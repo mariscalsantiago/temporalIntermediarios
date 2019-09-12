@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
+
 void main() => runApp(MyApp());
+
+
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -10,17 +14,20 @@ class MyApp extends StatelessWidget {
       title: 'GNP',
       theme: ThemeData(
 
-        primarySwatch: Colors.grey,
+       primaryColor: Colors.white
       ),
       home: MyHomePage(title: 'GNP'),
     );
   }
 }
 
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
   final String title;
+
+
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -117,8 +124,9 @@ class _MyHomePageState extends State<MyHomePage> {
                    children: <Widget>[
                   Column(
 
-                  children: <Widget>[
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
 
+                  children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
@@ -133,12 +141,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
                      Column(
 
+                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                          children: <Widget>[
 
                            Text(
                              
                              'Planes',
-                             textAlign: TextAlign.center,
+                             textAlign: TextAlign.right,
                              overflow: TextOverflow.ellipsis,
                              style: TextStyle(fontWeight: FontWeight.bold, color: colorLetters, fontSize: 16),
                            ),
@@ -159,19 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                    ],
 
                  ),
-                 Row(
-                   children: <Widget>[
-                     Icon(Icons.adjust, size: 10.0, color: Colors.transparent,),
-                     Text(
-                       'paso 1',
-                       textAlign: TextAlign.center,
-                       overflow: TextOverflow.ellipsis,
-                       style: TextStyle(fontWeight: FontWeight.bold, color: colorLetters, fontSize: 16),
-                     ),
 
-                   ],
-
-                 ),
                 ],
               ),
             ),
