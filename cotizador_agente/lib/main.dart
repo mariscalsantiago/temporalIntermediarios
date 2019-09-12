@@ -119,11 +119,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
                   children: <Widget>[
 
-                  Text(
-                    'Datos personales',
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.bold, color: colorLetters, fontSize: 16),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Datos personales',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: colorLetters, fontSize: 16),
+                    ),
                   ),
 
                 ]),
