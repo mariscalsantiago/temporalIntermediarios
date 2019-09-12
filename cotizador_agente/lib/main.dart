@@ -109,19 +109,10 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 100,
               width: double.infinity,
               child: Row(
-
-
                 children: <Widget>[
-                 Row(
-
-                   children: <Widget>[
-                  Column(
-
-                  children: <Widget>[
-
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
+                  Expanded(
+                    flex: 1,
+                    child:  Text(
                       'Datos personales',
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
@@ -129,48 +120,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
 
-                ]),
-
-                     Column(
-
-                         children: <Widget>[
-
-                           Text(
-                             'Planes',
-                             textAlign: TextAlign.center,
-                             overflow: TextOverflow.ellipsis,
-                             style: TextStyle(fontWeight: FontWeight.bold, color: colorLetters, fontSize: 16),
-                           ),
-
-                         ]),
-                   ],
-
-                 ),
-                 Row(
-                   children: <Widget>[
-                     Icon(Icons.adjust, size: 10.0, color: Colors.transparent,),
-                     Text(
-                       'botones',
-                       textAlign: TextAlign.center,
-                       overflow: TextOverflow.ellipsis,
-                       style: TextStyle(fontWeight: FontWeight.bold, color: colorLetters, fontSize: 16),
-                     ),
-                   ],
-
-                 ),
-                 Row(
-                   children: <Widget>[
-                     Icon(Icons.adjust, size: 10.0, color: Colors.transparent,),
-                     Text(
-                       'paso 1',
-                       textAlign: TextAlign.center,
-                       overflow: TextOverflow.ellipsis,
-                       style: TextStyle(fontWeight: FontWeight.bold, color: colorLetters, fontSize: 16),
-                     ),
-
-                   ],
-
-                 ),
+                  Expanded(
+                    flex: 1,
+                    child:  Text(
+                      'Datos personales',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontWeight: FontWeight.bold, color: colorLetters, fontSize: 16),
+                    ),
+                  ),
                 ],
               ),
             ),
