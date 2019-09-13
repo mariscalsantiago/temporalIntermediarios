@@ -37,11 +37,22 @@ void changeView() {
 class _MyHomePageState extends State<MyHomePage> {
   final colorHex = const Color(0xFFCECFD1);
   final colorLetters = const Color(0xFF002E71);
+  bool reNew = false;
   List _cities =
   ["Cluj-Napoca", "Bucuresti", "Timisoara", "Brasov", "Constanta"];
 
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _currentCity;
+
+
+  Paint _paint;
+
+  Drawhorizontalline() {
+    _paint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 1
+      ..strokeCap = StrokeCap.round;
+  }
 
   @override
   void initState() {
@@ -65,6 +76,17 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _currentCity = selectedCity;
     });
+  }
+
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.drawLine(Offset(-90.0, 0.0), Offset(90.0, 0.0), _paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 
   @override
@@ -262,22 +284,209 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
 
             Container(
+              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
 
-              child: Row(
-                  children: <Widget>[
+              color: colorHex,
+              width: double.infinity,
 
-                    DropdownButton(
-                      value: _currentCity,
-                      items: _dropDownMenuItems,
-                      onChanged: changedDropDownItem,
+              child:
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DropdownButtonFormField(
+                        value: _currentCity,
+                        items: _dropDownMenuItems,
+                        onChanged: changedDropDownItem,
+                        decoration: InputDecoration(
+                            enabledBorder: UnderlineInputBorder(
+                                borderSide: BorderSide(color: Colors.orange))),
+                      ),
                     ),
 
-                  ],
+
+              ),
+
+            Container(
+              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+              child: Column(
+
+                children: <Widget>[
+                  Text("Renovación"),
+                  Checkbox(
+                    value: reNew,
+                    onChanged: (bool value) {
+                      setState(() {
+                        reNew = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+              child: Container(
+                child: CustomPaint(painter: Drawhorizontalline()),
+
+              ),
+            ),
+
+            Container(
+              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+
+              child: Row(
+
+                children: <Widget>[
+
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                        'Datos del titular',
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: colorLetters,
+                            fontSize: 19),
+                    ),
+
+                  ),
+
+                  Container(
+                    child: Row(
+
+                      children: <Widget>[
+
+                       Expanded(
+                         flex: 1,
+                         child: Switch(
+
+                         ),
+                       ),
+
+                        Expanded(
+                        flex: 1,
+                          child: Switch(
+
+
+                          ),
+
+                        ),
+                      ],
+
+                    ),
+                  ),
+
+                  Container(
+                    child: Row(
+
+                      children: <Widget>[
+
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            'Hombre',
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: colorLetters,
+                                fontSize: 19),
+
+                          ),
+
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                            'Mujer',
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: colorLetters,
+                                fontSize: 19),
+
+                          ),
+
+                        ),
+                      ],
+
+                    ),
+
+                  ),
+
+                  Container(
+                    margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+                    child: Row(
+
+                      children: <Widget>[
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                      decoration: InputDecoration(
+                          labelText: 'Nombre'
+                      ),
+                  ),
+                    ),
+                      ],
+                    ),
+                  ),
+                Container(
+                  margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+                  child: Row(
+
+                    children: <Widget>[
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                    decoration: InputDecoration(
+                        labelText: 'Apellidos'
+                    ),
+                ),
+                  ),
+                    ],
+                  ),
+                ),
+                ],
+              ),
+            ),
+
+            Container(
+              margin: const EdgeInsets.only(
+                  left: 8.0, right: 8.0, top: 24, bottom: 0),
+              child: Row(
+
+                children: <Widget>[
+
+                  Expanded(
+                    flex: 1,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          labelText: 'Edad'
+                      ),
+
+                    ),
+
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                          labelText: 'C.P'),
+
+                    ),
+
+                  ),
+                ],
+
               ),
 
             ),
           ],
         ),
+
       ),
     );
   }
