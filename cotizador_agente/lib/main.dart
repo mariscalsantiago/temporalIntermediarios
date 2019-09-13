@@ -283,6 +283,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
 
+
             Container(
               margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
 
@@ -290,24 +291,24 @@ class _MyHomePageState extends State<MyHomePage> {
               width: double.infinity,
 
               child:
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButtonFormField(
-                        value: _currentCity,
-                        items: _dropDownMenuItems,
-                        onChanged: changedDropDownItem,
-                        decoration: InputDecoration(
-                            enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.orange))),
-                      ),
-                    ),
-
-
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownButtonFormField(
+                  value: _currentCity,
+                  items: _dropDownMenuItems,
+                  onChanged: changedDropDownItem,
+                  decoration: InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.orange))),
+                ),
               ),
+
+
+            ),
 
             Container(
               margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-              child: Column(
+              child: Row(
 
                 children: <Widget>[
                   Text("Renovación"),
@@ -322,13 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-              child: Container(
-                child: CustomPaint(painter: Drawhorizontalline()),
 
-              ),
-            ),
 
             Container(
               margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
@@ -340,33 +335,51 @@ class _MyHomePageState extends State<MyHomePage> {
                   Expanded(
                     flex: 1,
                     child: Text(
-                        'Datos del titular',
-                        textAlign: TextAlign.left,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: colorLetters,
-                            fontSize: 19),
+                      'Datos del titular',
+                      textAlign: TextAlign.left,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: colorLetters,
+                          fontSize: 19),
                     ),
 
                   ),
+
+
+
+
+
+
+
+                ],
+              ),
+            ),
+
+          /*  Container(
+              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+              child: Row(
+
+                children: <Widget>[
+
+
 
                   Container(
                     child: Row(
 
                       children: <Widget>[
 
-                       Expanded(
-                         flex: 1,
-                         child: Switch(
-
-                         ),
-                       ),
+                        Expanded(
+                          flex: 1,
+                          child: Text(
+                              'Imagen1'
+                          ),
+                        ),
 
                         Expanded(
-                        flex: 1,
-                          child: Switch(
-
+                          flex: 1,
+                          child: Text(
+                              'Imagen2'
 
                           ),
 
@@ -421,37 +434,52 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       children: <Widget>[
 
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Nombre'
-                      ),
-                  ),
-                    ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                                labelText: 'Nombre'
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                Container(
-                  margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-                  child: Row(
+                  Container(
+                    margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+                    child: Row(
 
-                    children: <Widget>[
+                      children: <Widget>[
 
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                    decoration: InputDecoration(
-                        labelText: 'Apellidos'
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            decoration: InputDecoration(
+                                labelText: 'Apellidos'
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                ),
                   ),
-                    ],
-                  ),
-                ),
+
+
+
+
+
+
+
+
+
+
+
+
                 ],
               ),
+
             ),
+
+*/
 
             Container(
               margin: const EdgeInsets.only(
@@ -484,6 +512,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
 
             ),
+
+
+
+
           ],
         ),
 
