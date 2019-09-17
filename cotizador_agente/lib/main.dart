@@ -554,47 +554,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-/*
-Future<jsonResponde> getQuote() async {
-  String url = 'https://quotes.rest/qod.json';
-  final response =
-  await http.get(url, headers: {"Accept": "application/json"});
-
-
-  if (response.statusCode == 200) {
-    return jsonResponde.fromJson(json.decode(response.body));
-  } else {
-    throw Exception('Failed to load post');
-  }
-}
-*/
-/*
-class jsonResponde {
-  final String id_aplicacion;
-  final String nombre;
-  final String descripcion;
-  final String cantidad_asegurados;
-  final String estatus;
-
-  final String secciones;
-  final String author;
-
-  jsonResponde({this.author, this.secciones, this.id_aplicacion, this.nombre, this.cantidad_asegurados, this.descripcion, this.estatus});
-
-  factory jsonResponde.fromJson(Map<String, dynamic> json) {
-    return jsonResponde(
-
-        nombre: json['nombre'],
-        author: json['contents']['quotes'][0]['author'],
-        secciones: json['secciones'][0]['campos']);
-
-
-
-
-  }
-}
-
-*/
 Future<SectionList> getQuote() async {
 
 
