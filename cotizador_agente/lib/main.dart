@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
+import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -281,7 +281,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             Container(
-            child: FutureBuilder<SectionList>(
+            child: FutureBuilder<Formulario>(
               future: getQuote(),
               builder: (context, snapshot){
 
@@ -293,11 +293,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
                         children: <Widget>[
 
-                          Text(snapshot.data.sectionsList.elementAt(0).toString()),
+                          Text(snapshot.data.secciones.elementAt(0).seccion),
                           SizedBox(
                             height: 10.0,
                           ),
-                          Text(" - ${snapshot.data.sectionsList.elementAt(0).toString()}"),
+                          Text(" - ${snapshot.data.nombre}"),
                         ]
                     ),
 
@@ -554,7 +554,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-Future<SectionList> getQuote() async {
+Future<Formulario> getQuote() async {
 
 
   String url = 'http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=991';
@@ -563,12 +563,14 @@ Future<SectionList> getQuote() async {
 
 
   if (response.statusCode == 200) {
-    return SectionList.fromJson(json.decode(response.body));
+    return Formulario.fromJson(json.decode(response.body));
   } else {
     throw Exception('Failed to load post');
   }
 }
 
+
+/*
 class SectionList {
 
 
@@ -599,5 +601,5 @@ class SectionList {
         //quote: json['contents']['quotes'][0]['quote']);
   }
 }
-
+*/
 
