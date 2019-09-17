@@ -1,6 +1,7 @@
 
-
-
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
 
@@ -27,12 +28,9 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-
 void changeView() {
   print('hellow');
 }
-
-
 
 class _MyHomePageState extends State<MyHomePage> {
   final colorHex = const Color(0xFFCECFD1);
@@ -282,6 +280,38 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
+            Container(
+            child: FutureBuilder<SectionList>(
+              future: getQuote(),
+              builder: (context, snapshot){
+
+                if (snapshot.hasData){
+
+
+                  return Center(
+                    child: Column(
+
+                        children: <Widget>[
+
+                          Text(snapshot.data.sectionsList.elementAt(0).toString()),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(" - ${snapshot.data.sectionsList.elementAt(0).toString()}"),
+                        ]
+                    ),
+
+                  );
+                }
+
+                else if
+                (snapshot.hasError) { //checks if the response throws an error
+                  return Text("${snapshot.error}");
+                }
+                return CircularProgressIndicator();
+              },
+            ),
+          ),
 
 
             Container(
@@ -521,6 +551,93 @@ class _MyHomePageState extends State<MyHomePage> {
 
       ),
     );
+  }
+}
+
+/*
+Future<jsonResponde> getQuote() async {
+  String url = 'https://quotes.rest/qod.json';
+  final response =
+  await http.get(url, headers: {"Accept": "application/json"});
+
+
+  if (response.statusCode == 200) {
+    return jsonResponde.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('Failed to load post');
+  }
+}
+*/
+/*
+class jsonResponde {
+  final String id_aplicacion;
+  final String nombre;
+  final String descripcion;
+  final String cantidad_asegurados;
+  final String estatus;
+
+  final String secciones;
+  final String author;
+
+  jsonResponde({this.author, this.secciones, this.id_aplicacion, this.nombre, this.cantidad_asegurados, this.descripcion, this.estatus});
+
+  factory jsonResponde.fromJson(Map<String, dynamic> json) {
+    return jsonResponde(
+
+        nombre: json['nombre'],
+        author: json['contents']['quotes'][0]['author'],
+        secciones: json['secciones'][0]['campos']);
+
+
+
+
+  }
+}
+
+*/
+Future<SectionList> getQuote() async {
+
+
+  String url = 'http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=991';
+  final response =
+  await http.get(url, headers: {"Accept": "application/json"});
+
+
+  if (response.statusCode == 200) {
+    return SectionList.fromJson(json.decode(response.body));
+  } else {
+    throw Exception('Failed to load post');
+  }
+}
+
+class SectionList {
+
+
+  final List sectionsList;
+
+  SectionList({this.sectionsList});
+
+  factory SectionList.fromJson(Map<String, dynamic> json) {
+
+    List sectionsList = new List();
+    List<dynamic> sectionsArray = json['secciones'][0]['campos'];
+
+    for (var i = 0; i < sectionsArray.length; i++) {
+
+      sectionsList.add(json['secciones'][0]['campos'][i]);
+
+    }
+
+    
+    return SectionList(
+
+      sectionsList: sectionsList
+    );
+        //author: json['contents']['quotes'][0]['author'],
+       // sections: json['secciones'][0]['campos'][0]["etiqueta"],
+       // name: json["nombre"]);
+
+        //quote: json['contents']['quotes'][0]['quote']);
   }
 }
 
