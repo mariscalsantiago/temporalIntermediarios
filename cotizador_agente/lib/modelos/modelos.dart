@@ -1,6 +1,6 @@
 
 class Formulario {
-  final String id;
+  final int id;
   final List <Seccion> secciones;
   final String nombre;
   final String descripcion;
@@ -31,7 +31,7 @@ class Formulario {
 }
 
 class Seccion {
-  final String ID;
+  final int ID;
   final List<Campo> campos;
   final String seccion;
 
@@ -60,7 +60,7 @@ class Seccion {
 
 
 class Campo {
-  final String ID;
+  final int ID;
   final String etiqueta;
   final bool obligatorio;
   final String nombre_campo;
@@ -76,8 +76,20 @@ class Campo {
 
   factory Campo.fromJson(Map<String, dynamic> parsedJson){
 
+    List<Valor> val;
+
+    try {
+
     var list = parsedJson["catalogo"]["valores"] as List;
-    List<Valor> val = list.map((i) => Valor.fromJson(i)).toList();
+    val = list.map((i) => Valor.fromJson(i)).toList();
+
+
+    } on NoSuchMethodError{
+      val = null;
+
+    }
+
+
 
 
     return Campo(
@@ -97,6 +109,7 @@ class Campo {
 
 }
 
+/*
 class Catalogo {
   final List <Valor> valores;
   Catalogo({this.valores});
@@ -118,9 +131,9 @@ class Catalogo {
 
 
 }
-
+*/
 class Valor {
-  final int id;
+  final String id;
   final String descripcion;
 
   Valor({this.id, this.descripcion});
