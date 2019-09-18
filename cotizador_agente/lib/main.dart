@@ -1,6 +1,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
-      home: MyHomePage(title: 'GNP'),
+      home: FormularioPaso1(title: 'GNP'),
     );
   }
 }

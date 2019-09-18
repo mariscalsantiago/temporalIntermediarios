@@ -1,4 +1,6 @@
 
+import 'package:flutter/material.dart';
+
 class Formulario {
   final int id;
   final List <Seccion> secciones;
@@ -73,6 +75,22 @@ class Campo {
   Campo({this.ID, this.etiqueta, this.obligatorio, this.nombre_campo,
     this.tipo_dato, this.tipo_componente, this.visible, this.regla,
     this.valores});
+
+  Widget getWidget(){
+
+    Widget resp;
+
+    switch (this.tipo_componente){
+
+      case "Combobox":
+
+
+    }
+
+    return resp;
+
+
+  }
 
   factory Campo.fromJson(Map<String, dynamic> parsedJson){
 
