@@ -109,7 +109,7 @@ class Campo {
 
 }
 
-/*
+
 class Catalogo {
   final List <Valor> valores;
   Catalogo({this.valores});
@@ -131,7 +131,8 @@ class Catalogo {
 
 
 }
-*/
+
+
 class Valor {
   final String id;
   final String descripcion;

@@ -294,6 +294,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         children: <Widget>[
 
                           Text(snapshot.data.secciones.elementAt(0).seccion),
+
                           SizedBox(
                             height: 10.0,
                           ),
