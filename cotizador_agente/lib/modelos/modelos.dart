@@ -13,7 +13,7 @@ class Formulario {
 
   factory Formulario.fromJson(Map<String, dynamic> parsedJson){
 
-    var list = parsedJson['images'] as List;
+    var list = parsedJson['secciones'] as List;
     List<Seccion> secc = list.map((i) => Seccion.fromJson(i)).toList();
 
 
