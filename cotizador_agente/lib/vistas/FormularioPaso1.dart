@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -59,6 +60,11 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
       appBar: AppBar(
         title: Text(data.nombre.toString()),
 
+      ),
+      body: Column(
+        children: <Widget>[
+          ComboBoxDinamico(valores: data.secciones[0].campos[0].valores)
+        ],
       ),
     );
   }

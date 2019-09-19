@@ -4,35 +4,30 @@ import 'package:flutter/material.dart';
 
 
 
-class ComboBox {
-  final int ID;
-  final String etiqueta;
-  final bool obligatorio;
-  final String nombre_campo;
-  final String tipo_dato;
-  final String tipo_componente;
-  final bool visible;
-  final String regla;
+class ComboBoxDinamico extends StatefulWidget {
+
+  ComboBoxDinamico({Key key, this.valores}) : super(key: key);
+
   final List <Valor>valores;
+
+
+
+  @override
+  _ComboBoxDinamicoState createState() => _ComboBoxDinamicoState();
+
+
+}
+
+class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
+
   String _currentCity;
-  String currentState;
 
-
-
-
-  ComboBox({this.ID, this.etiqueta, this.obligatorio, this.nombre_campo,
-    this.tipo_dato, this.tipo_componente, this.visible, this.regla,
-    this.valores});
-
-
-
-
-
-  Widget getWidget(){
-
-    DropdownButtonFormField(
-      value: getDropDownMenuItems()[0],
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField(
+      value: _currentCity,
       items: getDropDownMenuItems(),
+      onChanged: changedDropDownItem,
       decoration: InputDecoration(
           enabledBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.orange))),
@@ -45,7 +40,7 @@ class ComboBox {
 
   List<DropdownMenuItem<String>> getDropDownMenuItems() {
     List<DropdownMenuItem<String>> items = new List();
-    for (Valor v in this.valores) {
+    for (Valor v in widget.valores) {
       items.add(new DropdownMenuItem(
           value: v.id,
           child: new Text(v.descripcion.toString())
@@ -56,16 +51,19 @@ class ComboBox {
 
 
   void changedDropDownItem(String selectedCity) {
+    setState(() {
       _currentCity = selectedCity;
+    });
+  }
 
+  String getValor (){
+    return _currentCity;
   }
 
 
 
 
-
-
-
-
-
 }
+
+
+
