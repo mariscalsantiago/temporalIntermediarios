@@ -20,7 +20,9 @@ environment:
 dependencies:
 
   http: ^0.12.0 #import the HTTP package using this line
-  frideos: ^0.6.1
+  grouped_buttons: ^1.0.4
+  date_range_picker: ^1.0.3
+  flutter_calendar_carousel:
 
   flutter:
 

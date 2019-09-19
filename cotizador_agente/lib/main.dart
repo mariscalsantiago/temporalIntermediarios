@@ -1,10 +1,12 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
+import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
+import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
-      home: FormularioPaso1(title: 'GNP'),
+      home: MyHomePage(title: 'GNP'),
     );
   }
 }
@@ -33,12 +35,13 @@ void changeView() {
   print('hellow');
 }
 
+
 class _MyHomePageState extends State<MyHomePage> {
   final colorHex = const Color(0xFFCECFD1);
   final colorLetters = const Color(0xFF002E71);
   bool reNew = false;
-  List _cities =
-  ["Cluj-Napoca", "Bucuresti", "Timisoara", "Brasov", "Constanta"];
+ // List _cities =
+ // ["Cluj-Napoca", "Bucuresti", "Timisoara", "Brasov", "Constanta"];
 
   List<DropdownMenuItem<String>> _dropDownMenuItems;
   String _currentCity;
@@ -53,13 +56,50 @@ class _MyHomePageState extends State<MyHomePage> {
       ..strokeCap = StrokeCap.round;
   }
 
+
+
+  Formulario data;
+
+  Future<String> getData() async {
+    var response = await http.get(
+        Uri.encodeFull("http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=991"),
+        headers: {
+          "Accept": "application/json"
+        }
+    );
+
+
+    if (response.statusCode == 200) {
+      //return Formulario.fromJson(json.decode(response.body));
+      this.setState(() {
+        //data = json.decode(response.body);
+
+        data = Formulario.fromJson(json.decode(response.body));
+      });
+    } else {
+      throw Exception('Failed to load post');
+    }
+
+
+    print(data.nombre.toString());
+
+    return "Success!";
+  }
+
+
+  @override
+  void initState(){
+    this.getData();
+  }
+
+  /*
   @override
   void initState() {
     _dropDownMenuItems = getDropDownMenuItems();
     _currentCity = _dropDownMenuItems[0].value;
     super.initState();
-  }
-
+  }*/
+/*
   List<DropdownMenuItem<String>> getDropDownMenuItems() {
     List<DropdownMenuItem<String>> items = new List();
     for (String city in _cities) {
@@ -70,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     return items;
   }
-
+*/
   void changedDropDownItem(String selectedCity) {
     setState(() {
       _currentCity = selectedCity;
@@ -95,467 +135,445 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              color: colorHex,
-              height: 80,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Icon(
-                    Icons.adjust,
-                    size: 10.0,
-                    color: Colors.transparent,
-                  ),
-                  OutlineButton(
-                    textColor: Colors.orange,
-                    child: Text('COTIZACIONES GUARDADAS'),
-                    onPressed: () {},
-                    borderSide: BorderSide(
-                      color: Colors.orange, //Color of the border
-                      style: BorderStyle.solid, //Style of the border
-                      width: 0.8, //width of the border
+
+
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                color: colorHex,
+                height: 80,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Icon(
+                      Icons.adjust,
+                      size: 10.0,
+                      color: Colors.transparent,
                     ),
-                  ),
-                  Icon(
-                    Icons.adjust,
-                    size: 25.0,
-                    color: Colors.transparent,
-                  ),
-                  Icon(
-                    Icons.adjust,
-                    size: 25.0,
-                    color: Colors.transparent,
-                  ),
-                  Text(
-                    'MÁS',
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: Colors.orange,
-                        fontSize: 16),
-                  ),
-                  Icon(Icons.more_vert, color: Colors.orange, size: 35.0),
-                ],
-              ),
-            ),
-            Container(
-              color: Colors.white,
-              height: 80,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Icon(
-                    Icons.adjust,
-                    size: 10.0,
-                    color: Colors.transparent,
-                  ),
-                  Text(
-                    'COTIZACIÓN',
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontWeight: FontWeight.normal,
-                        color: colorLetters,
-                        fontSize: 19),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              color: colorHex,
-              width: double.infinity,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Datos personales',
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: colorLetters,
-                            fontSize: 16),
+                    OutlineButton(
+                      textColor: Colors.orange,
+                      child: Text('COTIZACIONES GUARDADAS'),
+                      onPressed: () {},
+                      borderSide: BorderSide(
+                        color: Colors.orange, //Color of the border
+                        style: BorderStyle.solid, //Style of the border
+                        width: 0.8, //width of the border
                       ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Planes',
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange,
-                            fontSize: 16),
-                      ),
+                    Icon(
+                      Icons.adjust,
+                      size: 25.0,
+                      color: Colors.transparent,
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              color: colorHex,
-              width: double.infinity,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        '',
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: colorLetters,
-                            fontSize: 16),
-                      ),
+                    Icon(
+                      Icons.adjust,
+                      size: 25.0,
+                      color: Colors.transparent,
                     ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        '',
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange,
-                            fontSize: 16),
-                      ),
+                    Text(
+                      'MÁS',
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.orange,
+                          fontSize: 16),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              color: colorHex,
-              width: double.infinity,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Paso 1',
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: colorLetters,
-                            fontSize: 16),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Paso 2',
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange,
-                            fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-            child: FutureBuilder<Formulario>(
-              future: getQuote(),
-              builder: (context, snapshot){
-
-                if (snapshot.hasData){
-
-
-                  return Center(
-                    child: Column(
-
-                        children: <Widget>[
-
-                          Text(snapshot.data.secciones.elementAt(0).seccion),
-
-                          SizedBox(
-                            height: 10.0,
-                          ),
-                          Text(" - ${snapshot.data.descripcion}"),
-                        ]
-                    ),
-
-                  );
-                }
-
-                else if
-                (snapshot.hasError) { //checks if the response throws an error
-                  return Text("${snapshot.error}");
-                }
-                return CircularProgressIndicator();
-              },
-            ),
-          ),
-
-
-            Container(
-              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-
-              color: colorHex,
-              width: double.infinity,
-
-              child:
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButtonFormField(
-                  value: _currentCity,
-                  items: _dropDownMenuItems,
-                  onChanged: changedDropDownItem,
-                  decoration: InputDecoration(
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.orange))),
+                    Icon(Icons.more_vert, color: Colors.orange, size: 35.0),
+                  ],
                 ),
               ),
-
-
-            ),
-
-            Container(
-              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-              child: Row(
-
-                children: <Widget>[
-                  Text("Renovación"),
-                  Checkbox(
-                    value: reNew,
-                    onChanged: (bool value) {
-                      setState(() {
-                        reNew = value;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-
-
-            Container(
-              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-
-              child: Row(
-
-                children: <Widget>[
-
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Datos del titular',
-                      textAlign: TextAlign.left,
+              Container(
+                color: Colors.white,
+                height: 80,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Icon(
+                      Icons.adjust,
+                      size: 10.0,
+                      color: Colors.transparent,
+                    ),
+                    Text(
+                      'COTIZACIÓN',
+                      textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontWeight: FontWeight.normal,
                           color: colorLetters,
                           fontSize: 19),
                     ),
-
-                  ),
-
-
-
-
-
-
-
-                ],
+                  ],
+                ),
               ),
-            ),
-
-          /*  Container(
-              margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-              child: Row(
-
-                children: <Widget>[
-
-
-
-                  Container(
-                    child: Row(
-
-                      children: <Widget>[
-
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                              'Imagen1'
-                          ),
+              Container(
+                color: colorHex,
+                width: double.infinity,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Datos personales',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: colorLetters,
+                              fontSize: 16),
                         ),
-
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                              'Imagen2'
-
-                          ),
-
-                        ),
-                      ],
-
+                      ),
                     ),
-                  ),
-
-                  Container(
-                    child: Row(
-
-                      children: <Widget>[
-
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            'Hombre',
-                            textAlign: TextAlign.left,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: colorLetters,
-                                fontSize: 19),
-
-                          ),
-
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Planes',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                              fontSize: 16),
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            'Mujer',
-                            textAlign: TextAlign.left,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: colorLetters,
-                                fontSize: 19),
-
-                          ),
-
-                        ),
-                      ],
-
+                      ),
                     ),
-
-                  ),
-
-                  Container(
-                    margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-                    child: Row(
-
-                      children: <Widget>[
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                                labelText: 'Nombre'
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-                    child: Row(
-
-                      children: <Widget>[
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            decoration: InputDecoration(
-                                labelText: 'Apellidos'
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-
-
-
-
-
-
-
-
-
-
-
-                ],
+                  ],
+                ),
               ),
+              Container(
+                color: colorHex,
+                width: double.infinity,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: colorLetters,
+                              fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          '',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                              fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                color: colorHex,
+                width: double.infinity,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Paso 1',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: colorLetters,
+                              fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Paso 2',
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange,
+                              fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
 
-            ),
+                color: colorHex,
+                width: double.infinity,
 
-*/
+                  /*
+              child: FutureBuilder<Formulario>(
+                future: getQuote(),
+                builder: (context, snapshot){
 
-            Container(
-              margin: const EdgeInsets.only(
-                  left: 8.0, right: 8.0, top: 24, bottom: 0),
-              child: Row(
+                  if (snapshot.hasData){
 
-                children: <Widget>[
 
-                  Expanded(
-                    flex: 1,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'Edad'
+                    return Center(
+                      child: Column(
+
+                          children: <Widget>[
+
+                            Text(snapshot.data.secciones.elementAt(0).seccion),
+
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            Text(" - ${snapshot.data.descripcion}"),
+                          ]
+                      ),
+
+                    );
+                  }
+
+                  else if
+                  (snapshot.hasError) { //checks if the response throws an error
+                    return Text("${snapshot.error}");
+                  }
+                  return CircularProgressIndicator();
+                },
+              ),*/
+
+                  child:  ComboBoxDinamico(valores: data.secciones[0].campos[0].valores),
+                  ),
+              Container(
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+                child: Row(
+
+                  children: <Widget>[
+                    CheckBoxDinamico(campo: data.secciones[1].campos[7],)
+
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+
+                child: Row(
+
+                  children: <Widget>[
+
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        'Datos del titular',
+                        textAlign: TextAlign.left,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontWeight: FontWeight.normal,
+                            color: colorLetters,
+                            fontSize: 19),
                       ),
 
                     ),
 
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'C.P'),
+
+
+
+
+
+
+                  ],
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+                child: Row(
+
+                  children: <Widget>[
+                    CalendarioDinamico()
+
+                  ],
+                ),
+
+              ),
+              Container(
+                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+                child: Row(
+
+                  children: <Widget>[
+
+
+
+                    Container(
+                      child: Row(
+
+                        children: <Widget>[
+
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                                'Imagen1'
+                            ),
+                          ),
+
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                                'Imagen2'
+
+                            ),
+
+                          ),
+                        ],
+
+                      ),
+                    ),
+
+                    Container(
+                      child: Row(
+
+                        children: <Widget>[
+
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              'Hombre',
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: colorLetters,
+                                  fontSize: 19),
+
+                            ),
+
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Text(
+                              'Mujer',
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: colorLetters,
+                                  fontSize: 19),
+
+                            ),
+
+                          ),
+                        ],
+
+                      ),
 
                     ),
 
-                  ),
-                ],
+                    Container(
+                      margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+                      child: Row(
+
+                        children: <Widget>[
+
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                  labelText: 'Nombre'
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
+                      child: Row(
+
+                        children: <Widget>[
+
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              decoration: InputDecoration(
+                                  labelText: 'Apellidos'
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  ],
+                ),
 
               ),
 
-            ),
+
+
+              Container(
+                margin: const EdgeInsets.only(
+                    left: 8.0, right: 8.0, top: 24, bottom: 0),
+                child: Row(
+
+                  children: <Widget>[
+
+                    Expanded(
+                      flex: 1,
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            labelText: 'Edad'
+                        ),
+
+                      ),
+
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                            labelText: 'C.P'),
+
+                      ),
+
+                    ),
+                  ],
+
+                ),
+
+              ),
 
 
 
 
-          ],
+            ],
+          ),
         ),
 
       ),
     );
   }
 }
-
+/*
 Future<Formulario> getQuote() async {
 
 
@@ -570,6 +588,9 @@ Future<Formulario> getQuote() async {
     throw Exception('Failed to load post');
   }
 }
+
+*/
+
 
 class Post {
   final String userId;
