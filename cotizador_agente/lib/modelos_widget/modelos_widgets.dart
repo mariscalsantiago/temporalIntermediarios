@@ -172,7 +172,7 @@ class _CalendarioDinamicoState extends State<CalendarioDinamico> {
     DateTime _currentDate = DateTime(2019, 2, 3);
 
     return Container(
-      
+
       child: CalendarCarousel<Event>(
         onDayPressed: (DateTime date, List<Event> events) {
           this.setState(() => _currentDate = date);
