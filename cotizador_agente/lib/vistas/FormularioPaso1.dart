@@ -63,7 +63,15 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
       ),
       body: Column(
         children: <Widget>[
-          ComboBoxDinamico(valores: data.secciones[0].campos[0].valores)
+
+          ListView.builder
+            (
+              itemCount: data.secciones.length,
+              itemBuilder: (BuildContext ctxt, int index) {
+                return new Text(data.secciones[index].seccion);
+              }
+          )
+
         ],
       ),
     );
