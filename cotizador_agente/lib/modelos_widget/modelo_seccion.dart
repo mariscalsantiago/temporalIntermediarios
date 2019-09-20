@@ -2,6 +2,8 @@
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
+
+import 'modelos_widgets.dart';
 class SeccionDinamica extends StatefulWidget {
   SeccionDinamica({Key key, this.secc}) : super(key: key);
 
@@ -74,39 +76,37 @@ class _CampoDinamicoState extends State<CampoDinamico> {
     switch (widget.campo.tipo_componente){
       case "select": {
         // statements;
-        return Container();
+        return ComboBoxDinamico(valores: widget.campo.valores,);
 
       }
 
       case "textbox": {
         //statements;
-        return Container(
-          child: Text("textbox"),
-        );
+        return TextFieldDinamico(titulo: widget.campo);
 
       }
 
       case "input": {
         //statements;
-        return Text("input");
+        return TextFieldDinamico(titulo: widget.campo);
 
       }
 
       case "checkbox": {
         //statements;
-        return Container();
+        return CheckBoxDinamico(campo: widget.campo);
 
       }
 
       case "calendar": {
         //statements;
-        return Container();
+        return CalendarioDinamicoRange();
 
       }
 
       case "button": {
         //statements;
-        return Container();
+        return BotonDinamicoBorde(titulo: widget.campo,);
 
       }
 

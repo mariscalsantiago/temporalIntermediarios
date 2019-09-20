@@ -141,10 +141,8 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
         decoration: InputDecoration(
         labelText: 'Input JSON'
       ),
-    );
+        ));
   }
-
-
 }
 
 
@@ -266,12 +264,13 @@ class CardDinamico extends StatefulWidget {
 class _CardDinamicoState extends State<CardDinamico> {
   @override
   Widget build(BuildContext context) {
-    return  Card(
-        child: InkWell(
+    return Card(
+      child: InkWell(
         splashColor: Colors.blue.withAlpha(30),
-    onTap: () {
-    print('Card tapped.');
-    },
-    ),
+        onTap: () {
+          print('Card tapped.');
+        },
+      ),
     );
+  }
 }

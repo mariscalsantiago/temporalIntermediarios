@@ -32,20 +32,11 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-void changeView() {
-  print('hellow');
-}
-
 
 class _MyHomePageState extends State<MyHomePage> {
   final colorHex = const Color(0xFFCECFD1);
   final colorLetters = const Color(0xFF002E71);
   bool reNew = false;
- // List _cities =
- // ["Cluj-Napoca", "Bucuresti", "Timisoara", "Brasov", "Constanta"];
-
-  List<DropdownMenuItem<String>> _dropDownMenuItems;
-  String _currentCity;
 
 
   Paint _paint;
@@ -81,9 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
       throw Exception('Failed to load post');
     }
 
-
-    print(data.nombre.toString());
-
     return "Success!";
   }
 
@@ -93,11 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
     this.getData();
   }
 
-  void changedDropDownItem(String selectedCity) {
-    setState(() {
-      _currentCity = selectedCity;
-    });
-  }
 
 
   @override
@@ -114,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(data.secciones[1].seccion),
+        title: Text(data.nombre),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -128,253 +111,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
                 itemBuilder: (BuildContext ctxt, int index) {
-                  return new SeccionDinamica(secc: data.secciones[index],);
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: new SeccionDinamica(secc: data.secciones[index],),
+                  );
                 }
             ),
-          )
-        ],
-
-                color: colorHex,
-                width: double.infinity,
-
-                  /*
-              child: FutureBuilder<Formulario>(
-                future: getQuote(),
-                builder: (context, snapshot){
-
-                  if (snapshot.hasData){
-
-
-                    return Center(
-                      child: Column(
-
-                          children: <Widget>[
-
-                            Text(snapshot.data.secciones.elementAt(0).seccion),
-
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Text(" - ${snapshot.data.descripcion}"),
-                          ]
-                      ),
-
-                    );
-                  }
-
-                  else if
-                  (snapshot.hasError) { //checks if the response throws an error
-                    return Text("${snapshot.error}");
-                  }
-                  return CircularProgressIndicator();
-                },
-              ),*/
-
-                  child:  ComboBoxDinamico(valores: data.secciones[0].campos[0].valores),
-                  ),
-              Container(
-                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-                child: Row(
-
-                  children: <Widget>[
-                    CheckBoxDinamico(campo: data.secciones[1].campos[7],)
-
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-
-                child: Row(
-
-                  children: <Widget>[
-
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Datos del titular',
-                        textAlign: TextAlign.left,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: colorLetters,
-                            fontSize: 19),
-                      ),
-
-                    ),
-
-
-
-
-
-
-
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-                child: Row(
-
-                  children: <Widget>[
-                   // CalendarioDinamico()
-
-                  ],
-                ),
-
-              ),
-              Container(
-                margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-                child: Row(
-
-                  children: <Widget>[
-
-
-
-                    Container(
-                      child: Row(
-
-                        children: <Widget>[
-
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                                'Imagen1'
-                            ),
-                          ),
-
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                                'Imagen2'
-
-                            ),
-
-                          ),
-                        ],
-
-                      ),
-                    ),
-
-                    Container(
-                      child: Row(
-
-                        children: <Widget>[
-
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              'Hombre',
-                              textAlign: TextAlign.left,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: colorLetters,
-                                  fontSize: 19),
-
-                            ),
-
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              'Mujer',
-                              textAlign: TextAlign.left,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: colorLetters,
-                                  fontSize: 19),
-
-                            ),
-
-                          ),
-                        ],
-
-                      ),
-
-                    ),
-
-                    Container(
-                      margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-                      child: Row(
-
-                        children: <Widget>[
-
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                  labelText: 'Nombre'
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 8.0, right: 8.0, top: 24, bottom: 0),
-                      child: Row(
-
-                        children: <Widget>[
-
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                  labelText: 'Apellidos'
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                  ],
-                ),
-
-              ),
-
-
-
-              Container(
-                margin: const EdgeInsets.only(
-                    left: 8.0, right: 8.0, top: 24, bottom: 0),
-                child: Row(
-
-                  children: <Widget>[
-
-                    Expanded(
-                      flex: 1,
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            labelText: 'Edad'
-                        ),
-
-                      ),
-
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            labelText: 'C.P'),
-
-                      ),
-
-                    ),
-                  ],
-
-                ),
-
-              ),
-
-
-
-
-            ],
           ),
-        ),
+        ]
 
       ),
     );
