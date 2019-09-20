@@ -92,25 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
     this.getData();
   }
 
-  /*
-  @override
-  void initState() {
-    _dropDownMenuItems = getDropDownMenuItems();
-    _currentCity = _dropDownMenuItems[0].value;
-    super.initState();
-  }*/
-/*
-  List<DropdownMenuItem<String>> getDropDownMenuItems() {
-    List<DropdownMenuItem<String>> items = new List();
-    for (String city in _cities) {
-      items.add(new DropdownMenuItem(
-          value: city,
-          child: new Text(city)
-      ));
-    }
-    return items;
-  }
-*/
   void changedDropDownItem(String selectedCity) {
     setState(() {
       _currentCity = selectedCity;
@@ -410,7 +391,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Row(
 
                   children: <Widget>[
-                   // CalendarioDinamico()
+
+
+                   Padding(
+                     padding: const EdgeInsets.all(8.0),
+                     child: CalendarioDinamicoRange(),
+                   )
 
                   ],
                 ),
@@ -573,23 +559,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-/*
-Future<Formulario> getQuote() async {
 
-
-  String url = 'http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=991';
-  final response =
-  await http.get(url, headers: {"Accept": "application/json"});
-
-
-  if (response.statusCode == 200) {
-    return Formulario.fromJson(json.decode(response.body));
-  } else {
-    throw Exception('Failed to load post');
-  }
-}
-
-*/
 
 
 class Post {
@@ -630,36 +600,5 @@ Future<Post> createPost(String url, {Map body}) async {
     return Post.fromJson(json.decode(response.body));
   });
 }
-/*
-class SectionList {
 
-
-  final List sectionsList;
-
-  SectionList({this.sectionsList});
-
-  factory SectionList.fromJson(Map<String, dynamic> json) {
-
-    List sectionsList = new List();
-    List<dynamic> sectionsArray = json['secciones'][0]['campos'];
-
-    for (var i = 0; i < sectionsArray.length; i++) {
-
-      sectionsList.add(json['secciones'][0]['campos'][i]);
-
-    }
-
-    
-    return SectionList(
-
-      sectionsList: sectionsList
-    );
-        //author: json['contents']['quotes'][0]['author'],
-       // sections: json['secciones'][0]['campos'][0]["etiqueta"],
-       // name: json["nombre"]);
-
-        //quote: json['contents']['quotes'][0]['quote']);
-  }
-}
-*/
 
