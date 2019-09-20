@@ -22,14 +22,17 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
 
-    Text(
-    widget.secc.seccion,
-      textAlign: TextAlign.start,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: colorLetters,
-          fontSize: 16),
+    Container(
+      width: double.infinity,
+      child: Text(
+      widget.secc.seccion,
+        textAlign: TextAlign.start,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: colorLetters,
+            fontSize: 16),
+      ),
     ),
 
 
@@ -76,7 +79,7 @@ class _CampoDinamicoState extends State<CampoDinamico> {
     switch (widget.campo.tipo_componente){
       case "select": {
         // statements;
-        return ComboBoxDinamico(valores: widget.campo.valores,);
+        return ComboBoxDinamico(campo: widget.campo,);
 
       }
 

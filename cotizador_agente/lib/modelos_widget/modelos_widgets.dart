@@ -6,14 +6,17 @@ import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 
 ////COMBOBOX
 class ComboBoxDinamico extends StatefulWidget {
 
-  ComboBoxDinamico({Key key, this.valores}) : super(key: key);
+  ComboBoxDinamico({Key key, this.campo}) : super(key: key);
 
-  final List <Valor>valores;
+  final Campo campo;
 
 
 
@@ -43,9 +46,9 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
   List<DropdownMenuItem<String>> getDropDownMenuItems() {
     List<DropdownMenuItem<String>> items = new List();
-    for (Valor v in widget.valores) {
+    for (Valor v in widget.campo.valores) {
       items.add(new DropdownMenuItem(
-          value: v.id,
+          value: v.descripcion,
           child: new Text(v.descripcion.toString())
       ));
     }
@@ -86,26 +89,24 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
   @override
   Widget build(BuildContext context) {
 
-    if (widget.campo.visible == true){
 
-      return  CheckboxGroup(
-          labels: <String>[
-            widget.campo.etiqueta,
+      return Visibility(
+        visible: widget.campo.visible,
+        child: CheckboxGroup(
+            labels: <String>[
+              widget.campo.etiqueta,
 
-          ],
+            ],
 
-          checkColor: Colors.white,
-          activeColor: Colors.orange,
-          onSelected: (List<String> checked) => print(checked.toString())
+            checkColor: Colors.white,
+            activeColor: Colors.orange,
+            onSelected: (List<String> checked) => print(checked.toString())
 
 
+        ),
       );
 
-    }else{
 
-      return null;
-
-    }
   }
 }
 
@@ -122,26 +123,37 @@ class CalendarioDinamicoRange extends StatefulWidget {
 class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
   @override
   Widget build(BuildContext context) {
-    return MaterialButton(
+    var now = new DateTime.now();
 
-        color: Colors.deepOrangeAccent,
-        onPressed: () async {
-          final List<DateTime> picked = await DateRagePicker.showDatePicker(
-              context: context,
-              initialFirstDate: new DateTime.now(),
-              initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
-              firstDate: new DateTime(2015),
-              lastDate: new DateTime(2020)
-          );
-          if (picked != null && picked.length == 2) {
-            print(picked);
-          }
-        },
-        child:  TextFormField(
-        decoration: InputDecoration(
-        labelText: 'Input JSON'
+
+
+
+
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        width: double.infinity,
+        child: MaterialButton(
+
+            color: Colors.deepOrangeAccent,
+            onPressed: () async {
+              final List<DateTime> picked = await DateRagePicker.showDatePicker(
+                  context: context,
+                  initialFirstDate: new DateTime.now(),
+                  initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
+                  firstDate: new DateTime(2015),
+                  lastDate: new DateTime(2020)
+              );
+              if (picked != null && picked.length == 2) {
+                print(picked);
+              }
+            },
+            child:  Text(
+             DateFormat('dd-MM-yyy').format(now)
+          )),
       ),
-        ));
+    );
   }
 }
 
@@ -163,14 +175,17 @@ class BotonDinamicoBorde extends StatefulWidget {
 class _BotonDinamicoStateBorde extends State<BotonDinamicoBorde> {
   @override
   Widget build(BuildContext context) {
-    return OutlineButton(
-      textColor: Colors.orange,
-      child: Text(widget.titulo.toString()),
-      onPressed: () {},
-      borderSide: BorderSide(
-        color: Colors.orange, //Color of the border
-        style: BorderStyle.solid, //Style of the border
-        width: 0.8, //width of the border
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: OutlineButton(
+        textColor: Colors.orange,
+        child: Text(widget.titulo.etiqueta),
+        onPressed: () {},
+        borderSide: BorderSide(
+          color: Colors.orange, //Color of the border
+          style: BorderStyle.solid, //Style of the border
+          width: 0.8, //width of the border
+        ),
       ),
     );
   }
@@ -239,11 +254,41 @@ class TextFieldDinamico extends StatefulWidget {
 class _TextFieldDinamicoState extends State<TextFieldDinamico> {
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      decoration: InputDecoration(
-          labelText: widget.titulo.toString()
-      ),
-    );
+
+    if(widget.titulo.tipo_dato=="integer"){
+      return TextFormField(
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey)
+            ),
+            border: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey)
+            ),
+            labelStyle: TextStyle(color: Colors.grey),
+            hintText: widget.titulo.etiqueta,
+            labelText: widget.titulo.etiqueta
+        ),
+      );
+
+    }else{
+      return TextFormField(
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey)
+            ),
+            border: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey)
+            ),
+            labelStyle: TextStyle(color: Colors.grey),
+            hintText: widget.titulo.etiqueta,
+            labelText: widget.titulo.etiqueta
+        ),
+      );
+    }
+
+
+
   }
 }
 
