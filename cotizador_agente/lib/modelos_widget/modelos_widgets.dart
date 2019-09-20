@@ -112,130 +112,7 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
 //////
 
 
-////CALENDAR SIN RANGE
-
-class CalendarioDinamico extends StatefulWidget {
-
-  CalendarioDinamico({Key key, this.antiguedad}) : super(key: key);
-  final Campo antiguedad;
-  @override
-  _CalendarioDinamicoState createState() => _CalendarioDinamicoState();
-}
-
-class _CalendarioDinamicoState extends State<CalendarioDinamico> {
-
-  static Widget _eventIcon = new Container(
-    decoration: new BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(1000)),
-        border: Border.all(color: Colors.blue, width: 2.0)),
-    child: new Icon(
-      Icons.person,
-      color: Colors.amber,
-    ),
-  );
-
-
-
-  EventList<Event> _markedDateMap = new EventList<Event>(
-    events: {
-      new DateTime(2019, 2, 10): [
-        new Event(
-          date: new DateTime(2019, 2, 10),
-          title: 'Event 1',
-          icon: _eventIcon,
-          dot: Container(
-            margin: EdgeInsets.symmetric(horizontal: 1.0),
-            color: Colors.red,
-            height: 5.0,
-            width: 5.0,
-          ),
-        ),
-        new Event(
-          date: new DateTime(2019, 2, 10),
-          title: 'Event 2',
-          icon: _eventIcon,
-        ),
-        new Event(
-          date: new DateTime(2019, 2, 10),
-          title: 'Event 3',
-          icon: _eventIcon,
-        ),
-      ],
-    },
-  );
-
-
-
-  @override
-  Widget build(BuildContext context) {
-    DateTime _currentDate = DateTime(2019, 2, 3);
-
-    return Container(
-
-      child: CalendarCarousel<Event>(
-        onDayPressed: (DateTime date, List<Event> events) {
-          this.setState(() => _currentDate = date);
-        },
-        weekendTextStyle: TextStyle(
-          color: Colors.red,
-        ),
-        thisMonthDayBorderColor: Colors.grey,
-//      weekDays: null, /// for pass null when you do not want to render weekDays
-//      headerText: Container( /// Example for rendering custom header
-//        child: Text('Custom Header'),
-//      ),
-        customDayBuilder: (   /// you can provide your own build function to make custom day containers
-            bool isSelectable,
-            int index,
-            bool isSelectedDay,
-            bool isToday,
-            bool isPrevMonthDay,
-            TextStyle textStyle,
-            bool isNextMonthDay,
-            bool isThisMonthDay,
-            DateTime day,
-            ) {
-          /// If you return null, [CalendarCarousel] will build container for current [day] with default function.
-          /// This way you can build custom containers for specific days only, leaving rest as default.
-
-          // Example: every 15th of month, we have a flight, we can place an icon in the container like that:
-          if (day.day == 15) {
-            return Center(
-              child: Icon(Icons.local_airport),
-            );
-          } else {
-            return null;
-          }
-        },
-        weekFormat: false,
-        markedDatesMap: _markedDateMap,
-        height: 420.0,
-        selectedDateTime: _currentDate,
-        daysHaveCircularBorder: false, /// null for not rendering any border, true for circular border, false for rectangular border
-      ),
-    );
-
-  }
-
-  void initState() {
-    /// Add more events to _markedDateMap EventList
-    _markedDateMap.add(
-        new DateTime(2019, 2, 25),
-        new Event(
-          date: new DateTime(2019, 2, 25),
-          title: 'Event 5',
-          icon: _eventIcon,
-        ));
-    super.initState();
-  }
-
-
-}
-
-
-
-////CALENDARIO CON RANGE
+////CALENDARIO
 
 class CalendarioDinamicoRange extends StatefulWidget {
   @override
@@ -260,9 +137,141 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
             print(picked);
           }
         },
-        child: new Text("Pick date range")
+        child:  TextFormField(
+        decoration: InputDecoration(
+        labelText: 'Input JSON'
+      ),
     );
   }
 
 
+}
+
+
+////
+
+
+////BOTON BORDE
+
+class BotonDinamicoBorde extends StatefulWidget {
+
+  BotonDinamicoBorde({Key key, this.titulo}) : super(key: key);
+  final Campo titulo;
+
+  @override
+  _BotonDinamicoStateBorde createState() => _BotonDinamicoStateBorde();
+}
+
+class _BotonDinamicoStateBorde extends State<BotonDinamicoBorde> {
+  @override
+  Widget build(BuildContext context) {
+    return OutlineButton(
+      textColor: Colors.orange,
+      child: Text(widget.titulo.toString()),
+      onPressed: () {},
+      borderSide: BorderSide(
+        color: Colors.orange, //Color of the border
+        style: BorderStyle.solid, //Style of the border
+        width: 0.8, //width of the border
+      ),
+    );
+  }
+}
+
+////
+
+////BOTON SIN BORDE
+
+class BotonDinamicoSinBorde extends StatefulWidget {
+  BotonDinamicoSinBorde({Key key, this.titulo}) : super(key: key);
+  final Campo titulo;
+  @override
+  _BotonDinamicoSinBordeState createState() => _BotonDinamicoSinBordeState();
+}
+
+class _BotonDinamicoSinBordeState extends State<BotonDinamicoSinBorde> {
+  @override
+  Widget build(BuildContext context) {
+    return OutlineButton(
+      textColor: Colors.orange,
+      color: Colors.orange,
+      child: Text(widget.titulo.toString()),
+      onPressed: () {},
+    );
+  }
+}
+
+
+////Text
+
+class TextoGenericoDinamico extends StatefulWidget {
+  TextoGenericoDinamico({Key key, this.texto}) : super(key: key);
+  final Campo texto;
+  @override
+  _TextoGenericoDinamicoState createState() => _TextoGenericoDinamicoState();
+}
+
+class _TextoGenericoDinamicoState extends State<TextoGenericoDinamico> {
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      widget.texto.toString(),
+      textAlign: TextAlign.center,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: Colors.orange,
+          fontSize: 16),
+    );
+  }
+}
+
+/////
+
+////TextField
+
+
+class TextFieldDinamico extends StatefulWidget {
+  TextFieldDinamico({Key key, this.titulo}) : super(key: key);
+  final Campo titulo;
+  @override
+  _TextFieldDinamicoState createState() => _TextFieldDinamicoState();
+}
+
+class _TextFieldDinamicoState extends State<TextFieldDinamico> {
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      decoration: InputDecoration(
+          labelText: widget.titulo.toString()
+      ),
+    );
+  }
+}
+
+
+/////
+
+////Card
+
+class CardDinamico extends StatefulWidget {
+
+  CardDinamico({Key key, this.campo}) : super(key: key);
+
+  final List <Campo>campo;
+  @override
+  _CardDinamicoState createState() => _CardDinamicoState();
+}
+
+class _CardDinamicoState extends State<CardDinamico> {
+  @override
+  Widget build(BuildContext context) {
+    return  Card(
+        child: InkWell(
+        splashColor: Colors.blue.withAlpha(30),
+    onTap: () {
+    print('Card tapped.');
+    },
+    ),
+    );
 }
