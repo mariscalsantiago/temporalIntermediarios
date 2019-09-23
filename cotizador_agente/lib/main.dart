@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (BuildContext ctxt, int index) {
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: new SeccionDinamica(secc: data.secciones[index], i:index, end:data.secciones.length),
+                    child: new SeccionDinamica(secc: data.secciones[index], i:index, end:data.secciones.length, cantidad_asegurados: data.cantidad_asegurados, ),
                   );
                 }
             ),

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 
 import 'modelos_widgets.dart';
 class SeccionDinamica extends StatefulWidget {
-  SeccionDinamica({Key key, this.secc, this.i, this.end}) : super(key: key);
+  SeccionDinamica({Key key, this.secc, this.i, this.end, this.cantidad_asegurados}) : super(key: key);
 
   final Seccion secc;
   final int end;
   final int i;
+  final int cantidad_asegurados;
+
   @override
   _SeccionDinamicaState createState() => _SeccionDinamicaState();
 }
@@ -17,49 +19,107 @@ class SeccionDinamica extends StatefulWidget {
 class _SeccionDinamicaState extends State<SeccionDinamica> {
 
   final colorLetters = const Color(0xFF002E71);
+  List <bool> _estadoAsegurados;
 
   @override
   Widget build(BuildContext context) {
 
+    @override
+    void initState(){
+
+      for (int i = 0 ; i<widget.cantidad_asegurados; i++ ){
+        _estadoAsegurados.add(false);
+      }
+    }
+
+
+    aumentar(){
+      setState(() {
+
+      });
+
+    }
+
 
     if(widget.i>=widget.end-1){
-      return Text("Hola"+(widget.end).toString());
+
+      return Row(
+        children: <Widget>[
+
+          Expanded(
+            flex: 2,
+            child: FloatingActionButton(onPressed: aumentar(),
+              tooltip: "agrega beneficiario",
+              child: const Icon(Icons.add),
+            ),
+          ),
+          Expanded(
+              flex: 6,
+              child: Text("Agregar Familiar")
+          ),
+          Expanded(
+            flex: 2,
+            child: FloatingActionButton(onPressed: aumentar(),
+              tooltip: "agrega beneficiario",
+              child: const Icon(Icons.delete),
+            ),
+          )
+
+        ],
+      );
+
+
+
+
 
 
     }else{
+
+
+      List <Widget> ultimaSecc = <Widget>[];
+
+      for (int i= 0; i<widget.cantidad_asegurados; i++){
+        ultimaSecc.add(
+            Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+
+                  Container(
+                    width: double.infinity,
+                    child: Text(
+                      widget.secc.seccion,
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: colorLetters,
+                          fontSize: 16),
+                    ),
+                  ),
+
+
+                  ListView.builder
+                    (
+                      itemCount: widget.secc.campos.length,
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      itemBuilder: (BuildContext ctxt, int index) {
+                        return new CampoDinamico(campo: widget.secc.campos[index]);
+                      }
+                  ),
+
+
+
+
+
+                ]
+            )
+        );
+      }
+
+
       return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-
-            Container(
-              width: double.infinity,
-              child: Text(
-                widget.secc.seccion,
-                textAlign: TextAlign.start,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: colorLetters,
-                    fontSize: 16),
-              ),
-            ),
-
-
-            ListView.builder
-              (
-                itemCount: widget.secc.campos.length,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemBuilder: (BuildContext ctxt, int index) {
-                  return new CampoDinamico(campo: widget.secc.campos[index]);
-                }
-            ),
-
-
-
-
-
-          ]
+        children: ultimaSecc,
       );
 
     }
