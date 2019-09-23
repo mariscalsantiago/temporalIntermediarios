@@ -108,16 +108,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemCount: data.secciones.length,
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
-
-
                 itemBuilder: (BuildContext ctxt, int index) {
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: new SeccionDinamica(secc: data.secciones[index],),
+                    child: new SeccionDinamica(secc: data.secciones[index], i:index, end:data.secciones.length),
                   );
                 }
             ),
           ),
+
+
         ]
 
       ),

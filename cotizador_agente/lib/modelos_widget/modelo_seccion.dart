@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 
 import 'modelos_widgets.dart';
 class SeccionDinamica extends StatefulWidget {
-  SeccionDinamica({Key key, this.secc}) : super(key: key);
+  SeccionDinamica({Key key, this.secc, this.i, this.end}) : super(key: key);
 
   final Seccion secc;
+  final int end;
+  final int i;
   @override
   _SeccionDinamicaState createState() => _SeccionDinamicaState();
 }
@@ -18,38 +20,50 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-
-    Container(
-      width: double.infinity,
-      child: Text(
-      widget.secc.seccion,
-        textAlign: TextAlign.start,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: colorLetters,
-            fontSize: 16),
-      ),
-    ),
 
 
-          ListView.builder
-            (
-              itemCount: widget.secc.campos.length,
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
-              itemBuilder: (BuildContext ctxt, int index) {
-                return new CampoDinamico(campo: widget.secc.campos[index]);
-              }
-          ),
+    if(widget.i>=widget.end-1){
+      return Text("Hola"+(widget.end).toString());
+
+
+    }else{
+      return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+
+            Container(
+              width: double.infinity,
+              child: Text(
+                widget.secc.seccion,
+                textAlign: TextAlign.start,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: colorLetters,
+                    fontSize: 16),
+              ),
+            ),
+
+
+            ListView.builder
+              (
+                itemCount: widget.secc.campos.length,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return new CampoDinamico(campo: widget.secc.campos[index]);
+                }
+            ),
+
+
 
 
 
           ]
-    );
+      );
+
+    }
+
   }
 }
 
