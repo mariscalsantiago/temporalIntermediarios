@@ -69,7 +69,8 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
       setState(() {
 
         //_showDialog();
-        _aseguradosList.removeLast();
+        //aseguradosList.removeLast();
+        _visible = false;
         widget.notifyParent();
 
       });
@@ -82,7 +83,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
 
       setState(() {
 
-        _visible = !_visible;
+        _visible = true;
 
         _aseguradosList.add(
           Column(

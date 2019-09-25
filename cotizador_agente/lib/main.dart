@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
+import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
@@ -84,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState(){
     this.getData();
+    Utils.notifyMain=refresh();
   }
 
 
