@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
@@ -85,7 +84,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState(){
     this.getData();
-    Utils.notifyMain=refresh();
   }
 
 
@@ -102,6 +100,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return Scaffold(
       appBar: AppBar(
         title: Text(data.nombre),
@@ -112,13 +113,13 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: ListView.builder
               (
-                itemCount: data.secciones.length,
+                itemCount: data.secciones.length-1,
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
                 itemBuilder: (BuildContext ctxt, int index) {
                   return Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: new SeccionDinamica(notifyParent:refresh,secc: data.secciones[index], i:index, end:data.secciones.length, cantidad_asegurados: data.cantidad_asegurados, ),
+                    child: new SeccionDinamica(notifyParent:refresh,secc: data.secciones[index], i:index, end:data.secciones.length-1, cantidad_asegurados: data.cantidad_asegurados, ),
                   );
                 }
             ),
