@@ -2,6 +2,7 @@
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/modelo_asegurados.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
 import 'package:flutter/material.dart';
 
 import 'modelos_widgets.dart';
@@ -209,15 +210,32 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
 
                 ),
               )
+            ],
 
-              //TODO: AQUI AGREGAR EL SEND
+
+          ),
+          Row(
+            children: <Widget>[
+
+              Expanded(
+                flex: 1,
+                child:   RaisedButton(
+                  child: Text(
+                    'Go to second screen',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                  onPressed: () {
+                   // _awaitReturnValueFromSecondScreen(context);
+                    Navigator.of(context).push(MaterialPageRoute(builder:(context)=>FormularioPaso2('something')));
+
+                  },
+                )
+              ),
 
             ],
           ),
         ],
       );
-
-
 
     }else{
       return Column(

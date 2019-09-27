@@ -12,16 +12,22 @@ import 'package:http/http.dart' as http;
 
 class FormularioPaso2 extends StatefulWidget {
 
-  String nombre;
-  FormularioPaso2(this.nombre);
+  String something;
+  FormularioPaso2(this.something);
   @override
   _FormularioPaso2State createState() => _FormularioPaso2State();
 }
 
 class _FormularioPaso2State extends State<FormularioPaso2> {
+  String something;
+
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+
+      child: Text(widget.something),
+    );
+
   }
 }
