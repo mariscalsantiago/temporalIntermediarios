@@ -23,10 +23,26 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
 
   @override
+
   Widget build(BuildContext context) {
     return Container(
 
-      child: Text(widget.something),
+      child: Column(
+
+        children: <Widget>[
+          Row(
+
+            children: <Widget>[
+              Container(
+
+                child: Text(
+                    widget.something
+                ),
+              ),
+            ],
+
+        ),],
+      ),
     );
 
   }

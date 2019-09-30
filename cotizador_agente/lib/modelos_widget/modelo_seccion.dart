@@ -146,22 +146,15 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
                   ),
                 ),
 
-
                 ListView.builder
                   (
                     itemCount: widget.secc.campos.length,
                     shrinkWrap: true,
-
                     physics: ScrollPhysics(),
                     itemBuilder: (BuildContext ctxt, int index) {
                       return new CampoDinamico(campo: widget.secc.campos[index]);
                     }
                 ),
-
-
-
-
-
               ]
           ),
         );
