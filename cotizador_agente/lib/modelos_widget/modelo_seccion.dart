@@ -2,38 +2,39 @@
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/modelo_asegurados.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:flutter/material.dart';
 
 import 'modelos_widgets.dart';
 class SeccionDinamica extends StatefulWidget {
-  SeccionDinamica({Key key, this.notifyParent, this.secc, this.i, this.end, this.cantidad_asegurados}) : super(key: key);
+  SeccionDinamica({Key key, this.agregarDicc, this.notifyParent, this.secc, this.i, this.end, this.cantidad_asegurados, this.formKey}) : super(key: key);
 
   final Seccion secc;
   final int end;
   final int i;
   final int cantidad_asegurados;
   final Function() notifyParent;
+  final void Function(String, String) agregarDicc;
+  final GlobalKey<FormState> formKey;
+
+
 
 
   @override
   _SeccionDinamicaState createState() => _SeccionDinamicaState();
 }
 
-class _SeccionDinamicaState extends State<SeccionDinamica> {
+class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores{
 
   final colorLetters = const Color(0xFF002E71);
 
   static List <Widget> _aseguradosList = <Widget>[];
-
-  static int contador =0;
-
 
 
   @override
   void initState(){
 
   }
-
 
 
   void _showDialog() {
@@ -63,6 +64,8 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
 
   @override
   Widget build(BuildContext context) {
+
+
 
     void _decrementar(){
       setState(() {
@@ -101,7 +104,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
 
                       physics: ScrollPhysics(),
                       itemBuilder: (BuildContext ctxt, int index) {
-                        return new CampoDinamico(campo: widget.secc.campos[index]);
+                        return new CampoDinamico(campo: widget.secc.campos[index], agregarDicc:widget.agregarDicc);
                       }
                   ),
 
@@ -214,6 +217,24 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
 
             ],
           ),
+          Row(
+            children: <Widget>[
+              RaisedButton.icon(
+                color: Colors.cyan[900],
+                textColor: Colors.white,
+                label: Text('Submit'),
+                icon: Icon(Icons.save),
+                onPressed: () {
+                  final bool v = widget.formKey.currentState.validate();
+                  if (v) {
+                    widget.formKey.currentState.save();
+                    print('valida');
+                  }else{
+                    print("invalid");
+                  }
+                },)
+            ],
+          )
         ],
       );
 
@@ -244,7 +265,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
                 itemBuilder: (BuildContext ctxt, int index) {
-                  return new CampoDinamico(campo: widget.secc.campos[index]);
+                  return new CampoDinamico(campo: widget.secc.campos[index], agregarDicc: widget.agregarDicc,);
                 }
             ),
 
@@ -257,9 +278,10 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
 }
 
 class CampoDinamico extends StatefulWidget {
-  CampoDinamico({Key key, this.campo}) : super(key: key);
+  CampoDinamico({Key key, this.campo, this.agregarDicc}) : super(key: key);
 
   final Campo campo;
+  final void Function(String, String)  agregarDicc ;
 
   @override
   _CampoDinamicoState createState() => _CampoDinamicoState();
@@ -284,6 +306,11 @@ class _CampoDinamicoState extends State<CampoDinamico> {
       }
 
       case "input": {
+
+        if(widget.campo.tipo_dato == "rango"){
+          return TextFieldConRangoDinamico(titulo: widget.campo, agregarAlDiccionario:widget.agregarDicc);
+        }
+
         //statements;
         return TextFieldDinamico(titulo: widget.campo);
 
