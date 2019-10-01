@@ -2,14 +2,24 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
+import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
+import 'package:load/load.dart';
 
-void main() => runApp(MyApp());
+
+void main() {
+  runApp(
+    LoadingProvider(
+      child: MyApp(),
+    ),
+  );
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -21,11 +31,6 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(title: 'GNP'),
     );
   }
-}
-
-void typeDoc(){
-
-
 }
 
 class MyHomePage extends StatefulWidget {
@@ -42,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final colorHex = const Color(0xFFCECFD1);
   final colorLetters = const Color(0xFF002E71);
   bool reNew = false;
-
+  bool isLoading = true;
 
   Paint _paint;
 
@@ -75,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //return Formulario.fromJson(json.decode(response.body));
       this.setState(() {
         //data = json.decode(response.body);
-
+        isLoading = false;
         data = Formulario.fromJson(json.decode(response.body));
       });
     } else {
@@ -90,7 +95,6 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState(){
     this.getData();
   }
-
 
 
   @override
@@ -108,75 +112,56 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(data.nombre),
+        title: Text("Paso 1"),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+
           Expanded(
-            child: ListView.builder
+
+            child: isLoading
+                ? Center(
+              child: CircularProgressIndicator(),
+            )
+                : new ListView.builder
               (
                 itemCount: data.secciones.length-1,
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
                 itemBuilder: (BuildContext ctxt, int index) {
+
                   return Padding(
+
                     padding: const EdgeInsets.all(16.0),
                     child: new SeccionDinamica(notifyParent:refresh,secc: data.secciones[index], i:index, end:data.secciones.length-1, cantidad_asegurados: data.cantidad_asegurados, ),
+
                   );
+
                 }
+
             ),
+
           ),
 
 
         ]
 
       ),
+
     );
+
+
   }
+
+
+
 }
 
 
 
-class Post {
-  final String userId;
-  final int id;
-  final String title;
-  final String body;
-
-  Post({this.userId, this.id, this.title, this.body});
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return Post(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-      body: json['body'],
-    );
-  }
-
-  Map toMap() {
-    var map = new Map<String, dynamic>();
-    map["userId"] = userId;
-    map["title"] = title;
-    map["body"] = body;
-
-    return map;
-  }
-}
-
-
-Future<Post> createPost(String url, {Map body}) async {
-  return http.post(url, body: body).then((http.Response response) {
-    final int statusCode = response.statusCode;
-
-    if (statusCode < 200 || statusCode > 400 || json == null) {
-      throw new Exception("Error while fetching data");
-    }
-    return Post.fromJson(json.decode(response.body));
-  });
-}
 
 

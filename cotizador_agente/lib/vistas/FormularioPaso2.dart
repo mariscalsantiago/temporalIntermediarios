@@ -11,9 +11,8 @@ import 'package:http/http.dart' as http;
 
 
 class FormularioPaso2 extends StatefulWidget {
-
-  String something;
-  FormularioPaso2(this.something);
+  final String text;
+  FormularioPaso2({Key key, @required this.text}) : super(key: key);
   @override
   _FormularioPaso2State createState() => _FormularioPaso2State();
 }
@@ -25,25 +24,22 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
   @override
 
   Widget build(BuildContext context) {
-    return Container(
-
-      child: Column(
-
-        children: <Widget>[
-          Row(
-
-            children: <Widget>[
-              Container(
-
-                child: Text(
-                    widget.something
-                ),
-              ),
-            ],
-
-        ),],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Paso 2"),
       ),
-    );
+
+      body: Column(
+
+        children:<Widget>[
+          Text(
+          widget.text,
+          style: TextStyle(fontSize: 24),),
+        ]
+        ),
+
+
+      );
 
   }
 }

@@ -22,19 +22,27 @@ class SeccionDinamica extends StatefulWidget {
 
 class _SeccionDinamicaState extends State<SeccionDinamica> {
 
+  TextEditingController textFieldController = TextEditingController();
+
   final colorLetters = const Color(0xFF002E71);
 
   static List <Widget> _aseguradosList = <Widget>[];
 
   static int contador =0;
 
-
-
   @override
   void initState(){
 
   }
 
+  void _sendDataToSecondScreen(BuildContext context) {
+    //String textToSend = textFieldController.text;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FormularioPaso2(text: "test",),
+        ));
+  }
 
 
   void _showDialog() {
@@ -185,6 +193,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
               Expanded(
                 flex: 2,
                 child: FloatingActionButton(onPressed: _aumentar,
+                  heroTag: "btn1",
                   tooltip: "agrega beneficiario",
                   child: const Icon(Icons.add),
 
@@ -198,6 +207,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
               Expanded(
                 flex: 2,
                 child: FloatingActionButton(onPressed: _decrementar,
+                  heroTag: "btn2",
                   tooltip: "agrega beneficiario",
                   child: const Icon(Icons.delete),
 
@@ -214,13 +224,12 @@ class _SeccionDinamicaState extends State<SeccionDinamica> {
                 flex: 1,
                 child:   RaisedButton(
                   child: Text(
-                    'Go to second screen',
+                    'Paso 2',
                     style: TextStyle(fontSize: 24),
                   ),
                   onPressed: () {
-                   // _awaitReturnValueFromSecondScreen(context);
-                    Navigator.of(context).push(MaterialPageRoute(builder:(context)=>FormularioPaso2('something')));
 
+                    _sendDataToSecondScreen(context);
                   },
                 )
               ),

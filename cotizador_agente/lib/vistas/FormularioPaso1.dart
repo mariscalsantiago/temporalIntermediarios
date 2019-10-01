@@ -3,9 +3,11 @@ import 'dart:convert';
 
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'FormularioPaso2.dart';
 
 class FormularioPaso1 extends StatefulWidget {
   FormularioPaso1({Key key, this.title}) : super(key: key);
@@ -18,8 +20,8 @@ class FormularioPaso1 extends StatefulWidget {
 
 class _FormularioPaso1State extends State<FormularioPaso1> {
 
-
   Formulario data;
+
 
   Future<String> getData() async {
     var response = await http.get(
@@ -54,6 +56,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
     this.getData();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +81,14 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
   }
 
 
+  void _sendDataToSecondScreen(BuildContext context) {
+   // String textToSend = textFieldController.text;
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => FormularioPaso2(text: "hola",),
+        ));
+  }
 
 
 }
