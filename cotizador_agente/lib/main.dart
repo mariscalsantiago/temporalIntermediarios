@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
 import 'package:load/load.dart';
+import 'package:localstorage/localstorage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -63,6 +64,9 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
 
   };
 
+  final LocalStorage storage = new LocalStorage('formulario_1');
+
+
 
 
 
@@ -88,16 +92,17 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
 
   agregarAlDiccionario(String key, String value){
     setState(() {
+
+      //El metodo que ya funciona
       print("llegue al metodo del diccionario");
       createDoc[key]=value;
-
-
-
-
-
-
       print(createDoc);
       guardarLocalStorage();
+
+      // Otro metodo
+      storage.setItem(key, createDoc);
+      print("esto etoy guardando"+json.encode(storage.getItem(key)));
+
 
     });
   }
@@ -109,6 +114,10 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
 
     final value = prefs.getString(key) ?? "no hay";
     print('read: $value');
+
+    // Segundo método
+
+
 
   }
 

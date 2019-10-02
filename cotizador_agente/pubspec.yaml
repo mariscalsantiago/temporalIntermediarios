@@ -23,6 +23,7 @@ dependencies:
   grouped_buttons: ^1.0.4
   date_range_picker: ^1.0.3
   shared_preferences: ^0.4.3
+  localstorage: ^2.0.0
   load:
   flutter_calendar_carousel:
 

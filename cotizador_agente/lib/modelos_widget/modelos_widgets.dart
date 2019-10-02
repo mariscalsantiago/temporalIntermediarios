@@ -263,11 +263,12 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
 
             validator: (value){
               print(value);
-
+              print("dato lenght"+value.length.toString());
+              print("dato longitud"+widget.titulo.dato_longitud.toString());
               if(value.isEmpty){
                 return "El campo no debe estar vacío";
               }else{
-                if(double.parse(value)>double.parse(widget.titulo.rango.rango_inicio) && double.parse(value)<double.parse(widget.titulo.rango.rango_fin)){
+                if(value.length<= widget.titulo.dato_longitud){
                   print("en teoria, esta ok");
 
                   return null;
