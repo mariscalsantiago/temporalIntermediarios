@@ -62,6 +62,8 @@ class Seccion {
 
 
 class Campo {
+  static int view_cont_ID=0;
+  final int view_ID;
   final int ID;
   final String etiqueta;
   final bool obligatorio;
@@ -72,10 +74,11 @@ class Campo {
   final String regla;
   final List <Valor>valores;
   final Rango rango;
+  final int dato_longitud;
 
   Campo({this.ID, this.etiqueta, this.obligatorio, this.nombre_campo,
     this.tipo_dato, this.tipo_componente, this.visible, this.regla,
-    this.valores, this.rango});
+    this.valores, this.rango, this.view_ID, this.dato_longitud});
 
   Widget getWidget(){
 
@@ -94,6 +97,7 @@ class Campo {
   }
 
   factory Campo.fromJson(Map<String, dynamic> parsedJson){
+    view_cont_ID ++;
 
     List<Valor> val;
 
@@ -140,6 +144,8 @@ class Campo {
       regla: parsedJson["regla"],
       valores: val,
       rango: r,
+      view_ID: view_cont_ID,
+      dato_longitud: parsedJson["regla"][0],
 
     );
   }
