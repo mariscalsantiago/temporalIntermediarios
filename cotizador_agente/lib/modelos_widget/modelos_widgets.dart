@@ -251,6 +251,57 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
   @override
   Widget build(BuildContext context) {
 
+
+
+
+
+    if (widget.titulo.obligatorio)
+      {
+        return Visibility(
+          visible: widget.titulo.visible,
+          child: TextFormField(
+
+            validator: (value){
+              print(value);
+
+              if(value.isEmpty){
+                return "El campo no debe estar vacío";
+              }else{
+                if(double.parse(value)>double.parse(widget.titulo.rango.rango_inicio) && double.parse(value)<double.parse(widget.titulo.rango.rango_fin)){
+                  print("en teoria, esta ok");
+
+                  return null;
+
+                }else{
+                  print("en teoria, fuera de rango");
+
+                  return "Esta fuera de rango";
+                }
+              }
+            },
+
+
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)
+                ),
+                border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)
+                ),
+                labelStyle: TextStyle(color: Colors.grey),
+                hintText: widget.titulo.etiqueta,
+                labelText: widget.titulo.etiqueta
+            ),
+
+
+          ),
+        );
+      }
+
+
+
+
     if(widget.titulo.tipo_dato=="integer"){
       return TextFormField(
         keyboardType: TextInputType.number,

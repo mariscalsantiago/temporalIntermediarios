@@ -324,11 +324,12 @@ class _CampoDinamicoState extends State<CampoDinamico> {
 
       case "textbox": {
         //statements;
+
         return TextFieldDinamico(titulo: widget.campo);
 
       }
 
-      case "input": {
+      case "input":  {
 
         if(widget.campo.tipo_dato == "rango"){
           return TextFieldConRangoDinamico(titulo: widget.campo, agregarAlDiccionario:widget.agregarDicc);
