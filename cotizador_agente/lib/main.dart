@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
 import 'package:load/load.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 void main() {
@@ -90,9 +91,25 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
       print("llegue al metodo del diccionario");
       createDoc[key]=value;
 
+
+
+
+
+
       print(createDoc);
+      guardarLocalStorage();
 
     });
+  }
+
+  guardarLocalStorage() async{
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'PASO1';
+    prefs.setString(key, createDoc.toString());
+
+    final value = prefs.getString(key) ?? "no hay";
+    print('read: $value');
+
   }
 
 

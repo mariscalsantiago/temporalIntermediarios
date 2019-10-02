@@ -22,6 +22,7 @@ dependencies:
   http: ^0.12.0 #import the HTTP package using this line
   grouped_buttons: ^1.0.4
   date_range_picker: ^1.0.3
+  shared_preferences: ^0.4.3
   load:
   flutter_calendar_carousel:
 

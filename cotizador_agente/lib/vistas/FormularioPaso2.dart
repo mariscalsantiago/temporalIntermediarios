@@ -7,6 +7,7 @@ import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -18,22 +19,54 @@ class FormularioPaso2 extends StatefulWidget {
 }
 
 class _FormularioPaso2State extends State<FormularioPaso2> {
-  String something;
+
+  String _something ="Cargando... ";
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _read();
+  }
+
+  _read() async {
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'PASO1';
+    final value = prefs.getString(key) ?? "no hay";
+    print('read: $value');
+
+    setState(() {
+      _something = value;
+
+
+    });
+
+  }
+
+
+
+
+
 
 
   @override
 
   Widget build(BuildContext context) {
+
+
+
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Paso 2"),
+        title: Text("PASO 2"),
       ),
 
       body: Column(
 
         children:<Widget>[
           Text(
-          widget.text,
+          widget.text + _something,
           style: TextStyle(fontSize: 24),),
         ]
         ),
