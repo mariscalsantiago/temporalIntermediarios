@@ -71,10 +71,11 @@ class Campo {
   final bool visible;
   final String regla;
   final List <Valor>valores;
+  final Rango rango;
 
   Campo({this.ID, this.etiqueta, this.obligatorio, this.nombre_campo,
     this.tipo_dato, this.tipo_componente, this.visible, this.regla,
-    this.valores});
+    this.valores, this.rango});
 
   Widget getWidget(){
 
@@ -108,6 +109,24 @@ class Campo {
     }
 
 
+    Rango r;
+
+    try {
+
+    //var list = parsedJson["catalogo"]["rangos"] as List;
+    //val = list.map((i) => Valor.fromJson(i)).toList();
+
+      r = Rango.fromJson(parsedJson["catalogo"]["rangos"]);
+
+
+    } on NoSuchMethodError{
+      r = null;
+
+    }
+
+
+
+
 
 
     return Campo(
@@ -120,6 +139,7 @@ class Campo {
       visible: parsedJson["visible"],
       regla: parsedJson["regla"],
       valores: val,
+      rango: r,
 
     );
   }
@@ -146,6 +166,28 @@ class Catalogo {
       valores: parsedJson["id_valor"],
     );
   }
+
+
+}
+
+class Rango {
+  final String rango_inicio;
+  final String rango_fin;
+
+  Rango({this.rango_inicio, this.rango_fin});
+
+
+  factory Rango.fromJson(Map<String, dynamic> parsedJson){
+
+
+    return Rango(
+      rango_inicio: parsedJson["rango_inicio"],
+      rango_fin: parsedJson["rango_fin"],
+
+    );
+  }
+
+
 
 
 }

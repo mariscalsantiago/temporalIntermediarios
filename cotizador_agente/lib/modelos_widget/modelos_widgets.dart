@@ -1,5 +1,6 @@
 
 import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
@@ -124,11 +125,6 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
   @override
   Widget build(BuildContext context) {
     var now = new DateTime.now();
-
-
-
-
-
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -294,6 +290,76 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
 
 
 /////
+
+
+
+////TextField
+
+
+class TextFieldConRangoDinamico extends StatefulWidget with Validadores {
+  TextFieldConRangoDinamico({Key key, this.titulo, this.agregarAlDiccionario}) : super(key: key);
+  final Campo titulo;
+  final void Function (String, String) agregarAlDiccionario;
+  @override
+  _TextFieldConRangoDinamicoState createState() => _TextFieldConRangoDinamicoState();
+}
+
+class _TextFieldConRangoDinamicoState extends State<TextFieldConRangoDinamico> {
+  @override
+  Widget build(BuildContext context) {
+
+      return TextFormField(
+        decoration: InputDecoration(
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey)
+            ),
+            border: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey)
+            ),
+            labelStyle: TextStyle(color: Colors.grey),
+            hintText: widget.titulo.etiqueta,
+            labelText: widget.titulo.etiqueta,
+        ),
+        onSaved: (String value){
+          print("llegue al onsave "+ value);
+          widget.agregarAlDiccionario( widget.titulo.nombre_campo, value);
+        },
+        validator: (value){
+          print(value);
+
+          if(value.isEmpty){
+            print("En teoria, vacio");
+            return "El campo no debe estar vacío";
+          }else{
+          if(double.parse(value)>double.parse(widget.titulo.rango.rango_inicio) && double.parse(value)<double.parse(widget.titulo.rango.rango_fin)){
+            print("en teoria, esta ok");
+
+            return null;
+
+          }else{
+            print("en teoria, fuera de rango");
+
+            return "Esta fuera de rango";
+          }
+          }
+        },
+      );
+
+
+
+
+
+
+  }
+}
+
+
+/////
+
+
+
+
+
 
 ////Card
 
