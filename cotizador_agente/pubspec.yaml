@@ -24,6 +24,7 @@ dependencies:
   date_range_picker: ^1.0.3
   shared_preferences: ^0.4.3
   localstorage: ^2.0.0
+  table_calendar: ^2.0.2
   load:
   flutter_calendar_carousel:
 

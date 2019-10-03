@@ -4,11 +4,9 @@ import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
-import 'package:flutter_calendar_carousel/classes/event.dart';
-import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 
 
@@ -131,13 +129,12 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
       child: Container(
         width: double.infinity,
         child: MaterialButton(
-
-            color: Colors.deepOrangeAccent,
+            color: Colors.grey,
             onPressed: () async {
               final List<DateTime> picked = await DateRagePicker.showDatePicker(
                   context: context,
                   initialFirstDate: new DateTime.now(),
-                  initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
+                //  initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
                   firstDate: new DateTime(2015),
                   lastDate: new DateTime(2020)
               );
@@ -145,8 +142,20 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
                 print(picked);
               }
             },
-            child:  Text(
-             DateFormat('dd-MM-yyy').format(now)
+            child:  Column(
+
+              children: <Widget>[
+                Text(
+                  "Antigüedad en GNP",
+                  style: TextStyle(color: Colors.white, fontSize: 14.0),
+                ),
+                Text(
+                  DateFormat('dd/MM/yyy').format(now),
+                  textAlign: TextAlign.left,
+                ),
+
+
+              ],
           )),
       ),
     );
