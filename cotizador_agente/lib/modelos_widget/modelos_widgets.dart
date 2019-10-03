@@ -255,8 +255,7 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
 
 
 
-    if (widget.titulo.obligatorio)
-      {
+    if (widget.titulo.obligatorio) {
         return Visibility(
           visible: widget.titulo.visible,
           child: TextFormField(
@@ -268,7 +267,7 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
               if(value.isEmpty){
                 return "El campo no debe estar vacío";
               }else{
-                if(value.length<= widget.titulo.dato_longitud){
+                if(widget.titulo.validaLongitud(value.length)){
                   print("en teoria, esta ok");
 
                   return null;

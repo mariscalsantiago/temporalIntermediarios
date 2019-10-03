@@ -74,25 +74,30 @@ class Campo {
   final String regla;
   final List <Valor>valores;
   final Rango rango;
-  final int dato_longitud;
+  final List <int>  dato_longitud;
 
   Campo({this.ID, this.etiqueta, this.obligatorio, this.nombre_campo,
     this.tipo_dato, this.tipo_componente, this.visible, this.regla,
     this.valores, this.rango, this.view_ID, this.dato_longitud});
 
-  Widget getWidget(){
+  bool validaLongitud (int val){
 
-    Widget resp;
-
-    switch (this.tipo_componente){
-
-      case "Combobox":
-
-
+    if(dato_longitud.isEmpty){
+      return true;
     }
 
-    return resp;
+    if(dato_longitud.length>=1){
+      if(val>dato_longitud[0] && val<dato_longitud[1]){
+        return true;
+      }
 
+    }else{
+      if(val<dato_longitud[0]){
+        return true;
+      }
+    }
+
+    return false;
 
   }
 
@@ -128,19 +133,27 @@ class Campo {
 
     }
 
-    int longitud;
+    List <int> longitud = new List <int>();
 
 
     try {
 
-      var list = parsedJson["dato_longitud"] as List;
-      longitud = list[list.length-1];
+      List  list = parsedJson["dato_longitud"] as List;
+
+      longitud.add(list[0]);
+      longitud.add(list[1]);
+
+
+
 
 
     } on NoSuchMethodError{
       longitud = null;
 
     }
+
+
+
 
 
 
@@ -160,6 +173,7 @@ class Campo {
       rango: r,
       view_ID: view_cont_ID,
       dato_longitud: longitud,
+
 
     );
   }
