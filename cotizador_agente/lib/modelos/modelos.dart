@@ -138,14 +138,10 @@ class Campo {
 
     try {
 
-      List  list = parsedJson["dato_longitud"] as List;
+      var list = parsedJson['dato_longitud'];
 
-      longitud.add(list[0]);
-      longitud.add(list[1]);
-
-
-
-
+      List<int> streetsList = new List<int>.from(list);
+      longitud = streetsList;
 
     } on NoSuchMethodError{
       longitud = null;
