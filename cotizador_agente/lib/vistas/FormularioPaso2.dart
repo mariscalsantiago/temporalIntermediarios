@@ -187,58 +187,41 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
           onPressed: () async {
             Post newPost = new Post(
-                userId: "123", id: 0, title: "1491", body: "142845");
+                body: "{'id_aplicacion': 991, 'id_plan': 25,'cp':'09310','id_coaseguro': 3,'edad_titular':'23','sexo':'H','id_negocio': 2,'asegurados': [{'id': 25,'cp': '09311','edad_titular': '20','sexo': 'M'},{'id': 33,'cp': '09310','edad_titular': '25','sexo': 'H'}]}");
             Post p = await createPost(CREATE_POST_URL,
                 body: newPost.toMap());
-            print(p.title);
+           // print(p.body);
           },
           child: const Text("Enviar"),
         )
 
         ),
-
-
-
-
-
           ),
-
 
           Text(
           widget.text + _something,
           style: TextStyle(fontSize: 24),),
         ]
         ),
-
-
       );
-
   }
 }
 
 
 
 class Post {
-  final String userId;
-  final int id;
-  final String title;
   final String body;
 
-  Post({this.userId, this.id, this.title, this.body});
+  Post({this.body});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
       body: json['body'],
     );
   }
 
   Map toMap() {
     var map = new Map<String, dynamic>();
-    map["userId"] = userId;
-    map["title"] = title;
     map["body"] = body;
 
     return map;

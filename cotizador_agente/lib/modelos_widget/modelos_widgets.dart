@@ -134,7 +134,7 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
               final List<DateTime> picked = await DateRagePicker.showDatePicker(
                   context: context,
                   initialFirstDate: new DateTime.now(),
-                //  initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
+                  initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
                   firstDate: new DateTime(2015),
                   lastDate: new DateTime(2020)
               );
