@@ -74,25 +74,31 @@ class Campo {
   final String regla;
   final List <Valor>valores;
   final Rango rango;
-  final int dato_longitud;
+  final List <int>  dato_longitud;
+  String valor;
 
   Campo({this.ID, this.etiqueta, this.obligatorio, this.nombre_campo,
     this.tipo_dato, this.tipo_componente, this.visible, this.regla,
-    this.valores, this.rango, this.view_ID, this.dato_longitud});
+    this.valores, this.rango, this.view_ID, this.dato_longitud, this.valor});
 
-  Widget getWidget(){
+  bool validaLongitud (int val){
 
-    Widget resp;
-
-    switch (this.tipo_componente){
-
-      case "Combobox":
-
-
+    if(dato_longitud.isEmpty){
+      return true;
     }
 
-    return resp;
+    if(dato_longitud.length>=1){
+      if(val>dato_longitud[0] && val<dato_longitud[1]){
+        return true;
+      }
 
+    }else{
+      if(val<dato_longitud[0]){
+        return true;
+      }
+    }
+
+    return false;
 
   }
 
@@ -128,19 +134,23 @@ class Campo {
 
     }
 
-    int longitud;
+    List <int> longitud = new List <int>();
 
 
     try {
 
-      var list = parsedJson["dato_longitud"] as List;
-      longitud = list[list.length-1];
+      var list = parsedJson['dato_longitud'];
 
+      List<int> streetsList = new List<int>.from(list);
+      longitud = streetsList;
 
     } on NoSuchMethodError{
       longitud = null;
 
     }
+
+
+
 
 
 
@@ -161,6 +171,8 @@ class Campo {
       view_ID: view_cont_ID,
       dato_longitud: longitud,
 
+
+
     );
   }
 
@@ -179,9 +191,6 @@ class Catalogo {
 
     List<Valor> val = list.map((i) => Valor.fromJson(i)).toList();
 
-
-
-
     return Catalogo(
       valores: parsedJson["id_valor"],
     );
@@ -196,10 +205,7 @@ class Rango {
 
   Rango({this.rango_inicio, this.rango_fin});
 
-
   factory Rango.fromJson(Map<String, dynamic> parsedJson){
-
-
     return Rango(
       rango_inicio: parsedJson["rango_inicio"],
       rango_fin: parsedJson["rango_fin"],
@@ -216,15 +222,28 @@ class Rango {
 class Valor {
   final String id;
   final String descripcion;
+  final Campo child;
+  final bool subnivel;
 
-  Valor({this.id, this.descripcion});
+  Valor({this.id, this.descripcion, this.subnivel, this.child});
 
   factory Valor.fromJson(Map<String, dynamic> parsedJson){
+    Campo hijo = null;
+    bool sub = false;
 
+    try{
+      sub = parsedJson["subnivel"];
+      hijo = Campo.fromJson(parsedJson);
+    }on NoSuchMethodError{
+      hijo = null;
+      sub = false;
+    }
 
     return Valor(
       id: parsedJson["id_valor"],
       descripcion: parsedJson["descripcion"],
+      subnivel: sub,
+      child: hijo,
 
     );
   }
