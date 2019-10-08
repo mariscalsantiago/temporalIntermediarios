@@ -115,7 +115,8 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores{
 
                       physics: ScrollPhysics(),
                       itemBuilder: (BuildContext ctxt, int index) {
-                        return new CampoDinamico(campo: widget.secc.campos[index], agregarDicc:widget.agregarDicc);
+                        return new CampoDinamico(campo: widget.secc.campos[index],
+                            agregarDicc:widget.agregarDicc);
                       }
                   ),
 
@@ -317,7 +318,20 @@ class _CampoDinamicoState extends State<CampoDinamico> {
 
     switch (widget.campo.tipo_componente){
       case "select": {
-        // statements;
+
+        /*
+
+        if(widget.campo.valores[0].subnivel){
+          return Column(
+            children: <Widget>[
+              ComboBoxDinamico(campo: widget.campo,),
+              //CampoDinamico(campo: widget.campo.valores[0].child, agregarDicc: widget.agregarDicc),
+              
+              Text("Test")
+
+            ],
+          );
+        }*/
         return ComboBoxDinamico(campo: widget.campo,);
 
       }

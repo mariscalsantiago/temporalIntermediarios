@@ -27,17 +27,33 @@ class ComboBoxDinamico extends StatefulWidget {
 
 class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
-  String _currentCity;
+
+  @override
+  void initState(){
+    if(currentCity!=null){
+      currentCity = widget.campo.valor;
+
+
+    }
+
+    //_currentCity = widget.campo.valor;
+  }
+
+
+  String currentCity;
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField(
-      value: _currentCity,
-      items: getDropDownMenuItems(),
-      onChanged: changedDropDownItem,
-      decoration: InputDecoration(
-          enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.orange))),
+    return Visibility(
+      visible: widget.campo.visible,
+      child: DropdownButtonFormField(
+        value: widget.campo.valor,
+        items: getDropDownMenuItems(),
+        onChanged: changedDropDownItem,
+        decoration: InputDecoration(
+            enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.orange))),
+      ),
     );
 
   }
@@ -57,12 +73,14 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
   void changedDropDownItem(String selectedCity) {
     setState(() {
-      _currentCity = selectedCity;
+      currentCity = selectedCity;
+      widget.campo.valor = selectedCity;
+      print(widget.campo.valor);
     });
   }
 
   String getValor (){
-    return _currentCity;
+    return currentCity;
   }
 
 
@@ -269,6 +287,18 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
           visible: widget.titulo.visible,
           child: TextFormField(
 
+            onSaved: (String value){
+              widget.titulo.valor = value;
+
+              print("llegue al onsave "+ widget.titulo.valor);
+            },
+
+            onChanged: (valor){
+              widget.titulo.valor = valor;
+              print(widget.titulo.valor);
+            },
+
+
             validator: (value){
               print(value);
               print("dato lenght"+value.length.toString());
@@ -276,7 +306,8 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
               if(value.isEmpty){
                 return "El campo no debe estar vacío";
               }else{
-                if(widget.titulo.validaLongitud(value.length)){
+                //if(widget.titulo.validaLongitud(value.length)){
+                if(true){
                   print("en teoria, esta ok");
 
                   return null;
@@ -368,41 +399,44 @@ class _TextFieldConRangoDinamicoState extends State<TextFieldConRangoDinamico> {
   @override
   Widget build(BuildContext context) {
 
-      return TextFormField(
-        decoration: InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)
-            ),
-            border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)
-            ),
-            labelStyle: TextStyle(color: Colors.grey),
-            hintText: widget.titulo.etiqueta,
-            labelText: widget.titulo.etiqueta,
+      return Visibility(
+        visible: widget.titulo.visible,
+        child: TextFormField(
+          decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey)
+              ),
+              border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey)
+              ),
+              labelStyle: TextStyle(color: Colors.grey),
+              hintText: widget.titulo.etiqueta,
+              labelText: widget.titulo.etiqueta,
+          ),
+          onSaved: (String value){
+            print("llegue al onsave "+ value);
+            widget.agregarAlDiccionario( widget.titulo.nombre_campo, value);
+          },
+          validator: (value){
+            print(value);
+
+            if(value.isEmpty){
+              print("En teoria, vacio");
+              return "El campo no debe estar vacío";
+            }else{
+            if(double.parse(value)>double.parse(widget.titulo.rango.rango_inicio) && double.parse(value)<double.parse(widget.titulo.rango.rango_fin)){
+              print("en teoria, esta ok");
+
+              return null;
+
+            }else{
+              print("en teoria, fuera de rango");
+
+              return "Esta fuera de rango";
+            }
+            }
+          },
         ),
-        onSaved: (String value){
-          print("llegue al onsave "+ value);
-          widget.agregarAlDiccionario( widget.titulo.nombre_campo, value);
-        },
-        validator: (value){
-          print(value);
-
-          if(value.isEmpty){
-            print("En teoria, vacio");
-            return "El campo no debe estar vacío";
-          }else{
-          if(double.parse(value)>double.parse(widget.titulo.rango.rango_inicio) && double.parse(value)<double.parse(widget.titulo.rango.rango_fin)){
-            print("en teoria, esta ok");
-
-            return null;
-
-          }else{
-            print("en teoria, fuera de rango");
-
-            return "Esta fuera de rango";
-          }
-          }
-        },
       );
 
 
