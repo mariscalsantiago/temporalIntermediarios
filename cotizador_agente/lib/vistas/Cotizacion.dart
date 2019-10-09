@@ -30,7 +30,7 @@ class _CotizacionState extends State<Cotizacion> {
       children: <Widget>[
 
         Container(
-          color: Colors.black12,
+          color: new Color(int.parse("F3F4F5", radix: 16)).withOpacity(1.0),
           child: Row(
 
             children: <Widget>[
@@ -152,10 +152,10 @@ class _CotizacionState extends State<Cotizacion> {
         Row(
           children: <Widget>[
             Expanded(
-              child: new Container(
-                  child: Divider(
+              child: Container(
+                  child: Divider( //002e71
                     thickness: 2,
-                    color: Colors.black,
+                    color: Color(int.parse("002e71", radix: 16)).withOpacity(1.0),
 
                     height: 0,
                   )),
@@ -164,83 +164,74 @@ class _CotizacionState extends State<Cotizacion> {
         ),
 
         Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                ("Cotización"), maxLines: 2, overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 20.0),
+              ),
+            ),
+          ],
+        ),
 
-        children: <Widget>[
-
-        Container(
-        height: 170.0,
-        //color: Colors.grey,
-          child: Column(
-           // crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 2,
+        Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                      ("Cotización "), maxLines: 2, overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 20.0),
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        width: double.infinity,
+                          child: Text("hola",
+                            textAlign: TextAlign.left,)),
+                      Container(
+                          width: double.infinity,
+                          child: Text("hola",
+                            textAlign: TextAlign.left,)),
+                      Container(
+                          width: double.infinity,
+                          child: Text("hola",
+                            textAlign: TextAlign.left,)),
+                      Container(
+                          width: double.infinity,
+                          child: Text("hola",
+                            textAlign: TextAlign.left,)),
+
+                    ],
                   ),
-                ),
-
-              ),
-              Expanded(
-
+                )
+            ),
+            Expanded(
                 flex: 1,
-                child: Text(
-                  ("Moises Lugo"), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FlatButton(
+                    textColor: Colors.orange,
+                    disabledColor: Colors.orange,
+                    disabledTextColor: Colors.orange,
+                    // splashColor: Colors.blueAccent,
+                    onPressed: () {
+                      /*...*/
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      child: Text(
+                        "Editar",
+                        style: TextStyle(fontSize: 14.0),
+                        textAlign: TextAlign.right,
 
-              ),
-
-              Expanded(
-
-                flex: 1,
-                child: Text(
-                  ("C.P 7382 "), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: FlatButton(
-                  textColor: Colors.orange,
-                  disabledColor: Colors.orange,
-                  disabledTextColor: Colors.orange,
-                  padding: EdgeInsets.all(8.0),
-                  // splashColor: Colors.blueAccent,
-                  onPressed: () {
-                    /*...*/
-                  },
-                  child: Text(
-                    "Editar",
-                    style: TextStyle(fontSize: 20.0),
-                    textAlign: TextAlign.right,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Expanded(
 
-                flex: 1,
-                child: Text(
-                  ("Hombre 26 años "), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Expanded(
-
-               flex: 1,
-                child: Text(
-                  ("Adicionales 2 "), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
-              )
-
-            ],
-          ),
+                ))
+          ],
+        ),
 
 
-        )
-      ],
-
-    ),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
