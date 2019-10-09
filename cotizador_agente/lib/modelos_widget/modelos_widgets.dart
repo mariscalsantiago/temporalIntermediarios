@@ -13,9 +13,11 @@ import 'package:table_calendar/table_calendar.dart';
 ////COMBOBOX
 class ComboBoxDinamico extends StatefulWidget {
 
-  ComboBoxDinamico({Key key, this.campo}) : super(key: key);
+  ComboBoxDinamico({Key key, this.campo, this.agregarAlDiccionario}) : super(key: key);
 
   final Campo campo;
+  final void Function (String, String) agregarAlDiccionario;
+
 
 
 
@@ -32,8 +34,6 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
   void initState(){
     if(currentCity!=null){
       currentCity = widget.campo.valor;
-
-
     }
 
     //_currentCity = widget.campo.valor;
@@ -76,6 +76,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
       currentCity = selectedCity;
       widget.campo.valor = selectedCity;
       print(widget.campo.valor);
+      widget.agregarAlDiccionario(widget.campo.ID.toString(), widget.campo.valor);
     });
   }
 
