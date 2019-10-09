@@ -319,19 +319,36 @@ class _CampoDinamicoState extends State<CampoDinamico> {
     switch (widget.campo.tipo_componente){
       case "select": {
 
-        /*
 
-        if(widget.campo.valores[0].subnivel){
-          return Column(
-            children: <Widget>[
-              ComboBoxDinamico(campo: widget.campo,),
-              //CampoDinamico(campo: widget.campo.valores[0].child, agregarDicc: widget.agregarDicc),
-              
-              Text("Test")
+        if(widget.campo.valores.isNotEmpty){
 
-            ],
-          );
-        }*/
+          if(widget.campo.valores[0].child!=null){ //En caso de que sea subnivel
+
+            List<Widget> list = new List<Widget>();
+            list.add(new ComboBoxDinamico(campo: widget.campo, agregarAlDiccionario: widget.agregarDicc));
+            list.add(
+                Visibility(
+                  visible: widget.campo.valor == widget.campo.valores[0].descripcion? true : false,
+                  child: new CampoDinamico(
+                    campo: widget.campo.valores[0].child, agregarDicc: widget.agregarDicc,
+                )
+            ));
+
+
+            return ListView.builder
+              (
+                itemCount: list.length,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return list[index];
+                }
+            );
+          }
+
+        }
+
+
         return ComboBoxDinamico(campo: widget.campo,);
 
       }
