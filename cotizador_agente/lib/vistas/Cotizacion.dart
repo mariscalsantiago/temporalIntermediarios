@@ -29,177 +29,209 @@ class _CotizacionState extends State<Cotizacion> {
 
       children: <Widget>[
 
-        Row(
+        Container(
+          color: new Color(int.parse("F3F4F5", radix: 16)).withOpacity(1.0),
+          child: Row(
 
+            children: <Widget>[
 
-          children: <Widget>[
+                  Expanded(
+                    flex: 10,
 
-                Expanded(
-
-                  child:  OutlineButton(
-                    textColor: Colors.orange,
-                    child: Text("COMPRAR PLAN"),
-                    onPressed: () {},
-                    borderSide: BorderSide(
-                      color: Colors.orange, //Color of the border
-                      style: BorderStyle.solid, //Style of the border
-                      width: 0.8, //width of the border
+                    child:  Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlineButton(
+                        textColor: Colors.orange,
+                        child: Text("COMPARAR PLAN"),
+                        onPressed: () {},
+                        borderSide: BorderSide(
+                          color: Colors.orange, //Color of the border
+                          style: BorderStyle.solid, //Style of the border
+                          width: 0.8, //width of the border
+                        ),
+                      ),
                     ),
+
                   ),
 
-                ),
+                  Expanded(
+                    flex: 3,
+                    child:  Padding(
+                      padding: const EdgeInsets.all(0),
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment(1, 0),
+                        child: FlatButton(
+                          padding: const EdgeInsets.all(0),
+                          textColor: Colors.orange,
+                          disabledColor: Colors.orange,
+                          disabledTextColor: Colors.orange,
+                          // splashColor: Colors.blueAccent,
+                          onPressed: () {
+                            /*...*/
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            child: Text(
+                              "MÁS",
+                              style: TextStyle(fontSize: 14.0),
+                              textAlign: TextAlign.right,
 
-                Expanded(
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
 
-                  child:  FlatButton(
+                  ),
+
+                  Expanded(
+
+                    flex: 1,
+                    child: Container(
+                      alignment: Alignment(-1, 0),
+                      width: double.infinity,
+                      child: (
+                          PopupMenuButton(
+
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 1,
+                                child: Text(
+                                  "Guardar",
+                                  style: TextStyle(
+                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 2,
+                                child: Text(
+                                  "Limpiar datos",
+                                  style: TextStyle(
+                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 3,
+                                child: Text(
+                                  "Imprimir",
+                                  style: TextStyle(
+                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 4,
+                                child: Text(
+                                  "Material de apoyo",
+                                  style: TextStyle(
+                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                            ],
+                            initialValue: 2,
+                            onCanceled: () {
+                              print("You have canceled the menu.");
+                            },
+                            onSelected: (value) {
+                              print("value:$value");
+                            },
+                            child: Icon(Icons.more_vert, color: Colors.orange,),
+                          )
+
+                      ),
+                    ),
+
+                  ),
+
+                ],
+
+
+          ),
+        ),
+
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                  child: Divider( //002e71
+                    thickness: 2,
+                    color: Color(int.parse("002e71", radix: 16)).withOpacity(1.0),
+
+                    height: 0,
+                  )),
+            ),
+          ],
+        ),
+
+        Row(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                ("Cotización"), maxLines: 2, overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 20.0),
+              ),
+            ),
+          ],
+        ),
+
+        Row(
+          children: <Widget>[
+            Expanded(
+              flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        width: double.infinity,
+                          child: Text("hola",
+                            textAlign: TextAlign.left,)),
+                      Container(
+                          width: double.infinity,
+                          child: Text("hola",
+                            textAlign: TextAlign.left,)),
+                      Container(
+                          width: double.infinity,
+                          child: Text("hola",
+                            textAlign: TextAlign.left,)),
+                      Container(
+                          width: double.infinity,
+                          child: Text("hola",
+                            textAlign: TextAlign.left,)),
+
+                    ],
+                  ),
+                )
+            ),
+            Expanded(
+                flex: 1,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: FlatButton(
                     textColor: Colors.orange,
                     disabledColor: Colors.orange,
                     disabledTextColor: Colors.orange,
-                    padding: EdgeInsets.all(8.0),
                     // splashColor: Colors.blueAccent,
                     onPressed: () {
                       /*...*/
                     },
-                    child: Text(
-                      "MÁS",
-                      style: TextStyle(fontSize: 20.0),
+                    child: Container(
+                      width: double.infinity,
+                      child: Text(
+                        "Editar",
+                        style: TextStyle(fontSize: 14.0),
+                        textAlign: TextAlign.right,
+
+                      ),
                     ),
                   ),
 
-                ),
-
-                Expanded(
-
-                  child: (
-                      PopupMenuButton(
-
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 1,
-                            child: Text(
-                              "Guardar",
-                              style: TextStyle(
-                                  color: Colors.orange, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 2,
-                            child: Text(
-                              "Limpiar datos",
-                              style: TextStyle(
-                                  color: Colors.orange, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 3,
-                            child: Text(
-                              "Imprimir",
-                              style: TextStyle(
-                                  color: Colors.orange, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 4,
-                            child: Text(
-                              "Material de apoyo",
-                              style: TextStyle(
-                                  color: Colors.orange, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ],
-                        initialValue: 2,
-                        onCanceled: () {
-                          print("You have canceled the menu.");
-                        },
-                        onSelected: (value) {
-                          print("value:$value");
-                        },
-                        child: Icon(Icons.more_vert),
-                      )
-
-                  ),
-
-                ),
-
-              ],
-
-
+                ))
+          ],
         ),
 
-        Row(
 
-        children: <Widget>[
-
-        Container(
-        height: 170.0,
-        //color: Colors.grey,
-          child: Column(
-           // crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: Text(
-                    ("Cotización "), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
-
-              ),
-              Expanded(
-
-                flex: 1,
-                child: Text(
-                  ("Moises Lugo"), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
-
-              ),
-
-              Expanded(
-
-                flex: 1,
-                child: Text(
-                  ("C.P 7382 "), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: FlatButton(
-                  textColor: Colors.orange,
-                  disabledColor: Colors.orange,
-                  disabledTextColor: Colors.orange,
-                  padding: EdgeInsets.all(8.0),
-                  // splashColor: Colors.blueAccent,
-                  onPressed: () {
-                    /*...*/
-                  },
-                  child: Text(
-                    "Editar",
-                    style: TextStyle(fontSize: 20.0),
-                    textAlign: TextAlign.right,
-                  ),
-                ),
-              ),
-              Expanded(
-
-                flex: 1,
-                child: Text(
-                  ("Hombre 26 años "), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              Expanded(
-
-               flex: 1,
-                child: Text(
-                  ("Adicionales 2 "), maxLines: 2, overflow: TextOverflow.ellipsis,
-                ),
-              )
-
-            ],
-          ),
-
-
-        )
-      ],
-
-    ),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
