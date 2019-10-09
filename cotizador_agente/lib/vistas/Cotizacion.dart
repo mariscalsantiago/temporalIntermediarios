@@ -29,101 +29,138 @@ class _CotizacionState extends State<Cotizacion> {
 
       children: <Widget>[
 
+        Container(
+          color: Colors.black12,
+          child: Row(
+
+            children: <Widget>[
+
+                  Expanded(
+                    flex: 10,
+
+                    child:  Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: OutlineButton(
+                        textColor: Colors.orange,
+                        child: Text("COMPARAR PLAN"),
+                        onPressed: () {},
+                        borderSide: BorderSide(
+                          color: Colors.orange, //Color of the border
+                          style: BorderStyle.solid, //Style of the border
+                          width: 0.8, //width of the border
+                        ),
+                      ),
+                    ),
+
+                  ),
+
+                  Expanded(
+                    flex: 3,
+                    child:  Padding(
+                      padding: const EdgeInsets.all(0),
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment(1, 0),
+                        child: FlatButton(
+                          padding: const EdgeInsets.all(0),
+                          textColor: Colors.orange,
+                          disabledColor: Colors.orange,
+                          disabledTextColor: Colors.orange,
+                          // splashColor: Colors.blueAccent,
+                          onPressed: () {
+                            /*...*/
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            child: Text(
+                              "MÁS",
+                              style: TextStyle(fontSize: 14.0),
+                              textAlign: TextAlign.right,
+
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  ),
+
+                  Expanded(
+
+                    flex: 1,
+                    child: Container(
+                      alignment: Alignment(-1, 0),
+                      width: double.infinity,
+                      child: (
+                          PopupMenuButton(
+
+                            itemBuilder: (context) => [
+                              PopupMenuItem(
+                                value: 1,
+                                child: Text(
+                                  "Guardar",
+                                  style: TextStyle(
+                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 2,
+                                child: Text(
+                                  "Limpiar datos",
+                                  style: TextStyle(
+                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 3,
+                                child: Text(
+                                  "Imprimir",
+                                  style: TextStyle(
+                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              PopupMenuItem(
+                                value: 4,
+                                child: Text(
+                                  "Material de apoyo",
+                                  style: TextStyle(
+                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                            ],
+                            initialValue: 2,
+                            onCanceled: () {
+                              print("You have canceled the menu.");
+                            },
+                            onSelected: (value) {
+                              print("value:$value");
+                            },
+                            child: Icon(Icons.more_vert, color: Colors.orange,),
+                          )
+
+                      ),
+                    ),
+
+                  ),
+
+                ],
+
+
+          ),
+        ),
+
         Row(
-
-
           children: <Widget>[
+            Expanded(
+              child: new Container(
+                  child: Divider(
+                    thickness: 2,
+                    color: Colors.black,
 
-                Expanded(
-
-                  child:  OutlineButton(
-                    textColor: Colors.orange,
-                    child: Text("COMPRAR PLAN"),
-                    onPressed: () {},
-                    borderSide: BorderSide(
-                      color: Colors.orange, //Color of the border
-                      style: BorderStyle.solid, //Style of the border
-                      width: 0.8, //width of the border
-                    ),
-                  ),
-
-                ),
-
-                Expanded(
-
-                  child:  FlatButton(
-                    textColor: Colors.orange,
-                    disabledColor: Colors.orange,
-                    disabledTextColor: Colors.orange,
-                    padding: EdgeInsets.all(8.0),
-                    // splashColor: Colors.blueAccent,
-                    onPressed: () {
-                      /*...*/
-                    },
-                    child: Text(
-                      "MÁS",
-                      style: TextStyle(fontSize: 20.0),
-                    ),
-                  ),
-
-                ),
-
-                Expanded(
-
-                  child: (
-                      PopupMenuButton(
-
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            value: 1,
-                            child: Text(
-                              "Guardar",
-                              style: TextStyle(
-                                  color: Colors.orange, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 2,
-                            child: Text(
-                              "Limpiar datos",
-                              style: TextStyle(
-                                  color: Colors.orange, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 3,
-                            child: Text(
-                              "Imprimir",
-                              style: TextStyle(
-                                  color: Colors.orange, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                          PopupMenuItem(
-                            value: 4,
-                            child: Text(
-                              "Material de apoyo",
-                              style: TextStyle(
-                                  color: Colors.orange, fontWeight: FontWeight.w700),
-                            ),
-                          ),
-                        ],
-                        initialValue: 2,
-                        onCanceled: () {
-                          print("You have canceled the menu.");
-                        },
-                        onSelected: (value) {
-                          print("value:$value");
-                        },
-                        child: Icon(Icons.more_vert),
-                      )
-
-                  ),
-
-                ),
-
-              ],
-
-
+                    height: 0,
+                  )),
+            ),
+          ],
         ),
 
         Row(
@@ -138,8 +175,12 @@ class _CotizacionState extends State<Cotizacion> {
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: Text(
-                    ("Cotización "), maxLines: 2, overflow: TextOverflow.ellipsis,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                      ("Cotización "), maxLines: 2, overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 20.0),
+                  ),
                 ),
 
               ),
