@@ -117,8 +117,6 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
     final value = prefs.getString(key) ?? "no hay";
     print('read: $value');
 
-    // Segundo método
-
 
 
   }
