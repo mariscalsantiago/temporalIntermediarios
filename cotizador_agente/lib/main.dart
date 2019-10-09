@@ -6,22 +6,23 @@ import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:cotizador_agente/utils/validadores.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
-import 'package:cotizador_agente/modelos/modelos.dart';
-import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
+
 import 'package:load/load.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:cotizador_agente/vistas/Cotizacion.dart';
 
 void main() {
+
   runApp(
     LoadingProvider(
       child: MyApp(),
+
     ),
+
   );
 }
 
@@ -32,10 +33,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
       key: scaffoldKey,
-      home: MyHomePage(title: 'GNP'),
+      home: Cotizacion()//MyHomePage(title: 'GNP'),
     );
   }
 }
@@ -170,12 +172,14 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
 
 
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Paso 1"),
+
       ),
+
       body: Column(
+
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
 
