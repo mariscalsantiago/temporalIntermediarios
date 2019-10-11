@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
+import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
@@ -30,22 +31,22 @@ class _CotizacionState extends State<Cotizacion> {
       children: <Widget>[
 
         Container(
-          color: new Color(int.parse("F3F4F5", radix: 16)).withOpacity(1.0),
+          color: Utilidades.sombra,
           child: Row(
 
             children: <Widget>[
 
                   Expanded(
-                    flex: 10,
+                    flex: 7,
 
                     child:  Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: OutlineButton(
-                        textColor: Colors.orange,
+                        textColor: Utilidades.color_primario,
                         child: Text("COMPARAR PLAN"),
                         onPressed: () {},
                         borderSide: BorderSide(
-                          color: Colors.orange, //Color of the border
+                          color: Utilidades.color_primario, //Color of the border
                           style: BorderStyle.solid, //Style of the border
                           width: 0.8, //width of the border
                         ),
@@ -54,42 +55,12 @@ class _CotizacionState extends State<Cotizacion> {
 
                   ),
 
+
+
                   Expanded(
+
                     flex: 3,
-                    child:  Padding(
-                      padding: const EdgeInsets.all(0),
-                      child: Container(
-                        width: double.infinity,
-                        alignment: Alignment(1, 0),
-                        child: FlatButton(
-                          padding: const EdgeInsets.all(0),
-                          textColor: Colors.orange,
-                          disabledColor: Colors.orange,
-                          disabledTextColor: Colors.orange,
-                          // splashColor: Colors.blueAccent,
-                          onPressed: () {
-                            /*...*/
-                          },
-                          child: Container(
-                            width: double.infinity,
-                            child: Text(
-                              "MÁS",
-                              style: TextStyle(fontSize: 14.0),
-                              textAlign: TextAlign.right,
-
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                  ),
-
-                  Expanded(
-
-                    flex: 1,
                     child: Container(
-                      alignment: Alignment(-1, 0),
                       width: double.infinity,
                       child: (
                           PopupMenuButton(
@@ -100,7 +71,7 @@ class _CotizacionState extends State<Cotizacion> {
                                 child: Text(
                                   "Guardar",
                                   style: TextStyle(
-                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                      color: Utilidades.color_primario, fontWeight: FontWeight.w700),
                                 ),
                               ),
                               PopupMenuItem(
@@ -108,7 +79,7 @@ class _CotizacionState extends State<Cotizacion> {
                                 child: Text(
                                   "Limpiar datos",
                                   style: TextStyle(
-                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                      color: Utilidades.color_primario, fontWeight: FontWeight.w700),
                                 ),
                               ),
                               PopupMenuItem(
@@ -116,7 +87,7 @@ class _CotizacionState extends State<Cotizacion> {
                                 child: Text(
                                   "Imprimir",
                                   style: TextStyle(
-                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                      color: Utilidades.color_primario, fontWeight: FontWeight.w700),
                                 ),
                               ),
                               PopupMenuItem(
@@ -124,7 +95,7 @@ class _CotizacionState extends State<Cotizacion> {
                                 child: Text(
                                   "Material de apoyo",
                                   style: TextStyle(
-                                      color: Colors.orange, fontWeight: FontWeight.w700),
+                                      color: Utilidades.color_primario, fontWeight: FontWeight.w700),
                                 ),
                               ),
                             ],
@@ -135,7 +106,18 @@ class _CotizacionState extends State<Cotizacion> {
                             onSelected: (value) {
                               print("value:$value");
                             },
-                            child: Icon(Icons.more_vert, color: Colors.orange,),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                Text(
+                                  "MÁS",
+                                  style: TextStyle(fontSize: 14.0, color: Utilidades.color_primario),
+                                  textAlign: TextAlign.right,
+
+                                ),
+                                Icon(Icons.more_vert, color: Utilidades.color_primario,),
+                              ],
+                            ),
                           )
 
                       ),
@@ -155,7 +137,7 @@ class _CotizacionState extends State<Cotizacion> {
               child: Container(
                   child: Divider( //002e71
                     thickness: 2,
-                    color: Color(int.parse("002e71", radix: 16)).withOpacity(1.0),
+                    color: Utilidades.color_titulo,
 
                     height: 0,
                   )),
@@ -169,7 +151,7 @@ class _CotizacionState extends State<Cotizacion> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 ("Cotización"), maxLines: 2, overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 20.0),
+                style: TextStyle(fontSize: 20.0, color: Utilidades.color_titulo),
               ),
             ),
           ],
@@ -209,9 +191,9 @@ class _CotizacionState extends State<Cotizacion> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FlatButton(
-                    textColor: Colors.orange,
-                    disabledColor: Colors.orange,
-                    disabledTextColor: Colors.orange,
+                    textColor: Utilidades.color_primario,
+                    disabledColor: Utilidades.color_primario,
+                    disabledTextColor: Utilidades.color_primario,
                     // splashColor: Colors.blueAccent,
                     onPressed: () {
                       /*...*/
@@ -237,17 +219,17 @@ class _CotizacionState extends State<Cotizacion> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
 
-            Card(
-              child: new InkWell(
-                onTap: () {
-                  print("tapped");
-                },
-                child: Container(
-                  width: 200.0,
-                  height: 100.0,
-                  color: Colors.indigo,
-                  child: Text('Anual\n \n (1500,000)'),
-                ),
+            Container(
+              width: 200.0,
+              height: 100.0,
+              color: Colors.transparent,
+              child: Container(
+                width: 200.0,
+                height: 100.0,
+
+
+                color: Utilidades.color_primario,
+                child: Text('Anual'),
               ),
             ),
 

@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
+import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
       key: scaffoldKey,
-      home: Cotizacion()//MyHomePage(title: 'GNP'),
+      home: MyHomePage(title: 'GNP'),
+      //home: Cotizacion(),
     );
   }
 }
@@ -174,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Paso 1"),
+        title: Text("GNP"),
 
       ),
 
@@ -182,6 +184,121 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
 
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
+
+          Container(
+            color: Utilidades.sombra,
+            child: Row(
+
+              children: <Widget>[
+
+                Expanded(
+                  flex: 7,
+
+                  child:  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: OutlineButton(
+                      textColor: Utilidades.color_primario,
+                      child: Text("COTIZACIONES GUARDADAS"),
+                      onPressed: () {},
+                      borderSide: BorderSide(
+                        color: Utilidades.color_primario, //Color of the border
+                        style: BorderStyle.solid, //Style of the border
+                        width: 0.8, //width of the border
+                      ),
+                    ),
+                  ),
+
+                ),
+
+
+
+                Expanded(
+
+                  flex: 3,
+                  child: Container(
+                    width: double.infinity,
+                    child: (
+                        PopupMenuButton(
+
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 1,
+                              child: Text(
+                                "Guardar",
+                                style: TextStyle(
+                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 2,
+                              child: Text(
+                                "Limpiar datos",
+                                style: TextStyle(
+                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 3,
+                              child: Text(
+                                "Imprimir",
+                                style: TextStyle(
+                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                            PopupMenuItem(
+                              value: 4,
+                              child: Text(
+                                "Material de apoyo",
+                                style: TextStyle(
+                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
+                              ),
+                            ),
+                          ],
+                          initialValue: 2,
+                          onCanceled: () {
+                            print("You have canceled the menu.");
+                          },
+                          onSelected: (value) {
+                            print("value:$value");
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                "MÁS",
+                                style: TextStyle(fontSize: 14.0, color: Utilidades.color_primario),
+                                textAlign: TextAlign.right,
+
+                              ),
+                              Icon(Icons.more_vert, color: Utilidades.color_primario,),
+                            ],
+                          ),
+                        )
+
+                    ),
+                  ),
+
+                ),
+
+              ],
+
+
+            ),
+          ),
+
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                    child: Divider( //002e71
+                      thickness: 2,
+                      color: Utilidades.color_titulo,
+
+                      height: 0,
+                    )),
+              ),
+            ],
+          ),
 
           Expanded(
 
