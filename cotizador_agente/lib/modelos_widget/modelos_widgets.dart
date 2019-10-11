@@ -1,4 +1,5 @@
 import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
@@ -116,7 +117,7 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
       child: Container(
         width: double.infinity,
         child: MaterialButton(
-            color: Colors.grey,
+            color: Utilidades.sombra,
             onPressed: () async {
               final List<DateTime> picked = await DateRagePicker.showDatePicker(
                   context: context,
@@ -131,14 +132,19 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
             },
             child: Column(
               children: <Widget>[
-                Text(
-                  "Antigüedad en GNP",
-                  style: TextStyle(color: Colors.white, fontSize: 14.0),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                child: TextFormField(
+                  enableInteractiveSelection: false,
+                  onTap: () { FocusScope.of(context).requestFocus(new FocusNode()); },
+                decoration: InputDecoration(
+                    labelText: 'Antigüedad'
+                  ),
                 ),
-                Text(
-                  DateFormat('dd/MM/yyy').format(now),
-                  textAlign: TextAlign.left,
-                ),
+              ),
+            ),
               ],
             )),
       ),
