@@ -25,6 +25,8 @@ dependencies:
   shared_preferences: ^0.4.3
   localstorage: ^2.0.0
   table_calendar: ^2.0.2
+  google_tag_manager:
+  js: ^0.6.0
   load:
   flutter_calendar_carousel:
 

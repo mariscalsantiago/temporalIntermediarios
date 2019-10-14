@@ -6,6 +6,7 @@ import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:google_tag_manager/google_tag_manager.dart' as gtm;
 
 
 
@@ -135,8 +136,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
   @override
 
   Widget build(BuildContext context) {
-
-
 
 
     return Scaffold(
