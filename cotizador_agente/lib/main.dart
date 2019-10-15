@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
@@ -18,13 +17,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cotizador_agente/vistas/Cotizacion.dart';
 
 void main() {
-
   runApp(
     LoadingProvider(
       child: MyApp(),
-
     ),
-
   );
 }
 
@@ -50,38 +46,28 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title, this.scaffoldKey}) : super(key: key);
 
-
   final GlobalKey<ScaffoldState> scaffoldKey;
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState( scaffoldKey);
+  _MyHomePageState createState() => _MyHomePageState(scaffoldKey);
 }
 
-
-class _MyHomePageState extends State<MyHomePage> with Validadores{
-
+class _MyHomePageState extends State<MyHomePage> with Validadores {
   final formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   _MyHomePageState(this.scaffoldKey);
 
   //Se van a guardar los datos de la forma aquí createdoc[rango_edad]
-  var createDoc = {
-
-  };
+  var createDoc = {};
 
   final LocalStorage storage = new LocalStorage('formulario_1');
-
-
-
-
 
   final colorHex = const Color(0xFFCECFD1);
   final colorLetters = const Color(0xFF002E71);
   bool reNew = false;
   bool isLoading = true;
-
 
   Paint _paint;
 
@@ -92,54 +78,40 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
       ..strokeCap = StrokeCap.round;
   }
 
-
   refresh() {
     setState(() {});
   }
 
-  agregarAlDiccionario(String key, String value){
+  agregarAlDiccionario(String key, String value) {
     setState(() {
-
       //El metodo que ya funciona
       print("llegue al metodo del diccionario");
-      createDoc[key]=value;
+      createDoc[key] = value;
       print(createDoc);
       guardarLocalStorage();
 
       // Otro metodo
       storage.setItem(key, createDoc);
-      print("esto etoy guardando"+json.encode(storage.getItem(key)));
-
-
+      print("esto etoy guardando" + json.encode(storage.getItem(key)));
     });
   }
 
-  guardarLocalStorage() async{
+  guardarLocalStorage() async {
     final prefs = await SharedPreferences.getInstance();
     final key = 'PASO1';
     prefs.setString(key, createDoc.toString());
 
     final value = prefs.getString(key) ?? "no hay";
     print('read: $value');
-
-    // Segundo método
-
-
-
   }
-
-
 
   Formulario data;
 
   Future<String> getData() async {
     var response = await http.get(
-        Uri.encodeFull("http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=1438"),
-        headers: {
-          "Accept": "application/json"
-        }
-    );
-
+        Uri.encodeFull(
+            "http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=1438"),
+        headers: {"Accept": "application/json"});
 
     if (response.statusCode == 200) {
       //return Formulario.fromJson(json.decode(response.body));
@@ -155,12 +127,10 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
     return "Success!";
   }
 
-
   @override
-  void initState(){
+  void initState() {
     this.getData();
   }
-
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -174,11 +144,9 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
 
   @override
   Widget build(BuildContext context) {
-
-
-
     return Scaffold(
       appBar: AppBar(
+
         title: Text("GNP"),
 
       ),
@@ -332,22 +300,7 @@ class _MyHomePageState extends State<MyHomePage> with Validadores{
             ),
 
           ),
-
-
-        ]
-
-      ),
-
-    );
-
-
+        ]),
+      );
   }
-
-
-
 }
-
-
-
-
-
