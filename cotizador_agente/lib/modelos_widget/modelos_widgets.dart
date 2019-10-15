@@ -403,3 +403,57 @@ class _CardDinamicoState extends State<CardDinamico> {
     );
   }
 }
+
+
+class RenglonTablaDoscolumna extends StatefulWidget {
+  final String titulo;
+  final String valor;
+  RenglonTablaDoscolumna({Key key, this.valor, this.titulo}) : super(key: key);
+  @override
+  _RenglonTablaDoscolumnaState createState() => _RenglonTablaDoscolumnaState();
+}
+
+class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
+  @override
+
+
+
+  Widget build(BuildContext context) {
+    return Container(
+
+      color: Utilidades.sombra,
+      child: Row(
+
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+
+        Expanded(
+        flex: 1,
+        child: Column(
+
+          children: <Widget>[
+
+            Row(
+              children: <Widget>[
+
+                Expanded(
+                  flex: 1,
+                  child: Text(widget.titulo,style: TextStyle(
+                      color: Utilidades.color_texto, fontWeight: FontWeight.normal, fontSize: 16),),),
+
+                Expanded(
+                  flex: 1,
+                  child: Text(widget.valor,style: TextStyle(
+                      color: Utilidades.color_texto, fontWeight: FontWeight.normal, fontSize: 16),),
+                ),
+              ],
+            ),
+          ],
+        ),
+        )
+        ],
+      ),
+    );
+  }
+}
+

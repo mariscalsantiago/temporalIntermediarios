@@ -1,15 +1,13 @@
 
 
-import 'dart:async';
-import 'dart:convert';
-import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
+
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
-import 'package:localstorage/localstorage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
+
+
 
 
 class Cotizacion extends StatefulWidget {
@@ -18,6 +16,23 @@ class Cotizacion extends StatefulWidget {
 }
 
 class _CotizacionState extends State<Cotizacion> {
+
+  List<Cotizacion2Campos> itemsValor = List<Cotizacion2Campos>();
+
+
+  @override
+  void initState() {
+
+    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -26,7 +41,9 @@ class _CotizacionState extends State<Cotizacion> {
         title: Text("Cotización"),
     ),
 
-    body: Column(
+    body:
+
+    Column(
 
       children: <Widget>[
 
@@ -215,27 +232,109 @@ class _CotizacionState extends State<Cotizacion> {
 
 
 
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
 
-            Container(
-              width: 200.0,
-              height: 100.0,
-              color: Colors.transparent,
-              child: Container(
+              Container(
                 width: 200.0,
                 height: 100.0,
+                color: Colors.transparent,
+                child: Container(
+                  width: 200.0,
+                  height: 100.0,
 
 
-                color: Utilidades.color_primario,
-                child: Text('Anual'),
+                  color: Utilidades.color_primario,
+                  child: Text('Anual'),
+                ),
+              ),
+
+            ],
+
+          ),
+        ),
+
+        Container(
+          color: Utilidades.sombra,
+          child: Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  ("Prima total"), maxLines: 2, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 20.0, color: Utilidades.color_titulo),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+      Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder
+            (
+              itemCount: itemsValor.length,
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              itemBuilder: (BuildContext ctxt, int index) {
+
+                return Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: RenglonTablaDoscolumna(titulo: itemsValor[index].titulo,valor:itemsValor[index].valor),
+
+                );
+
+              }
+
+          ),
+        ),
+
+      ),
+
+        Container(
+          color: Utilidades.sombra,
+          child: Row(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  ("Cobertura Basica"), maxLines: 2, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 20.0, color: Utilidades.color_titulo),
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: ListView.builder
+                (
+                  itemCount: itemsValor.length,
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  itemBuilder: (BuildContext ctxt, int index) {
+
+                    return Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: RenglonTablaDoscolumna(titulo: itemsValor[index].titulo,valor:itemsValor[index].valor),
+
+                    );
+
+                  }
+
               ),
             ),
 
-          ],
-
         )
+
+
+
 
       ],
     )

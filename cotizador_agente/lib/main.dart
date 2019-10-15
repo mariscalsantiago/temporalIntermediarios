@@ -34,8 +34,8 @@ class MyApp extends StatelessWidget {
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
       key: scaffoldKey,
-      home: MyHomePage(title: 'GNP'),
-      //home: Cotizacion(),
+      //home: MyHomePage(title: 'GNP'),
+      home: Cotizacion(),
     );
   }
 }

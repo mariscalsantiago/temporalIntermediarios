@@ -248,8 +248,14 @@ class Valor {
     );
   }
 
+}
 
 
+class Cotizacion2Campos{
 
 
+  final String titulo;
+  final String valor;
+
+  Cotizacion2Campos({this.titulo, this.valor});
 }
