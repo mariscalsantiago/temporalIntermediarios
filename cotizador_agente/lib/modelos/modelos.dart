@@ -1,4 +1,5 @@
 
+import 'package:cotizador_agente/modelos_widget/reglonTabla.dart';
 import 'package:flutter/material.dart';
 
 class Formulario {
@@ -248,6 +249,17 @@ class Valor {
     );
   }
 
+
+
+}
+
+class Cotizacion {
+
+  final String fecha;
+  final String titular;
+  final String id;
+
+  Cotizacion({this.fecha, this.titular, this.id});
 
 
 

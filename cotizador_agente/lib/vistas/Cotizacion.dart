@@ -55,10 +55,7 @@ class _CotizacionState extends State<Cotizacion> {
 
                   ),
 
-
-
                   Expanded(
-
                     flex: 3,
                     child: Container(
                       width: double.infinity,
