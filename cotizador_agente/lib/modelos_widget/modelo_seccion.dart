@@ -341,7 +341,7 @@ class _CampoDinamicoState extends State<CampoDinamico> {
       case "calendar":
         {
           //statements;
-          return CalendarioDinamicoRange();
+          return CalendarioDinamicoRange(campo: widget.campo);
         }
 
       case "button":

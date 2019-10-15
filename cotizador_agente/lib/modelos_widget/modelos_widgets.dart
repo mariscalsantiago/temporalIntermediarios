@@ -102,6 +102,11 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
 ////CALENDARIO
 
 class CalendarioDinamicoRange extends StatefulWidget {
+
+  final Campo campo;
+
+  const CalendarioDinamicoRange({Key key, this.campo}) : super(key: key);
+
   @override
   _CalendarioDinamicoRangeState createState() =>
       _CalendarioDinamicoRangeState();
@@ -112,42 +117,63 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
   Widget build(BuildContext context) {
     var now = new DateTime.now();
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: double.infinity,
-        child: MaterialButton(
-            color: Utilidades.sombra,
-            onPressed: () async {
-              final List<DateTime> picked = await DateRagePicker.showDatePicker(
-                  context: context,
-                  initialFirstDate: new DateTime.now(),
-                  initialLastDate:
-                      (new DateTime.now()).add(new Duration(days: 7)),
-                  firstDate: new DateTime(2015),
-                  lastDate: new DateTime(2020));
-              if (picked != null && picked.length == 2) {
-                print(picked);
-              }
-            },
-            child: Column(
-              children: <Widget>[
+    return Container(
+      padding: EdgeInsets.only(top:8),
+      width: double.infinity,
+      child: FlatButton(
+          padding: const EdgeInsets.all(1.0),
 
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                child: TextFormField(
-                  enableInteractiveSelection: false,
-                  onTap: () { FocusScope.of(context).requestFocus(new FocusNode()); },
-                decoration: InputDecoration(
-                    labelText: 'Antigüedad'
-                  ),
+          color: Utilidades.sombra,
+          onPressed: () async {
+            final List<DateTime> picked = await DateRagePicker.showDatePicker(
+                context: context,
+                initialFirstDate: new DateTime.now(),
+                initialLastDate:
+                    (new DateTime.now()).add(new Duration(days: 7)),
+                firstDate: new DateTime(2015),
+                lastDate: new DateTime(2020));
+            if (picked != null && picked.length == 2) {
+              print(picked);
+              setState(() {
+                widget.campo.valor=picked.toString();
+
+              });
+
+            }
+          },
+          child: Column(
+
+            children: <Widget>[
+
+              Visibility(
+                visible: widget.campo.valor == null? false : true,
+                child: Container(
+                    width: double.infinity,
+                    child: Text("Antiguedad", textAlign: TextAlign.left, style: TextStyle(fontSize: 12, color: Utilidades.color_primario),)
                 ),
               ),
-            ),
-              ],
-            )),
-      ),
+
+              Padding(
+                padding: widget.campo.valor == null? const EdgeInsets.only(top:16.0): const EdgeInsets.only(top:4),
+                child: Container(
+                    width: double.infinity,
+                    child: Text(widget.campo.valor == null? widget.campo.etiqueta : "10/AGO/2019", textAlign: TextAlign.left,style: TextStyle(fontSize: 16))
+                ),
+              ),
+
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                  child: Divider( //002e71
+                    thickness: 1,
+                    color: Utilidades.color_primario,
+
+                    height: 0,
+                  )),
+
+
+
+            ],
+          )),
     );
   }
 }

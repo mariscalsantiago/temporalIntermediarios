@@ -35,9 +35,9 @@ class MyApp extends StatelessWidget {
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
       key: scaffoldKey,
-      //home: MyHomePage(title: 'GNP'),
+      home: MyHomePage(title: 'GNP'),
       //home: Cotizacion(),
-      home: CotizacionesGuardadas(),
+      //home: CotizacionesGuardadas(),
 
     );
   }
@@ -170,7 +170,16 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
                     child: OutlineButton(
                       textColor: Utilidades.color_primario,
                       child: Text("COTIZACIONES GUARDADAS"),
-                      onPressed: () {},
+                      onPressed: () {
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CotizacionesGuardadas(),
+                            ));
+
+
+                      },
                       borderSide: BorderSide(
                         color: Utilidades.color_primario, //Color of the border
                         style: BorderStyle.solid, //Style of the border
