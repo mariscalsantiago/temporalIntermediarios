@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/vistas/CotizacionesGuardadas.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -9,11 +10,10 @@ import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
-
+import 'package:cotizador_agente/vistas/Cotizacion.dart';
 import 'package:load/load.dart';
 import 'package:localstorage/localstorage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cotizador_agente/vistas/Cotizacion.dart';
 
 void main() {
   runApp(
@@ -34,8 +34,11 @@ class MyApp extends StatelessWidget {
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
       key: scaffoldKey,
-      //home: MyHomePage(title: 'GNP'),
-      home: Cotizacion(),
+      home: MyHomePage(title: 'GNP'),
+
+     // home: CotizacionVista(),
+     // home: CotizacionesGuardadas(),
+
     );
   }
 }

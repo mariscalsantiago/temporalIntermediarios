@@ -10,12 +10,12 @@ import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
 
 
 
-class Cotizacion extends StatefulWidget {
+class CotizacionVista extends StatefulWidget {
   @override
-  _CotizacionState createState() => _CotizacionState();
+  _CotizacionVistaState createState() => _CotizacionVistaState();
 }
 
-class _CotizacionState extends State<Cotizacion> {
+class _CotizacionVistaState extends State<CotizacionVista> {
 
   List<Cotizacion2Campos> itemsValor = List<Cotizacion2Campos>();
 
@@ -72,10 +72,7 @@ class _CotizacionState extends State<Cotizacion> {
 
                   ),
 
-
-
                   Expanded(
-
                     flex: 3,
                     child: Container(
                       width: double.infinity,
