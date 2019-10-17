@@ -4,6 +4,7 @@ import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/vistas/CotizacionesGuardadas.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
+import 'package:cotizador_agente/vistas/SendEmail.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:cotizador_agente/utils/validadores.dart';
@@ -34,10 +35,10 @@ class MyApp extends StatelessWidget {
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
       key: scaffoldKey,
-      home: MyHomePage(title: 'GNP'),
-
-     // home: CotizacionVista(),
-     // home: CotizacionesGuardadas(),
+     // home: MyHomePage(title: 'GNP'),
+        home: SendEmail(),
+      //home: Cotizacion(),
+      //home: CotizacionesGuardadas(),
 
     );
   }
@@ -170,7 +171,16 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
                     child: OutlineButton(
                       textColor: Utilidades.color_primario,
                       child: Text("COTIZACIONES GUARDADAS"),
-                      onPressed: () {},
+                      onPressed: () {
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CotizacionesGuardadas(),
+                            ));
+
+
+                      },
                       borderSide: BorderSide(
                         color: Utilidades.color_primario, //Color of the border
                         style: BorderStyle.solid, //Style of the border

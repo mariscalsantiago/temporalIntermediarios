@@ -170,7 +170,9 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
               Padding(
                 padding: EdgeInsets.only(right: 16, top: 32, bottom: 24),
                 child: FloatingActionButton(
-                  onPressed: (){},
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
                   heroTag: "btn1",
                   tooltip: "Cerrar",
                   backgroundColor: Utilidades.color_primario,

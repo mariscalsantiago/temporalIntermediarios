@@ -160,28 +160,34 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
               itemBuilder: (BuildContext ctxt, int index) {
                 return _aseguradosList[index];
               }),
-          Row(
-            children: <Widget>[
-              Expanded(
-                flex: 2,
-                child: FloatingActionButton(
-                  onPressed: _aumentar,
-                  heroTag: "btn1",
-                  tooltip: "agrega beneficiario",
-                  child: const Icon(Icons.add),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: FloatingActionButton(
+                    onPressed: _aumentar,
+                    heroTag: "btn1",
+                    tooltip: "agrega beneficiario",
+                    child: const Icon(Icons.add, color: Colors.white,),
+                    backgroundColor: Utilidades.color_primario,
+
+                  ),
                 ),
-              ),
-              Expanded(flex: 6, child: Text("Agregar Familiar")),
-              Expanded(
-                flex: 2,
-                child: FloatingActionButton(
-                  onPressed: _decrementar,
-                  heroTag: "btn2",
-                  tooltip: "agrega beneficiario",
-                  child: const Icon(Icons.delete),
-                ),
-              )
-            ],
+                Expanded(flex: 6, child: Text("Agregar Familiar")),
+                Expanded(
+                  flex: 2,
+                  child: FloatingActionButton(
+                    onPressed: _decrementar,
+                    heroTag: "btn2",
+                    tooltip: "agrega beneficiario",
+                    child: const Icon(Icons.delete, color: Colors.white,),
+                    backgroundColor: Utilidades.color_primario,
+                  ),
+                )
+              ],
+            ),
           ),
           /* Row(
             children: <Widget>[
@@ -202,35 +208,38 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
 
             ],
           ),*/
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              FlatButton(
-                color: Utilidades.color_primario,
-                textColor: Colors.white,
-                disabledColor: Colors.grey,
-                disabledTextColor: Colors.black,
-                padding: EdgeInsets.all(8.0),
-                splashColor: Utilidades.color_titulo,
-                onPressed: () {
-                  final bool v = widget.formKey.currentState.validate();
-                  if (v) {
-                    widget.formKey.currentState.save();
-                    _sendDataToSecondScreen(context);
-                    print('valida');
-                  } else {
-                    print("invalid");
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    "CONTINUAR",
-                    style: TextStyle(fontSize: 16.0, letterSpacing: 1),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                FlatButton(
+                  color: Utilidades.color_primario,
+                  textColor: Colors.white,
+                  disabledColor: Colors.grey,
+                  disabledTextColor: Colors.black,
+                  padding: EdgeInsets.all(8.0),
+                  splashColor: Utilidades.color_titulo,
+                  onPressed: () {
+                    final bool v = widget.formKey.currentState.validate();
+                    if (v) {
+                      widget.formKey.currentState.save();
+                      _sendDataToSecondScreen(context);
+                      print('valida');
+                    } else {
+                      print("invalid");
+                    }
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "CONTINUAR",
+                      style: TextStyle(fontSize: 16.0, letterSpacing: 1),
+                    ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           )
         ],
       );
@@ -341,7 +350,7 @@ class _CampoDinamicoState extends State<CampoDinamico> {
       case "calendar":
         {
           //statements;
-          return CalendarioDinamicoRange();
+          return CalendarioDinamicoRange(campo: widget.campo);
         }
 
       case "button":

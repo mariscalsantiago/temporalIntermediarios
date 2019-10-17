@@ -7,6 +7,7 @@ import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 
 ////COMBOBOX
 class ComboBoxDinamico extends StatefulWidget {
@@ -51,7 +52,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
     List<DropdownMenuItem<String>> items = new List();
     for (Valor v in widget.campo.valores) {
       items.add(new DropdownMenuItem(
-          value: v.descripcion, child: new Text(v.descripcion.toString())));
+          value: v.descripcion, child: new Text(v.descripcion.toString(), style: TextStyle(color: Utilidades.color_primario),)));
     }
     return items;
   }
@@ -102,6 +103,11 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
 ////CALENDARIO
 
 class CalendarioDinamicoRange extends StatefulWidget {
+
+  final Campo campo;
+
+  const CalendarioDinamicoRange({Key key, this.campo}) : super(key: key);
+
   @override
   _CalendarioDinamicoRangeState createState() =>
       _CalendarioDinamicoRangeState();
@@ -112,43 +118,68 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
   Widget build(BuildContext context) {
     var now = new DateTime.now();
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: double.infinity,
-        child: MaterialButton(
-            color: Utilidades.sombra,
-            onPressed: () async {
-              final List<DateTime> picked = await DateRagePicker.showDatePicker(
-                  context: context,
-                  initialFirstDate: new DateTime.now(),
-                  initialLastDate:
-                      (new DateTime.now()).add(new Duration(days: 7)),
-                  firstDate: new DateTime(2015),
-                  lastDate: new DateTime(2020));
-              if (picked != null && picked.length == 2) {
-                print(picked);
-              }
-            },
-            child: Column(
-              children: <Widget>[
+    return Container(
+      padding: EdgeInsets.only(top:8),
+      width: double.infinity,
+      child: FlatButton(
+          padding: const EdgeInsets.all(1.0),
 
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                child: TextFormField(
-                  enableInteractiveSelection: false,
-                  onTap: () { FocusScope.of(context).requestFocus(new FocusNode()); },
-                decoration: InputDecoration(
-                    labelText: 'Antigüedad'
-                  ),
+          color: Utilidades.sombra,
+          onPressed: () async {
+            final List<DateTime> picked = await DateRagePicker.showDatePicker(
+                context: context,
+                initialFirstDate: new DateTime.now(),
+                initialLastDate:
+                    (new DateTime.now()).add(new Duration(days: 7)),
+                firstDate: new DateTime(2015),
+                lastDate: new DateTime(2020));
+            if (picked != null && picked.length == 2) {
+              print(picked);
+              setState(() {
+                widget.campo.valor=picked.toString();
+
+              });
+
+            }
+          },
+          child: Column(
+
+            children: <Widget>[
+
+              Visibility(
+                visible: widget.campo.valor == null? false : true,
+                child: Container(
+                    width: double.infinity,
+                    child: Text("Antiguedad", textAlign: TextAlign.left, style: TextStyle(fontSize: 12, color: Utilidades.color_primario),)
                 ),
               ),
-            ),
-              ],
-            )),
-      ),
+
+              Padding(
+                padding: widget.campo.valor == null? const EdgeInsets.only(top:16.0): const EdgeInsets.only(top:4),
+                child: Container(
+                    width: double.infinity,
+                    child: Text(widget.campo.valor == null? widget.campo.etiqueta : "10/AGO/2019", textAlign: TextAlign.left,style: TextStyle(fontSize: 16))
+                ),
+              ),
+
+              Container(
+                padding: EdgeInsets.only(top: 8),
+                  child: Divider( //002e71
+                    thickness: 1,
+                    color: Utilidades.color_primario,
+
+                    height: 0,
+                  )),
+
+
+
+            ],
+          )),
     );
+
+
+
+
   }
 }
 
@@ -280,10 +311,12 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
           keyboardType: TextInputType.text,
           decoration: InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey)),
+                  borderSide: BorderSide(color: Utilidades.color_primario)),
+              enabledBorder:  UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)) ,
+
               border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey)),
-              labelStyle: TextStyle(color: Colors.grey),
+                  borderSide: BorderSide(color: Utilidades.color_primario)),
+              labelStyle: TextStyle(color: Utilidades.color_primario),
               hintText: widget.titulo.etiqueta,
               labelText: widget.titulo.etiqueta),
         ),
@@ -295,10 +328,12 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
+                borderSide: BorderSide(color:Utilidades.color_primario)),
+            enabledBorder:  UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)) ,
+
             border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
-            labelStyle: TextStyle(color: Colors.grey),
+                borderSide: BorderSide(color: Utilidades.color_primario)),
+            labelStyle: TextStyle(color:Utilidades.color_primario),
             hintText: widget.titulo.etiqueta,
             labelText: widget.titulo.etiqueta),
       );
@@ -306,10 +341,12 @@ class _TextFieldDinamicoState extends State<TextFieldDinamico> {
       return TextFormField(
         decoration: InputDecoration(
             focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
+                borderSide: BorderSide(color: Utilidades.color_primario)),
+            enabledBorder:  UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)) ,
+
             border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey)),
-            labelStyle: TextStyle(color: Colors.grey),
+                borderSide: BorderSide(color: Utilidades.color_primario)),
+            labelStyle: TextStyle(color: Utilidades.color_primario),
             hintText: widget.titulo.etiqueta,
             labelText: widget.titulo.etiqueta),
       );
@@ -340,9 +377,11 @@ class _TextFieldConRangoDinamicoState extends State<TextFieldConRangoDinamico> {
       child: TextFormField(
         decoration: InputDecoration(
           focusedBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+              UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)),
+          enabledBorder:  UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)) ,
           border:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.grey)),
+              UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)),
+
           labelStyle: TextStyle(color: Colors.grey),
           hintText: widget.titulo.etiqueta,
           labelText: widget.titulo.etiqueta,
