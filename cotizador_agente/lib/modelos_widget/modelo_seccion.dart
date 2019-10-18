@@ -290,8 +290,6 @@ class _CampoDinamicoState extends State<CampoDinamico> {
         {
           if (widget.campo.valores.isNotEmpty) {
 
-            print("El lenght es: " +widget.campo.valores.length.toString());
-
             List<Widget> list = new List<Widget>();
             list.add(new ComboBoxDinamico(
                 campo: widget.campo,
@@ -330,11 +328,10 @@ class _CampoDinamicoState extends State<CampoDinamico> {
                 });
 
 
+          }else{
+            return Text("Error: El campo select "+ widget.campo.ID.toString() + " no contiene valores");
           }
-
-          return ComboBoxDinamico(
-            campo: widget.campo,
-          );
+          
         }
 
       case "textbox":
