@@ -329,10 +329,16 @@ class _CampoDinamicoState extends State<CampoDinamico> {
 
 
           }else{
-            return Text("Error: El campo select "+ widget.campo.ID.toString() + " no contiene valores");
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text("Error: El campo select "+ widget.campo.ID.toString() + " no contiene valores"),
+            );
           }
+
+          break;
           
         }
+
 
       case "textbox":
         {
