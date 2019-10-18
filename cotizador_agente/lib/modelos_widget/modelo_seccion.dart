@@ -290,18 +290,21 @@ class _CampoDinamicoState extends State<CampoDinamico> {
         {
           if (widget.campo.valores.isNotEmpty) {
 
-            for(int i =0; i<= widget.campo.valores.length; i++){
+            print("El lenght es: " +widget.campo.valores.length.toString());
+
+            List<Widget> list = new List<Widget>();
+            list.add(new ComboBoxDinamico(
+                campo: widget.campo,
+                agregarAlDiccionario: widget.agregarDicc));
+
+            for(int i =0; i < widget.campo.valores.length; i++){
+              print(widget.campo.valores[i].child.toString() + i.toString());
+
 
               if (widget.campo.valores[i].child != null) {
                 //En caso de que sea subnivel
                 widget.campo.valores[i].child.etiqueta = widget.campo.valores[i].descripcion;
-                print(widget.campo.valores[i].child.etiqueta);
 
-                List<Widget> list = new List<Widget>();
-
-                list.add(new ComboBoxDinamico(
-                    campo: widget.campo,
-                    agregarAlDiccionario: widget.agregarDicc));
                 list.add(Visibility(
                     visible:
                     widget.campo.valor == widget.campo.valores[i].descripcion
@@ -312,17 +315,19 @@ class _CampoDinamicoState extends State<CampoDinamico> {
                       agregarDicc: widget.agregarDicc,
                     )));
 
-                return ListView.builder(
-                    itemCount: list.length,
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    itemBuilder: (BuildContext ctxt, int index) {
-                      return list[index];
-                    });
+
               }
 
 
             }
+
+            return ListView.builder(
+                itemCount: list.length,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemBuilder: (BuildContext ctxt, int index) {
+                  return list[index];
+                });
 
 
           }
