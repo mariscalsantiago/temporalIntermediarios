@@ -35,9 +35,9 @@ class MyApp extends StatelessWidget {
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.white),
       key: scaffoldKey,
-     // home: MyHomePage(title: 'GNP'),
-        home: SendEmail(),
-      //home: Cotizacion(),
+      home: MyHomePage(title: 'GNP'),
+      //  home: SendEmail(),
+      //home: CotizacionVista(),
       //home: CotizacionesGuardadas(),
 
     );
@@ -111,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
   Future<String> getData() async {
     var response = await http.get(
         Uri.encodeFull(
-            "http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=1438"),
+            "http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=1818"),
         headers: {"Accept": "application/json"});
 
     if (response.statusCode == 200) {
@@ -122,6 +122,7 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
         data = Formulario.fromJson(json.decode(response.body));
       });
     } else {
+      print("VVV");
       throw Exception('Failed to load post');
     }
 
@@ -159,27 +160,21 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
 
           Container(
             color: Utilidades.sombra,
-            child: Row(
-
+            child: Row( //Barra de menú superior
               children: <Widget>[
-
                 Expanded(
                   flex: 7,
-
                   child:  Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: OutlineButton(
                       textColor: Utilidades.color_primario,
                       child: Text("COTIZACIONES GUARDADAS"),
                       onPressed: () {
-
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => CotizacionesGuardadas(),
                             ));
-
-
                       },
                       borderSide: BorderSide(
                         color: Utilidades.color_primario, //Color of the border
@@ -188,9 +183,7 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
                       ),
                     ),
                   ),
-
                 ),
-
 
 
                 Expanded(
@@ -258,12 +251,8 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
 
                     ),
                   ),
-
                 ),
-
               ],
-
-
             ),
           ),
 
@@ -280,9 +269,12 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
               ),
             ],
           ),
+          /****** Termina panel superior *******/
+
+
+          /****** Comienza panel de coti *******/
 
           Expanded(
-
             child: Form(
               key: formKey,
               child: isLoading
@@ -295,17 +287,11 @@ class _MyHomePageState extends State<MyHomePage> with Validadores {
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   itemBuilder: (BuildContext ctxt, int index) {
-
                     return Padding(
-
                       padding: const EdgeInsets.all(16.0),
                       child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: data.secciones[index], i:index, end:data.secciones.length-1, cantidad_asegurados: data.cantidad_asegurados, formKey: formKey,),
-
                     );
-
                   }
-
-
               ),
             ),
 

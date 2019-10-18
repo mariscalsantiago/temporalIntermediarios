@@ -6,5 +6,6 @@ class Utilidades {
    static Color color_texto = Color(int.parse("000000", radix: 16)).withOpacity(1.0);
    static Color color_filtro = Color(int.parse("e4e4e4", radix: 16)).withOpacity(1.0);
    static Color color_texto_filtro = Color(int.parse("6c7480", radix: 16)).withOpacity(1.0);
+   static Color color_texto_campo = Color (int.parse("343f61", radix: 16)).withOpacity(1.0);
 
 }

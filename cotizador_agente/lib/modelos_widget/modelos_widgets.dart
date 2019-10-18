@@ -35,15 +35,33 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: widget.campo.visible,
-      child: DropdownButtonFormField(
-        value: widget.campo.valor,
-        items: getDropDownMenuItems(),
-        onChanged: changedDropDownItem,
-        decoration: InputDecoration(
-            enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.orange))),
+    return Padding(
+      padding: EdgeInsets.only(top: 8, bottom: 8),
+      child: Visibility(
+        visible: widget.campo.visible,
+        child: Container(
+          color: Utilidades.sombra,
+          child: Column(
+            children: <Widget>[
+              Container(
+                width: double.infinity,
+                  margin: EdgeInsets.only(left: 8, top: 8),
+                  child: Text(widget.campo.etiqueta == null? widget.campo.valor: widget.campo.etiqueta, style: TextStyle(color: Utilidades.color_primario),),
+              ),
+              Container(
+                height: 40,
+                child: DropdownButtonFormField(
+                  value: widget.campo.valor,
+                  items: getDropDownMenuItems(),
+                  onChanged: changedDropDownItem,
+                  decoration: InputDecoration(
+                      enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Utilidades.color_primario))),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -52,7 +70,11 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
     List<DropdownMenuItem<String>> items = new List();
     for (Valor v in widget.campo.valores) {
       items.add(new DropdownMenuItem(
-          value: v.descripcion, child: new Text(v.descripcion.toString(), style: TextStyle(color: Utilidades.color_primario),)));
+          value: v.descripcion,
+          child: Container(
+            padding: EdgeInsets.only(left: 8),
+            child: new Text(v.descripcion.toString(), style: TextStyle(color: Utilidades.color_texto_campo),),
+          )));
     }
     return items;
   }
@@ -92,7 +114,7 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
             widget.campo.etiqueta,
           ],
           checkColor: Colors.white,
-          activeColor: Colors.orange,
+          activeColor: Utilidades.color_primario,
           onSelected: (List<String> checked) => print(checked.toString())),
     );
   }

@@ -37,11 +37,15 @@ class Seccion {
   final int ID;
   final List<Campo> campos;
   final String seccion;
+   int multiplicador ;
+  final List <Seccion> children_secc;
 
   Seccion({
     this.ID,
     this.campos,
     this.seccion,
+    this.multiplicador,
+    this.children_secc
   });
 
 
@@ -50,11 +54,12 @@ class Seccion {
     var list = parsedJson["campos"] as List;
     List<Campo> camp = list.map((i) => Campo.fromJson(i)).toList();
 
-
     return Seccion(
       ID: parsedJson["id_seccion"],
       campos: camp,
       seccion: parsedJson["seccion"],
+      multiplicador: parsedJson["multiplicador"]!= null? parsedJson["multiplicador"]: 0, //Si es multiplicador
+      children_secc: new List<Seccion>()
 
     );
   }
@@ -66,7 +71,7 @@ class Campo {
   static int view_cont_ID=0;
   final int view_ID;
   final int ID;
-  final String etiqueta;
+  String etiqueta;
   final bool obligatorio;
   final String nombre_campo;
   final String tipo_dato;

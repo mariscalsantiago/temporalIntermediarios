@@ -1,5 +1,4 @@
 import 'package:cotizador_agente/main.dart';
-import 'package:cotizador_agente/modelos/modelo_asegurados.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
@@ -86,7 +85,6 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
         widget.notifyParent();
       });
     }
-
     void _aumentar() {
       setState(() {
         if (_aseguradosList.length <= widget.cantidad_asegurados - 1) {
@@ -124,7 +122,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
       });
     }
 
-    if (widget.i == 2) {
+    if (widget.secc.multiplicador>0) {
       if (_aseguradosList.isEmpty) {
         _aseguradosList.add(
           Column(mainAxisAlignment: MainAxisAlignment.start, children: <Widget>[
@@ -291,31 +289,42 @@ class _CampoDinamicoState extends State<CampoDinamico> {
       case "select":
         {
           if (widget.campo.valores.isNotEmpty) {
-            if (widget.campo.valores[0].child != null) {
-              //En caso de que sea subnivel
 
-              List<Widget> list = new List<Widget>();
-              list.add(new ComboBoxDinamico(
-                  campo: widget.campo,
-                  agregarAlDiccionario: widget.agregarDicc));
-              list.add(Visibility(
-                  visible:
-                      widget.campo.valor == widget.campo.valores[0].descripcion
-                          ? true
-                          : false,
-                  child: new CampoDinamico(
-                    campo: widget.campo.valores[0].child,
-                    agregarDicc: widget.agregarDicc,
-                  )));
+            for(int i =0; i<= widget.campo.valores.length; i++){
 
-              return ListView.builder(
-                  itemCount: list.length,
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemBuilder: (BuildContext ctxt, int index) {
-                    return list[index];
-                  });
+              if (widget.campo.valores[i].child != null) {
+                //En caso de que sea subnivel
+                widget.campo.valores[i].child.etiqueta = widget.campo.valores[i].descripcion;
+                print(widget.campo.valores[i].child.etiqueta);
+
+                List<Widget> list = new List<Widget>();
+
+                list.add(new ComboBoxDinamico(
+                    campo: widget.campo,
+                    agregarAlDiccionario: widget.agregarDicc));
+                list.add(Visibility(
+                    visible:
+                    widget.campo.valor == widget.campo.valores[i].descripcion
+                        ? true
+                        : false,
+                    child: new CampoDinamico(
+                      campo: widget.campo.valores[i].child,
+                      agregarDicc: widget.agregarDicc,
+                    )));
+
+                return ListView.builder(
+                    itemCount: list.length,
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemBuilder: (BuildContext ctxt, int index) {
+                      return list[index];
+                    });
+              }
+
+
             }
+
+
           }
 
           return ComboBoxDinamico(
