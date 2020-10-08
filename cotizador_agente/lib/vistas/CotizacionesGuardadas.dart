@@ -24,39 +24,39 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
   }
 
   llenarTabla(){
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Eduardo Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Moises Lugo"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Edgar Moreno"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Ángel Schaufelberger"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Dunkin Donuts"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Gloria Trevi"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Alejandra Guzmán"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Rocío Durcal"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
-    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Eduardo Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Moises Lugo"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Edgar Moreno"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Ángel Schaufelberger"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Dunkin Donuts"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Gloria Trevi"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Alejandra Guzmán"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Rocío Durcal"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
+    cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Rodriguez Zavaleta"));
 
 
   }
 
   mostrarMas(){
     setState(() {
-      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Yair Eduardo Rodriguez Zavaleta"));
-      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Moises Lugo"));
-      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Edgar Moreno"));
-      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Ángel Schaufelberger"));
-      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Dunkin Donuts"));
-      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Gloria Trevi"));
-      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Alejandra Guzmán"));
-      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: "09989", titular: "Rocío Durcal"));
+      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Yair Eduardo Rodriguez Zavaleta"));
+      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Moises Lugo"));
+      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Edgar Moreno"));
+      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Ángel Schaufelberger"));
+      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Dunkin Donuts"));
+      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Gloria Trevi"));
+      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Alejandra Guzmán"));
+      cotizaciones.add(Cotizacion(fecha: "30/09/2019", id: 09989, titular: "Rocío Durcal"));
 
 
 

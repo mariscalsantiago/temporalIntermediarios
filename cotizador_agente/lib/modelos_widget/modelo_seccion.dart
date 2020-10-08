@@ -15,7 +15,7 @@ class SeccionDinamica extends StatefulWidget {
       this.secc,
       this.i,
       this.end,
-      this.cantidad_asegurados,
+      this.cantidad_asegurados, this.actualizarSecciones,
       this.formKey})
       : super(key: key);
 
@@ -23,6 +23,7 @@ class SeccionDinamica extends StatefulWidget {
   final int end;
   final int i;
   final int cantidad_asegurados;
+  final void Function(String) actualizarSecciones;
   final Function() notifyParent;
   final void Function(String, String) agregarDicc;
   final GlobalKey<FormState> formKey;
@@ -273,10 +274,17 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
 }
 
 class CampoDinamico extends StatefulWidget {
-  CampoDinamico({Key key, this.campo, this.agregarDicc}) : super(key: key);
+  CampoDinamico({Key key, this.campo, this.agregarDicc, this.actualizarSecciones,
+    this.actualizarCodigoPostalFamiliares,
+    this.validarCodigoPostalFamiliares,
+  }) : super(key: key);
 
   final Campo campo;
   final void Function(String, String) agregarDicc;
+  final void Function(String) actualizarSecciones;
+  final void Function() actualizarCodigoPostalFamiliares;
+  final bool Function() validarCodigoPostalFamiliares;
+
 
   @override
   _CampoDinamicoState createState() => _CampoDinamicoState();
@@ -290,98 +298,143 @@ class _CampoDinamicoState extends State<CampoDinamico> {
         {
           if (widget.campo.valores.isNotEmpty) {
 
-            List<Widget> list = new List<Widget>();
-            list.add(new ComboBoxDinamico(
-                campo: widget.campo,
-                agregarAlDiccionario: widget.agregarDicc));
-
-            for(int i =0; i < widget.campo.valores.length; i++){
-              print(widget.campo.valores[i].child.toString() + i.toString());
-
-
-              if (widget.campo.valores[i].child != null) {
-                //En caso de que sea subnivel
-                widget.campo.valores[i].child.etiqueta = widget.campo.valores[i].descripcion;
-
-                list.add(Visibility(
-                    visible:
-                    widget.campo.valor == widget.campo.valores[i].descripcion
-                        ? true
-                        : false,
-                    child: new CampoDinamico(
-                      campo: widget.campo.valores[i].child,
-                      agregarDicc: widget.agregarDicc,
-                    )));
-
-
+            bool bandera = true;
+            for (int i =0 ; i<widget.campo.valores.length && bandera; i++){
+              if(widget.campo.valores[i].children.length>0){
+                bandera = false;
               }
-
-
             }
 
-            return ListView.builder(
-                itemCount: list.length,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemBuilder: (BuildContext ctxt, int index) {
-                  return list[index];
-                });
-
+            if(!bandera){
+              return ComboBoxDependiente(
+                campo: widget.campo,
+                agregarDicc: widget.agregarDicc,
+                actualizarSecciones: widget.actualizarSecciones,
+              );
+            }else{
+              return ComboBoxDinamico(
+                campo: widget.campo,
+                agregarAlDiccionario: widget.agregarDicc,
+                actualizarSecciones: widget.actualizarSecciones,
+              );
+            }
 
           }else{
             return Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text("Error: El campo select "+ widget.campo.ID.toString() + " no contiene valores"),
+              child: Text("Error: El campo select "+ widget.campo.id_campo.toString() + " no contiene valores"),
             );
           }
 
           break;
-          
+
         }
 
 
       case "textbox":
         {
-          //statements;
-
-          return TextFieldDinamico(titulo: widget.campo);
+          return CustomTextField(campo: widget.campo,
+            actualizarCodigoPostalFamiliares:
+            widget.actualizarCodigoPostalFamiliares,
+            validarCodigoPostalFamiliares: widget.validarCodigoPostalFamiliares,
+          );
         }
 
       case "input":
         {
-          if (widget.campo.tipo_dato == "rango") {
-            return TextFieldConRangoDinamico(
-                titulo: widget.campo, agregarAlDiccionario: widget.agregarDicc);
-          }
-
-          //statements;
-          return TextFieldDinamico(titulo: widget.campo);
+          return CustomTextField(campo: widget.campo,
+            actualizarCodigoPostalFamiliares:
+            widget.actualizarCodigoPostalFamiliares,
+            validarCodigoPostalFamiliares: widget.validarCodigoPostalFamiliares,
+          );
         }
 
       case "checkbox":
         {
-          //statements;
-          return CheckBoxDinamico(campo: widget.campo);
+
+          if(widget.campo.valores!=null){
+            if(widget.campo.valores.length > 0){
+              if(widget.campo.valores[0].children != null && widget.campo.valores[0].children.length>0){
+                return CheckBoxDinamicoDependiente(campo: widget.campo, agregarAlDiccionario: widget.agregarDicc, actualizarSecciones: widget.actualizarSecciones,);
+
+              }
+            }
+
+          }
+
+
+          return CheckBoxDinamico(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);
         }
 
       case "calendar":
         {
-          //statements;
           return CalendarioDinamicoRange(campo: widget.campo);
+        }
+
+      case "date_relativa":
+        {
+          return CalendarioConRangoRelativo(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);
         }
 
       case "button":
         {
-          //statements;
           return BotonDinamicoBorde(
             titulo: widget.campo,
           );
         }
 
+
+      case "label":
+        {
+          return Container(
+            margin: EdgeInsets.only(bottom: 16),
+            child: Visibility(
+
+                visible: widget.campo.visible,
+                child: Text(widget.campo.etiqueta ,style: TextStyle(color: Utilidades.color_primario, fontWeight: FontWeight.w400, fontSize: 16))),
+          );
+        }
+
+      case "switch":
+        {
+
+
+          if(widget.campo.valores[0].children.length>0){
+            return SwitchConImagenDependiente(
+              campo: widget.campo,
+              agregarAlDiccionario: widget.agregarDicc,
+              actualizarSecciones: widget.actualizarSecciones,
+            );
+          }
+          return SwitchConImagen(
+            campo: widget.campo,
+          );
+        }
+
+      case "toggle":
+        {
+          // return CheckBoxDinamicoDependiente(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);
+          return ToggleConValores(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);
+        }
+
+      case "select_con_post":
+        {
+
+          return ComboBoxDinamico(campo: widget.campo,);
+        }
+
+      case "card":
+        {
+
+          return CardCoberturas(campo: widget.campo,);
+
+        }
+
+
       default:
         {
-          //statements;
-          return Container();
+          return Container(child:
+          Text(widget.campo.nombre_campo),);
         }
     }
   }

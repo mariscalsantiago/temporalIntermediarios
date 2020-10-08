@@ -30,12 +30,12 @@ class _RenglonTablaState extends State<RenglonTabla> {
           flex: 3,
           child: Row(
             children: <Widget>[
-              Text(widget.cotizacion.id),
+              Text(widget.cotizacion.id.toString()),
               Spacer(),
               IconButton(
                 icon: Icon(Icons.delete, color: Utilidades.color_primario,),
                 onPressed: () {
-                  print("Pressed" + widget.cotizacion.id);
+                  print("Pressed" + widget.cotizacion.id.toString());
                   widget.eliminar(widget.cotizacion);
                 },
               ),

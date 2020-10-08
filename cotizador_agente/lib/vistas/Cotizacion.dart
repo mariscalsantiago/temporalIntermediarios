@@ -23,12 +23,12 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   @override
   void initState() {
 
-    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
-    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
-    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
-    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
-    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
-    itemsValor.add(Cotizacion2Campos(titulo: "Suma 1", valor: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(etiquetaElemento: "Suma 1", descElemento: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(etiquetaElemento: "Suma 1", descElemento: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(etiquetaElemento: "Suma 1", descElemento: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(etiquetaElemento: "Suma 1", descElemento: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(etiquetaElemento: "Suma 1", descElemento: "100,000.00"));
+    itemsValor.add(Cotizacion2Campos(etiquetaElemento: "Suma 1", descElemento: "100,000.00"));
 
   }
 
@@ -48,7 +48,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       children: <Widget>[
 
         Container(
-          color: Utilidades.sombra,
+          color: Utilidades.color_sombra,
           child: Row(
 
             children: <Widget>[
@@ -255,7 +255,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         ),
 
         Container(
-          color: Utilidades.sombra,
+          color: Utilidades.color_sombra,
           child: Row(
             children: <Widget>[
               Padding(
@@ -281,7 +281,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                 return Padding(
                   padding: const EdgeInsets.all(5.0),
-                  child: RenglonTablaDoscolumna(titulo: itemsValor[index].titulo,valor:itemsValor[index].valor),
+                  child: RenglonTablaDoscolumna(titulo: itemsValor[index].descElemento,valor:itemsValor[index].etiquetaElemento),
 
                 );
 
@@ -293,7 +293,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       ),
 
         Container(
-          color: Utilidades.sombra,
+          color: Utilidades.color_sombra,
           child: Row(
             children: <Widget>[
               Padding(
@@ -319,7 +319,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                     return Padding(
                       padding: const EdgeInsets.all(5.0),
-                      child: RenglonTablaDoscolumna(titulo: itemsValor[index].titulo,valor:itemsValor[index].valor),
+                      child: RenglonTablaDoscolumna(titulo: itemsValor[index].descElemento,valor:itemsValor[index].etiquetaElemento),
 
                     );
 
