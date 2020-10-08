@@ -220,8 +220,12 @@ class _DropDownNegocioOperableElementState
                               seccionCotizador();
                                //Navigator.pushNamed(FormularioPaso1; FormularioPaso1;,);
                               Utilidades.deboCargarPaso1 = false;
-                              //Navigator.pop(context);
-                              FormularioPaso1;
+                              //Navigator.pop(FormularioPaso1);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => FormularioPaso1(key: null, title: "cotizador"),
+                                ));
 
                           },
                         )),
