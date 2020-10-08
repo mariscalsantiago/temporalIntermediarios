@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cotizador_agente/utils/Mensajes.dart';
+import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
@@ -133,7 +134,7 @@ class _DropDownNegocioOperableElementState
 
 
     return Visibility(
-      visible: widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
+      visible: true,//widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
       child: Column(
         children: <Widget>[
           Container(
@@ -192,20 +193,9 @@ class _DropDownNegocioOperableElementState
                     offset: Offset(0, 3))
               ],
             ),
-
-            child: ListView.builder(
-
-                itemCount: widget.negocioOperable.cotizadores.length,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemBuilder: (BuildContext ctxt, int j) {
-                  /*if((!widget.negocioOperable.cotizadores[j].estatus ) && (!widget.negocioOperable.cotizadores[j].visible_movil)){
-                    return Container();
-                  }*/
-
-
-                  return Visibility(
-                    visible: estaAbierto && widget.negocioOperable.cotizadores[j].estatus && widget.negocioOperable.cotizadores[j].visible_movil,
+            //child: FlatButton(onPressed:(){ FormularioPaso1;}, child: null),
+            child: Visibility(
+                    visible: true,
                     child: Container(
                         color: Colors.white,
                         width: double.infinity,
@@ -214,7 +204,7 @@ class _DropDownNegocioOperableElementState
                           child: Container(
                             width: double.infinity,
                             child: Text(
-                              widget.negocioOperable.cotizadores[j].aplicacion,
+                              "Cotizador",//widget.negocioOperable.cotizadores[j].aplicacion,
                               textAlign: TextAlign.left,
                               style: TextStyle(color: Colors.grey),
                             ),
@@ -224,48 +214,19 @@ class _DropDownNegocioOperableElementState
 
                             Utilidades.cotizacionesApp = nuevo;
 
-                            if(widget.negocioOperable.cotizadores[j].mensaje != null) {
-                              Utilidades.mostrarAlertaCallback(
-                                  Mensajes.titleContinuar, widget.negocioOperable.cotizadores[j].mensaje, context, () {
-                                Navigator.pop(context);
-                              }, () {
-                                Navigator.pop(context);
-                                Utilidades.idAplicacion = int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
-                                Utilidades.tipoDeNegocio = widget.negocioOperable.cotizadores[j].aplicacion;
-                                seccionCotizador();
-                                Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoUno",);
-                                Utilidades.deboCargarPaso1 = false;
-                              });
-                            }
 
-                            else{
-                              Utilidades.idAplicacion = int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
-                              Utilidades.tipoDeNegocio = widget.negocioOperable.cotizadores[j].aplicacion;
+                              Utilidades.idAplicacion = 2343;//int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
+                              Utilidades.tipoDeNegocio = "Planes Individuales";//widget.negocioOperable.cotizadores[j].aplicacion;
                               seccionCotizador();
-                               Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoUno",);
+                               //Navigator.pushNamed(FormularioPaso1; FormularioPaso1;,);
                               Utilidades.deboCargarPaso1 = false;
-                            }
+                              //Navigator.pop(context);
+                              FormularioPaso1;
 
                           },
                         )),
-                  );
-                }),
+                  ),
           ),
-          /*Container(
-            height: 0,
-            width: 0,
-            child: Visibility(
-              visible: true,
-              child: WebviewScaffold(
-                  url: _initialURL,
-                  withJavascript: true,
-                  withZoom: false,
-                  withLocalStorage: true,
-                  hidden:true,
-                  clearCache: true
-              ),
-            ),
-          ),*/
         ],
       ),
     );

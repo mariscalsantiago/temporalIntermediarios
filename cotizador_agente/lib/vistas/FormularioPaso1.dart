@@ -25,7 +25,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
   Future<String> getData() async {
     var response = await http.get(
-        Uri.encodeFull("http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=991"),
+        Uri.encodeFull("https://gmm-cotizadores-uat.gnp.com.mx/cotizador/aplicacion?idAplicacion=2343"),
         headers: {
           "Accept": "application/json"
         }

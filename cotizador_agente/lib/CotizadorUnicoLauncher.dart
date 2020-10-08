@@ -11,7 +11,14 @@ import 'modelos_widget/DropDownNegocioOperableElement.dart';
 
 class SeleccionaCotizadorUnicoGMM extends StatefulWidget {
   List<NegocioOperable> negociosOperables = new List<NegocioOperable>();
-  SeleccionaCotizadorUnicoGMM({Key key, this.negociosOperables}) : super(key: key);
+  NegocioOperable negocioOperableNew = NegocioOperable(
+    ramo: "Fuerza Productora Regular GMM",
+    negocioOperable: "NOP0002000",
+    idNegocioOperable: "G",
+    idNegocioComercial: "NC00000FPR",
+    idUnidadNegocio: "SDP",
+  );
+  SeleccionaCotizadorUnicoGMM({Key key, this.negocioOperableNew}) : super(key: key);
 
 
   @override
@@ -28,7 +35,7 @@ class _SeleccionaCotizadorUnicoGMMState extends State<SeleccionaCotizadorUnicoGM
   @override
   void initState() {
 
-    negociosOper();
+    //negociosOper();
     super.initState();
   }
 
@@ -47,7 +54,16 @@ class _SeleccionaCotizadorUnicoGMMState extends State<SeleccionaCotizadorUnicoGM
           setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorUnicoGMM");*/
 
           if(Utilidades.negociosOperables.length == 0){
-            widget.negociosOperables = Utilidades.negociosOperables;
+            Cotizadores cotizador = Cotizadores(id_aplicacion: 2343,cantidad_asegurados: 6,aplicacion: "Planes Individuales",descripcion: "Cotizador WEB con configuración PI",estatus: true,visible_movil: true,mensaje: null);
+            NegocioOperable negocioOperable = NegocioOperable(
+              ramo: "Fuerza Productora Regular GMM",
+              negocioOperable: "NOP0002000",
+              idNegocioOperable: "G",
+              idNegocioComercial: "NC00000FPR",
+              idUnidadNegocio: "SDP",
+            );
+            widget.negociosOperables.add(negocioOperable);
+            widget.negociosOperables[0].cotizadores.add(cotizador);
             isLoading = false;
           }else{
             if(widget.negociosOperables == null){
@@ -290,7 +306,17 @@ class _SeleccionaCotizadorUnicoGMMState extends State<SeleccionaCotizadorUnicoGM
   Widget build(BuildContext context) {
 
     if(Utilidades.negociosOperables.length == 0){
-      widget.negociosOperables = Utilidades.negociosOperables;
+      //widget.negociosOperables = Utilidades.negociosOperables;
+      Cotizadores cotizador = Cotizadores(id_aplicacion: 2343,cantidad_asegurados: 6,aplicacion: "Planes Individuales",descripcion: "Cotizador WEB con configuración PI",estatus: true,visible_movil: true,mensaje: null);
+      NegocioOperable negocioOperable = NegocioOperable(
+        ramo: "Fuerza Productora Regular GMM",
+        negocioOperable: "NOP0002000",
+        idNegocioOperable: "G",
+        idNegocioComercial: "NC00000FPR",
+        idUnidadNegocio: "SDP",
+      );
+      //negocioOperable.cotizadores.add(cotizador);
+      widget.negociosOperables.add(negocioOperable);
       isLoading = false;
     }else{
       if(widget.negociosOperables == null){
