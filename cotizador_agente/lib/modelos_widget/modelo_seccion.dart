@@ -4,7 +4,6 @@ import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:flutter/material.dart';
-
 import 'modelos_widgets.dart';
 
 class SeccionDinamica extends StatefulWidget {
@@ -478,10 +477,9 @@ class _CampoDinamicoState extends State<CampoDinamico> {
               child: Text("Error: El campo select "+ widget.campo.id_campo.toString() + " no contiene valores"),
             );
           }
-
+          break;
 
         }
-
 
       case "textbox":
         {
