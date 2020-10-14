@@ -36,7 +36,6 @@ dependencies:
   flutter_webview_plugin: 0.3.11
   load:
   flutter_calendar_carousel:
-  firebase_analytics: ^5.0.14
   jiffy: ^2.2.0
 
 
