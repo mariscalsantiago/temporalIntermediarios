@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/vistas/CotizacionesGuardadas.dart';
@@ -34,7 +35,7 @@ class _TopBarState extends State<TopBar> {
         value: 1,
         child: Text("Limpiar datos",
           style: TextStyle(
-              color: Utilidades.color_titulo, fontWeight: FontWeight.w400),
+              color: AppColors.color_titulo, fontWeight: FontWeight.w400),
         ),
       ));
     }
@@ -56,7 +57,7 @@ class _TopBarState extends State<TopBar> {
         child: Text(
           "Formato Comparativa",
           style: TextStyle(
-              color: Utilidades.color_titulo,
+              color: AppColors.color_titulo,
               fontWeight: FontWeight.w400),
         ),
       ),);
@@ -65,7 +66,7 @@ class _TopBarState extends State<TopBar> {
       listaitems.add(PopupMenuItem(
         value: 3,
         child: Text("Material de apoyo",
-          style: TextStyle(color: Utilidades.color_titulo,
+          style: TextStyle(color: AppColors.color_titulo,
               fontWeight: FontWeight.w400),
         ),));
     }
@@ -79,7 +80,7 @@ class _TopBarState extends State<TopBar> {
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       Container(
-        color: Utilidades.color_sombra,
+        color: AppColors.color_sombra,
         child: Row(
           children: <Widget>[
             Expanded(
@@ -87,7 +88,7 @@ class _TopBarState extends State<TopBar> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: OutlineButton(
-                  textColor: Utilidades.color_primario,
+                  textColor: AppColors.color_primario,
                   child: Text("COTIZACIONES GUARDADAS"),
                   onPressed: () {
                     Navigator.push(
@@ -97,7 +98,7 @@ class _TopBarState extends State<TopBar> {
                         ));
                   },
                   borderSide: BorderSide(
-                    color: Utilidades.color_primario, //Color of the border
+                    color: AppColors.color_primario, //Color of the border
                     style: BorderStyle.solid, //Style of the border
                     width: 0.8, //width of the border
                   ),
@@ -185,12 +186,12 @@ class _TopBarState extends State<TopBar> {
                       Text(
                         "MÁS",
                         style: TextStyle(
-                            fontSize: 14.0, color: Utilidades.color_primario),
+                            fontSize: 14.0, color: AppColors.color_primario),
                         textAlign: TextAlign.right,
                       ),
                       Icon(
                         Icons.more_vert,
-                        color: Utilidades.color_primario,
+                        color: AppColors.color_primario,
                       ),
                     ],
                   ),
@@ -207,7 +208,7 @@ class _TopBarState extends State<TopBar> {
                 child: Divider(
               //002e71
               thickness: 2,
-              color: Utilidades.color_titulo,
+              color: AppColors.color_titulo,
 
               height: 0,
             )),

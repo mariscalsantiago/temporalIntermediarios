@@ -12,6 +12,7 @@ class Mensajes{
   static final String titleLoSentimos = "¡Lo sentimos!";
   static final String titleContinuar = "¿Deseas continuar?";
   static final String titleAdver = "No se puede continuar";
+  static final String legendCotizador = "SELECCIONA UN COTIZADOR";
 
   //MENSAJES
   static final String recuperarPlan = "No es posible recuperar la cotización, el plan ya no se encuentra disponible.";

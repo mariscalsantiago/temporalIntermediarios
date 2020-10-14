@@ -1,26 +1,24 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:http/http.dart';
-//import 'package:cotizador_agente/Modelos/LoginModels.dart';
 
-class DropDownNegocioOperableElement extends StatefulWidget {
-  const DropDownNegocioOperableElement({Key key, this.negocioOperable})
+class NegocioOperableElement extends StatefulWidget {
+  const NegocioOperableElement({Key key, this.negocioOperable})
       : super(key: key);
 
   @override
-  _DropDownNegocioOperableElementState createState() =>
-      _DropDownNegocioOperableElementState();
+  _NegocioOperableElementState createState() =>
+      _NegocioOperableElementState();
 
   final NegocioOperable negocioOperable;
 }
 
-class _DropDownNegocioOperableElementState
-    extends State<DropDownNegocioOperableElement> {
+class _NegocioOperableElementState
+    extends State<NegocioOperableElement> {
   //Inicializacion de pestaña
   bool estaAbierto = false;
   IconData icon = Icons.expand_more;
@@ -195,41 +193,41 @@ class _DropDownNegocioOperableElementState
             ),
             //child: FlatButton(onPressed:(){ FormularioPaso1;}, child: null),
             child: Visibility(
-                    visible: true,
+              visible: estaAbierto,
+              child: Container(
+                  color: Colors.white,
+                  width: double.infinity,
+
+                  child: FlatButton(
                     child: Container(
-                        color: Colors.white,
-                        width: double.infinity,
+                      width: double.infinity,
+                      child: Text(
+                        "Cotizador",//widget.negocioOperable.cotizadores[j].aplicacion,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                    onPressed: () {
+                      CotizacionesApp nuevo = new CotizacionesApp();
 
-                        child: FlatButton(
-                          child: Container(
-                            width: double.infinity,
-                            child: Text(
-                              "Cotizador",//widget.negocioOperable.cotizadores[j].aplicacion,
-                              textAlign: TextAlign.left,
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                          ),
-                          onPressed: () {
-                            CotizacionesApp nuevo = new CotizacionesApp();
-
-                            Utilidades.cotizacionesApp = nuevo;
+                      Utilidades.cotizacionesApp = nuevo;
 
 
-                              Utilidades.idAplicacion = 2343;//int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
-                              Utilidades.tipoDeNegocio = "Planes Individuales";//widget.negocioOperable.cotizadores[j].aplicacion;
-                              seccionCotizador();
-                               //Navigator.pushNamed(FormularioPaso1; FormularioPaso1;,);
-                              Utilidades.deboCargarPaso1 = false;
-                              //Navigator.pop(FormularioPaso1);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FormularioPaso1(key: null, title: "cotizador"),
-                                ));
+                      Utilidades.idAplicacion = 2343;//int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
+                      Utilidades.tipoDeNegocio = "Planes Individuales";//widget.negocioOperable.cotizadores[j].aplicacion;
+                      seccionCotizador();
+                      //Navigator.pushNamed(FormularioPaso1; FormularioPaso1;,);
+                      Utilidades.deboCargarPaso1 = false;
+                      //Navigator.pop(FormularioPaso1);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FormularioPaso1(),
+                          ));
 
-                          },
-                        )),
-                  ),
+                    },
+                  )),
+            ),
           ),
         ],
       ),

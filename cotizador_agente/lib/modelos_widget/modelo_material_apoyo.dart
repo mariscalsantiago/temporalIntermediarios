@@ -1,6 +1,6 @@
 
 import 'package:cotizador_agente/modelos/modelos.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -96,12 +96,12 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
                   children: <Widget>[
                     Expanded(
                       flex: 8,
-                        child: Text(widget.documento.nombreDocumento, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: Utilidades.color_primario),)),
+                        child: Text(widget.documento.nombreDocumento, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold, color: AppColors.color_primario),)),
                     Expanded(
                       flex: 2,
                       child: IconButton(
                         padding: EdgeInsets.all(20.0),
-                        icon: Icon(icon, color: Utilidades.color_primario,),
+                        icon: Icon(icon, color: AppColors.color_primario,),
                         onPressed: () {
                           listener();
                         },
@@ -122,7 +122,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
               child: Container(
                   child: Divider( //002e71
                     thickness: 0.5,
-                    color: Utilidades.color_titulo,
+                    color: AppColors.color_titulo,
                     height: 0,
                   )),
             ),
@@ -132,11 +132,11 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
         Visibility(
           visible: estaAbierto,
           child:Container(
-            color: Utilidades.color_sombra,
+            color: AppColors.color_sombra,
             width: double.infinity,
             padding: EdgeInsets.only(right: 24, left: 24, top: 8, bottom: 8),
             child:  Text((widget.documento.descDocumento), maxLines: 10, overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 15.0, color: Utilidades.color_titulo ), textAlign: TextAlign.left,),
+                style: TextStyle(fontSize: 15.0, color: AppColors.color_titulo ), textAlign: TextAlign.left,),
           ),
         ),
 
@@ -146,7 +146,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
               child: Container(
                   child: Divider( //002e71
                     thickness: 0.5,
-                    color: Utilidades.color_titulo,
+                    color: AppColors.color_titulo,
                     height: 0,
                   )),
             ),
@@ -156,11 +156,11 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
         Visibility(
           visible: estaAbierto,
           child:Container(
-            color: Utilidades.color_sombra,
+            color: AppColors.color_sombra,
             width: double.infinity,
             padding: EdgeInsets.only(right: 24, left: 24, top: 8, bottom: 8),
             child:  Text((widget.documento.productos), maxLines: 10, overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 15.0, color: Utilidades.color_titulo ), textAlign: TextAlign.left,),
+              style: TextStyle(fontSize: 15.0, color: AppColors.color_titulo ), textAlign: TextAlign.left,),
           ),
         ),
         Row(
@@ -169,7 +169,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
               child: Container(
                   child: Divider( //002e71
                     thickness: 0.5,
-                    color: Utilidades.color_titulo,
+                    color: AppColors.color_titulo,
                     height: 0,
                   )),
             ),
@@ -179,7 +179,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
         Visibility(
           visible: estaAbierto,
           child:Container(
-            color: Utilidades.color_sombra,
+            color: AppColors.color_sombra,
             width: double.infinity,
             padding: EdgeInsets.only(right: 24, left: 24, top: 8, bottom: 8),
             child: FlatButton(
@@ -196,7 +196,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
               child: Container(
                   child: Divider( //002e71
                     thickness: 0.5,
-                    color: Utilidades.color_titulo,
+                    color: AppColors.color_titulo,
                     height: 0,
                   )),
             ),

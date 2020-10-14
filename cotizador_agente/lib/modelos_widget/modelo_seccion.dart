@@ -1,7 +1,7 @@
-import 'package:cotizador_agente/main.dart';
+
 import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
 import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:flutter/material.dart';
 
@@ -191,7 +191,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   fontWeight: FontWeight.normal,
-                  color: Utilidades.color_titulo,
+                  color: AppColors.color_titulo,
                   fontSize: 20),
             ),
           ),
@@ -213,7 +213,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontWeight: FontWeight.normal,
-                              color: Utilidades.color_titulo,
+                              color: AppColors.color_titulo,
                               fontSize: 20),
                         ),
                       ): Container(),
@@ -315,7 +315,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                               heroTag: "btn1",
                               tooltip: "Agregar "+ widget.secc.seccion,
                               child: const Icon(Icons.add, color: Colors.white,),
-                              backgroundColor: Utilidades.color_primario,
+                              backgroundColor: AppColors.color_primario,
                               elevation: 0,
                             ),
                           ),
@@ -323,7 +323,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                       ),
                       Expanded(flex: 6, child: Padding(
                         padding: const EdgeInsets.all(16),
-                        child: Text(botonAgregarEtiqueta(widget.secc.id_seccion), style: TextStyle(color:Utilidades.color_primario, fontSize: 16),),
+                        child: Text(botonAgregarEtiqueta(widget.secc.id_seccion), style: TextStyle(color:AppColors.color_primario, fontSize: 16),),
                       )),
                       Visibility(
                         visible: widget.secc.children_secc.isNotEmpty,
@@ -373,7 +373,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                             fontWeight: FontWeight.normal,
-                            color: Utilidades.color_titulo,
+                            color: AppColors.color_titulo,
                             fontSize: 20),
                       ),
                       GestureDetector(
@@ -387,7 +387,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                           child: Ink(
                             child: IconButton(
                               icon: Icon(Icons.delete_outline),
-                              color: Utilidades.color_primario,
+                              color: AppColors.color_primario,
                               onPressed: () {
                                 _borrarSeccion(widget.secc.hashCode);
                               },
@@ -479,7 +479,6 @@ class _CampoDinamicoState extends State<CampoDinamico> {
             );
           }
 
-          break;
 
         }
 
@@ -544,7 +543,7 @@ class _CampoDinamicoState extends State<CampoDinamico> {
             child: Visibility(
 
                 visible: widget.campo.visible,
-                child: Text(widget.campo.etiqueta ,style: TextStyle(color: Utilidades.color_primario, fontWeight: FontWeight.w400, fontSize: 16))),
+                child: Text(widget.campo.etiqueta ,style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w400, fontSize: 16))),
           );
         }
 

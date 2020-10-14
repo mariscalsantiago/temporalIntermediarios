@@ -1,7 +1,5 @@
 
-
-import 'package:cotizador_agente/main.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -27,7 +25,7 @@ class _SendEmailState extends State<SendEmail> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(24),
-              child: Text("Escoge la opción para \nenviar la cotización",  overflow: TextOverflow.clip, style: TextStyle(fontSize: 20.0, color: Utilidades.color_titulo),
+              child: Text("Escoge la opción para \nenviar la cotización",  overflow: TextOverflow.clip, style: TextStyle(fontSize: 20.0, color: AppColors.color_titulo),
                 textAlign: TextAlign.left,),
             ),
             Spacer(),
@@ -39,7 +37,7 @@ class _SendEmailState extends State<SendEmail> {
                 },
                 heroTag: "btn1",
                 tooltip: "Cerrar",
-                backgroundColor: Utilidades.color_primario,
+                backgroundColor: AppColors.color_primario,
                 child: const Icon(Icons.close),
               ),
             ),
@@ -50,7 +48,7 @@ class _SendEmailState extends State<SendEmail> {
             children: <Widget>[
              Padding(
                padding: EdgeInsets.only(right: 24, left: 24),
-               child: new Text("Mail", style: TextStyle(fontWeight: FontWeight.w500, color: Utilidades.color_titulo),),
+               child: new Text("Mail", style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.color_titulo),),
              ),
 
             ],
@@ -63,12 +61,12 @@ class _SendEmailState extends State<SendEmail> {
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.all(16.5),
-                  child: Icon(Icons.email, color: Utilidades.color_titulo,),
+                  child: Icon(Icons.email, color: AppColors.color_titulo,),
                   decoration: BoxDecoration(
                       border: Border(
-                        top:BorderSide(width: 1, color: Utilidades.color_titulo),
-                        bottom:BorderSide(width: 1, color: Utilidades.color_titulo),
-                        left:BorderSide(width: 1, color: Utilidades.color_titulo),
+                        top:BorderSide(width: 1, color: AppColors.color_titulo),
+                        bottom:BorderSide(width: 1, color: AppColors.color_titulo),
+                        left:BorderSide(width: 1, color: AppColors.color_titulo),
                       )
                   ),
                 ),
@@ -77,7 +75,7 @@ class _SendEmailState extends State<SendEmail> {
                      padding: EdgeInsets.only(right: 0, left: 0),
                      child: new TextFormField(
                        decoration: new InputDecoration(
-                         fillColor: Utilidades.color_titulo,
+                         fillColor: AppColors.color_titulo,
                          border: new OutlineInputBorder(
                            borderRadius: new BorderRadius.circular(0.0),
                            borderSide: new BorderSide(
@@ -107,7 +105,7 @@ class _SendEmailState extends State<SendEmail> {
 
               Padding(
                 padding: EdgeInsets.only(right: 24, left: 24, bottom: 4, top: 24),
-                child: new Text("Comentario", style: TextStyle(fontWeight: FontWeight.w500, color: Utilidades.color_titulo),),
+                child: new Text("Comentario", style: TextStyle(fontWeight: FontWeight.w500, color: AppColors.color_titulo),),
               ),
             ],
 
@@ -151,12 +149,12 @@ class _SendEmailState extends State<SendEmail> {
                 child: Container(
                   width: double.infinity,
                   child: FlatButton(
-                    color: Utilidades.color_primario,
+                    color: AppColors.color_primario,
                     textColor: Colors.white,
-                    disabledColor: Utilidades.color_primario,
+                    disabledColor: AppColors.color_primario,
                     disabledTextColor: Colors.white,
                     padding: EdgeInsets.all(8.0),
-                    splashColor: Utilidades.color_titulo,
+                    splashColor: AppColors.color_titulo,
                     //onPressed: (),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
