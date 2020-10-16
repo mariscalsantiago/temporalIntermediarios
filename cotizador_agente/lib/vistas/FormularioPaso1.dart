@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
 //import 'package:agentesgnp/Modelos/LoginModels.dart';
@@ -16,10 +17,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 class FormularioPaso1 extends StatefulWidget {
-  FormularioPaso1({Key key, this.title, this.scaffoldKey, this.cotizador, this.cotizacionGuardada}) : super(key: key);
+  FormularioPaso1({Key key, this.scaffoldKey, this.cotizador, this.cotizacionGuardada}) : super(key: key);
 
   final GlobalKey<ScaffoldState> scaffoldKey;
-  final String title;
   String cotizador;
   Cotizacion cotizacionGuardada;
   bool estaCargando = true;
@@ -564,7 +564,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                   FlatButton(
                     child: new Text(
                       "Aceptar",
-                      style: TextStyle(color: Utilidades.color_primario),
+                      style: TextStyle(color: AppColors.color_primario),
                     ),
                     onPressed: () {
                       Navigator.pop(context2);
@@ -669,23 +669,23 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
       child: WillPopScope(
         onWillPop: () async {
 
-
-
           if(Utilidades.cotizacionesApp.getCurrentLengthLista()>1){
             //print("Estoy eliminando la index: "+ (Utilidades.cotizacionesApp.getCurrentLengthLista()-1).toString());
             Utilidades.cotizacionesApp.eliminarDeLaComparativa(Utilidades.cotizacionesApp.getCurrentLengthLista()-1);
 
           }else{
-            Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoGMM'));
+           // Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoAP'));
+            Navigator.pop(context);
           }
 
           return true;
         },
         child: new Scaffold(
           appBar: AppBar(
-            iconTheme: IconThemeData(color: Utilidades.color_primario),
+            iconTheme: IconThemeData(color: AppColors.color_primario),
             backgroundColor: Colors.white,
-            title: Text("Cotizador GMM", style: TextStyle(color: Colors.black),),
+            title: Text("Cotizador Accidentes Personales", style: TextStyle(color: Colors.black),),
+
           ),
 
           body: Column(
@@ -703,7 +703,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                       child: Container(
                           child: Divider( //002e71
                             thickness: 2,
-                            color: Utilidades.color_titulo,
+                            color: AppColors.color_titulo,
 
                             height: 0,
                           )),
@@ -718,7 +718,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                 Expanded(
                   child: Form(
                     key: formKey,
-                    child: (isLoading || (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion() == null)) ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Utilidades.color_primario),),):
+                    child: (isLoading || (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion() == null)) ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),):
                     new ListView.builder(
                         itemCount: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length+1,
                         shrinkWrap: true,
@@ -734,7 +734,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: <Widget>[
                                   FlatButton(
-                                    color: Utilidades.color_primario,
+                                    color: AppColors.color_primario,
                                     textColor: Colors.white,
                                     disabledColor: Colors.grey,
                                     disabledTextColor: Colors.black,
@@ -805,22 +805,22 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                         fontWeight: FontWeight.normal,
-                                        color: Utilidades.color_titulo,
+                                        color: AppColors.color_titulo,
                                         fontSize: 20),
                                   ),
                                 ),
 
                                 Container(//Etiquetas
-                                  color: Utilidades.color_sombra,
+                                  color: AppColors.color_sombra,
                                   child: Row(
                                     children: <Widget>[
                                       Expanded(child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: Utilidades.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
                                       )),
                                       Expanded(child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: Utilidades.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
                                       ))
                                     ],
                                   ),
@@ -828,20 +828,20 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
 
                                 Container(//Puntos
-                                  color: Utilidades.color_sombra,
+                                  color: AppColors.color_sombra,
 
                                   child: Row(
                                     children: <Widget>[
                                       Expanded(
                                         child: Container(
-                                          color: Utilidades.color_sombra,
+                                          color: AppColors.color_sombra,
                                           child: Column(
                                             children: <Widget>[
                                               Row(
                                                 children: <Widget>[
 
                                                   Spacer(),
-                                                  CircleButton(backgroundColor: Utilidades.color_primario ,onTap: () => print("Cool")),
+                                                  CircleButton(backgroundColor: AppColors.color_primario ,onTap: () => print("Cool")),
                                                   Expanded(
                                                     child: Container(
                                                         child: Divider( //002e71
@@ -859,7 +859,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
                                       Expanded(
                                         child: Container(
-                                          color: Utilidades.color_sombra,
+                                          color: AppColors.color_sombra,
                                           child: Column(
                                             children: <Widget>[
                                               Row(
@@ -889,12 +889,12 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                 ),
 
                                 Container(//Etiquetas
-                                  color: Utilidades.color_sombra,
+                                  color: AppColors.color_sombra,
                                   child: Row(
                                     children: <Widget>[
                                       Expanded(child: Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: Utilidades.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
                                       )),
                                       Expanded(child: Padding(
                                         padding: const EdgeInsets.all(8.0),

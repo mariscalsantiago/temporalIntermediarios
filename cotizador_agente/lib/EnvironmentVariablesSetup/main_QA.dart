@@ -1,13 +1,6 @@
-
-import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
-import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
-import 'package:cotizador_agente/vistas/SendEmail.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
+import 'app_config.dart';
+import '../main.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +12,7 @@ void main() {
     serviceEndPoint: 'http://10.67.83.12/AppCobros/rest/',
     ambient: Ambient.qa,
     serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
-  //  serviceBCA: 'https://bca-ws-qa.gnp.com.mx',
+   // serviceBCA: 'https://bca-ws-qa.gnp.com.mx',
     apikeyBCABonos:'04985d13-d1d4-4032-9fe6-faa14c18d464',
     serviceBonosLogin:'https://api-qa.oscp.gnp.com.mx/bca-bonos/BCABonosSegundoPwd',
     apikeyBCA: 'd41d8cd98f00b204e9800998ecf8427e',
@@ -77,43 +70,8 @@ void main() {
     child: new MyApp(),
   );
 
-  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-  runApp(configuredApp);
-  // });
+ // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
+    runApp(configuredApp);
+ // });
   // runApp(configuredApp);
 }
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: [
-        // ... app-specific localization delegate[s] here
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [
-        const Locale('en'), // English
-        const Locale('es'), // español
-      ],
-      initialRoute: '/',
-      routes: {
-        '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
-        '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
-        '/cotizadorUnicoAPPasoDos': (buildContext) => FormularioPaso2(),
-        '/cotizadorUnicoAPSendEmail': (buildContext) => SendEmail(),
-      },
-        debugShowCheckedModeBanner: false,
-      title: 'GNP',
-      theme: ThemeData(primaryColor: Colors.deepOrange,
-          textTheme: TextTheme(
-              body1: TextStyle(fontSize: 18.0),
-              body2: TextStyle(fontSize: 18.0))),
-      home: SeleccionaCotizadorAP(),
-    );
-  }
-}
-

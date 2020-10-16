@@ -1,19 +1,13 @@
 import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:cotizador_agente/widgets/ImageSwitch.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
-import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:table_calendar/table_calendar.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 import 'modelo_seccion.dart';
 
 ////COMBOBOX
@@ -204,7 +198,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
         child: Visibility(
           visible: widget.campo.visible,
           child: Container(
-            color: Utilidades.color_sombra,
+            color: AppColors.color_sombra,
             child: Column(
               children: <Widget>[
                 Container(
@@ -214,7 +208,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                     widget.campo.etiqueta == null
                         ? widget.campo.nombre_campo
                         : widget.campo.etiqueta,
-                    style: widget.campo.enabled? TextStyle(color: Utilidades.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                    style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
                   ),
                 ),
                 Container(
@@ -227,7 +221,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                       contentPadding: EdgeInsets.only(top: 0, bottom: 0),
                       enabledBorder: UnderlineInputBorder(
                           borderSide:widget.campo.enabled?
-                          BorderSide(color: Utilidades.color_primario): BorderSide(color: Colors.grey )),
+                          BorderSide(color: AppColors.color_primario): BorderSide(color: Colors.grey )),
                     ),
                   ),
                 )
@@ -250,7 +244,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
               padding: EdgeInsets.only(left: 8, bottom: 0),
               child: new Text(
                 v.descripcion.toString(),
-                style: widget.campo.enabled? TextStyle(color: Utilidades.color_texto_campo, fontSize: 15) : TextStyle(color: Colors.grey, fontSize: 15),
+                style: widget.campo.enabled? TextStyle(color: AppColors.color_texto_campo, fontSize: 15) : TextStyle(color: Colors.grey, fontSize: 15),
               ),
             )));
 
@@ -467,7 +461,7 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
       child: CheckboxListTile(
         title: Text(widget.campo.etiqueta),
         value: widget.currentValue,
-        activeColor: Utilidades.color_primario,
+        activeColor: AppColors.color_primario,
         onChanged: widget.campo.enabled ? (newValue) {
           setState(() {
             widget.currentValue = newValue;
@@ -550,8 +544,8 @@ class _ToggleConValoresState extends State<ToggleConValores> {
 
                     });
                   },
-                  activeTrackColor: Utilidades.color_primario,
-                  activeColor: Utilidades.color_primario,
+                  activeTrackColor: AppColors.color_primario,
+                  activeColor: AppColors.color_primario,
                 ),
               ],
             );
@@ -721,7 +715,7 @@ class _CheckBoxDinamicoDependienteState extends State<CheckBoxDinamicoDependient
               return CheckboxListTile(
                 title: Text(widget.campo.etiqueta),
                 value: widget.currentValue,
-                activeColor: Utilidades.color_primario,
+                activeColor: AppColors.color_primario,
                 onChanged: widget.campo.enabled ? (newValue) {
                   setState(() {
                     widget.currentValue = newValue;
@@ -1464,9 +1458,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
                           //labelStyle: TextStyle(color: Utilidades.color_primario),
                           labelStyle: TextStyle(
-                              color: Utilidades.color_texto_place_holder, fontSize: 15),
+                              color: Utilidades.color_texto_campo, fontSize: 15),
                           hintStyle: TextStyle(
-                              color: Utilidades.color_texto_place_holder, fontSize: 15),
+                              color: Utilidades.color_texto_campo, fontSize: 15),
                           hasFloatingPlaceholder: false,
                           hintText: widget.campo.etiqueta,
                           //labelText: widget.campo.etiqueta),

@@ -1,7 +1,4 @@
-
-
-
-import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +45,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       children: <Widget>[
 
         Container(
-          color: Utilidades.color_sombra,
+          color: AppColors.color_sombra,
           child: Row(
 
             children: <Widget>[
@@ -59,11 +56,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                     child:  Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: OutlineButton(
-                        textColor: Utilidades.color_primario,
+                        textColor: AppColors.color_primario,
                         child: Text("COMPARAR PLAN"),
                         onPressed: () {},
                         borderSide: BorderSide(
-                          color: Utilidades.color_primario, //Color of the border
+                          color: AppColors.color_primario, //Color of the border
                           style: BorderStyle.solid, //Style of the border
                           width: 0.8, //width of the border
                         ),
@@ -85,7 +82,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                 child: Text(
                                   "Guardar",
                                   style: TextStyle(
-                                      color: Utilidades.color_primario, fontWeight: FontWeight.w700),
+                                      color: AppColors.color_primario, fontWeight: FontWeight.w700),
                                 ),
                               ),
                               PopupMenuItem(
@@ -93,7 +90,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                 child: Text(
                                   "Limpiar datos",
                                   style: TextStyle(
-                                      color: Utilidades.color_primario, fontWeight: FontWeight.w700),
+                                      color: AppColors.color_primario, fontWeight: FontWeight.w700),
                                 ),
                               ),
                               PopupMenuItem(
@@ -101,7 +98,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                 child: Text(
                                   "Imprimir",
                                   style: TextStyle(
-                                      color: Utilidades.color_primario, fontWeight: FontWeight.w700),
+                                      color: AppColors.color_primario, fontWeight: FontWeight.w700),
                                 ),
                               ),
                               PopupMenuItem(
@@ -109,7 +106,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                 child: Text(
                                   "Material de apoyo",
                                   style: TextStyle(
-                                      color: Utilidades.color_primario, fontWeight: FontWeight.w700),
+                                      color: AppColors.color_primario, fontWeight: FontWeight.w700),
                                 ),
                               ),
                             ],
@@ -125,11 +122,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                               children: <Widget>[
                                 Text(
                                   "MÁS",
-                                  style: TextStyle(fontSize: 14.0, color: Utilidades.color_primario),
+                                  style: TextStyle(fontSize: 14.0, color: AppColors.color_primario),
                                   textAlign: TextAlign.right,
 
                                 ),
-                                Icon(Icons.more_vert, color: Utilidades.color_primario,),
+                                Icon(Icons.more_vert, color: AppColors.color_primario,),
                               ],
                             ),
                           )
@@ -151,7 +148,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
               child: Container(
                   child: Divider( //002e71
                     thickness: 2,
-                    color: Utilidades.color_titulo,
+                    color: AppColors.color_titulo,
 
                     height: 0,
                   )),
@@ -165,7 +162,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
               padding: const EdgeInsets.all(16.0),
               child: Text(
                 ("Cotización"), maxLines: 2, overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 20.0, color: Utilidades.color_titulo),
+                style: TextStyle(fontSize: 20.0, color: AppColors.color_titulo),
               ),
             ),
           ],
@@ -205,9 +202,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FlatButton(
-                    textColor: Utilidades.color_primario,
-                    disabledColor: Utilidades.color_primario,
-                    disabledTextColor: Utilidades.color_primario,
+                    textColor: AppColors.color_primario,
+                    disabledColor: AppColors.color_primario,
+                    disabledTextColor: AppColors.color_primario,
                     // splashColor: Colors.blueAccent,
                     onPressed: () {
                       /*...*/
@@ -244,7 +241,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   height: 100.0,
 
 
-                  color: Utilidades.color_primario,
+                  color: AppColors.color_primario,
                   child: Text('Anual'),
                 ),
               ),
@@ -255,14 +252,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         ),
 
         Container(
-          color: Utilidades.color_sombra,
+          color: AppColors.color_sombra,
           child: Row(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   ("Prima total"), maxLines: 2, overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 20.0, color: Utilidades.color_titulo),
+                  style: TextStyle(fontSize: 20.0, color: AppColors.color_titulo),
                 ),
               ),
             ],
@@ -293,14 +290,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       ),
 
         Container(
-          color: Utilidades.color_sombra,
+          color: AppColors.color_sombra,
           child: Row(
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   ("Cobertura Basica"), maxLines: 2, overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 20.0, color: Utilidades.color_titulo),
+                  style: TextStyle(fontSize: 20.0, color: AppColors.color_titulo),
                 ),
               ),
             ],

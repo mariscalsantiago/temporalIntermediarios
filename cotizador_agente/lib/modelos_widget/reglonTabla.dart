@@ -1,5 +1,5 @@
 import 'package:cotizador_agente/modelos/modelos.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:flutter/material.dart';
 class RenglonTabla extends StatefulWidget {
 
@@ -33,7 +33,7 @@ class _RenglonTablaState extends State<RenglonTabla> {
               Text(widget.cotizacion.id.toString()),
               Spacer(),
               IconButton(
-                icon: Icon(Icons.delete, color: Utilidades.color_primario,),
+                icon: Icon(Icons.delete, color: AppColors.color_primario,),
                 onPressed: () {
                   print("Pressed" + widget.cotizacion.id.toString());
                   widget.eliminar(widget.cotizacion);

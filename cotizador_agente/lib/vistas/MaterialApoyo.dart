@@ -1,5 +1,6 @@
 
 import 'package:cotizador_agente/modelos_widget/modelo_material_apoyo.dart';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Utilidades.color_primario),
+        iconTheme: IconThemeData(color: AppColors.color_primario),
         backgroundColor: Colors.white,
         title: Text("Material de apoyo", style: TextStyle(color: Colors.black),),
       ),
@@ -51,7 +52,7 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
                     child: Text("Material de apoyo para venta",
                       overflow: TextOverflow.clip,
                       style: TextStyle(
-                          fontSize: 20.0, color: Utilidades.color_titulo),
+                          fontSize: 20.0, color: AppColors.color_titulo),
                       textAlign: TextAlign.left,),
                   ),
                 ),
@@ -69,7 +70,7 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
                           },
                           heroTag: "btn1",
                           tooltip: "Cerrar",
-                          backgroundColor: Utilidades.color_primario,
+                          backgroundColor: AppColors.color_primario,
                           child: const Icon(Icons.close),
                         ),
                       ),
@@ -93,17 +94,17 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
                     hintText: "Buscar documento",
                     prefixIcon: Icon(Icons.search, color: Colors.grey,),
 
-                    fillColor: Utilidades.color_primario,
+                    fillColor: AppColors.color_primario,
                     border: new OutlineInputBorder(
                       borderRadius: new BorderRadius.circular(0.0),
                       borderSide: new BorderSide(
-                        color: Utilidades.color_primario
+                        color: AppColors.color_primario
                       ),
                     ),
                     focusedBorder:  new OutlineInputBorder(
                                           borderRadius: new BorderRadius.circular(0.0),
                                           borderSide: new BorderSide(
-                                          color: Utilidades.color_primario
+                                          color: AppColors.color_primario
                                           ),
                                           ),
                     suffixIcon:  IconButton(
@@ -132,7 +133,7 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
                     "Nombre del documento",
                     style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Utilidades.color_titulo,
+                    color: AppColors.color_titulo,
                     fontSize: 16),
                   ),
                 ),
@@ -145,7 +146,7 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
                 child: Container(
                     child: Divider( //002e71
                       thickness: 0.5,
-                      color: Utilidades.color_titulo,
+                      color: AppColors.color_titulo,
 
                       height: 0,
                     )),

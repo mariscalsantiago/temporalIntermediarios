@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/utils/Colores.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:firebase_analytics/firebase_analytics.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
@@ -107,7 +108,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
     Navigator.pop(context);
     Utilidades.cotizacionesApp.eliminarDeLaComparativa(Utilidades.cotizacionesApp.getCurrentLengthLista()-1);
 
-    Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoUno",);
+    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
 
 
 
@@ -610,7 +611,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
       child: Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(color: Utilidades.color_primario),
+          iconTheme: IconThemeData(color: AppColors.color_primario),
           backgroundColor: Colors.white,
           title: Text("Paso 2", style: TextStyle(color: Colors.black)),
         ),
@@ -652,22 +653,22 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontWeight: FontWeight.normal,
-                                      color: Utilidades.color_titulo,
+                                      color: AppColors.color_titulo,
                                       fontSize: 20),
                                 ),
                               ),
 
                               Container(//Etiquetas
-                                color: Utilidades.color_sombra,
+                                color: AppColors.color_sombra,
                                 child: Row(
                                   children: <Widget>[
                                     Expanded(child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: Utilidades.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
+                                      child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
                                     )),
                                     Expanded(child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: Utilidades.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
+                                      child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
                                     ))
                                   ],
                                 ),
@@ -675,25 +676,25 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
 
                               Container(//Puntos
-                                color: Utilidades.color_sombra,
+                                color: AppColors.color_sombra,
 
                                 child: Row(
                                   children: <Widget>[
                                     Expanded(
                                       child: Container(
-                                        color: Utilidades.color_sombra,
+                                        color: AppColors.color_sombra,
                                         child: Column(
                                           children: <Widget>[
                                             Row(
                                               children: <Widget>[
 
                                                 Spacer(),
-                                                CircleButton(backgroundColor: Utilidades.color_titulo ,onTap: () => print("Cool"), iconData: Icons.check,),
+                                                CircleButton(backgroundColor: AppColors.color_titulo ,onTap: () => print("Cool"), iconData: Icons.check,),
                                                 Expanded(
                                                   child: Container(
                                                       child: Divider( //002e71
                                                         thickness: 2,
-                                                        color: Utilidades.color_primario,
+                                                        color: AppColors.color_primario,
                                                         height: 0,
                                                       )),
                                                 ),
@@ -706,7 +707,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
                                     Expanded(
                                       child: Container(
-                                        color: Utilidades.color_sombra,
+                                        color: AppColors.color_sombra,
                                         child: Column(
                                           children: <Widget>[
                                             Row(
@@ -715,12 +716,12 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                   child: Container(
                                                       child: Divider( //002e71
                                                         thickness: 2,
-                                                        color: Utilidades.color_primario,
+                                                        color: AppColors.color_primario,
 
                                                         height: 0,
                                                       )),
                                                 ),
-                                                CircleButton(backgroundColor: Utilidades.color_primario ,onTap: () => print("Cool")),
+                                                CircleButton(backgroundColor: AppColors.color_primario ,onTap: () => print("Cool")),
 
                                                 Spacer(),
 
@@ -736,16 +737,16 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                               ),
 
                               Container(//Etiquetas
-                                color: Utilidades.color_sombra,
+                                color: AppColors.color_sombra,
                                 child: Row(
                                   children: <Widget>[
                                     Expanded(child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: Utilidades.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
+                                      child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
                                     )),
                                     Expanded(child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Text("Paso 2", textAlign: TextAlign.center, style: TextStyle(color: Utilidades.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
+                                      child: Text("Paso 2", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
                                     ))
                                   ],
                                 ),
@@ -776,9 +777,9 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                           try{
                             return Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2==null
                                 ?
-                            Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Utilidades.color_primario),),)
+                            Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),)
                                 : isLoading == true ?
-                            Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Utilidades.color_primario),),)
+                            Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),)
                                 : ListView.builder(
                                 itemCount:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length+1,
                                 shrinkWrap: true,
@@ -793,7 +794,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                         crossAxisAlignment: CrossAxisAlignment.stretch,
                                         children: <Widget>[
                                           FlatButton(
-                                            color: Utilidades.color_primario,
+                                            color: AppColors.color_primario,
                                             textColor: Colors.white,
                                             disabledColor: Colors.grey,
                                             disabledTextColor: Colors.black,
@@ -829,11 +830,13 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                     }, (){ //ACEPTAR
 
                                                       Navigator.pop(context);
-                                                      Navigator.push(
+                                                      Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
+
+                                                      /*Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) => CotizacionVista(),
-                                                          ));
+                                                          ));*/
 
                                                     });
                                                   }
@@ -844,11 +847,13 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                 }else{
                                                   print("No se cumplen reglas");
 
-                                                  Navigator.push(
+                                                  Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
+
+                                                  /*Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) => CotizacionVista(),
-                                                      ));
+                                                      ));*/
 
                                                 }
 
@@ -891,7 +896,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                     padding: const EdgeInsets.all(16.0),
                                     child:
                                     isLoading == true ?
-                                    Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Utilidades.color_primario),),) :
+                                    Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),) :
                                     new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
                                       actualizarCodigoPostalFamiliares:
                                       actualizarCodigoPostalFamiliares,
