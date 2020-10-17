@@ -12,6 +12,7 @@ import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
 import 'package:cotizador_agente/utils/CircleButton.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/vistas/Cotizacion.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
@@ -831,6 +832,12 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                       Navigator.pop(context);
                                                       Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
 
+                                                      /*Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) => CotizacionVista(),
+                                                          ));*/
+
                                                     });
                                                   }
                                                   if(r.tipoRegla== Utilidades.REGLA_STOPPER){
@@ -841,6 +848,12 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                   print("No se cumplen reglas");
 
                                                   Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
+
+                                                  /*Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) => CotizacionVista(),
+                                                      ));*/
 
                                                 }
 
