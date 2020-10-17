@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/modelos_widget/NegocioOperableElement.dart';
-import 'package:cotizador_agente/utils/Colores.dart';
+import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
-import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
 
@@ -210,32 +210,52 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     }
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         iconTheme: IconThemeData(color: AppColors.color_primario),
         backgroundColor: Colors.white,
-        title: Text("Cotizador Accidentes Personales", style: TextStyle(color: Colors.black),),
+        title: Text("Selecciona un cotizador", style: TextStyle(color: Colors.black),),
       ),
       body:  isLoading ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),): Column(
         children:  <Widget>[
-          Text(Mensajes.legendCotizador, style: TextStyle(),),
+
           Visibility(
-            visible: true, //widget.negociosOperables[0].cotizadores != null,
+            visible:  true,//widget.negociosOperables[0].cotizadores != null,
             child: Expanded(
-                child: Container(
-                  child: new ListView.builder(
-                      itemCount: widget.negociosOperables.length,
-                      shrinkWrap: true,
-                      physics: ScrollPhysics(),
-                      itemBuilder: (BuildContext ctxt, int index) {
-                        return NegocioOperableElement(negocioOperable: widget.negociosOperables[index]);
-                      }),
-                )),
-          )
+              child: new ListView.builder(
+                  itemCount: widget.negociosOperables.length,
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  itemBuilder: (context, index){
+                  return Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            blurRadius: 1.0,
+                            color: AppColors.color_borde,
+                            offset: Offset(1.0, 3.0),
+                          ),
+                        ]),
+                    child: new ExpansionTile(
+                      title: new Text(widget.negociosOperables[0].negocioOperable,
+                        style: new TextStyle(
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.color_appBar),),
+                      children: <Widget>[
+                        NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
+                      ],
+                    ),
+                  );
+                }
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 }
-
 
 
