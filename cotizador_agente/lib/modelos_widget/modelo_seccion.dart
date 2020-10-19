@@ -1,6 +1,6 @@
 
 import 'package:cotizador_agente/modelos/modelos.dart';
-import 'package:cotizador_agente/utils/Colores.dart';
+import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/utils/validadores.dart';
 import 'package:flutter/material.dart';

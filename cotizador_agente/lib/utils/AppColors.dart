@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static HexColor color_sombra = HexColor("F3F4F5");
-  static HexColor color_titulo = HexColor("002e71");
+  static HexColor color_titulo = HexColor("002E71");
   static HexColor color_primario = HexColor("fc6c25");
   static HexColor color_texto = HexColor("000000");
   static HexColor color_filtro = HexColor("e4e4e4");
@@ -10,6 +10,10 @@ class AppColors {
   static HexColor color_texto_campo = HexColor("343f61");
   static HexColor color_switch_apagado = HexColor("dcdcdc");
   static HexColor color_mail = HexColor("aac3ee");
+  static HexColor color_appBar = HexColor("#33445F");
+  static HexColor color_background = HexColor("#F6F9FD");
+  static HexColor color_backgroundApp = HexColor("#F4F4F4");
+  static HexColor color_borde = HexColor("E8EEF8");
 }
 
 class HexColor extends Color {

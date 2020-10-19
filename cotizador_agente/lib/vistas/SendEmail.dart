@@ -1,5 +1,5 @@
 
-import 'package:cotizador_agente/utils/Colores.dart';
+import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

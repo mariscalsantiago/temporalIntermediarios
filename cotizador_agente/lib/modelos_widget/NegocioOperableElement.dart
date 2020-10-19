@@ -99,7 +99,7 @@ class _NegocioOperableElementState
 
       setState(() {
         _initialURL = "config.urlAccionIngreso + encoded";
-        Utilidades.LogPrint("URLACCION: " + _initialURL);
+        Utilidades.LogPrint(" URLACCION: " + _initialURL);
       });
 
       Map<String, String> headers = {
@@ -130,8 +130,42 @@ class _NegocioOperableElementState
   @override
   Widget build(BuildContext context) {
 
-
     return Visibility(
+      visible: true,//widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
+      child: Container(
+        color: Colors.white,
+        width: double.infinity,
+        child: FlatButton(
+          color: Colors.white,
+          child: Container(
+            color: Colors.white,
+            width: double.infinity,
+            child: Text(
+              "Cotizador",//widget.negocioOperable.cotizadores[j].aplicacion,
+              textAlign: TextAlign.left,
+              style: TextStyle(color: Colors.grey),
+            ),
+          ),
+          onPressed: () {
+            CotizacionesApp nuevo = new CotizacionesApp();
+
+            Utilidades.cotizacionesApp = nuevo;
+
+            Utilidades.idAplicacion = 2343;//int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
+            Utilidades.tipoDeNegocio = "Planes Individuales";//widget.negocioOperable.cotizadores[j].aplicacion;
+            seccionCotizador();
+            //Navigator.pushNamed(FormularioPaso1; FormularioPaso1;,);
+            Utilidades.deboCargarPaso1 = false;
+            //Navigator.pop(FormularioPaso1);
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => FormularioPaso1(),
+            ));
+            },
+        ),
+      ),
+    );
+
+    /*return Visibility(
       visible: true,//widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
       child: Column(
         children: <Widget>[
@@ -231,6 +265,6 @@ class _NegocioOperableElementState
           ),
         ],
       ),
-    );
+    );*/
   }
 }
