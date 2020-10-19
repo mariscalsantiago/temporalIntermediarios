@@ -404,6 +404,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
 ////CHECKBOX
 
+
 class CheckBoxDinamico extends StatefulWidget {
   CheckBoxDinamico({Key key, this.campo, this.agregarAlDiccionario, this.actualizarSecciones}) : super(key: key);
   final Campo campo;
@@ -474,6 +475,1005 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
     );
   }
 }////CHECKBOX
+
+
+
+
+////CHECKBOX Dependiente
+
+class CheckBoxDinamicoDependiente extends StatefulWidget {
+  CheckBoxDinamicoDependiente({Key key, this.campo, this.agregarAlDiccionario, this.actualizarSecciones}) : super(key: key);
+  final Campo campo;
+  bool currentValue = false;
+  final void Function(String, String) agregarAlDiccionario;
+  final void Function(String) actualizarSecciones;
+
+
+  @override
+  _CheckBoxDinamicoDependienteState createState() => _CheckBoxDinamicoDependienteState();
+}
+
+class _CheckBoxDinamicoDependienteState extends State<CheckBoxDinamicoDependiente> {
+
+  @override
+  void initState() {
+
+    if(widget.campo.valor!=null){
+      widget.currentValue = widget.campo.valor == "true" ? true : false;
+      print("entro al initState");
+      //widget.agregarAlDiccionario("", "");
+
+
+    }else{
+
+      if(widget.campo.checked){
+        widget.currentValue = true;
+        widget.campo.valor = "true";
+
+      }else{
+        widget.currentValue = false;
+        widget.campo.valor = "false";
+
+      }
+    }
+
+
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    if(widget.campo.valor!=null){
+      widget.currentValue = widget.campo.valor == "true" ? true : false;
+    }
+
+
+    return Visibility(
+      visible: widget.campo.visible,
+      child: ListView.builder(
+          itemCount: 2,
+          shrinkWrap: true,
+          physics: ScrollPhysics(),
+          itemBuilder: (BuildContext ctxt, int index) {
+
+            if(index==0){
+              return CheckboxListTile(
+                title: Text(widget.campo.etiqueta),
+                value: widget.currentValue,
+                activeColor: AppColors.color_primario,
+                onChanged: widget.campo.enabled ? (newValue) {
+                  setState(() {
+                    widget.currentValue = newValue;
+                    newValue? widget.campo.valor = "true": widget.campo.valor= "false";
+                  });
+
+                }: null,
+                controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+              );
+            }else{
+
+
+
+
+
+              return ListView.builder(
+                  itemCount: widget.campo.valores.length,
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  itemBuilder: (BuildContext ctxt, int j) {
+
+
+                    return Visibility(
+                      visible: widget.campo.valor == "true" ? true : false,
+                      child: ListView.builder(
+                          itemCount: widget.campo.valores[j].children.length,
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemBuilder: (BuildContext ctxt, int k) {
+                            return CampoDinamico(campo: widget.campo.valores[j].children[k], agregarDicc: widget.agregarAlDiccionario, actualizarSecciones: widget.actualizarSecciones,actualizarCodigoPostalFamiliares: () {}, validarCodigoPostalFamiliares: ()=>false,);
+                          }),
+                    );
+
+                  });
+            }
+
+          }),
+
+    );
+  }
+}
+
+//////
+
+////CALENDARIO
+
+class CalendarioDinamicoRange extends StatefulWidget {
+  final Campo campo;
+
+  const CalendarioDinamicoRange({Key key, this.campo}) : super(key: key);
+
+  @override
+  _CalendarioDinamicoRangeState createState() =>
+      _CalendarioDinamicoRangeState();
+}
+
+class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
+
+  Future<Null> _selectDate1(BuildContext context, DateTime selectedDate, DateTime firstDate, DateTime lastDate ) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        helpText: selectedDate.year.toString(),
+        locale: const Locale('es', 'MX'),
+        initialDate: selectedDate,
+        firstDate: firstDate,
+        lastDate: lastDate);
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        widget.campo.valor = Jiffy(picked).format("yyy-MM-dd").toString();
+      });
+  }
+
+
+
+  var fecha = new DateTime.now().toString().substring(0,10);
+
+  initState(){
+    super.initState();
+
+    DateTime fecha_1_init;
+    if(widget.campo.rango.rango_inicio!=null){
+      fecha_1_init = DateTime( int.parse(widget.campo.rango.rango_inicio.substring(6,10))  , int.parse(widget.campo.rango.rango_inicio.substring(3,5)) , int.parse(widget.campo.rango.rango_inicio.substring(0,2)) );
+
+
+    }else{
+      fecha_1_init = DateTime.now();
+
+    }
+
+    if(widget.campo.valor==null || widget.campo.valor==""){
+      widget.campo.valor = Jiffy(fecha_1_init).format("yyy-MM-dd").toString();
+    }
+
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AbsorbPointer(
+        absorbing: !widget.campo.enabled,
+        child: Visibility(
+            visible: widget.campo.visible,
+            child: GestureDetector(
+              onTap: (){
+                DateTime now = DateTime.now();
+                _selectDate1(context, DateTime.parse(widget.campo.valor),
+                    widget.campo.rango.rango_inicio != null ? DateTime( int.parse(widget.campo.rango.rango_inicio.substring(6,10))  , int.parse(widget.campo.rango.rango_inicio.substring(3,5)) , int.parse(widget.campo.rango.rango_inicio.substring(0,2)) ) : DateTime(1900),
+                    widget.campo.rango.rango_fin != null ? DateTime( int.parse(widget.campo.rango.rango_fin.substring(6,10))  , int.parse(widget.campo.rango.rango_fin.substring(3,5)) , int.parse(widget.campo.rango.rango_fin.substring(0,2)) ) : DateTime(now.year , now.month , now.day)
+                );
+              },
+              child: Container(
+                  margin: EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                      color: AppColors.color_sombra,
+                      border: Border(
+                          bottom: BorderSide(color: AppColors.color_primario))),
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        width: double.infinity,
+                        margin: EdgeInsets.only(left: 8, top: 8),
+                        child: Text(
+                          widget.campo.etiqueta == null
+                              ? widget.campo.nombre_campo
+                              : widget.campo.etiqueta,
+                          style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                        ),
+                      ),
+                      Container(
+                          height: 30,
+                          margin: EdgeInsets.only(left: 8, top: 8, right: 8),
+                          padding: EdgeInsets.only(bottom: 8),
+                          width: double.infinity,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              //Jiffy( DateTime.parse(widget.campo.valor)).format("dd-MM-yyyy").toString()
+                              Text(Jiffy(widget.campo.valor).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),
+                                textAlign: TextAlign.left,),
+                              Icon(Icons.date_range, color: Colors.grey,)
+                            ],
+                          ))
+                    ],
+                  )
+              ),
+            )
+        )
+    );
+  }
+}
+
+
+
+class CalendarioConRangoRelativo extends StatefulWidget {
+  final Campo campo;
+  final void Function(String, String) agregarAlDiccionario;
+  final void Function(String) actualizarSecciones;
+  //El valor de este campo estará separado por comas (Así lo requiere el Backend, en String).
+  const CalendarioConRangoRelativo({Key key, this.campo, this.agregarAlDiccionario, this.actualizarSecciones}) : super(key: key);
+
+  @override
+  _CalendarioConRangoRelativoState createState() => _CalendarioConRangoRelativoState();
+}
+
+class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo> {
+
+
+  bool calcularValor(){
+    //TODO: Verificar que sea con el campo de validacion, no sólo con un año.
+    return Jiffy(DateTime.parse(widget.campo.valor.split(",")[0])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) >1;
+  }
+
+
+  Future<Null> _selectDate1(BuildContext context, DateTime selectedDate, DateTime firstDate, DateTime lastDate ) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        locale: const Locale('es', 'MX'),
+        initialDate: selectedDate,
+        firstDate: firstDate,
+        lastDate: lastDate);
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        DateTime fecha_2_init = Jiffy(picked).add(days:widget.campo.rangoRelativa[1].dia, months: widget.campo.rangoRelativa[1].mes, years:widget.campo.rangoRelativa[1].anio);
+        //Asignar el valor de las dos fechas en el valor completo del campo
+        widget.campo.valor = Jiffy(picked).format("yyy-MM-dd").toString() +","+ Jiffy(fecha_2_init).format("yyy-MM-dd").toString();
+
+      });
+  }
+
+
+  Future<Null> _selectDate2(BuildContext context, DateTime selectedDate, DateTime firstDate, DateTime lastDate ) async {
+    final DateTime picked = await showDatePicker(
+      //locale: Locale("es","MX"),
+        context: context,
+        locale: const Locale('es', 'MX'),
+        initialDate: selectedDate,
+        firstDate: firstDate,
+        lastDate: lastDate);
+    if (picked != null && picked != selectedDate)
+
+
+
+      setState(() {
+        widget.campo.valor = widget.campo.valor.split(",")[0] +","+ Jiffy(picked).format("yyy-MM-dd").toString();
+
+
+
+
+      });
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    DateTime fecha_1_init = DateTime( int.parse(widget.campo.rango.rango_inicio.substring(6,10))  , int.parse(widget.campo.rango.rango_inicio.substring(3,5)) , int.parse(widget.campo.rango.rango_inicio.substring(0,2)) );
+    DateTime fecha_2_init = Jiffy(fecha_1_init).add(days:widget.campo.rangoRelativa[1].dia, months: widget.campo.rangoRelativa[1].mes, years:widget.campo.rangoRelativa[1].anio);
+
+    if(widget.campo.valor==null || widget.campo.valor==""){
+      widget.campo.valor = Jiffy(fecha_1_init).format("yyy-MM-dd").toString() +","+ Jiffy(fecha_2_init).format("yyy-MM-dd").toString();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: 3,
+        shrinkWrap: true,
+        physics: ScrollPhysics(),
+        itemBuilder: (BuildContext ctxt, int index) {
+
+          switch(index){
+          //Fecha 1
+          //Eal valor de la fecha 1 lo vamos a guardar siempre antes de la primer coma.
+          //El valor de la fecha 1 SIEMPRE actualiza el valor de la fecha 2
+            case 0:
+              return
+                AbsorbPointer(
+                    absorbing: !widget.campo.enabled,
+                    child: Visibility(
+                        visible: widget.campo.visible,
+                        child: GestureDetector(
+                          onTap: (){
+                            DateTime now = DateTime.now();
+                            _selectDate1(context, DateTime.parse(widget.campo.valor.split(",")[0]),
+                                widget.campo.rango.rango_inicio != null ? DateTime( int.parse(widget.campo.rango.rango_inicio.substring(6,10))  , int.parse(widget.campo.rango.rango_inicio.substring(3,5)) , int.parse(widget.campo.rango.rango_inicio.substring(0,2)) ) : DateTime(1900),
+                                widget.campo.rango.rango_fin != null ? DateTime( int.parse(widget.campo.rango.rango_fin.substring(6,10))  , int.parse(widget.campo.rango.rango_fin.substring(3,5)) , int.parse(widget.campo.rango.rango_fin.substring(0,2)) ) : DateTime(now.year , now.month , now.day)
+                            );
+                          },
+                          child: Container(
+                              margin: EdgeInsets.only(top: 8),
+                              decoration: BoxDecoration(
+                                  color: AppColors.color_sombra,
+                                  border: Border(
+                                      bottom: BorderSide(color: AppColors.color_primario))),
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    width: double.infinity,
+                                    margin: EdgeInsets.only(left: 8, top: 8),
+                                    child: Text(
+                                      widget.campo.etiqueta == null
+                                          ? widget.campo.nombre_campo
+                                          : widget.campo.etiqueta + " inicial",
+                                      style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                                    ),
+                                  ),
+                                  Container(
+                                      height: 30,
+                                      margin: EdgeInsets.only(left: 8, top: 8),
+                                      padding: EdgeInsets.only(bottom: 8),
+                                      width: double.infinity,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(Jiffy( DateTime.parse(widget.campo.valor.split(",")[0])).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),textAlign: TextAlign.left,),
+                                          Icon(Icons.date_range, color: Colors.grey,)
+                                        ],
+                                      ))
+
+
+                                ],
+                              )
+                          ),
+                        )
+                    )
+                );
+
+
+            case 1: //Facha 2: El campo se simula un textField, aunque no se muestra uno, en realidad se muestra un botón que llama a un modal de calendario.
+            //El valor de la fecha 2 no actualiza ningún valor, pero su rango está controlado por el campo 1
+
+              return
+                AbsorbPointer(
+                    absorbing: !widget.campo.enabled,
+                    child: Visibility(
+                        visible: widget.campo.visible,
+                        child: GestureDetector(
+                          onTap: (){
+                            _selectDate2(context, DateTime.parse(widget.campo.valor.split(",")[1]),
+                                Jiffy(DateTime.parse(widget.campo.valor.split(",")[0])).add(days:widget.campo.rangoRelativa[0].dia, months: widget.campo.rangoRelativa[0].mes, years:widget.campo.rangoRelativa[0].anio),
+                                Jiffy(DateTime.parse(widget.campo.valor.split(",")[0])).add(days:widget.campo.rangoRelativa[1].dia, months: widget.campo.rangoRelativa[1].mes, years:widget.campo.rangoRelativa[1].anio));
+                          },
+                          child: Container(
+                              margin: EdgeInsets.only(top: 8),
+                              decoration: BoxDecoration(
+                                  color: AppColors.color_sombra,
+                                  border: Border(
+                                      bottom: BorderSide(color: AppColors.color_primario))),
+                              child: Column(
+                                children: <Widget>[
+                                  Container(
+                                    width: double.infinity,
+                                    margin: EdgeInsets.only(left: 8, top: 8),
+                                    child: Text(
+                                      widget.campo.etiqueta == null
+                                          ? widget.campo.nombre_campo
+                                          : widget.campo.etiqueta + " final",
+                                      style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                                    ),
+                                  ),
+                                  Container(
+                                      height: 30,
+                                      margin: EdgeInsets.only(left: 8, top: 8),
+                                      padding: EdgeInsets.only(bottom: 8),
+                                      width: double.infinity,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(Jiffy( DateTime.parse(widget.campo.valor.split(",")[1])).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),textAlign: TextAlign.left,),
+                                          Icon(Icons.date_range, color: Colors.grey,)
+                                        ],
+                                      ))
+                                ],
+                              )
+                          ),
+                        )
+                    )
+                );
+
+            case 2: // Sus hijos
+
+              if(Jiffy(DateTime.parse(widget.campo.valor.split(",")[1])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) >= 1 ){
+                widget.campo.valores[0].children[0].visible = true;
+                widget.campo.valores[1].children[0].visible = false;
+              }else{
+                widget.campo.valores[0].children[0].visible = false;
+                widget.campo.valores[1].children[0].visible = true;
+
+
+              }
+
+
+              return Column(
+                children: <Widget>[
+                  Visibility(
+                    visible: Jiffy(DateTime.parse(widget.campo.valor.split(",")[1])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) >= 1 ,
+                    child: CampoDinamico(actualizarSecciones:widget.actualizarSecciones, agregarDicc: widget.agregarAlDiccionario, campo: widget.campo.valores[0].children[0], actualizarCodigoPostalFamiliares: () {}, validarCodigoPostalFamiliares: ()=>false,),
+                  ),
+                  Visibility(
+                    visible: Jiffy(DateTime.parse(widget.campo.valor.split(",")[1])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) < 1 ,
+                    child: CampoDinamico(actualizarSecciones:widget.actualizarSecciones, agregarDicc: widget.agregarAlDiccionario, campo: widget.campo.valores[1].children[0], actualizarCodigoPostalFamiliares: () {}, validarCodigoPostalFamiliares: ()=>false,),
+                  )
+                ],
+              );
+
+              break;
+
+
+            default:
+              return Container();
+
+          }
+
+
+
+        });
+  }
+}
+
+
+////
+
+////BOTON BORDE
+
+class BotonDinamicoBorde extends StatefulWidget {
+  BotonDinamicoBorde({Key key, this.titulo}) : super(key: key);
+  final Campo titulo;
+
+  @override
+  _BotonDinamicoStateBorde createState() => _BotonDinamicoStateBorde();
+}
+
+class _BotonDinamicoStateBorde extends State<BotonDinamicoBorde> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: OutlineButton(
+        textColor: AppColors.color_primario,
+        child: Text(widget.titulo.etiqueta,
+          style: TextStyle(fontSize: 15),),
+        onPressed: () {},
+        borderSide: BorderSide(
+          color: AppColors.color_primario, //Color of the border
+          style: BorderStyle.solid, //Style of the border
+          width: 0.8, //width of the border
+        ),
+      ),
+    );
+  }
+}
+
+////
+
+////BOTON SIN BORDE
+
+class BotonDinamicoSinBorde extends StatefulWidget {
+  BotonDinamicoSinBorde({Key key, this.titulo}) : super(key: key);
+  final Campo titulo;
+
+  @override
+  _BotonDinamicoSinBordeState createState() => _BotonDinamicoSinBordeState();
+}
+
+class _BotonDinamicoSinBordeState extends State<BotonDinamicoSinBorde> {
+  @override
+  Widget build(BuildContext context) {
+    return OutlineButton(
+      textColor: AppColors.color_primario,
+      color: AppColors.color_primario,
+      child: Text(widget.titulo.toString(),
+        style: TextStyle(fontSize: 15),),
+      onPressed: () {},
+    );
+  }
+}
+
+////Text
+
+class TextoGenericoDinamico extends StatefulWidget {
+  TextoGenericoDinamico({Key key, this.texto}) : super(key: key);
+  final Campo texto;
+
+  @override
+  _TextoGenericoDinamicoState createState() => _TextoGenericoDinamicoState();
+}
+
+class _TextoGenericoDinamicoState extends State<TextoGenericoDinamico> {
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      widget.texto.toString(),
+      textAlign: TextAlign.center,
+      overflow: TextOverflow.ellipsis,
+      style: TextStyle(
+          fontWeight: FontWeight.normal,
+          color: AppColors.color_primario,
+          fontSize: 15),
+    );
+  }
+}
+
+/////
+
+////TextField
+
+class CustomTextField extends StatefulWidget {
+  final Campo campo;
+  final void Function(String, String) agregarAlDiccionario;
+  final void Function(String) actualizarSecciones;
+  final void Function() actualizarCodigoPostalFamiliares;
+  final bool Function() validarCodigoPostalFamiliares;
+
+  const CustomTextField({
+    Key key,
+    this.campo,
+    this.agregarAlDiccionario,
+    this.actualizarSecciones,
+    this.actualizarCodigoPostalFamiliares,
+    this.validarCodigoPostalFamiliares,
+  }) : super(key: key);
+
+  @override
+  _CustomTextFieldState createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  String codigoPostal = '';
+
+  void actualizarCodigoPostalFamiliares() {
+    setState(() {
+      widget.actualizarCodigoPostalFamiliares();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    final GlobalCupertinoLocalizations localizations = CupertinoLocalizations.of(context);
+    TextEditingController _controller;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(right: 8, left: 8),
+            decoration: BoxDecoration(
+                color: AppColors.color_sombra,
+                border: Border(
+                    bottom: BorderSide(color: AppColors.color_primario))),
+            child: Visibility(
+              visible: widget.campo.visible,
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    color: AppColors.color_sombra,
+                    width: double.infinity,
+                    margin: EdgeInsets.only(top: 8),
+                    child: Text(widget.campo.obligatorio == true ? widget.campo.etiqueta + " *" : widget.campo.etiqueta,
+                      style: TextStyle(color: AppColors.color_primario, fontSize: 15),
+                    ),
+                  ),
+                  Container(
+                    height: 40,
+                    child: new SingleChildScrollView(
+                      physics: NeverScrollableScrollPhysics(),
+                      reverse: true,
+                      child: TextFormField(
+                        controller: _controller,
+                        key: ValueKey('Key_' + widget.campo.hashCode.toString() + "_" + DateTime.now().millisecondsSinceEpoch.toString()),
+                        inputFormatters: [new WhitelistingTextInputFormatter(new RegExp(widget.campo.reg_ex)), //[0-9]
+                          LengthLimitingTextInputFormatter(widget.campo.dato_longitud!=null ? widget.campo.dato_longitud.length == 2 ?  widget.campo.dato_longitud[1] : widget.campo.dato_longitud[0]: null ,)],
+                        enabled: widget.campo.enabled,
+                        maxLengthEnforced: true,
+                        onSaved: (String value) {
+                          widget.campo.valor = value;
+                          print("llegue al onsave " + widget.campo.valor);
+                        },
+                        onChanged: (valor) {
+                          widget.campo.valor = valor;
+                          if ( (widget.campo.id_seccion == Utilidades.titularSeccion && widget.campo.id_campo == Utilidades.titularCampo) ) {
+                            widget.campo.valor = valor;
+                            if (valor != codigoPostal && widget.validarCodigoPostalFamiliares() == true) {
+                              if (valor.length == 5) {
+                                codigoPostal = valor;
+                                showDialog<void>(
+                                  context: context,
+                                  barrierDismissible: false, // user must tap button!
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Aviso'),
+                                      content: SingleChildScrollView(
+                                        child: ListBody(
+                                          children: <Widget>[
+                                            Text(Mensajes.cambioCP),
+                                          ],
+                                        ),
+                                      ),
+                                      actions: <Widget>[
+                                        FlatButton(
+                                          child: Text('Cancelar'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        FlatButton(
+                                          child: Text('Aceptar'),
+                                          onPressed: () {
+                                            Utilidades.actualizarCodigoPostalAdicional = true;
+                                            actualizarCodigoPostalFamiliares();
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+
+                                      ],
+                                    );
+                                  },
+                                );
+                              }
+                            }
+                          }
+                          // Se agrega validación para cuando se edita una cotización y el adicional cambia CP
+                          if(widget.campo.id_seccion == null && widget.campo.id_campo == Utilidades.titularCampo && Utilidades.actualizarCodigoPostalAdicional == false){
+                            widget.campo.valor = valor;
+                            if (valor != codigoPostal) {
+                              if(widget.validarCodigoPostalFamiliares == null){
+                                if (valor.length == 5) {
+                                  codigoPostal = valor;
+                                  print("VALIDA cuando idsecc null: " + valor.toString());
+                                }
+                              }else if(widget.validarCodigoPostalFamiliares() == true){
+                                if (valor.length == 5) {
+                                  codigoPostal = valor;
+                                  print("VALIDA cuando idsecc null: " + valor.toString());
+                                  showDialog<void>(
+                                    context: context,
+                                    barrierDismissible: false, // user must tap button!
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Aviso'),
+                                        content: SingleChildScrollView(
+                                          child: ListBody(
+                                            children: <Widget>[
+                                              Text(Mensajes.cambioCP),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('Cancelar'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                          FlatButton(
+                                            child: Text('Aceptar'),
+                                            onPressed: () {
+                                              Utilidades.actualizarCodigoPostalAdicional = true;
+                                              actualizarCodigoPostalFamiliares();
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
+                              }
+                            }
+                          }
+                        },
+                        initialValue: widget.campo.valor,
+                        validator:(value) {
+                          setState(() {
+                            print("validando"+ value);
+                            widget.campo.isValid = widget.campo.validaCampo(value);
+                          });
+                          return null;
+
+                        },
+                        keyboardType: widget.campo.tipo_dato=="integer" || widget.campo.reg_ex == "[0-9]" ?TextInputType.number:TextInputType.text,
+                        decoration: InputDecoration(
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.transparent)),
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                              BorderSide(color: Colors.transparent)),
+
+                          //labelStyle: TextStyle(color: AppColors.color_primario),
+                          labelStyle: TextStyle(
+                              color: AppColors.color_texto_campo, fontSize: 15),
+                          hintStyle: TextStyle(
+                              color: AppColors.color_texto_campo, fontSize: 15),
+                          hasFloatingPlaceholder: false,
+                          hintText: widget.campo.etiqueta,
+                          //labelText: widget.campo.etiqueta),
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Visibility(
+            visible: widget.campo.error != "" ? true : false,
+            child: Container(
+              width: double.infinity,
+              margin: EdgeInsets.only(top: 8),
+              child: Text(
+                widget.campo.error,
+                style: TextStyle(color: AppColors.color_primario, fontSize: 15),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomTextFieldCotizacion extends StatefulWidget{
+  CustomTextFieldCotizacion({Key key, this.campo, this.comparativa, this.index, this.cont}) : super(key: key);
+  final Campo campo;
+  final Comparativa comparativa;
+  final int index;
+  final int cont;
+
+  @override
+  _CustomTextFieldCotizacionState createState() => _CustomTextFieldCotizacionState();
+}
+
+class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
+
+  bool mostrarText = true;
+  bool mostrarCampo = false;
+
+
+
+  void ocultarTextField(){
+    setState(() {
+      if(widget.comparativa.nombre == null){
+        widget.comparativa.nombre = "Propuesta" + ' ' + (widget.cont).toString();
+        mostrarText = false;
+        mostrarCampo = true;
+        print("ENTRE TEXTFIELD");
+      }else{
+        mostrarText = false;
+        mostrarCampo = true;
+      }
+    });
+  }
+
+  void ocultarText(){
+    setState(() {
+      // if(widget.comparativa.nombre == null)
+      mostrarCampo = false;
+      mostrarText = true;
+
+      print("ENTRE TEXT");
+    });
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        children: <Widget>[
+          Visibility(
+            visible: mostrarCampo,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 24.0, left: 24.0),
+              child: new TextFormField(
+                initialValue: widget.comparativa.nombre,
+                inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+                maxLength: 30,
+                maxLengthEnforced: true,
+                decoration:
+                InputDecoration(
+                  hintText: "Nombre cotización",
+                  fillColor: AppColors.color_primario,
+                  border: new OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(0.0),
+                    borderSide: new BorderSide(
+                        color: AppColors.color_primario
+                    ),
+                  ),
+                  focusedBorder:  new OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(0.0),
+                    borderSide: new BorderSide(
+                        color: AppColors.color_primario
+                    ),
+                  ),
+                  suffixIcon:  IconButton(
+                      icon: Icon(Icons.done, color: Colors.grey,),
+                      onPressed: () {
+                        setState(() {
+                          ocultarText();
+                        });
+                      }),
+                ),
+                onChanged: (valor){
+                  setState(() {
+                    widget.comparativa.nombre = valor;
+                  });
+                },
+                keyboardType: TextInputType.text,
+                style: new TextStyle(
+                  fontFamily: "Poppins",
+                ),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: mostrarText,
+            child: Padding(
+
+              padding: const EdgeInsets.only(right: 10.0, left: 10.0),
+
+              child:  Align(
+                alignment: Alignment.bottomCenter,
+                child:  ButtonBar(
+                  alignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(widget.comparativa.nombre == null ?
+                    "Propuesta" + ' ' + (widget.cont).toString() : widget.comparativa.nombre,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: AppColors.color_titulo, fontSize: 24, fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          ocultarTextField();
+                        });
+
+                      },
+                      child: Container(
+                        //padding: EdgeInsets.all(16.5),
+                        child: Icon(
+                          Icons.edit,
+                          color: AppColors.color_titulo,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+////Card
+
+class CardDinamico extends StatefulWidget {
+  CardDinamico({Key key, this.campo}) : super(key: key);
+
+  final List<Campo> campo;
+
+  @override
+  _CardDinamicoState createState() => _CardDinamicoState();
+}
+
+class _CardDinamicoState extends State<CardDinamico> {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: InkWell(
+        splashColor: Colors.blue.withAlpha(30),
+        onTap: () {
+          print('Card tapped.');
+        },
+      ),
+    );
+  }
+}
+
+class RenglonTablaDoscolumna extends StatefulWidget {
+  final String titulo;
+  final String valor;
+
+  RenglonTablaDoscolumna({Key key, this.valor, this.titulo}) : super(key: key);
+
+  @override
+  _RenglonTablaDoscolumnaState createState() => _RenglonTablaDoscolumnaState();
+}
+
+class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.color_sombra,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            flex: 1,
+            child: ListView(
+              shrinkWrap: true,
+              physics: ScrollPhysics(),
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: EdgeInsets.only(right: 8.0,bottom: 16.0, left: 8.0),
+                        child: Text(
+                          widget.titulo,
+                          style: TextStyle(
+                              color: AppColors.color_texto,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 14),
+                          textAlign: TextAlign.right,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 8.0,bottom: 16.0),
+                        child: Text(
+                          widget.valor,
+                          style: TextStyle(
+                              color: AppColors.color_texto,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                          padding: EdgeInsets.only(left: 16,right: 16),
+                          child: Divider( //002e71
+                            thickness: 0.5,
+                            color: Colors.grey,
+                            height: 0,
+                          )),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 
 ////////////////// Toggle
 
@@ -653,1010 +1653,6 @@ class _ComboBoxDependienteState extends State<ComboBoxDependiente> {
   }
 }
 
-////CHECKBOX Dependiente
-
-class CheckBoxDinamicoDependiente extends StatefulWidget {
-  CheckBoxDinamicoDependiente({Key key, this.campo, this.agregarAlDiccionario, this.actualizarSecciones}) : super(key: key);
-  final Campo campo;
-  bool currentValue = false;
-  final void Function(String, String) agregarAlDiccionario;
-  final void Function(String) actualizarSecciones;
-
-
-  @override
-  _CheckBoxDinamicoDependienteState createState() => _CheckBoxDinamicoDependienteState();
-}
-
-class _CheckBoxDinamicoDependienteState extends State<CheckBoxDinamicoDependiente> {
-
-  @override
-  void initState() {
-
-    if(widget.campo.valor!=null){
-      widget.currentValue = widget.campo.valor == "true" ? true : false;
-      print("entro al initState");
-      //widget.agregarAlDiccionario("", "");
-
-
-    }else{
-
-      if(widget.campo.checked){
-        widget.currentValue = true;
-        widget.campo.valor = "true";
-
-      }else{
-        widget.currentValue = false;
-        widget.campo.valor = "false";
-
-      }
-    }
-
-
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-
-    if(widget.campo.valor!=null){
-      widget.currentValue = widget.campo.valor == "true" ? true : false;
-    }
-
-
-    return Visibility(
-      visible: widget.campo.visible,
-      child: ListView.builder(
-          itemCount: 2,
-          shrinkWrap: true,
-          physics: ScrollPhysics(),
-          itemBuilder: (BuildContext ctxt, int index) {
-
-            if(index==0){
-              return CheckboxListTile(
-                title: Text(widget.campo.etiqueta),
-                value: widget.currentValue,
-                activeColor: AppColors.color_primario,
-                onChanged: widget.campo.enabled ? (newValue) {
-                  setState(() {
-                    widget.currentValue = newValue;
-                    newValue? widget.campo.valor = "true": widget.campo.valor= "false";
-                  });
-
-                }: null,
-                controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
-              );
-            }else{
-
-
-
-
-
-              return ListView.builder(
-                  itemCount: widget.campo.valores.length,
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemBuilder: (BuildContext ctxt, int j) {
-
-
-                    return Visibility(
-                      visible: widget.campo.valor == "true" ? true : false,
-                      child: ListView.builder(
-                          itemCount: widget.campo.valores[j].children.length,
-                          shrinkWrap: true,
-                          physics: ScrollPhysics(),
-                          itemBuilder: (BuildContext ctxt, int k) {
-                            return CampoDinamico(campo: widget.campo.valores[j].children[k], agregarDicc: widget.agregarAlDiccionario, actualizarSecciones: widget.actualizarSecciones,actualizarCodigoPostalFamiliares: () {}, validarCodigoPostalFamiliares: ()=>false,);
-                          }),
-                    );
-
-                  });
-            }
-
-          }),
-
-    );
-  }
-}
-
-//////
-
-////CALENDARIO
-
-class CalendarioDinamicoRange extends StatefulWidget {
-
-  final Campo campo;
-
-  const CalendarioDinamicoRange({Key key, this.campo}) : super(key: key);
-
-  @override
-  _CalendarioDinamicoRangeState createState() =>
-      _CalendarioDinamicoRangeState();
-}
-
-class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
-
-  Future<Null> _selectDate1(BuildContext context, DateTime selectedDate, DateTime firstDate, DateTime lastDate ) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        helpText: selectedDate.year.toString(),
-        locale: const Locale('es', 'MX'),
-        initialDate: selectedDate,
-        firstDate: firstDate,
-        lastDate: lastDate);
-    if (picked != null && picked != selectedDate)
-      setState(() {
-        widget.campo.valor = Jiffy(picked).format("yyy-MM-dd").toString();
-      });
-  }
-
-
-
-  var fecha = new DateTime.now().toString().substring(0,10);
-
-  initState(){
-    super.initState();
-
-    DateTime fecha_1_init;
-    if(widget.campo.rango.rango_inicio!=null){
-      fecha_1_init = DateTime( int.parse(widget.campo.rango.rango_inicio.substring(6,10))  , int.parse(widget.campo.rango.rango_inicio.substring(3,5)) , int.parse(widget.campo.rango.rango_inicio.substring(0,2)) );
-
-
-    }else{
-      fecha_1_init = DateTime.now();
-
-    }
-
-    if(widget.campo.valor==null || widget.campo.valor==""){
-      widget.campo.valor = Jiffy(fecha_1_init).format("yyy-MM-dd").toString();
-    }
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AbsorbPointer(
-        absorbing: !widget.campo.enabled,
-        child: Visibility(
-            visible: widget.campo.visible,
-            child: GestureDetector(
-              onTap: (){
-                DateTime now = DateTime.now();
-                _selectDate1(context, DateTime.parse(widget.campo.valor),
-                    widget.campo.rango.rango_inicio != null ? DateTime( int.parse(widget.campo.rango.rango_inicio.substring(6,10))  , int.parse(widget.campo.rango.rango_inicio.substring(3,5)) , int.parse(widget.campo.rango.rango_inicio.substring(0,2)) ) : DateTime(1900),
-                    widget.campo.rango.rango_fin != null ? DateTime( int.parse(widget.campo.rango.rango_fin.substring(6,10))  , int.parse(widget.campo.rango.rango_fin.substring(3,5)) , int.parse(widget.campo.rango.rango_fin.substring(0,2)) ) : DateTime(now.year , now.month , now.day)
-                );
-              },
-              child: Container(
-                  margin: EdgeInsets.only(top: 8),
-                  decoration: BoxDecoration(
-                      color: Utilidades.color_sombra,
-                      border: Border(
-                          bottom: BorderSide(color: Utilidades.color_primario))),
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        width: double.infinity,
-                        margin: EdgeInsets.only(left: 8, top: 8),
-                        child: Text(
-                          widget.campo.etiqueta == null
-                              ? widget.campo.nombre_campo
-                              : widget.campo.etiqueta,
-                          style: widget.campo.enabled? TextStyle(color: Utilidades.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
-                        ),
-                      ),
-                      Container(
-                          height: 30,
-                          margin: EdgeInsets.only(left: 8, top: 8, right: 8),
-                          padding: EdgeInsets.only(bottom: 8),
-                          width: double.infinity,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              //Jiffy( DateTime.parse(widget.campo.valor)).format("dd-MM-yyyy").toString()
-                              Text(Jiffy(widget.campo.valor).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),
-                                textAlign: TextAlign.left,),
-                              Icon(Icons.date_range, color: Colors.grey,)
-                            ],
-                          ))
-                    ],
-                  )
-              ),
-            )
-        )
-    );;
-  }
-}
-
-class CalendarioConRangoRelativo extends StatefulWidget {
-  final Campo campo;
-  final void Function(String, String) agregarAlDiccionario;
-  final void Function(String) actualizarSecciones;
-  //El valor de este campo estará separado por comas (Así lo requiere el Backend, en String).
-  const CalendarioConRangoRelativo({Key key, this.campo, this.agregarAlDiccionario, this.actualizarSecciones}) : super(key: key);
-
-  @override
-  _CalendarioConRangoRelativoState createState() => _CalendarioConRangoRelativoState();
-}
-
-class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo> {
-
-
-  bool calcularValor(){
-    //TODO: Verificar que sea con el campo de validacion, no sólo con un año.
-    return Jiffy(DateTime.parse(widget.campo.valor.split(",")[0])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) >1;
-  }
-
-
-  Future<Null> _selectDate1(BuildContext context, DateTime selectedDate, DateTime firstDate, DateTime lastDate ) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        locale: const Locale('es', 'MX'),
-        initialDate: selectedDate,
-        firstDate: firstDate,
-        lastDate: lastDate);
-    if (picked != null && picked != selectedDate)
-      setState(() {
-        DateTime fecha_2_init = Jiffy(picked).add(days:widget.campo.rangoRelativa[1].dia, months: widget.campo.rangoRelativa[1].mes, years:widget.campo.rangoRelativa[1].anio);
-        //Asignar el valor de las dos fechas en el valor completo del campo
-        widget.campo.valor = Jiffy(picked).format("yyy-MM-dd").toString() +","+ Jiffy(fecha_2_init).format("yyy-MM-dd").toString();
-
-      });
-  }
-
-
-  Future<Null> _selectDate2(BuildContext context, DateTime selectedDate, DateTime firstDate, DateTime lastDate ) async {
-    final DateTime picked = await showDatePicker(
-      //locale: Locale("es","MX"),
-        context: context,
-        locale: const Locale('es', 'MX'),
-        initialDate: selectedDate,
-        firstDate: firstDate,
-        lastDate: lastDate);
-    if (picked != null && picked != selectedDate)
-
-
-
-      setState(() {
-        widget.campo.valor = widget.campo.valor.split(",")[0] +","+ Jiffy(picked).format("yyy-MM-dd").toString();
-
-
-
-
-      });
-  }
-
-
-  @override
-  void initState() {
-    super.initState();
-
-    DateTime fecha_1_init = DateTime( int.parse(widget.campo.rango.rango_inicio.substring(6,10))  , int.parse(widget.campo.rango.rango_inicio.substring(3,5)) , int.parse(widget.campo.rango.rango_inicio.substring(0,2)) );
-    DateTime fecha_2_init = Jiffy(fecha_1_init).add(days:widget.campo.rangoRelativa[1].dia, months: widget.campo.rangoRelativa[1].mes, years:widget.campo.rangoRelativa[1].anio);
-
-    if(widget.campo.valor==null || widget.campo.valor==""){
-      widget.campo.valor = Jiffy(fecha_1_init).format("yyy-MM-dd").toString() +","+ Jiffy(fecha_2_init).format("yyy-MM-dd").toString();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-        itemCount: 3,
-        shrinkWrap: true,
-        physics: ScrollPhysics(),
-        itemBuilder: (BuildContext ctxt, int index) {
-
-          switch(index){
-          //Fecha 1
-          //Eal valor de la fecha 1 lo vamos a guardar siempre antes de la primer coma.
-          //El valor de la fecha 1 SIEMPRE actualiza el valor de la fecha 2
-            case 0:
-              return
-                AbsorbPointer(
-                    absorbing: !widget.campo.enabled,
-                    child: Visibility(
-                        visible: widget.campo.visible,
-                        child: GestureDetector(
-                          onTap: (){
-                            DateTime now = DateTime.now();
-                            _selectDate1(context, DateTime.parse(widget.campo.valor.split(",")[0]),
-                                widget.campo.rango.rango_inicio != null ? DateTime( int.parse(widget.campo.rango.rango_inicio.substring(6,10))  , int.parse(widget.campo.rango.rango_inicio.substring(3,5)) , int.parse(widget.campo.rango.rango_inicio.substring(0,2)) ) : DateTime(1900),
-                                widget.campo.rango.rango_fin != null ? DateTime( int.parse(widget.campo.rango.rango_fin.substring(6,10))  , int.parse(widget.campo.rango.rango_fin.substring(3,5)) , int.parse(widget.campo.rango.rango_fin.substring(0,2)) ) : DateTime(now.year , now.month , now.day)
-                            );
-                          },
-                          child: Container(
-                              margin: EdgeInsets.only(top: 8),
-                              decoration: BoxDecoration(
-                                  color: Utilidades.color_sombra,
-                                  border: Border(
-                                      bottom: BorderSide(color: Utilidades.color_primario))),
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.only(left: 8, top: 8),
-                                    child: Text(
-                                      widget.campo.etiqueta == null
-                                          ? widget.campo.nombre_campo
-                                          : widget.campo.etiqueta + " inicial",
-                                      style: widget.campo.enabled? TextStyle(color: Utilidades.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
-                                    ),
-                                  ),
-                                  Container(
-                                      height: 30,
-                                      margin: EdgeInsets.only(left: 8, top: 8),
-                                      padding: EdgeInsets.only(bottom: 8),
-                                      width: double.infinity,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(Jiffy( DateTime.parse(widget.campo.valor.split(",")[0])).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),textAlign: TextAlign.left,),
-                                          Icon(Icons.date_range, color: Colors.grey,)
-                                        ],
-                                      ))
-
-
-                                ],
-                              )
-                          ),
-                        )
-                    )
-                );
-
-
-            case 1: //Facha 2: El campo se simula un textField, aunque no se muestra uno, en realidad se muestra un botón que llama a un modal de calendario.
-            //El valor de la fecha 2 no actualiza ningún valor, pero su rango está controlado por el campo 1
-
-              return
-                AbsorbPointer(
-                    absorbing: !widget.campo.enabled,
-                    child: Visibility(
-                        visible: widget.campo.visible,
-                        child: GestureDetector(
-                          onTap: (){
-                            _selectDate2(context, DateTime.parse(widget.campo.valor.split(",")[1]),
-                                Jiffy(DateTime.parse(widget.campo.valor.split(",")[0])).add(days:widget.campo.rangoRelativa[0].dia, months: widget.campo.rangoRelativa[0].mes, years:widget.campo.rangoRelativa[0].anio),
-                                Jiffy(DateTime.parse(widget.campo.valor.split(",")[0])).add(days:widget.campo.rangoRelativa[1].dia, months: widget.campo.rangoRelativa[1].mes, years:widget.campo.rangoRelativa[1].anio));
-                          },
-                          child: Container(
-                              margin: EdgeInsets.only(top: 8),
-                              decoration: BoxDecoration(
-                                  color: Utilidades.color_sombra,
-                                  border: Border(
-                                      bottom: BorderSide(color: Utilidades.color_primario))),
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    width: double.infinity,
-                                    margin: EdgeInsets.only(left: 8, top: 8),
-                                    child: Text(
-                                      widget.campo.etiqueta == null
-                                          ? widget.campo.nombre_campo
-                                          : widget.campo.etiqueta + " final",
-                                      style: widget.campo.enabled? TextStyle(color: Utilidades.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
-                                    ),
-                                  ),
-                                  Container(
-                                      height: 30,
-                                      margin: EdgeInsets.only(left: 8, top: 8),
-                                      padding: EdgeInsets.only(bottom: 8),
-                                      width: double.infinity,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: <Widget>[
-                                          Text(Jiffy( DateTime.parse(widget.campo.valor.split(",")[1])).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),textAlign: TextAlign.left,),
-                                          Icon(Icons.date_range, color: Colors.grey,)
-                                        ],
-                                      ))
-                                ],
-                              )
-                          ),
-                        )
-                    )
-                );
-
-            case 2: // Sus hijos
-
-              if(Jiffy(DateTime.parse(widget.campo.valor.split(",")[1])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) >= 1 ){
-                widget.campo.valores[0].children[0].visible = true;
-                widget.campo.valores[1].children[0].visible = false;
-              }else{
-                widget.campo.valores[0].children[0].visible = false;
-                widget.campo.valores[1].children[0].visible = true;
-
-
-              }
-
-
-              return Column(
-                children: <Widget>[
-                  Visibility(
-                    visible: Jiffy(DateTime.parse(widget.campo.valor.split(",")[1])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) >= 1 ,
-                    child: CampoDinamico(actualizarSecciones:widget.actualizarSecciones, agregarDicc: widget.agregarAlDiccionario, campo: widget.campo.valores[0].children[0], actualizarCodigoPostalFamiliares: () {}, validarCodigoPostalFamiliares: ()=>false,),
-                  ),
-                  Visibility(
-                    visible: Jiffy(DateTime.parse(widget.campo.valor.split(",")[1])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) < 1 ,
-                    child: CampoDinamico(actualizarSecciones:widget.actualizarSecciones, agregarDicc: widget.agregarAlDiccionario, campo: widget.campo.valores[1].children[0], actualizarCodigoPostalFamiliares: () {}, validarCodigoPostalFamiliares: ()=>false,),
-                  )
-                ],
-              );
-
-              break;
-
-
-            default:
-              return Container();
-
-          }
-
-
-
-        });
-  }
-}
-
-
-////
-
-////BOTON BORDE
-
-class BotonDinamicoBorde extends StatefulWidget {
-  BotonDinamicoBorde({Key key, this.titulo}) : super(key: key);
-  final Campo titulo;
-
-  @override
-  _BotonDinamicoStateBorde createState() => _BotonDinamicoStateBorde();
-}
-
-class _BotonDinamicoStateBorde extends State<BotonDinamicoBorde> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: OutlineButton(
-        textColor: Colors.orange,
-        child: Text(widget.titulo.etiqueta),
-        onPressed: () {},
-        borderSide: BorderSide(
-          color: Colors.orange, //Color of the border
-          style: BorderStyle.solid, //Style of the border
-          width: 0.8, //width of the border
-        ),
-      ),
-    );
-  }
-}
-
-////
-
-////BOTON SIN BORDE
-
-class BotonDinamicoSinBorde extends StatefulWidget {
-  BotonDinamicoSinBorde({Key key, this.titulo}) : super(key: key);
-  final Campo titulo;
-
-  @override
-  _BotonDinamicoSinBordeState createState() => _BotonDinamicoSinBordeState();
-}
-
-class _BotonDinamicoSinBordeState extends State<BotonDinamicoSinBorde> {
-  @override
-  Widget build(BuildContext context) {
-    return OutlineButton(
-      textColor: Colors.orange,
-      color: Colors.orange,
-      child: Text(widget.titulo.toString()),
-      onPressed: () {},
-    );
-  }
-}
-
-////Text
-
-class TextoGenericoDinamico extends StatefulWidget {
-  TextoGenericoDinamico({Key key, this.texto}) : super(key: key);
-  final Campo texto;
-
-  @override
-  _TextoGenericoDinamicoState createState() => _TextoGenericoDinamicoState();
-}
-
-class _TextoGenericoDinamicoState extends State<TextoGenericoDinamico> {
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      widget.texto.toString(),
-      textAlign: TextAlign.center,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(
-          fontWeight: FontWeight.normal, color: Colors.orange, fontSize: 16),
-    );
-  }
-}
-
-/////
-
-////TextField
-
-class TextFieldDinamico extends StatefulWidget {
-  TextFieldDinamico({Key key, this.titulo}) : super(key: key);
-  final Campo titulo;
-
-  @override
-  _TextFieldDinamicoState createState() => _TextFieldDinamicoState();
-}
-
-class _TextFieldDinamicoState extends State<TextFieldDinamico> {
-  @override
-  Widget build(BuildContext context) {
-    if (widget.titulo.obligatorio) {
-      return Visibility(
-        visible: widget.titulo.visible,
-        child: TextFormField(
-          onSaved: (String value) {
-            widget.titulo.valor = value;
-
-            print("llegue al onsave " + widget.titulo.valor);
-          },
-          onChanged: (valor) {
-            widget.titulo.valor = valor;
-            print(widget.titulo.valor);
-          },
-          validator: (value) {
-            print(value);
-            print("dato lenght" + value.length.toString());
-            print("dato longitud" + widget.titulo.dato_longitud.toString());
-            if (value.isEmpty) {
-              return "El campo no debe estar vacío";
-            } else {
-              //if(widget.titulo.validaLongitud(value.length)){
-              if (true) {
-                print("en teoria, esta ok");
-
-                return null;
-              } else {
-                print("en teoria, fuera de rango");
-
-                return "Esta fuera de rango";
-              }
-            }
-          },
-          keyboardType: TextInputType.text,
-          decoration: InputDecoration(
-              focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Utilidades.color_primario)),
-              enabledBorder:  UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)) ,
-
-              border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Utilidades.color_primario)),
-              labelStyle: TextStyle(color: Utilidades.color_primario),
-              hintText: widget.titulo.etiqueta,
-              labelText: widget.titulo.etiqueta),
-        ),
-      );
-    }
-
-    if (widget.titulo.tipo_dato == "integer") {
-      return TextFormField(
-        keyboardType: TextInputType.number,
-        decoration: InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color:Utilidades.color_primario)),
-            enabledBorder:  UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)) ,
-
-            border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Utilidades.color_primario)),
-            labelStyle: TextStyle(color:Utilidades.color_primario),
-            hintText: widget.titulo.etiqueta,
-            labelText: widget.titulo.etiqueta),
-      );
-    } else {
-      return TextFormField(
-        decoration: InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Utilidades.color_primario)),
-            enabledBorder:  UnderlineInputBorder(borderSide: BorderSide(color: Utilidades.color_primario)) ,
-
-            border: UnderlineInputBorder(
-                borderSide: BorderSide(color: Utilidades.color_primario)),
-            labelStyle: TextStyle(color: Utilidades.color_primario),
-            hintText: widget.titulo.etiqueta,
-            labelText: widget.titulo.etiqueta),
-      );
-    }
-  }
-}
-
-/////
-
-////TextField
-
-class CustomTextField extends StatefulWidget {
-  final Campo campo;
-  final void Function(String, String) agregarAlDiccionario;
-  final void Function(String) actualizarSecciones;
-  final void Function() actualizarCodigoPostalFamiliares;
-  final bool Function() validarCodigoPostalFamiliares;
-
-  const CustomTextField({
-    Key key,
-    this.campo,
-    this.agregarAlDiccionario,
-    this.actualizarSecciones,
-    this.actualizarCodigoPostalFamiliares,
-    this.validarCodigoPostalFamiliares,
-  }) : super(key: key);
-
-  @override
-  _CustomTextFieldState createState() => _CustomTextFieldState();
-}
-
-class _CustomTextFieldState extends State<CustomTextField> {
-  String codigoPostal = '';
-
-  void actualizarCodigoPostalFamiliares() {
-    setState(() {
-      widget.actualizarCodigoPostalFamiliares();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    final GlobalCupertinoLocalizations localizations = CupertinoLocalizations.of(context);
-    TextEditingController _controller;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(right: 8, left: 8),
-            decoration: BoxDecoration(
-                color: Utilidades.color_sombra,
-                border: Border(
-                    bottom: BorderSide(color: Utilidades.color_primario))),
-            child: Visibility(
-              visible: widget.campo.visible,
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    color: Utilidades.color_sombra,
-                    width: double.infinity,
-                    margin: EdgeInsets.only(top: 8),
-                    child: Text(widget.campo.obligatorio == true ? widget.campo.etiqueta + " *" : widget.campo.etiqueta,
-                      style: TextStyle(color: Utilidades.color_primario, fontSize: 15),
-                    ),
-                  ),
-                  Container(
-                    height: 40,
-                    child: new SingleChildScrollView(
-                      physics: NeverScrollableScrollPhysics(),
-                      reverse: true,
-                      child: TextFormField(
-                        controller: _controller,
-                        key: ValueKey('Key_' + widget.campo.hashCode.toString() + "_" + DateTime.now().millisecondsSinceEpoch.toString()),
-                        inputFormatters: [new WhitelistingTextInputFormatter(new RegExp(widget.campo.reg_ex)), //[0-9]
-                          LengthLimitingTextInputFormatter(widget.campo.dato_longitud!=null ? widget.campo.dato_longitud.length == 2 ?  widget.campo.dato_longitud[1] : widget.campo.dato_longitud[0]: null ,)],
-                        enabled: widget.campo.enabled,
-                        maxLengthEnforced: true,
-                        onSaved: (String value) {
-                          widget.campo.valor = value;
-                          print("llegue al onsave " + widget.campo.valor);
-                        },
-                        onChanged: (valor) {
-                          widget.campo.valor = valor;
-                          if ( (widget.campo.id_seccion == Utilidades.titularSeccion && widget.campo.id_campo == Utilidades.titularCampo) ) {
-                            widget.campo.valor = valor;
-                            if (valor != codigoPostal && widget.validarCodigoPostalFamiliares() == true) {
-                              if (valor.length == 5) {
-                                codigoPostal = valor;
-                                showDialog<void>(
-                                  context: context,
-                                  barrierDismissible: false, // user must tap button!
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('Aviso'),
-                                      content: SingleChildScrollView(
-                                        child: ListBody(
-                                          children: <Widget>[
-                                            Text(Mensajes.cambioCP),
-                                          ],
-                                        ),
-                                      ),
-                                      actions: <Widget>[
-                                        FlatButton(
-                                          child: Text('Cancelar'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-                                        FlatButton(
-                                          child: Text('Aceptar'),
-                                          onPressed: () {
-                                            Utilidades.actualizarCodigoPostalAdicional = true;
-                                            actualizarCodigoPostalFamiliares();
-                                            Navigator.of(context).pop();
-                                          },
-                                        ),
-
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            }
-                          }
-                          // Se agrega validación para cuando se edita una cotización y el adicional cambia CP
-                          if(widget.campo.id_seccion == null && widget.campo.id_campo == Utilidades.titularCampo && Utilidades.actualizarCodigoPostalAdicional == false){
-                            widget.campo.valor = valor;
-                            if (valor != codigoPostal) {
-                              if(widget.validarCodigoPostalFamiliares == null){
-                                if (valor.length == 5) {
-                                  codigoPostal = valor;
-                                  print("VALIDA cuando idsecc null: " + valor.toString());
-                                }
-                              }else if(widget.validarCodigoPostalFamiliares() == true){
-                                if (valor.length == 5) {
-                                  codigoPostal = valor;
-                                  print("VALIDA cuando idsecc null: " + valor.toString());
-                                  showDialog<void>(
-                                    context: context,
-                                    barrierDismissible: false, // user must tap button!
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('Aviso'),
-                                        content: SingleChildScrollView(
-                                          child: ListBody(
-                                            children: <Widget>[
-                                              Text(Mensajes.cambioCP),
-                                            ],
-                                          ),
-                                        ),
-                                        actions: <Widget>[
-                                          FlatButton(
-                                            child: Text('Cancelar'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          FlatButton(
-                                            child: Text('Aceptar'),
-                                            onPressed: () {
-                                              Utilidades.actualizarCodigoPostalAdicional = true;
-                                              actualizarCodigoPostalFamiliares();
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }
-                              }
-                            }
-                          }
-                        },
-                        initialValue: widget.campo.valor,
-                        validator:(value) {
-                          setState(() {
-                            print("validando"+ value);
-                            widget.campo.isValid = widget.campo.validaCampo(value);
-                          });
-                          return null;
-
-                        },
-                        keyboardType: widget.campo.tipo_dato=="integer" || widget.campo.reg_ex == "[0-9]" ?TextInputType.number:TextInputType.text,
-                        decoration: InputDecoration(
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide:
-                              BorderSide(color: Colors.transparent)),
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide:
-                              BorderSide(color: Colors.transparent)),
-
-                          //labelStyle: TextStyle(color: Utilidades.color_primario),
-                          labelStyle: TextStyle(
-                              color: Utilidades.color_texto_campo, fontSize: 15),
-                          hintStyle: TextStyle(
-                              color: Utilidades.color_texto_campo, fontSize: 15),
-                          hasFloatingPlaceholder: false,
-                          hintText: widget.campo.etiqueta,
-                          //labelText: widget.campo.etiqueta),
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Visibility(
-            visible: widget.campo.error != "" ? true : false,
-            child: Container(
-              width: double.infinity,
-              margin: EdgeInsets.only(top: 8),
-              child: Text(
-                widget.campo.error,
-                style: TextStyle(color: Utilidades.color_primario, fontSize: 15),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CustomTextFieldCotizacion extends StatefulWidget{
-  CustomTextFieldCotizacion({Key key, this.campo, this.comparativa, this.index, this.cont}) : super(key: key);
-  final Campo campo;
-  final Comparativa comparativa;
-  final int index;
-  final int cont;
-
-  @override
-  _CustomTextFieldCotizacionState createState() => _CustomTextFieldCotizacionState();
-}
-
-class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
-
-  bool mostrarText = true;
-  bool mostrarCampo = false;
-
-
-
-  void ocultarTextField(){
-    setState(() {
-      if(widget.comparativa.nombre == null){
-        widget.comparativa.nombre = "Propuesta" + ' ' + (widget.cont).toString();
-        mostrarText = false;
-        mostrarCampo = true;
-        print("ENTRE TEXTFIELD");
-      }else{
-        mostrarText = false;
-        mostrarCampo = true;
-      }
-    });
-  }
-
-  void ocultarText(){
-    setState(() {
-      // if(widget.comparativa.nombre == null)
-      mostrarCampo = false;
-      mostrarText = true;
-
-      print("ENTRE TEXT");
-    });
-  }
-
-
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 8),
-      child: Column(
-        children: <Widget>[
-          Visibility(
-            visible: mostrarCampo,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 24.0, left: 24.0),
-              child: new TextFormField(
-                initialValue: widget.comparativa.nombre,
-                inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
-                maxLength: 30,
-                maxLengthEnforced: true,
-                decoration:
-                InputDecoration(
-                  hintText: "Nombre cotización",
-                  fillColor: Utilidades.color_primario,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(0.0),
-                    borderSide: new BorderSide(
-                        color: Utilidades.color_primario
-                    ),
-                  ),
-                  focusedBorder:  new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(0.0),
-                    borderSide: new BorderSide(
-                        color: Utilidades.color_primario
-                    ),
-                  ),
-                  suffixIcon:  IconButton(
-                      icon: Icon(Icons.done, color: Colors.grey,),
-                      onPressed: () {
-                        setState(() {
-                          ocultarText();
-                        });
-                      }),
-                ),
-                onChanged: (valor){
-                  setState(() {
-                    widget.comparativa.nombre = valor;
-                  });
-                },
-                keyboardType: TextInputType.text,
-                style: new TextStyle(
-                  fontFamily: "Poppins",
-                ),
-              ),
-            ),
-          ),
-          Visibility(
-            visible: mostrarText,
-            child: Padding(
-
-              padding: const EdgeInsets.only(right: 10.0, left: 10.0),
-
-              child:  Align(
-                alignment: Alignment.bottomCenter,
-                child:  ButtonBar(
-                  alignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(widget.comparativa.nombre == null ?
-                    "Propuesta" + ' ' + (widget.cont).toString() : widget.comparativa.nombre,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Utilidades.color_titulo, fontSize: 24, fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          ocultarTextField();
-                        });
-
-                      },
-                      child: Container(
-                        //padding: EdgeInsets.all(16.5),
-                        child: Icon(
-                          Icons.edit,
-                          color: Utilidades.color_titulo,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),),
-        ],
-      ),
-    );
-  }
-}
-
-
-/////
-
-////Card
-
-class CardDinamico extends StatefulWidget {
-  CardDinamico({Key key, this.campo}) : super(key: key);
-
-  final List<Campo> campo;
-
-  @override
-  _CardDinamicoState createState() => _CardDinamicoState();
-}
-
-class _CardDinamicoState extends State<CardDinamico> {
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        splashColor: Colors.blue.withAlpha(30),
-        onTap: () {
-          print('Card tapped.');
-        },
-      ),
-    );
-  }
-}
 
 class SwitchConImagen extends StatefulWidget {
 
@@ -1740,7 +1736,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                       child: Container(
                         decoration: new BoxDecoration(
                           color: esMujer
-                              ? Utilidades.color_primario
+                              ? AppColors.color_primario
                               : Colors.white,
                           shape: BoxShape.circle,
                         ),
@@ -1751,7 +1747,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                             icon: ImageSwitch(image: widget.campo.valores[0].icono, isOn: esMujer), //mujer
                             color: esMujer
                                 ? Colors.white
-                                : Utilidades.color_switch_apagado,
+                                : AppColors.color_switch_apagado,
                             iconSize: 50,
                             onPressed: () {
                               setState(() {
@@ -1774,7 +1770,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                       child:  Container(
                         decoration: new BoxDecoration(
                           color: esHombre
-                              ? Utilidades.color_primario
+                              ? AppColors.color_primario
                               : Colors.white,
                           shape: BoxShape.circle,
                         ),
@@ -1782,7 +1778,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                           icon: ImageSwitch(image: widget.campo.valores[1].icono, isOn: esHombre),//Icon(CotizadorUnicoApp.hombre),
                           color: esHombre
                               ? Colors.white
-                              : Utilidades.color_switch_apagado,
+                              : AppColors.color_switch_apagado,
                           iconSize: 50,
                           onPressed: () {
                             setState(() {
@@ -1818,7 +1814,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                     child: Text(widget.campo.valores[0].descripcion, style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.bold,
-                      color: Utilidades.color_titulo,
+                      color: AppColors.color_titulo,
                     ),
                     ),
                   ),
@@ -1830,7 +1826,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                     child: Text(widget.campo.valores[1].descripcion, style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
-                        color: Utilidades.color_titulo),
+                        color: AppColors.color_titulo),
                     ),
                   ),
                 ),
@@ -1942,7 +1938,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                                 child: Container(
                                   decoration: new BoxDecoration(
                                     color: esValor1
-                                        ? Utilidades.color_primario
+                                        ? AppColors.color_primario
                                         : Colors.white,
                                     shape: BoxShape.circle,
                                   ),
@@ -1955,7 +1951,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                                       color: esValor1
 
                                           ? Colors.white
-                                          : Utilidades.color_switch_apagado,
+                                          : AppColors.color_switch_apagado,
                                       iconSize: 50,
                                       onPressed: () {
                                         setState(() {
@@ -1974,7 +1970,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                                 child:  Container(
                                   decoration: new BoxDecoration(
                                     color: esValor2
-                                        ? Utilidades.color_primario
+                                        ? AppColors.color_primario
                                         : Colors.white,
                                     shape: BoxShape.circle,
                                   ),
@@ -1982,7 +1978,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                                     icon: ImageSwitch(image: widget.campo.valores[1].icono, isOn: esValor2), //hombre
                                     color: esValor2
                                         ? Colors.white
-                                        : Utilidades.color_switch_apagado,
+                                        : AppColors.color_switch_apagado,
                                     iconSize: 50,
                                     onPressed: () {
                                       setState(() {
@@ -2014,7 +2010,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                               child: Text(widget.campo.valores[0].descripcion, style: TextStyle(
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold,
-                                color: Utilidades.color_titulo,
+                                color: AppColors.color_titulo,
                               ),
                               ),
                             ),
@@ -2026,7 +2022,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                               child: Text(widget.campo.valores[1].descripcion, style: TextStyle(
                                   fontSize: 12.0,
                                   fontWeight: FontWeight.bold,
-                                  color: Utilidades.color_titulo),
+                                  color: AppColors.color_titulo),
                               ),
                             ),
                           ),
@@ -2067,58 +2063,6 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
   }
 }
 
-class RenglonTablaDoscolumna extends StatefulWidget {
-  final String titulo;
-  final String valor;
-  RenglonTablaDoscolumna({Key key, this.valor, this.titulo}) : super(key: key);
-  @override
-  _RenglonTablaDoscolumnaState createState() => _RenglonTablaDoscolumnaState();
-}
-
-class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
-  @override
-
-
-
-
-  Widget build(BuildContext context) {
-    return Container(
-
-      color: Utilidades.color_sombra,
-      child: Row(
-
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-
-        Expanded(
-        flex: 1,
-        child: Column(
-
-          children: <Widget>[
-
-            Row(
-              children: <Widget>[
-
-                Expanded(
-                  flex: 1,
-                  child: Text(widget.titulo,style: TextStyle(
-                      color: Utilidades.color_texto, fontWeight: FontWeight.normal, fontSize: 16),),),
-
-                Expanded(
-                  flex: 1,
-                  child: Text(widget.valor,style: TextStyle(
-                      color: Utilidades.color_texto, fontWeight: FontWeight.normal, fontSize: 16),),
-                ),
-              ],
-            ),
-          ],
-        ),
-        )
-        ],
-      ),
-    );
-  }
-}
 
 class CardCoberturas extends StatefulWidget {
 
@@ -2155,14 +2099,14 @@ class _CardCoberturasState extends State<CardCoberturas> {
     return Visibility(
       visible: widget.campo.visible,
       child: Container(
-        color: Utilidades.color_sombra,
+        color: AppColors.color_sombra,
         child: Column(
           children: <Widget>[
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(8.0),
               child: Text(widget.campo.etiqueta,
-                style: TextStyle(color: Utilidades.color_titulo, fontWeight: FontWeight.w600, fontSize: 16),),
+                style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w600, fontSize: 16),),
             ),
 
             ListView.builder(
@@ -2181,7 +2125,7 @@ class _CardCoberturasState extends State<CardCoberturas> {
                         Visibility(
                           visible: widget.campo.valores[index].visible,
                           child: Text("\u2022 " + widget.campo.valores[index].descripcion,
-                            style: TextStyle(color: Utilidades.color_titulo, fontWeight: FontWeight.w400, fontSize: 16),),
+                            style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w400, fontSize: 16),),
                         ),
                       ],
                     ),
@@ -2194,4 +2138,3 @@ class _CardCoberturasState extends State<CardCoberturas> {
     );
   }
 }
-
