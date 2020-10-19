@@ -830,13 +830,13 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                     }, (){ //ACEPTAR
 
                                                       Navigator.pop(context);
-                                                      Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
+                                                      //Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
 
-                                                      /*Navigator.push(
+                                                      Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) => CotizacionVista(),
-                                                          ));*/
+                                                          ));
 
                                                     });
                                                   }
@@ -847,13 +847,13 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                 }else{
                                                   print("No se cumplen reglas");
 
-                                                  Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
+                                                  //Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
 
-                                                  /*Navigator.push(
+                                                  Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
                                                         builder: (context) => CotizacionVista(),
-                                                      ));*/
+                                                      ));
 
                                                 }
 
