@@ -14,7 +14,7 @@ void main() {
     serviceEndPoint: 'http://150.23.58.197/AppCobros/rest/',
     ambient: Ambient.uat,
     serviceLogin: 'https://cuentas-uat.gnp.com.mx/auth/login',
-   // serviceBCA: 'https://bca-ws-uat.gnp.com.mx',
+    serviceBCA: 'https://bca-ws-uat.gnp.com.mx',
     apikeyBCA: 'd41d8cd98f00b204e9800998ecf8427e',
     apikeyBCABonos: '04985d13-d1d4-4032-9fe6-faa14c18d464',
     serviceBonosLogin:'https://api-uat.oscp.gnp.com.mx/bca-bonos/BCABonosSegundoPwd',

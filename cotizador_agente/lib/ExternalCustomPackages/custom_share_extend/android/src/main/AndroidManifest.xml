@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.zt.shareextend">
+
+    <application>
+
+        <provider
+            android:name="com.zt.shareextend.ShareExtendProvider"
+            android:authorities="${applicationId}.shareextend.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/share_extend_provider_path" />
+        </provider>
+
+    </application>
+</manifest>

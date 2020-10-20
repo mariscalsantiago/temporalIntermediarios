@@ -1,13 +1,47 @@
 
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/Perfil/PerfilPage.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
+import 'package:cotizador_agente/vistas/Inicio/Bienvenida.dart';
+import 'package:cotizador_agente/vistas/Inicio/LoginPage.dart';
 import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
 import 'package:cotizador_agente/vistas/SendEmail.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+int timerMinuts = 20;
+int timerSec = 1200;
+DateTime sessionStartDate;
+var inWebView = false;
+var isLogActive = true;
+
+void printLog(String where, String what) {
+  if (isLogActive) {
+    print("_" + where + ": " + what);
+  } else {}
+}
+
+enum editType {
+  salud,
+  estudios,
+  familiar,
+  texto,
+  correo,
+  telefono,
+  direccion,
+  poliza,
+  contatoEmergencia,
+  nickname,
+  visa,
+  pasaporte,
+  playera,
+  condiciones,
+  deportes,
+  acompaniante
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -101,6 +135,8 @@ class MyApp extends StatelessWidget {
       ],
       initialRoute: '/',
       routes: {
+        '/login': (buildContext) => LoginPage(),
+        '/perfil': (buildContext) => PerfilPage(),
         '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
         '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
         '/cotizadorUnicoAPPasoDos': (buildContext) => FormularioPaso2(),
@@ -112,7 +148,7 @@ class MyApp extends StatelessWidget {
           textTheme: TextTheme(
               body1: TextStyle(fontSize: 18.0),
               body2: TextStyle(fontSize: 18.0))),
-      home: SeleccionaCotizadorAP(),
+      home: LoginPage(),
     );
   }
 }

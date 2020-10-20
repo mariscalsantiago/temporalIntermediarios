@@ -12,7 +12,7 @@ void main() {
     serviceEndPoint: 'http://10.67.83.12/AppCobros/rest/',
     ambient: Ambient.qa,
     serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
-   // serviceBCA: 'https://bca-ws-qa.gnp.com.mx',
+    serviceBCA: 'https://bca-ws-qa.gnp.com.mx',
     apikeyBCABonos:'04985d13-d1d4-4032-9fe6-faa14c18d464',
     serviceBonosLogin:'https://api-qa.oscp.gnp.com.mx/bca-bonos/BCABonosSegundoPwd',
     apikeyBCA: 'd41d8cd98f00b204e9800998ecf8427e',

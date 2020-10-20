@@ -14,6 +14,7 @@ class AppConfig extends InheritedWidget {
     @required this.serviceEndPoint,
     @required this.serviceEndPointCuentas,
     @required this.serviceLogin,
+    @required this.serviceBCA,
     @required this.apikeyBCABonos,
     @required this.serviceBonosLogin,
     @required this.apikeyBCA,
@@ -35,6 +36,7 @@ class AppConfig extends InheritedWidget {
     @required Widget child,
     @required this.agentCod,
     @required this.apikeyBCABusqueda,
+    @required this.serviceBCABase,
     @required this.apiKeyCampaniasService,
     @required this.urlCampaniasService,
     @required this.urlNotifierService,
@@ -89,6 +91,7 @@ class AppConfig extends InheritedWidget {
   final String serviceConteoClientes;
   final String apiKeyTipoDeCambio;
   final String urlTipoDeCambio;
+  final String serviceBCA;
   final String apikeyBCABonos;
   final String serviceBonosLogin;
   final String proyectId;
@@ -96,6 +99,7 @@ class AppConfig extends InheritedWidget {
   final String agentCod;
   final String apikeyBCA;
   final String apikeyAppAgentes;
+  final String serviceBCABase;
   final String apikeyBCABusqueda;
   final String apiKeyCampaniasService;
   final String urlCampaniasService;

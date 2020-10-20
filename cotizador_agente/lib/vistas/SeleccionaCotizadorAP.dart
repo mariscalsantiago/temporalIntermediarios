@@ -37,6 +37,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   void initState() {
     //negociosOper();
     super.initState();
+    this._getNegociosOperables();
   }
 
   _getNegociosOperables( ) async {
@@ -54,7 +55,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
         Map<String, dynamic> jsonMap = {
           "consultaNegocio": {
-            "idParticipante": "datosUsuario.idparticipante.toString()"
+            "idParticipante": "MMONTA330374"
           }
         };
 
@@ -128,13 +129,12 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
         Map<String, String> headers = {
           "Content-type": "application/json",
-          "Authorization" : "loginData.jwt"
+          "Authorization" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJmaXJlYmFzZS1qd3RAZ25wLWFwcGFnZW50ZXMtcWEuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJzdWIiOiJmaXJlYmFzZS1qd3RAZ25wLWFwcGFnZW50ZXMtcWEuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJhdWQiOiJodHRwczpcL1wvaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tXC9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTYwMzEyNzIxNiwiZXhwIjoxNjAzMTI5MDE2LCJwcm9qZWN0aWQiOiJnbnAtYXBwYWdlbnRlcy1xYSIsInVpZCI6Ik1NT05UQTMzMDM3NCIsImNsYWltcyI6eyJyb2wiOiJNb250YWx2byBSb2RyaWd1ZXoiLCJuZWdvY2lvc09wZXJhYmxlcyI6Ik1NT05UQTMzMDM3NCIsImlkcGFydGljaXBhbnRlIjoiTU1PTlRBMzMwMzc0IiwibWFpbCI6Im1hcmlvbW9udGFsdm9Ac2VndXJvc21vbnRhbHZvLmNvbSIsImFwZW1hdGVybm8iOiIiLCJnaXZlbm5hbWUiOiJNYXJpbyBNb250YWx2byBSb2RyaWd1ZXoiLCJhcGVwYXRlcm5vIjoiIiwiY3VlbnRhYmxvcXVlYWRhIjpmYWxzZSwidGlwb3VzdWFyaW8iOiJpbnRlcm1lZGlhcmlvcyIsImNlZHVsYSI6IiIsInJvbGVzIjpbIkFnZW50ZXMiLCJTZWd1cm8gTWFzaXZvIiwiU2VndXJvIFBlcnNvbmFzIiwiR00gV29yayBTaXRlIENvdGl6YSJdfX0.tCTGnZYipt6jzX-wq_k03sojnWjvXmTSnEPmue-hVLiBJEf2NIwrlnSV0vwW3xwEprrvF1jr7DnaAqBcKTDzOZ447Cmu6tjRqi2RlOCRHlL5_3wH_kA71Lo9nn8tT21vg0HQCTzgRYSonkG4dzDN2JExekqJgRBIxmp4hP1197XBCiqYis4zBpJGHAr1KHtxOuRlB1FkZY_j_VcuSv3UfMa-EhVrH-m9InllFWACBv18n66gMgdNOBmjICoekxib5qiFFU7qsOm1fVthAaEqwwb1a4UMYpQ8v1GeCpRtLU58BBFk6ZGNp4vPtaohtv6xja-ilUPzaesWKxAwDTmKVQ"
         };
 
         Map<String, dynamic> jsonMap = {
-          "clave_negocio_operable": negocioOperable.idNegocioOperable,
-          "correo": "datosUsuario.mail"
-
+        "clave_negocio_operable": "NOP0002000",
+        "correo": "mariomontalvo@segurosmontalvo.com"
         };
         // make POST request
         Response response = await post(config.urlCotizadores, headers: headers, body: json.encode(jsonMap));

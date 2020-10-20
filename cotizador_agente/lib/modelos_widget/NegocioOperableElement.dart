@@ -153,7 +153,7 @@ class _NegocioOperableElementState
 
             Utilidades.idAplicacion = 2343;//int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
             Utilidades.tipoDeNegocio = "Planes Individuales";//widget.negocioOperable.cotizadores[j].aplicacion;
-            seccionCotizador();
+          //  seccionCotizador();
             //Navigator.pushNamed(FormularioPaso1; FormularioPaso1;,);
             Utilidades.deboCargarPaso1 = false;
             //Navigator.pop(FormularioPaso1);
