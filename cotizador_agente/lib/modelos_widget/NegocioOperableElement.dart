@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
@@ -65,8 +67,8 @@ class _NegocioOperableElementState
     //SECCIÓN: datos Cotizador Anaytics
     Map<String, dynamic> parameters_Cotizador = Map<String, dynamic>();
     parameters_Cotizador["seccion"] = "datosCotizador";
-    parameters_Cotizador["datosIdParticipante"] = "datosUsuario.idparticipante.toString()";
-    parameters_Cotizador["datosNombreParticipante"] = "datosUsuario.givenname";
+    parameters_Cotizador["datosIdParticipante"] = datosUsuario.idparticipante.toString();
+    parameters_Cotizador["datosNombreParticipante"] = datosUsuario.givenname;
     parameters_Cotizador["datosIdAplicacion"] = "AppAgentes/" + platform + "/" + Utilidades.idAplicacion.toString();
     parameters_Cotizador["datosTipoDeNegocio"] = Utilidades.tipoDeNegocio;
     parameters_Cotizador["datosPortal"] = "AppAgentes/" + platform + "/" + Utilidades.idAplicacion.toString();
@@ -130,8 +132,8 @@ class _NegocioOperableElementState
   @override
   Widget build(BuildContext context) {
 
-    return Visibility(
-      visible: true,//widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
+    /*return Visibility(
+      visible: widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
       child: Container(
         color: Colors.white,
         width: double.infinity,
@@ -141,7 +143,7 @@ class _NegocioOperableElementState
             color: Colors.white,
             width: double.infinity,
             child: Text(
-              "Cotizador",//widget.negocioOperable.cotizadores[j].aplicacion,
+              widget.negocioOperable.cotizadores[j].aplicacion,
               textAlign: TextAlign.left,
               style: TextStyle(color: Colors.grey),
             ),
@@ -151,8 +153,8 @@ class _NegocioOperableElementState
 
             Utilidades.cotizacionesApp = nuevo;
 
-            Utilidades.idAplicacion = 2343;//int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
-            Utilidades.tipoDeNegocio = "Planes Individuales";//widget.negocioOperable.cotizadores[j].aplicacion;
+            int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
+            widget.negocioOperable.cotizadores[j].aplicacion;
           //  seccionCotizador();
             //Navigator.pushNamed(FormularioPaso1; FormularioPaso1;,);
             Utilidades.deboCargarPaso1 = false;
@@ -163,10 +165,10 @@ class _NegocioOperableElementState
             },
         ),
       ),
-    );
+    );*/
 
-    /*return Visibility(
-      visible: true,//widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
+    return Visibility(
+      visible: widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
       child: Column(
         children: <Widget>[
           Container(
@@ -226,45 +228,66 @@ class _NegocioOperableElementState
               ],
             ),
             //child: FlatButton(onPressed:(){ FormularioPaso1;}, child: null),
-            child: Visibility(
-              visible: estaAbierto,
-              child: Container(
-                  color: Colors.white,
-                  width: double.infinity,
+            child: ListView.builder(
 
-                  child: FlatButton(
+                itemCount: widget.negocioOperable.cotizadores.length,
+                shrinkWrap: true,
+                physics: ScrollPhysics(),
+                itemBuilder: (BuildContext ctxt, int j) {
+                  /*if((!widget.negocioOperable.cotizadores[j].estatus ) && (!widget.negocioOperable.cotizadores[j].visible_movil)){
+                    return Container();
+                  }*/
+
+
+                  return Visibility(
+                    visible: estaAbierto && widget.negocioOperable.cotizadores[j].estatus && widget.negocioOperable.cotizadores[j].visible_movil,
                     child: Container(
-                      width: double.infinity,
-                      child: Text(
-                        "Cotizador",//widget.negocioOperable.cotizadores[j].aplicacion,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                    onPressed: () {
-                      CotizacionesApp nuevo = new CotizacionesApp();
+                        color: Colors.white,
+                        width: double.infinity,
 
-                      Utilidades.cotizacionesApp = nuevo;
+                        child: FlatButton(
+                          child: Container(
+                            width: double.infinity,
+                            child: Text(
+                              widget.negocioOperable.cotizadores[j].aplicacion,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          onPressed: () {
+                            CotizacionesApp nuevo = new CotizacionesApp();
 
+                            Utilidades.cotizacionesApp = nuevo;
 
-                      Utilidades.idAplicacion = 2343;//int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
-                      Utilidades.tipoDeNegocio = "Planes Individuales";//widget.negocioOperable.cotizadores[j].aplicacion;
-                      seccionCotizador();
-                      //Navigator.pushNamed(FormularioPaso1; FormularioPaso1;,);
-                      Utilidades.deboCargarPaso1 = false;
-                      //Navigator.pop(FormularioPaso1);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => FormularioPaso1(),
-                          ));
+                            if(widget.negocioOperable.cotizadores[j].mensaje != null) {
+                              Utilidades.mostrarAlertaCallback(
+                                  Mensajes.titleContinuar, widget.negocioOperable.cotizadores[j].mensaje, context, () {
+                                Navigator.pop(context);
+                              }, () {
+                                Navigator.pop(context);
+                                Utilidades.idAplicacion = int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
+                                Utilidades.tipoDeNegocio = widget.negocioOperable.cotizadores[j].aplicacion;
+                                seccionCotizador();
+                                Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoUno",);
+                                Utilidades.deboCargarPaso1 = false;
+                              });
+                            }
 
-                    },
-                  )),
-            ),
+                            else{
+                              Utilidades.idAplicacion = int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
+                              Utilidades.tipoDeNegocio = widget.negocioOperable.cotizadores[j].aplicacion;
+                              seccionCotizador();
+                              Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoUno",);
+                              Utilidades.deboCargarPaso1 = false;
+                            }
+
+                          },
+                        )),
+                  );
+                }),
           ),
         ],
       ),
-    );*/
+    );
   }
 }

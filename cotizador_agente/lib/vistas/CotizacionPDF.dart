@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 //import 'package:agentesgnp/Functions/Analytics.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/vistas/SendEmail.dart';
@@ -14,7 +15,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/widgets.dart';
-//import 'package:agentesgnp/Modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
@@ -77,7 +77,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
           if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-            Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : "loginData.jwt"};
+            Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
 
             //TO DO: Revisar esta cambio para ver si es correcto.
             Map<String, dynamic> jsonMap = {

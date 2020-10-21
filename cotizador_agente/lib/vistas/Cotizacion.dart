@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'dart:core';
 import 'dart:async';
@@ -6,7 +7,6 @@ import 'dart:io';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:cotizador_agente/cotizador_analitycs_tags.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
-//import 'package:agentesgnp/Modelos/LoginModels.dart';
 
 import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
@@ -121,7 +121,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
         try{
 
-          Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : "loginData.jwt"};
+          Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
 
           Response response = await post("https://gmm-cotizadores-qa.gnp.com.mx/orquestador-cotizador/generar-cotizacion", body: json.encode(widget.jsonMap), headers: headers);
 
@@ -378,7 +378,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
           try{
 
-            Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : "loginData.jwt"};
+            Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
 
             String resumen;
 
@@ -435,7 +435,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
             ////TODO: Revisar esta cambio. HAY UNA BRECHA EN EL SERVICIO DEL BACK 1 - POLIZA, 2 - COMPARATIVA, 3 - COMISIONES
             Map<String, dynamic> jsonMap = {
-              "idUsuario":  "MMONTA330374",//"datosUsuario.idparticipante".toString(),
+              "idUsuario": datosUsuario.idparticipante.toString(),
               "idAplicacion": Utilidades.idAplicacion,
               "codIntermediario": "0060661001",//"datosPerfilador.intermediarios".toString().replaceAll("[", "").replaceAll("]", ""),
               "idPlan": idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,

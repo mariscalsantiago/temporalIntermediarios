@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos_widget/NegocioOperableElement.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
@@ -13,14 +14,7 @@ import 'package:http/http.dart';
 
 class SeleccionaCotizadorAP extends StatefulWidget {
   List<NegocioOperable> negociosOperables = new List<NegocioOperable>();
-  NegocioOperable negocioOperableNew = NegocioOperable(
-    ramo: "Fuerza Productora Regular GMM",
-    negocioOperable: "NOP0002000",
-    idNegocioOperable: "G",
-    idNegocioComercial: "NC00000FPR",
-    idUnidadNegocio: "SDP",
-  );
-  SeleccionaCotizadorAP({Key key, this.negocioOperableNew}) : super(key: key);
+  SeleccionaCotizadorAP({Key key, this.negociosOperables}) : super(key: key);
 
 
   @override
@@ -55,7 +49,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
         Map<String, dynamic> jsonMap = {
           "consultaNegocio": {
-            "idParticipante": "MMONTA330374"
+            "idParticipante": datosUsuario.idparticipante.toString(),
           }
         };
 
@@ -129,12 +123,12 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
         Map<String, String> headers = {
           "Content-type": "application/json",
-          "Authorization" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJmaXJlYmFzZS1qd3RAZ25wLWFwcGFnZW50ZXMtcWEuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJzdWIiOiJmaXJlYmFzZS1qd3RAZ25wLWFwcGFnZW50ZXMtcWEuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJhdWQiOiJodHRwczpcL1wvaWRlbnRpdHl0b29sa2l0Lmdvb2dsZWFwaXMuY29tXC9nb29nbGUuaWRlbnRpdHkuaWRlbnRpdHl0b29sa2l0LnYxLklkZW50aXR5VG9vbGtpdCIsImlhdCI6MTYwMzEyNzIxNiwiZXhwIjoxNjAzMTI5MDE2LCJwcm9qZWN0aWQiOiJnbnAtYXBwYWdlbnRlcy1xYSIsInVpZCI6Ik1NT05UQTMzMDM3NCIsImNsYWltcyI6eyJyb2wiOiJNb250YWx2byBSb2RyaWd1ZXoiLCJuZWdvY2lvc09wZXJhYmxlcyI6Ik1NT05UQTMzMDM3NCIsImlkcGFydGljaXBhbnRlIjoiTU1PTlRBMzMwMzc0IiwibWFpbCI6Im1hcmlvbW9udGFsdm9Ac2VndXJvc21vbnRhbHZvLmNvbSIsImFwZW1hdGVybm8iOiIiLCJnaXZlbm5hbWUiOiJNYXJpbyBNb250YWx2byBSb2RyaWd1ZXoiLCJhcGVwYXRlcm5vIjoiIiwiY3VlbnRhYmxvcXVlYWRhIjpmYWxzZSwidGlwb3VzdWFyaW8iOiJpbnRlcm1lZGlhcmlvcyIsImNlZHVsYSI6IiIsInJvbGVzIjpbIkFnZW50ZXMiLCJTZWd1cm8gTWFzaXZvIiwiU2VndXJvIFBlcnNvbmFzIiwiR00gV29yayBTaXRlIENvdGl6YSJdfX0.tCTGnZYipt6jzX-wq_k03sojnWjvXmTSnEPmue-hVLiBJEf2NIwrlnSV0vwW3xwEprrvF1jr7DnaAqBcKTDzOZ447Cmu6tjRqi2RlOCRHlL5_3wH_kA71Lo9nn8tT21vg0HQCTzgRYSonkG4dzDN2JExekqJgRBIxmp4hP1197XBCiqYis4zBpJGHAr1KHtxOuRlB1FkZY_j_VcuSv3UfMa-EhVrH-m9InllFWACBv18n66gMgdNOBmjICoekxib5qiFFU7qsOm1fVthAaEqwwb1a4UMYpQ8v1GeCpRtLU58BBFk6ZGNp4vPtaohtv6xja-ilUPzaesWKxAwDTmKVQ"
+          "Authorization" : loginData.jwt
         };
 
         Map<String, dynamic> jsonMap = {
-        "clave_negocio_operable": "NOP0002000",
-        "correo": "mariomontalvo@segurosmontalvo.com"
+        "clave_negocio_operable": negocioOperable.idNegocioOperable,
+        "correo": datosUsuario.mail
         };
         // make POST request
         Response response = await post(config.urlCotizadores, headers: headers, body: json.encode(jsonMap));
@@ -188,18 +182,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   @override
   Widget build(BuildContext context) {
 
-    if(Utilidades.negociosOperables.length == 0){
-      //widget.negociosOperables = Utilidades.negociosOperables;
-      Cotizadores cotizador = Cotizadores(id_aplicacion: 2343,cantidad_asegurados: 6,aplicacion: "Planes Individuales",descripcion: "Cotizador WEB con configuración PI",estatus: true,visible_movil: true,mensaje: null);
-      NegocioOperable negocioOperable = NegocioOperable(
-        ramo: "Fuerza Productora Regular GMM",
-        negocioOperable: "NOP0002000",
-        idNegocioOperable: "G",
-        idNegocioComercial: "NC00000FPR",
-        idUnidadNegocio: "SDP",
-      );
-      //negocioOperable.cotizadores.add(cotizador);
-      widget.negociosOperables.add(negocioOperable);
+    if(Utilidades.negociosOperables.length > 0){
+      widget.negociosOperables = Utilidades.negociosOperables;
       isLoading = false;
     }else{
       if(widget.negociosOperables == null){
@@ -220,7 +204,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         children:  <Widget>[
 
           Visibility(
-            visible:  true,//widget.negociosOperables[0].cotizadores != null,
+            visible:  widget.negociosOperables[0].cotizadores != null,
             child: Expanded(
               child: new ListView.builder(
                   itemCount: widget.negociosOperables.length,

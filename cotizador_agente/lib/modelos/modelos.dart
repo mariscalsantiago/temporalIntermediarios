@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 
@@ -466,8 +467,8 @@ class FormularioCotizacion {
     });
 
     Map<String, dynamic> responseResumen = {
-      "idParticipante": "datosUsuario.idparticipante.toString()",
-      "nombreParticipante": "datosUsuario.givenname",
+      "idParticipante": datosUsuario.idparticipante.toString(),
+      "nombreParticipante": datosUsuario.givenname,
       "parametroCotizador": Utilidades.idAplicacion,
       "seccion": secciones,
     };

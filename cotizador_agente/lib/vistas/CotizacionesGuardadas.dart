@@ -1,11 +1,11 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/widgets/date-picker-custom-component.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
-//import 'package:cotizador_agente/Modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_reglon_tabla.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
@@ -106,7 +106,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
 
           Map<String, String> headers = {
             "Content-Type": "application/json",
-            "Authorization": "loginData.jwt"
+            "Authorization": loginData.jwt
           };
 
           Response response = await http.post("config.urlBorraCotizacion", body: json.encode(jsonMap), headers: headers);
@@ -187,7 +187,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
           Map<String, dynamic> jsonMap = {
             "idAplicacion": Utilidades.idAplicacion,
             "pagina": pagina,
-            "idUsuario": "MMONTA330374",//datosUsuario.idparticipante.toString()
+            "idUsuario": datosUsuario.idparticipante.toString()
           };
 
 
@@ -203,7 +203,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
               case "nombre":
                 jsonMap = {
                   "idAplicacion": Utilidades.idAplicacion,
-                  "idUsuario": "MMONTA330374",//datosUsuario.idparticipante.toString(),
+                  "idUsuario": datosUsuario.idparticipante.toString(),
                   "titularCotizacion": nombreFiltro,
                   "pagina": pagina
                 };
@@ -212,7 +212,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
 
                 jsonMap = {
                   "idAplicacion": Utilidades.idAplicacion,
-                  "idUsuario": "MMONTA330374",//datosUsuario.idparticipante.toString(),
+                  "idUsuario": datosUsuario.idparticipante.toString(),
                   "nombreCotizacion": nombreCotizacionFiltro,
                   "pagina": pagina
                 };
@@ -220,7 +220,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
               case "fecha":
                 jsonMap = {
                   "idAplicacion": Utilidades.idAplicacion,
-                  "idUsuario": "MMONTA330374",//datosUsuario.idparticipante.toString(),
+                  "idUsuario": datosUsuario.idparticipante.toString(),
                   "fechaInicio": fechaInicioFiltro.substring(0, 10),
                   "fechaFin": fechaFinFiltro.substring(0, 10),
                   "pagina": pagina
@@ -235,7 +235,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
           //Utilidades.LogPrint("JSONMAP COT G: " + jsonMap.toString());
           Map<String, String> headers = {
             "Content-Type": "application/json",
-            "Authorization": "loginData.jwt"
+            "Authorization": loginData.jwt
           };
 
 
