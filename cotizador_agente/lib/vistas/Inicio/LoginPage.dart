@@ -4,8 +4,6 @@ import 'dart:io';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/vistas/Inicio/AvisoPrivacidad.dart';
 import 'package:cotizador_agente/vistas/Inicio/LoginServices.dart';
-import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
@@ -23,7 +21,6 @@ bool canCheckBiometrics;
 bool canShowBiometrics = true;
 List<BiometricType> availableBiometrics;
 SharedPreferences prefs;
-final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 final flutterWebviewPlugin = new FlutterWebviewPlugin();
 
 
@@ -309,68 +306,6 @@ class LogInBodyState extends State<LogInBody> {
 
   @override
   void initState() {
-    getHuella();
-
-    _firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) async {
-        print("onMessage: $message");
-        if (message.containsKey('data')) {
-          final dynamic data = message['data'];
-          final dynamic idEvento = data['idEvento'];
-          print("onResume idEvento => $idEvento");
-
-          /*pathEventos = "eventos#/detalleevento/$idEvento";
-          print(pathEventos);
-          flutterWebviewPlugin.reloadUrl("$urlEventos/$pathEventos");
-          */
-
-          //flutterWebviewPlugin.evalJavascript("window.location.href = '/web/eventosgnp/eventos#/detalleevento/$idEvento';");
-
-          flutterWebviewPlugin.onUrlChanged.listen((String url) {
-            print("onResume Change Url => $url");
-          });
-        }
-      },
-      onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch: $message");
-        if (message.containsKey('data')) {
-          final dynamic data = message['data'];
-          final dynamic idEvento = data['idEvento'];
-          print("onResume idEvento => $idEvento");
-
-          /*pathEventos = "eventos#/detalleevento/$idEvento";
-          print(pathEventos);
-          flutterWebviewPlugin.reloadUrl("$urlEventos/$pathEventos");
-          */
-
-          //flutterWebviewPlugin.evalJavascript("window.location.href = '/web/eventosgnp/eventos#/detalleevento/$idEvento';");
-
-          flutterWebviewPlugin.onUrlChanged.listen((String url) {
-            print("onResume Change Url => $url");
-          });
-        }
-      },
-      onResume: (Map<String, dynamic> message) async {
-        print("onResume: $message");        if (message.containsKey('data')) {
-          final dynamic data = message['data'];
-          final dynamic idEvento = data['idEvento'];
-          print("onResume idEvento => $idEvento");
-
-          /*pathEventos = "eventos#/detalleevento/$idEvento";
-          print(pathEventos);
-          flutterWebviewPlugin.reloadUrl("$urlEventos/$pathEventos");
-          */
-
-          //flutterWebviewPlugin.evalJavascript("window.location.href = '/web/eventosgnp/eventos#/detalleevento/$idEvento';");
-
-          flutterWebviewPlugin.onUrlChanged.listen((String url) {
-            print("onResume Change Url => $url");
-          });
-        }
-
-      },
-    );
-
     super.initState();
   }
 
@@ -389,14 +324,6 @@ class LogInBodyState extends State<LogInBody> {
             alignment: Alignment.topCenter,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            decoration: BoxDecoration(
-              color: Theme.Colors.White,
-              image: DecorationImage(
-                image: ExactAssetImage('assets/img/image_gnp_agente_white.png'),
-                alignment: Alignment.bottomCenter,
-                fit: BoxFit.contain,
-              ),
-            ),
             child: ListView(shrinkWrap: true, children: [
               Container(
                   alignment: Alignment.topCenter,
@@ -569,199 +496,6 @@ class LogInBodyState extends State<LogInBody> {
                       ),
                     ),
                   ),
-                  canCheckBiometrics != null &&
-                      canCheckBiometrics &&
-                      validHuella ? Container(
-                      margin: EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              //height: 300,
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(width: 1.0, color: Theme.Colors.LightGray),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8.0 ),
-                            child: Text('o',
-                                style:
-                                Theme.TextStyles.DarkGrayRegular14px,
-                              ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              //height: 300,
-                              decoration: const BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(width: 1.0, color: Theme.Colors.LightGray),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ):Container(),
-
-                  canCheckBiometrics != null &&
-                      canCheckBiometrics &&
-                      validHuella
-                      ? Platform.isIOS
-                      ? availableBiometrics != null &&
-                      availableBiometrics
-                          .contains(BiometricType.face)
-                      ? Container(
-                      width: 296,
-                      child: FlatButton(
-                          color: Theme.Colors.White,
-                          textColor: Colors.white,
-                          padding: EdgeInsets.all(8.0),
-                          splashColor: Colors.white,
-                          shape: new RoundedRectangleBorder(
-                            side: BorderSide(
-                                width: 1.0,
-                                color: Theme.Colors.DarkGray),
-                          ),
-                          onPressed: () {
-                            onHuella();
-                          },
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                child: Image.asset(
-                                    'assets/icon/login/facial.png'),
-                                margin: EdgeInsets.only(right: 16),
-                              ),
-                              Text(
-                                AppStrings.StringsMX.loginFace,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    color: Theme.Colors.Dark,
-                                    fontSize: 19.0,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Roboto"),
-                              )
-                            ],
-                          )))
-                      : availableBiometrics != null &&
-                      availableBiometrics
-                          .contains(BiometricType.fingerprint)
-                      ? Container(
-                      width: 296,
-                      child: FlatButton(
-                          color: Theme.Colors.Orange,
-                          textColor: Colors.white,
-                          padding: EdgeInsets.all(8.0),
-                          splashColor: Colors.orange,
-                          onPressed: () {
-                            onHuella();
-                          },
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                child: Image.asset(
-                                    'assets/icon/login/huella.png'),
-                                margin:
-                                EdgeInsets.only(right: 16),
-                              ),
-                              Text(
-                                AppStrings
-                                    .StringsMX.loginFinger,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    color:
-                                    Theme.Colors.White,
-                                    fontSize: 19.0,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Roboto"),
-                              )
-                            ],
-                          )))
-                      : Container()
-                      : availableBiometrics != null &&
-                      availableBiometrics
-                          .contains(BiometricType.fingerprint)
-                      ? Container(
-                      width: 296,
-                      child: FlatButton(
-                          color: Theme.Colors.Orange,
-                          textColor: Colors.white,
-                          padding: EdgeInsets.all(8.0),
-                          splashColor: Colors.orange,
-                          onPressed: () {
-                            onHuella();
-                          },
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                child: Image.asset(
-                                    'assets/icon/login/huella.png'),
-                                margin: EdgeInsets.only(right: 16),
-                              ),
-                              Text(
-                                AppStrings.StringsMX.loginFinger,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    color: Theme.Colors.White,
-                                    fontSize: 19.0,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Roboto"),
-                              )
-                            ],
-                          )))
-                      : availableBiometrics != null &&
-                      availableBiometrics
-                          .contains(BiometricType.face)
-                      ? Container(
-                      width: 296,
-                      child: FlatButton(
-                          color: Theme.Colors.White,
-                          textColor: Colors.white,
-                          padding: EdgeInsets.all(8.0),
-                          splashColor: Colors.white,
-                          shape: new RoundedRectangleBorder(
-                            side: BorderSide(
-                                width: 1.0,
-                                color:
-                                Theme.Colors.DarkGray),
-                          ),
-                          onPressed: () {
-                            onHuella();
-                          },
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            children: <Widget>[
-                              Container(
-                                child: Image.asset(
-                                    'assets/icon/login/facial.png'),
-                                margin:
-                                EdgeInsets.only(right: 16),
-                              ),
-                              Text(
-                                AppStrings.StringsMX.loginFace,
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                    color:
-                                    Theme.Colors.Dark,
-                                    fontSize: 19.0,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Roboto"),
-                              )
-                            ],
-                          )))
-                      : Container()
-                      : Container()
                 ],
               )
             ])),
