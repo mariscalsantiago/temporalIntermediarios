@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'dart:core';
-import 'package:cotizador_agente/Modelos/LoginModels.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 //import 'package:agentesgnp/PagoMovil/constants.dart';
 //import 'MobilePayServiceDictionary.dart';
 import 'Validate.dart';

@@ -62,6 +62,10 @@ android {
                 abiFilters 'armeabi-v7a'
             }
         }
+        debug {
+            minifyEnabled false
+            useProguard false
+        }
     }
 }
 

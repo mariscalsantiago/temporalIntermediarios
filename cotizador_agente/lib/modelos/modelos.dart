@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
 
-import 'package:cotizador_agente/modelos_widget/reglonTabla.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 

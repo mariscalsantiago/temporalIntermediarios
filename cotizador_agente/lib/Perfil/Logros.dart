@@ -2,7 +2,7 @@ import 'package:cotizador_agente/vistas/Inicio/LoginServices.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/Functions/Analytics.dart';
-import 'package:cotizador_agente/Modelos/LoginModels.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/Custom/Widgets/CustomAlerts.dart';
 
 class LogrosTab extends StatefulWidget {
