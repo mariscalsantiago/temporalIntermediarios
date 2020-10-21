@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Widgets/CustomAlerts.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
-import 'package:cotizador_agente/Modelos/LoginModels.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/Perfil/Contacto.dart';

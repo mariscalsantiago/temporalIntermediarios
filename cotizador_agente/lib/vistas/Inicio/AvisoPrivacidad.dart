@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:cotizador_agente/Modelos/LoginModels.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';

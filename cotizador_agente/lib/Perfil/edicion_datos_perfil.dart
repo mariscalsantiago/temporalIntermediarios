@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cotizador_agente/Custom/Widgets/CustomRadioItem.dart';
 
-import 'package:cotizador_agente/Modelos/LoginModels.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/Custom/Styles/Strings.dart' as AppStrings;
 import 'Contacto.dart';
