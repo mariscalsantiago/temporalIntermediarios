@@ -15,7 +15,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="cotizador_agente"
+        android:label="Cotizador AP"
         android:icon="@mipmap/ic_launcher">
 
         <meta-data
