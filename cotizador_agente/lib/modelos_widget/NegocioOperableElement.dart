@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class NegocioOperableElement extends StatefulWidget {
 class _NegocioOperableElementState
     extends State<NegocioOperableElement> {
   //Inicializacion de pestaña
-  bool estaAbierto = false;
+  bool estaAbierto = true;
   IconData icon = Icons.expand_more;
   //FlutterWebviewPlugin _flutterWebViewPlugin = new FlutterWebviewPlugin();
   String _initialURL="";
@@ -171,7 +172,7 @@ class _NegocioOperableElementState
       visible: widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
       child: Column(
         children: <Widget>[
-          Container(
+          /*Container(
             height: 80,
             margin: EdgeInsets.only(right: 8, left: 8, top: 8),
             decoration: BoxDecoration(
@@ -216,8 +217,86 @@ class _NegocioOperableElementState
                     ],
                   ),
                 )),
+          ),*/
+          ExpansionTile(
+            title: Text(widget.negocioOperable.negocioOperable,
+            style: new TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.w600,
+                color: AppColors.color_Etiqueta),),
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(right: 8, left: 8, top: 2, bottom: 8),
+                decoration: BoxDecoration(
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        blurRadius: 3,
+                        offset: Offset(0, 3))
+                  ],
+                ),
+                //child: FlatButton(onPressed:(){ FormularioPaso1;}, child: null),
+                child: ListView.builder(
+
+                    itemCount: widget.negocioOperable.cotizadores.length,
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemBuilder: (BuildContext ctxt, int j) {
+                      /*if((!widget.negocioOperable.cotizadores[j].estatus ) && (!widget.negocioOperable.cotizadores[j].visible_movil)){
+                    return Container();
+                  }*/
+
+
+                      return Visibility(
+                        visible: estaAbierto && widget.negocioOperable.cotizadores[j].estatus && widget.negocioOperable.cotizadores[j].visible_movil,
+                        child: Container(
+                            color: Colors.white,
+                            width: double.infinity,
+
+                            child: FlatButton(
+                              child: Container(
+                                width: double.infinity,
+                                child: Text(
+                                  widget.negocioOperable.cotizadores[j].aplicacion,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                              onPressed: () {
+                                CotizacionesApp nuevo = new CotizacionesApp();
+
+                                Utilidades.cotizacionesApp = nuevo;
+
+                                if(widget.negocioOperable.cotizadores[j].mensaje != null) {
+                                  Utilidades.mostrarAlertaCallback(
+                                      Mensajes.titleContinuar, widget.negocioOperable.cotizadores[j].mensaje, context, () {
+                                    Navigator.pop(context);
+                                  }, () {
+                                    Navigator.pop(context);
+                                    Utilidades.idAplicacion = int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
+                                    Utilidades.tipoDeNegocio = widget.negocioOperable.cotizadores[j].aplicacion;
+                                    seccionCotizador();
+                                    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                                    Utilidades.deboCargarPaso1 = false;
+                                  });
+                                }
+
+                                else{
+                                  Utilidades.idAplicacion = int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
+                                  Utilidades.tipoDeNegocio = widget.negocioOperable.cotizadores[j].aplicacion;
+                                  seccionCotizador();
+                                  Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                                  Utilidades.deboCargarPaso1 = false;
+                                }
+
+                              },
+                            )),
+                      );
+                    }),
+              ),
+            ],
           ),
-          Container(
+          /*Container(
             margin: EdgeInsets.only(right: 8, left: 8, top: 2, bottom: 8),
             decoration: BoxDecoration(
               boxShadow: <BoxShadow>[
@@ -234,9 +313,9 @@ class _NegocioOperableElementState
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
                 itemBuilder: (BuildContext ctxt, int j) {
-                  /*if((!widget.negocioOperable.cotizadores[j].estatus ) && (!widget.negocioOperable.cotizadores[j].visible_movil)){
+                  *//*if((!widget.negocioOperable.cotizadores[j].estatus ) && (!widget.negocioOperable.cotizadores[j].visible_movil)){
                     return Container();
-                  }*/
+                  }*//*
 
 
                   return Visibility(
@@ -285,7 +364,7 @@ class _NegocioOperableElementState
                         )),
                   );
                 }),
-          ),
+          ),*/
         ],
       ),
     );

@@ -72,7 +72,7 @@ class _SendEmailState extends State<SendEmail> {
           };
 
 
-          Response response = await post("config.urlEnviaEmail", body: json.encode(jsonMap) , headers: headers);
+          Response response = await post(config.urlEnviaEmail, body: json.encode(jsonMap) , headers: headers);
 
           int statusCode = response.statusCode;
 

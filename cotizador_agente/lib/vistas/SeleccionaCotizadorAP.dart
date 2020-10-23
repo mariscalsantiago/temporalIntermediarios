@@ -221,16 +221,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                             offset: Offset(1.0, 3.0),
                           ),
                         ]),
-                    child: new ExpansionTile(
-                      title: new Text(widget.negociosOperables[0].negocioOperable,
-                        style: new TextStyle(
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.color_appBar),),
-                      children: <Widget>[
-                        NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
-                      ],
-                    ),
+                    child: NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
                   );
                 }
               ),

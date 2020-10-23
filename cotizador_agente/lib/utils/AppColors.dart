@@ -15,6 +15,7 @@ class AppColors {
   static HexColor color_backgroundApp = HexColor("#F4F4F4");
   static HexColor color_borde = HexColor("E8EEF8");
   static HexColor color_encabezado_guardados = HexColor("6c7480");
+  static HexColor color_Etiqueta = HexColor("647085");
 }
 
 class HexColor extends Color {
