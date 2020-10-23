@@ -181,7 +181,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
       if (myTextEditControllerCP.text.length == 5) {
         if (lasnumber != myTextEditControllerCP.text) {
           lasnumber = myTextEditControllerCP.text;
-          domicilio = (await getCodigoPostal(myTextEditControllerCP.text)) as DomicilioModel;
+          domicilio = null;
           if (domicilio != null) {
           //  print("domicilio");
             myTextEditControllerCiudad.text = domicilio.ciudad.descripcionValor;
@@ -632,7 +632,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
                             myTextEditControllerPais.text != null &&
                             myTextEditControllerPais.text != "") {
                           _saving = true;
-                          saveGeneric(widget.type);
+                          //saveGeneric(widget.type);
                         } else {
                           customAlert(
                               AlertDialogType.mensajeGenericoDataIncomplete,
@@ -642,7 +642,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
                         }
                       } else {
                         _saving = true;
-                        saveGeneric(widget.type);
+                        //saveGeneric(widget.type);
                       }
                     }
                   });
@@ -751,7 +751,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
                   onFieldSubmitted: (S) {
                     if (_formKey.currentState.validate()) {
                       _saving = true;
-                      saveGeneric(editType.correo);
+                      //saveGeneric(editType.correo);
                     }
                   },
                   controller: myTextEditControllerEmail,
@@ -871,7 +871,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
                   onFieldSubmitted: (S) {
                     if (_formKey.currentState.validate()) {
                       _saving = true;
-                      saveGeneric(editType.estudios);
+                      //saveGeneric(editType.estudios);
                     }
                   },
                   keyboardType: TextInputType.text,
@@ -930,7 +930,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
                   onFieldSubmitted: (S) {
                     if (_formKey.currentState.validate()) {
                       _saving = true;
-                      saveGeneric(editType.telefono);
+                      //saveGeneric(editType.telefono);
                     }
                   },
                   decoration: InputDecoration(
@@ -1078,7 +1078,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
                   onFieldSubmitted: (S) {
                     if (_formKey.currentState.validate()) {
                       _saving = true;
-                      saveGeneric(editType.poliza);
+                      //saveGeneric(editType.poliza);
                     }
                   },
                   controller: myTextEditControllerPolicyEnd,
@@ -1921,7 +1921,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
                 onFieldSubmitted: (S) {
                   if (_formKey.currentState.validate()) {
                     _saving = true;
-                    saveGeneric(editType.pasaporte);
+                    //saveGeneric(editType.pasaporte);
                   }
                 },
                 style: TextStyle(
@@ -2422,7 +2422,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
                 onFieldSubmitted: (S) {
                   if (_formKey.currentState.validate()) {
                     _saving = true;
-                    saveGeneric(editType.visa);
+                    //saveGeneric(editType.visa);
                   }
                 },
                 style: TextStyle(
@@ -2829,7 +2829,7 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
     });
   }
 
-  Future saveGeneric(editType type) async {
+  /*Future saveGeneric(editType type) async {
     bool responce;
     switch (type) {
       case editType.correo:
@@ -3311,5 +3311,5 @@ class EdicionDatosPerfilState extends State<EdicionDatosPerfil>
             "${mensajeStatus.title}", "${mensajeStatus.message}");
       }
     });
-  }
+  }*/
 }

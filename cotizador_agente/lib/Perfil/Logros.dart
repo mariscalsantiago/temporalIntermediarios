@@ -82,7 +82,7 @@ class LogrosTabState extends State<LogrosTab>{
                         if(selectedItem!=currentCuaLogros){
                           setState(() {
                               _loader =true;
-                            _getData(selectedItem);
+                            //_getData(selectedItem);
                           });
                         }
                       },
@@ -96,7 +96,7 @@ class LogrosTabState extends State<LogrosTab>{
     ) : Container();
   }
 
-  Future _getData(String newCUA) async {
+  /*Future _getData(String newCUA) async {
     var response = await getPersonaMoral(newCUA,1);
     if(response!=null){
       currentCuaLogros = newCUA ;
@@ -108,7 +108,7 @@ class LogrosTabState extends State<LogrosTab>{
     setState(() {
       _loader =false;
     });
-  }
+  }*/
 
   List<DropdownMenuItem<String>> makeCUADropList() {
     List<DropdownMenuItem<String>> items = new List();

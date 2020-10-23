@@ -164,7 +164,7 @@ class LogInBodyState extends State<LogInBody> {
   bool isInternet = true;
 
   redirect() async {
-    prefs.setBool("availableSesion", true);
+    //prefs.setBool("availableSesion", true);
     loginPasswordController.clear();
     loginEmailController.clear();
     setState(() {});
@@ -175,7 +175,7 @@ class LogInBodyState extends State<LogInBody> {
       );
     }else {
       Navigator.pushNamed(context, '/cotizadorUnicoAP').then((val){
-        getHuella();
+        //getHuella();
       });
     }
     _saving = false;
@@ -298,7 +298,7 @@ class LogInBodyState extends State<LogInBody> {
 
   @override
   void dispose() {
-    getHuella();
+    //getHuella();
     myFocusNodePasswordLogin.dispose();
     myFocusNodeEmailLogin.dispose();
     super.dispose();

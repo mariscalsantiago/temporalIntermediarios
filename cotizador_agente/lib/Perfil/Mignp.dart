@@ -131,7 +131,7 @@ class MignpState extends State<Mignp>{
                       if(selectedItem!=currentCuaGNP){
                         setState(() {
                           _loader =true;
-                          _buildData(selectedItem);
+                          //_buildData(selectedItem);
                         });
                       }
                     },
@@ -145,7 +145,7 @@ class MignpState extends State<Mignp>{
     ) : Container();
   }
 
-  Future _buildData(String newCUA) async {
+  /*Future _buildData(String newCUA) async {
     mignp.clear();
     var response = await getPersonaMoral(newCUA,3);
     if(response!=null){
@@ -292,7 +292,7 @@ class MignpState extends State<Mignp>{
     setState(() {
       _loader =false;
     });
-  }
+  }*/
 
   List<DropdownMenuItem<String>> makeCUADropList() {
     List<DropdownMenuItem<String>> items = new List();

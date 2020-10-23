@@ -83,8 +83,8 @@ class DesignacionesState extends State<Designaciones>{
                       if(selectedItem!=currentCuaDesignaciones){
                         setState(() {
                           setState(() {
-                            _loader =true;
-                            _buildData(selectedItem);
+                            _loader =false;
+                            //_buildData(selectedItem);
                           });
                         }
                         );
@@ -156,7 +156,7 @@ class DesignacionesState extends State<Designaciones>{
     return Ruta;
   }
 
-  Future _buildData(String newCUA) async{
+  /*Future _buildData(String newCUA) async{
     var response = await getPersonaMoral(newCUA,2);
     if(response!=null){
       currentCuaDesignaciones = newCUA ;
@@ -169,7 +169,7 @@ class DesignacionesState extends State<Designaciones>{
     setState(() {
       _loader =false;
     });
-  }
+  }*/
 
 
   Widget _buildDesignacion() {

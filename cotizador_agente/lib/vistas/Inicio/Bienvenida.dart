@@ -52,7 +52,7 @@ class _WelcomePageState extends State<WelcomePage>
                       ),
                     )
                 ),
-                Expanded(
+                /*Expanded(
                     flex: 5,
                     child: FutureBuilder(
                       future: pathTemporalBucket(context,welcomeObject.bucketName, welcomeObject.pathFile ),
@@ -70,7 +70,7 @@ class _WelcomePageState extends State<WelcomePage>
                         }
                       },
                     )
-                ),
+                ),*/
                 Expanded(
                     flex: 4,
                     child: Container(

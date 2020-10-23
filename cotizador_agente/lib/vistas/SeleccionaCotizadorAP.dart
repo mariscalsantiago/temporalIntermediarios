@@ -123,12 +123,12 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
         Map<String, String> headers = {
           "Content-type": "application/json",
-          "Authorization" : loginData.jwt
+          "Authorization" : loginData.jwt.toString()
         };
 
         Map<String, dynamic> jsonMap = {
-        "clave_negocio_operable": negocioOperable.idNegocioOperable,
-        "correo": datosUsuario.mail
+        "clave_negocio_operable": negocioOperable.idNegocioOperable.toString(),
+        "correo": datosUsuario.mail.toString(),
         };
         // make POST request
         Response response = await post(config.urlCotizadores, headers: headers, body: json.encode(jsonMap));
