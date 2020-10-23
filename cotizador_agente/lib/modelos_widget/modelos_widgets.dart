@@ -198,31 +198,39 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
         child: Visibility(
           visible: widget.campo.visible,
           child: Container(
-            color: AppColors.color_sombra,
+            //color: AppColors.color_sombra,
             child: Column(
               children: <Widget>[
+                Divider(
+                  color: AppColors.color_Bordes, height: 1
+                ),
                 Container(
                   width: double.infinity,
                   margin: EdgeInsets.only(left: 8, top: 8),
+                  padding: EdgeInsets.only(bottom: 8),
                   child: Text(
                     widget.campo.etiqueta == null
                         ? widget.campo.nombre_campo
                         : widget.campo.etiqueta,
-                    style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                    style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
                   ),
                 ),
                 Container(
                   //height: 60,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                    border: Border.all(color: AppColors.color_Bordes, style: BorderStyle.solid, width: 1.0),
+                  ),
                   child: DropdownButtonFormField(
                     value:  widget.campo.valor,
                     items: getDropDownMenuItems(),
                     onChanged: changedDropDownItem,
-                    decoration: InputDecoration(
+                    /*decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(top: 0, bottom: 0),
                       enabledBorder: UnderlineInputBorder(
                           borderSide:widget.campo.enabled?
                           BorderSide(color: AppColors.color_primario): BorderSide(color: Colors.grey )),
-                    ),
+                    ),*/
                   ),
                 )
               ],
