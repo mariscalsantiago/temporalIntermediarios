@@ -301,49 +301,53 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                 visible: widget.secc.multiplicador>=1,
                 child: Visibility(
                   visible: widget.secc.children_secc.length <= widget.secc.multiplicador-1,
-                  child: Row(
+                  child: Column(
                     children: <Widget>[
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          height: 50,
-                          width: 50,
-                          child: FittedBox(
-                            child: FloatingActionButton(
-                              onPressed: _aumentar,
-                              heroTag: "btn1",
-                              tooltip: "Agregar "+ widget.secc.seccion,
-                              child: const Icon(Icons.add, color: Colors.white,),
-                              backgroundColor: AppColors.color_primario,
-                              elevation: 0,
+                      Row(
+                        children: <Widget>[
+                          Expanded(flex: 9, child: Text(botonAgregarEtiqueta(widget.secc.id_seccion), style: TextStyle(color:AppColors.color_appBar,),)),
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              height: 50,
+                              width: 50,
+                              child: FittedBox(
+                                child: FloatingActionButton(
+                                  onPressed: _aumentar,
+                                  heroTag: "btn1",
+                                  tooltip: "Agregar "+ widget.secc.seccion,
+                                  child: Icon(Icons.add, color: AppColors.color_naranja_primario, size: 50,),
+                                  backgroundColor: AppColors.color_background_blanco,
+                                  elevation: 0,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      Expanded(flex: 6, child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(botonAgregarEtiqueta(widget.secc.id_seccion), style: TextStyle(color:AppColors.color_primario, fontSize: 16),),
-                      )),
-                      Visibility(
-                        visible: widget.secc.children_secc.isNotEmpty,
-                        child: Expanded(
-                          flex: 2,
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            child: Container(),/* FittedBox(
-                              child: FloatingActionButton(
-                                onPressed: _decrementar,
-                                heroTag: "btn2",
-                                tooltip: "Eliminar",
-                                child: Icon(Icons.delete, color: Utilidades.color_primario,),
-                                backgroundColor: Colors.white,
-                                elevation: 0.5,
+                          Visibility(
+                            visible: widget.secc.children_secc.isNotEmpty,
+                            child: Expanded(
+                              flex: 2,
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                child: Container(),/* FittedBox(
+                                  child: FloatingActionButton(
+                                    onPressed: _decrementar,
+                                    heroTag: "btn2",
+                                    tooltip: "Eliminar",
+                                    child: Icon(Icons.delete, color: Utilidades.color_primario,),
+                                    backgroundColor: Colors.white,
+                                    elevation: 0.5,
+                                  ),
+                                ), */
                               ),
-                            ), */
+                            ),
                           ),
-                        ),
-                      )
+                        ],
+                      ),
+                      Divider(
+                          color: AppColors.color_Bordes, height: 1
+                      ),
                     ],
                   ),
                 ),

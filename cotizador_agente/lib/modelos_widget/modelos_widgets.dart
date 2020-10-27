@@ -27,6 +27,7 @@ class ComboBoxDinamico extends StatefulWidget {
 class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
   //String valorActual;
+  bool isUnValor;
 
 
   void asignarValorDefault(){
@@ -68,6 +69,8 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
     /*if(widget.campo.esConsulta && Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan ==null){
       Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan =  widget.campo.valores[0].id;
     }*/
+    isUnValor = widget.campo.valores.length > 1 ? false : true;
+
     if(widget.campo.valor == null){ //SE INICIALIZA CAMPO
 
       asignarValorDefault();
@@ -210,21 +213,30 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                   padding: EdgeInsets.only(bottom: 8),
                   child: Text(
                     widget.campo.etiqueta == null
-                        ? widget.campo.nombre_campo
-                        : widget.campo.etiqueta,
+                        ? widget.campo.nombre_campo.toUpperCase()
+                        : widget.campo.etiqueta.toUpperCase(),
                     style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
                   ),
                 ),
                 Container(
                   //height: 60,
                   decoration: BoxDecoration(
+                    color: isUnValor ? AppColors.color_background : AppColors.color_background_blanco,
                     borderRadius: BorderRadius.all(Radius.circular(4.0)),
                     border: Border.all(color: AppColors.color_Bordes, style: BorderStyle.solid, width: 1.0),
+                      boxShadow: [
+                        BoxShadow(
+                            color: AppColors.color_background,
+                            blurRadius: 1.0,
+                            spreadRadius: 1.0,
+                            offset: Offset(0.0, 1.5))
+                      ]
                   ),
                   child: DropdownButtonFormField(
                     value:  widget.campo.valor,
                     items: getDropDownMenuItems(),
-                    onChanged: changedDropDownItem,
+                    onChanged: isUnValor ? null : changedDropDownItem,
+                    disabledHint: Text("  "+ widget.campo.valores[0].descripcion.toString()),
                     /*decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(top: 0, bottom: 0),
                       enabledBorder: UnderlineInputBorder(
@@ -470,7 +482,7 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
       child: CheckboxListTile(
         title: Text(widget.campo.etiqueta),
         value: widget.currentValue,
-        activeColor: AppColors.color_primario,
+        activeColor: AppColors.color_naranja_primario,
         onChanged: widget.campo.enabled ? (newValue) {
           setState(() {
             widget.currentValue = newValue;
@@ -1059,22 +1071,23 @@ class _CustomTextFieldState extends State<CustomTextField> {
           Container(
             padding: EdgeInsets.only(right: 8, left: 8),
             decoration: BoxDecoration(
-                color: AppColors.color_sombra,
+                color: AppColors.color_background_blanco,
                 border: Border(
-                    bottom: BorderSide(color: AppColors.color_primario))),
+                    bottom: BorderSide(color: AppColors.color_mail))),
             child: Visibility(
               visible: widget.campo.visible,
               child: Column(
                 children: <Widget>[
-                  Container(
+                  /*Container(
                     color: AppColors.color_sombra,
                     width: double.infinity,
                     margin: EdgeInsets.only(top: 8),
                     child: Text(widget.campo.obligatorio == true ? widget.campo.etiqueta + " *" : widget.campo.etiqueta,
                       style: TextStyle(color: AppColors.color_primario, fontSize: 15),
                     ),
-                  ),
+                  ),*/
                   Container(
+                    margin: EdgeInsets.only(top: 8),
                     height: 40,
                     child: new SingleChildScrollView(
                       physics: NeverScrollableScrollPhysics(),
@@ -1552,8 +1565,10 @@ class _ToggleConValoresState extends State<ToggleConValores> {
 
                     });
                   },
-                  activeTrackColor: AppColors.color_primario,
-                  activeColor: AppColors.color_primario,
+                  activeTrackColor: AppColors.color_naranja_primario.withOpacity(0.38),
+                  activeColor: AppColors.color_naranja_primario,
+                  inactiveTrackColor: AppColors.color_switch_simple_apagado.withOpacity(0.38),
+                  inactiveThumbColor: AppColors.color_switch_simple_apagado,
                 ),
               ],
             );

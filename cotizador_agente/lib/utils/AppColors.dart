@@ -17,6 +17,9 @@ class AppColors {
   static HexColor color_encabezado_guardados = HexColor("6c7480");
   static HexColor color_Etiqueta = HexColor("647085");
   static HexColor color_Bordes = HexColor("CED8E8");
+  static HexColor color_background_blanco = HexColor("FEFEFE");
+  static HexColor color_switch_simple_apagado = HexColor("595959");
+  static HexColor color_naranja_primario = HexColor("FF6B0B");
 }
 
 class HexColor extends Color {
