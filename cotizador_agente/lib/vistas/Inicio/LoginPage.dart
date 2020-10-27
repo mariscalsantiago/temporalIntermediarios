@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/vistas/Inicio/AvisoPrivacidad.dart';
 import 'package:cotizador_agente/vistas/Inicio/LoginServices.dart';
 import 'package:flutter/material.dart';
@@ -296,6 +297,12 @@ class LogInBodyState extends State<LogInBody> {
     }
   }
 
+  void requestFocusEmail() {
+    setState(() {
+      FocusScope.of(context).requestFocus(myFocusNodeEmailLogin);
+    });
+  }
+
   @override
   void dispose() {
     //getHuella();
@@ -346,28 +353,28 @@ class LogInBodyState extends State<LogInBody> {
                     child: Container(
                       margin: EdgeInsets.only(top: 16, left: 24, right: 24),
                       child: TextFormField(
-                        cursorColor: Theme.Colors.Orange,
                         focusNode: myFocusNodeEmailLogin,
-                        onFieldSubmitted: (S){FocusScope.of(context).requestFocus(myFocusNodePasswordLogin);},
-                        controller: loginEmailController,
+                        onTap: requestFocusEmail,controller: loginEmailController,
                         keyboardType: TextInputType.emailAddress,
-                        style: TextStyle(
-                          fontFamily: "Roboto",
-                          fontSize: 16.0,
-                          color: Theme.Colors.Light,
-                        ),
                         decoration: InputDecoration(
-
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Theme.Colors.Light, width: 1.0),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Theme.Colors.Orange, width: 1.0),
+                          isDense: true,
+                          alignLabelWithHint: true,
+                          enabledBorder: new UnderlineInputBorder(
+                            borderSide: new BorderSide(
+                                color: myFocusNodeEmailLogin.hasFocus
+                                    ? AppColors.color_TextActive
+                                    : AppColors.primary200),
                           ),
                           labelText: AppStrings.StringsMX.loginEmail,
-                          labelStyle: Theme.TextStyles.DarkGrayRegular16px,
+                          labelStyle: TextStyle(
+                              color: myFocusNodeEmailLogin.hasFocus
+                                  ? AppColors.color_TextActive
+                                  : AppColors.gnpTextUser,
+                              fontFamily: "Roboto",
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
+                              letterSpacing: 0.5),//Theme.TextStyles.DarkGrayRegular16px,
                         ),
                         validator: (value) {
                           String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
@@ -390,7 +397,6 @@ class LogInBodyState extends State<LogInBody> {
                       margin:
                       const EdgeInsets.only(top: 16, left: 24.0, right: 24),
                       child: TextFormField(
-                        cursorColor: Theme.Colors.Orange,
                         focusNode: myFocusNodePasswordLogin,
                         onFieldSubmitted: (S) async {
                           if (_formKey.currentState.validate()) {
@@ -412,12 +418,9 @@ class LogInBodyState extends State<LogInBody> {
                         },
                         controller: loginPasswordController,
                         obscureText: _obscureTextLogin,
-
-                        style: TextStyle(
-                            fontFamily: "Roboto",
-                            fontSize: 16.0,
-                            color: Theme.Colors.gnpBlue),
                         decoration: InputDecoration(
+                          isDense: true,
+                          alignLabelWithHint: true,
                           suffixIcon: IconButton(
                               icon: Icon(Icons.remove_red_eye),
                               color: _obscureTextLogin
@@ -429,16 +432,22 @@ class LogInBodyState extends State<LogInBody> {
                                 });
                               }),
                           //suffixIcon: Icon(Theme.Icons.lock),
-                          enabledBorder: const UnderlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Theme.Colors.Light, width: 1.0),
-                          ),
-                          focusedBorder: const UnderlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Theme.Colors.Orange, width: 1.0),
+                          enabledBorder: new UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: myFocusNodePasswordLogin.hasFocus
+                                    ? AppColors.color_TextActive
+                                    : AppColors.primary200),
                           ),
                           labelText: AppStrings.StringsMX.loginPassword,
-                          labelStyle: Theme.TextStyles.DarkGrayRegular16px,
+                          labelStyle: TextStyle(
+                              color: myFocusNodePasswordLogin.hasFocus
+                                  ? AppColors.color_TextActive
+                                  : AppColors.gnpTextUser,
+                              fontFamily: "Roboto",
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
+                              letterSpacing: 0.5),
                         ),
                         validator: (value) {
                           if (value.isEmpty) {

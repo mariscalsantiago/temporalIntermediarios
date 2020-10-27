@@ -1,10 +1,9 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
-//import 'package:firebase_performance/firebase_performance.dart';
-//import 'package:agentesgnp/Modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
 import 'package:cotizador_agente/utils/CircleButton.dart';
@@ -264,28 +263,27 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
     print(data.name);*/
     bool success = false;
 
+   // var config = AppConfig.of(context);
 
-    try{
+    final result = await InternetAddress.lookup('google.com');
 
-      final result = await InternetAddress.lookup('google.com');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      setState(() {
+        isLoading = true;
+      });
+      var idApp = "2343";
+      try{
+        Map<String, String> headers = {"Accept": "application/json"};
 
-        setState(() {
-          isLoading = true;
-        });
+        var response = await http.get(Uri.encodeFull(config.urlFormularioPaso1 + idApp), headers: headers);
 
-        try{
-          Map<String, String> headers = {"Accept": "application/json"};
+        int statusCode = response.statusCode;
 
-          var response = await http.get(Uri.encodeFull("https://gmm-cotizadores-uat.gnp.com.mx/cotizador/aplicacion?idAplicacion=2343"), headers: headers);
+        if(response != null){
+          if(response.body != null && response.body.isNotEmpty){
 
-          int statusCode = response.statusCode;
-
-          if(response != null){
-            if(response.body != null && response.body.isNotEmpty){
-
-              if (statusCode == 200) {
+            if (statusCode == 200) {
                 //data.stop();
                 success = true;
                 this.setState(() {
@@ -295,30 +293,23 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                   PasoFormulario estePaso = PasoFormulario.fromJson(json.decode(response.body));
                   formularioCotizacion.paso1=estePaso;
 
-
                   if(widget.cotizacionGuardada != null){
                     if(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().comparativa == null){
 
                       if(widget.deboReemplazarGuardada){
 
                         Utilidades.cotizacionesApp.listaCotizaciones.last = formularioCotizacion;
-
                         widget.deboReemplazarGuardada = false;
-
                       }else{
                         Utilidades.cotizacionesApp.agregarCotizacion(formularioCotizacion);
-
                       }
-
                       //Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan = widget.cotizacionGuardada.idPlan;
-
                     }
                     else{
 
                       Utilidades.cotizacionesApp.agregarCotizacion(formularioCotizacion);
 
                     }
-
 
                     Map<String,dynamic> resumenSecciones = json.decode(widget.cotizacionGuardada.responseResumen);
 
@@ -329,7 +320,6 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                       int id_Seccion = s["idSeccion"];
 
                       if(lista_campos != null && lista_campos.length > 0){
-
 
                         if(lista_campos[0]["valores"] != null){
                           //La lista campos se convierte en lista de secciones child
@@ -351,27 +341,14 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
                                     if(campo_result != null){
                                       campo_result.valor = lista_camposmult[j]["valor"].toString();
-
-
                                     }
-
                                   }
                                 }
-
-
-
-
                               }
-
                             }
-
                           });
-
-
                         }else{
                           lista_campos.forEach((esteCampo){
-
-
                             if(esteCampo["valor"] != null){
                               List<Campo> campos = Utilidades.buscaCampoPorID(id_Seccion, esteCampo["idCampo"], false);
                               if(campos != null){
@@ -386,77 +363,51 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
                               }
                             }
-
                           });
                         }
-
                       }
                     });
-
                     Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[3].campos[0].valor;
                     //_onAfterBuild(context);
-
-
-
                   }else{
                     if(!Utilidades.editarEnComparativa){
                       Utilidades.cotizacionesApp.agregarCotizacion(formularioCotizacion);
                     }else{
                       Utilidades.editarEnComparativa = false;
                     }
-
                   }
-
                 });
               }else if(statusCode != null){
-                //data.stop();
-                isLoading = false;
-                Navigator.pop(context);
-                String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
-                Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), message, context);
-              }
-              // return "Success!";
-
-            }else{
               //data.stop();
-              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                Navigator.pop(context);
-                getData();
-              });
+              isLoading = false;
+              Navigator.pop(context);
+              String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
+              Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), message, context);
             }
+              // return "Success!";
           }else{
-            //data.stop();
+              //data.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
               Navigator.pop(context);
               getData();
             });
           }
-
-        }catch(e){
-          //data.stop();
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
-            getData();
-          });
         }
 
-
-      }else{
+      }catch(e){
         //data.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           getData();
         });
       }
-
-    }catch(e){
-      //data.stop();
-      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
-        getData();
-      });
-
-    }
+    }else{
+        //data.stop();
+        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+          Navigator.pop(context);
+          getData();
+        });
+      }
 
     return success;
 
