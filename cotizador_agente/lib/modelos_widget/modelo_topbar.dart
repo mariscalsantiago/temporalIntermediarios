@@ -1,7 +1,7 @@
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/CotizacionesGuardadas.dart';
+import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
 import 'package:cotizador_agente/vistas/MaterialApoyo.dart';
 import 'package:flutter/material.dart';
 
@@ -94,7 +94,7 @@ class _TopBarState extends State<TopBar> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CotizacionesGuardadas(),
+                          builder: (context) => MisCotizaciones(),
                         ));
                   },
                   borderSide: BorderSide(

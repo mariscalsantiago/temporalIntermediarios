@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:firebase_analytics/firebase_analytics.dart';
@@ -203,7 +204,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
     cargaPaso.start();
     print(cargaPaso.name);*/
     bool success = false;
-
+    var config = AppConfig.of(context);
     try{
       final result = await InternetAddress.lookup('google.com');
 
@@ -212,7 +213,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
           Map<String, String> headers = {"Content-Type": "application/json"};
 
-          Response response = await http.post("https://gmm-cotizadores-uat.gnp.com.mx/cotizador/aplicacion/", body: json.encode(map_plan), headers: headers);
+          Response response = await http.post(config.urlFormularioPaso2, body: json.encode(map_plan), headers: headers);
           int statusCode = response.statusCode;
 
           if(response != null) {
