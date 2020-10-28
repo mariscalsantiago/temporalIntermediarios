@@ -539,7 +539,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
         iconTheme: IconThemeData(color: AppColors.color_primario),
         backgroundColor: Colors.white,
         title: Text("Mis Cotizaciones",
-          style: TextStyle(color: AppColors.color_TextAppBar, fontSize: 20, fontWeight: FontWeight.w500),
+          style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),
         ),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -547,6 +547,82 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
             Navigator.pop(context);
           },
         ),
+        actions: <Widget>[
+          PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
+            offset: Offset(100, 100),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 1,
+                child: Column(
+                  children: <Widget>[
+                    Divider(height: 4,color: AppColors.color_divider,),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Row(
+                        children: <Widget>[
+                          Text("ACCIONES",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                  color: AppColors.color_popupmenu,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                              )
+                          ),
+                          Spacer(flex: 1,)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              PopupMenuItem(
+                value: 2,
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                          child: Text(
+                            "Nueva cotización",
+                            style: TextStyle(
+                            color: AppColors.color_appBar,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 16)
+                          ),
+                        ),
+                        Spacer(flex: 2,),
+                        IconButton(
+                          icon: Icon(Icons.add, color: AppColors.color_primario,),
+                          onPressed: () {
+                            Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                          },),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                      child: Divider(height: 2,color: AppColors.color_divider,),
+                    ),
+                  ],
+                ),
+              ),
+              ],
+              initialValue: 0,
+              onCanceled: () {
+                print("You have canceled the menu.");
+              },
+              onSelected: (value) {
+                  /*switch (value) {
+                    case 2:
+                      Navigator.pushReplacement(context,  MaterialPageRoute(
+                        builder: (context) => FormularioPaso1(),
+                      ));
+                      break;
+                  }*/
+              }
+          ),
+        ],
       ),
       body:  SafeArea(
         top: true,
