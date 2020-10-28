@@ -795,7 +795,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                         crossAxisAlignment: CrossAxisAlignment.stretch,
                                         children: <Widget>[
                                           FlatButton(
-                                            color: AppColors.color_primario,
+                                            color: AppColors.color_naranja_primario,
                                             textColor: Colors.white,
                                             disabledColor: Colors.grey,
                                             disabledTextColor: Colors.black,
@@ -865,7 +865,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                             child: Padding(
                                               padding: const EdgeInsets.all(8.0),
                                               child: Text(
-                                                "COTIZAR",
+                                                "Cotizar",
                                                 style: TextStyle(fontSize: 15.0, letterSpacing: 1),
                                               ),
                                             ),

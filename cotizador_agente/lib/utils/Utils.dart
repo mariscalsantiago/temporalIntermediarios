@@ -1,4 +1,5 @@
 import 'package:cotizador_agente/modelos/modelos.dart';
+import 'package:cotizador_agente/utils/AppColors.dart';
 
 import 'package:flutter/material.dart';
 class Utilidades {
@@ -375,23 +376,40 @@ class Utilidades {
                   return false;
                },
                child: AlertDialog(
-                  title: new Text(titulo),
-                  content: SingleChildScrollView(child: new Text(mensaje)),
+                  title: Center(child: new Text(titulo)),
+                  content: Container(
+                     height: 70,
+                    child: Column(
+                       children: <Widget>[
+                          SingleChildScrollView(child: new Text(mensaje)),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Divider(color: AppColors.color_Bordes, height: 20,thickness: 1,),
+                          ),
+                       ],
+                    ),
+                  ),
                   actions: <Widget>[
                      // usually buttons at the bottom of the dialog
-                     new FlatButton(
-                        child: new Text(
-                           "Cancelar",
-                           style: TextStyle(color: Utilidades.color_primario),
-                        ),
-                        onPressed: negative,
+                     ButtonTheme(
+                       child: new FlatButton(
+                          color: AppColors.color_naranja_primario,
+                          child: new Text(
+                             "Cancelar",
+                             style: TextStyle(color: AppColors.color_background_blanco),
+                          ),
+                          onPressed: negative,
+                       ),
                      ),
-                     FlatButton(
-                        child: new Text(
-                           "Aceptar",
-                           style: TextStyle(color: Utilidades.color_primario),
-                        ),
-                        onPressed: positive,
+                     ButtonTheme(
+                       child: FlatButton(
+                          color: AppColors.color_naranja_primario,
+                          child: new Text(
+                             "Aceptar",
+                             style: TextStyle(color: AppColors.color_background_blanco),
+                          ),
+                          onPressed: positive,
+                       ),
                      )
                   ],
                ),

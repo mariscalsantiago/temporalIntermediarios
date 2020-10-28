@@ -3,7 +3,7 @@ class Mensajes{
 
   //TÍTULOS
   static final String titleConexion = "Error de conexión.";
-  static final String titleLimpia = "Limpiar datos";
+  static final String titleLimpia = "Borrar datos";
   static final String titleExito = "Éxito";
   static final String titleError = "Error: ";
   static final String titleErrorEnvioCorreo = "Error al enviar correo";
@@ -25,7 +25,7 @@ class Mensajes{
   static final String ingresaCorreo = "Ingresa un correo válido";
   static final String sinCotizaciones = "No se encontraron cotizaciones guardadas.";
   static final String generaComparativa = "Solo es posible generar la comparativa con dos o tres cotizaciones";
-  static final String limpiaDatos = "¿Está seguro de limpiar todos los datos de la cotización?";
+  static final String limpiaDatos = "Esto eliminará la información no guardada.";
   static final String campoOblig = "Este campo es obligatorio";
 
 
