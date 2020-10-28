@@ -9,6 +9,7 @@ import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
 import 'package:cotizador_agente/utils/CircleButton.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
+import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
@@ -635,8 +636,154 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
           appBar: AppBar(
             iconTheme: IconThemeData(color: AppColors.color_primario),
             backgroundColor: Colors.white,
-            title: Text("Cotizador Accidentes Personales", style: TextStyle(color: Colors.black),),
+            title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 18, fontWeight: FontWeight.w500),),
+            actions: <Widget>[
+              PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
+                  offset: Offset(100, 100),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 1,
+                      child: Column(
+                        children: <Widget>[
+                          Divider(height: 4,color: AppColors.color_divider,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text("ACCIONES",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      color: AppColors.color_popupmenu,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10,
+                                    )
+                                ),
+                                Spacer(flex: 1,)
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value:2,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                child: Text(
+                                    "Guardar",
+                                    style: TextStyle(
+                                        color: AppColors.color_disable,//AppColors.color_appBar,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16)
+                                ),
+                              ),
+                              Spacer(flex: 2,),
+                              IconButton(
+                                icon: Image.asset('assets/icon/cotizador/guardar_Disable.png'),
+                                onPressed: () {
 
+                                },),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                            child: Divider(height: 2,color: AppColors.color_divider,),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    PopupMenuItem(
+                      value:3,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                child: Text("Borrar datos",
+                                    style: TextStyle(
+                                        color: AppColors.color_appBar,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16)
+                                ),),
+                              Spacer(flex: 2,),
+                              IconButton(
+                                icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
+                                onPressed: () {
+                                  recargar();
+                                },),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0, right: 8.0, bottom: 16.0),
+                            child: Divider(height: 2,color: AppColors.color_divider,),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 4,
+                      child: Column(
+                        children: <Widget>[
+                          Divider(height: 4,color: AppColors.color_divider,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text("SOPORTE",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      color: AppColors.color_popupmenu,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10,)),
+                                Spacer(flex: 1,)
+                              ],
+                            ),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                                child: Text("Mis cotizaciones",
+                                    style: TextStyle(
+                                        color: AppColors.color_appBar,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16)
+                                ),),
+                              Spacer(flex: 2,),
+                              IconButton(
+                                icon: Image.asset('assets/icon/cotizador/miscotizaciones.png'),
+                                onPressed: () {
+                                  Navigator.pushReplacement(context,  MaterialPageRoute(
+                                    builder: (context) => MisCotizaciones(),
+                                  ));
+                                },),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                            child: Divider(height: 2,color: AppColors.color_divider,),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  initialValue: 0,
+                  onCanceled: () {
+                    print("You have canceled the menu.");
+                  },
+                  onSelected: (value) {
+                    switch (value) {
+
+                    }
+                  }
+              ),
+            ],
           ),
 
           body: Column(

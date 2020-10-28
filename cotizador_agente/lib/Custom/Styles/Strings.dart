@@ -93,6 +93,12 @@ class StringsMX {
   static const String edicion = "Editar";
   static const String eliminar = "Eliminar";
   static const String descarga = "Descarga";
+  static const String titleSave = "Guardar cotización";
+  static const String lblSaveCot = "Selecciona los documentos que deseas \n"
+      "guardar.Recuerda que los podrás revisar \n"
+      "en la sección de Mis cotizaciones.";
+  static const String propuesta = "Nombre de propuesta";
+  static const String tabla_Comp = "Nombre de la tabla comparativa";
 
 }
 

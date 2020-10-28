@@ -25,6 +25,12 @@ class AppColors {
   static HexColor color_background_blanco = HexColor("FEFEFE");
   static HexColor color_switch_simple_apagado = HexColor("595959");
   static HexColor color_naranja_primario = HexColor("FF6B0B");
+  static HexColor color_popupmenu = HexColor("647085");
+  static HexColor color_divider = HexColor("CED8E8");
+  static HexColor color_disable = HexColor("A3AAB6");
+  static HexColor color_titleAlert = HexColor("002E71");
+  static HexColor color_btnHover = HexColor("FFB022");
+  static HexColor color_LongPress = HexColor("FF8D21");
 }
 
 class HexColor extends Color {

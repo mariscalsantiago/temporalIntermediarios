@@ -7,7 +7,6 @@ import 'dart:io';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:cotizador_agente/cotizador_analitycs_tags.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
-
 import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
@@ -16,10 +15,10 @@ import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
 import 'package:cotizador_agente/vistas/CotizacionPDF.dart';
-
+import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart';
-
+import 'package:cotizador_agente/Custom/Styles/Strings.dart' as Strings;
 
 
 
@@ -73,6 +72,10 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   String idAseg = "";
   String platform = "";
   bool esComparativa = false;
+  TextEditingController namePropuesta1Controller = new TextEditingController();
+  TextEditingController namePropuesta2Controller = new TextEditingController();
+  TextEditingController nametablaCompController = new TextEditingController();
+
 
   @override
   void dispose() {
@@ -762,9 +765,151 @@ class _CotizacionVistaState extends State<CotizacionVista> {
               appBar: AppBar(
                 iconTheme: IconThemeData(color: AppColors.color_primario),
                 backgroundColor: Colors.white,
-                title: Text("", style: TextStyle(fontSize: 24, color: AppColors.color_titulo)),
-              ),
+                title: Text("Tabla comparativa", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500)),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) =>
+                              AlertDialog(
+                                title: new Text(Strings.StringsMX.titleSave,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: AppColors.color_titleAlert,
+                                        fontSize: 16.0,
+                                        fontWeight: FontWeight.w600)),
+                                content: Column(
+                                  children: <Widget>[
+                                    Text(Strings.StringsMX.lblSaveCot,
+                                        textAlign: TextAlign.justify,
+                                        style: TextStyle(
+                                            color: AppColors.color_appBar,
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.normal)),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 32.0),
+                                      child: Expanded(
+                                        child: new TextField(
+                                          controller: namePropuesta1Controller,
+                                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[a-z0-9_-]{3,50}"))],
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.only(left: 12.0),
+                                            labelText: Strings.StringsMX.propuesta + " 1",
+                                            hintStyle: TextStyle(fontSize: 16,
+                                              fontWeight: FontWeight.normal,
+                                              color: AppColors.gnpTextUser,
+                                            ),
+                                            focusColor: AppColors.color_primario,
+                                            fillColor: AppColors.primary200,
+                                            enabledBorder: new UnderlineInputBorder(
+                                              borderSide: new BorderSide(
+                                                  color: AppColors.primary200
+                                              ),
+                                            ),
+                                            border: new UnderlineInputBorder(
+                                              borderSide: new BorderSide(
+                                                  color: AppColors.primary200
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 32.0),
+                                      child: Expanded(
+                                        child: new TextField(
+                                          controller: namePropuesta2Controller,
+                                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[a-z0-9_-]{3,50}"))],
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.only(left: 12.0),
+                                            labelText: Strings.StringsMX.propuesta + " 2",
+                                            hintStyle: TextStyle(fontSize: 16,
+                                              fontWeight: FontWeight.normal,
+                                              color: AppColors.gnpTextUser,
+                                            ),
+                                            focusColor: AppColors.color_primario,
+                                            fillColor: AppColors.primary200,
+                                            enabledBorder: new UnderlineInputBorder(
+                                              borderSide: new BorderSide(
+                                                  color: AppColors.primary200
+                                              ),
+                                            ),
+                                            border: new UnderlineInputBorder(
+                                              borderSide: new BorderSide(
+                                                  color: AppColors.primary200
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 32.0),
+                                      child: Expanded(
+                                        child: new TextField(
+                                          controller: nametablaCompController,
+                                          inputFormatters: [WhitelistingTextInputFormatter(RegExp("[a-z0-9_-]{3,50}"))],
+                                          decoration: InputDecoration(
+                                            contentPadding: EdgeInsets.only(left: 12.0),
+                                            labelText: Strings.StringsMX.tabla_Comp,
+                                            hintStyle: TextStyle(fontSize: 16,
+                                              fontWeight: FontWeight.normal,
+                                              color: AppColors.gnpTextUser,
+                                            ),
+                                            focusColor: AppColors.color_primario,
+                                            fillColor: AppColors.primary200,
+                                            enabledBorder: new UnderlineInputBorder(
+                                              borderSide: new BorderSide(
+                                                  color: AppColors.primary200
+                                              ),
+                                            ),
+                                            border: new UnderlineInputBorder(
+                                              borderSide: new BorderSide(
+                                                  color: AppColors.primary200
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                actions: <Widget>[
+                                  Expanded(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Divider(thickness: 1,
+                                          color: AppColors.color_divider,
+                                          height: 10,),
+                                        FlatButton(
+                                            color: AppColors.color_primario,
+                                            hoverColor: AppColors.color_btnHover,
+                                            child: Text("Guardar",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16.0,
+                                                    fontWeight: FontWeight.w600)),
+                                            onPressed: () {
+                                              setState(() {
+                                                namePropuesta1Controller.text = namePropuesta1Controller.text;
+                                                namePropuesta2Controller.text = namePropuesta2Controller.text;
+                                                nametablaCompController.text = nametablaCompController.text;
+                                              });
+                                              Navigator.of(context).pop();
+                                            }),
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              )
+                      );
+                    },),
 
+                ],
+              ),
               body: isLoading ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),): Column(
 
                 children: <Widget>[
@@ -1202,9 +1347,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   ),
                 ],
               )
-
-
-
           ),
 
         ],
