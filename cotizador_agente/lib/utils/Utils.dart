@@ -376,12 +376,12 @@ class Utilidades {
                   return false;
                },
                child: AlertDialog(
-                  title: Center(child: new Text(titulo)),
+                  title: Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
                   content: Container(
-                     height: 70,
+                     height: 72,
                     child: Column(
                        children: <Widget>[
-                          SingleChildScrollView(child: new Text(mensaje)),
+                          SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Divider(color: AppColors.color_Bordes, height: 20,thickness: 1,),
@@ -391,26 +391,30 @@ class Utilidades {
                   ),
                   actions: <Widget>[
                      // usually buttons at the bottom of the dialog
-                     ButtonTheme(
-                       child: new FlatButton(
-                          color: AppColors.color_naranja_primario,
-                          child: new Text(
-                             "Cancelar",
-                             style: TextStyle(color: AppColors.color_background_blanco),
-                          ),
-                          onPressed: negative,
-                       ),
-                     ),
-                     ButtonTheme(
-                       child: FlatButton(
-                          color: AppColors.color_naranja_primario,
-                          child: new Text(
-                             "Aceptar",
-                             style: TextStyle(color: AppColors.color_background_blanco),
-                          ),
-                          onPressed: positive,
-                       ),
-                     )
+                    ButtonTheme(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0),),
+                      child: FlatButton(
+                        color: AppColors.color_naranja_primario,
+                        textColor: AppColors.color_background_blanco,
+                        child: Text(
+                          "Borrar",
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,fontFamily: 'OpenSansRegular'),
+                        ),
+                        onPressed: positive,
+                      ),
+                    ),
+                    ButtonTheme(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0),),
+                      child: FlatButton(
+                        color: AppColors.color_naranja_primario,
+                        textColor: AppColors.color_background_blanco,
+                        child: Text(
+                          "Cancelar",
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,fontFamily: 'OpenSansRegular'),
+                        ),
+                        onPressed: negative,
+                      ),
+                    ),
                   ],
                ),
             );
