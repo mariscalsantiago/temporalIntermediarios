@@ -1430,7 +1430,7 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.color_sombra,
+     // color: AppColors.color_sombra,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -1443,46 +1443,39 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                 Row(
                   children: <Widget>[
                     Expanded(
-                      flex: 1,
                       child: Container(
-                        padding: EdgeInsets.only(right: 8.0,bottom: 16.0, left: 8.0),
+                        color: AppColors.color_background,
+                        padding: EdgeInsets.only(bottom: 16.0, left: 8.0),
                         child: Text(
                           widget.titulo,
                           style: TextStyle(
-                              color: AppColors.color_texto,
-                              fontWeight: FontWeight.w300,
-                              fontSize: 14),
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: EdgeInsets.only(left: 8.0,bottom: 16.0),
-                        child: Text(
-                          widget.valor,
-                          style: TextStyle(
-                              color: AppColors.color_texto,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14),
+                              color: AppColors.color_Etiqueta,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12),
                           textAlign: TextAlign.left,
                         ),
                       ),
                     ),
+
 
                   ],
                 ),
                 Row(
                   children: <Widget>[
                     Expanded(
+                      flex: 1,
                       child: Container(
-                          padding: EdgeInsets.only(left: 16,right: 16),
-                          child: Divider( //002e71
-                            thickness: 0.5,
-                            color: Colors.grey,
-                            height: 0,
-                          )),
+                        color: Colors.white,
+                        padding: EdgeInsets.only(left: 8.0,bottom: 16.0),
+                        child: Text(
+                          widget.valor,
+                          style: TextStyle(
+                              color: AppColors.color_appBar,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 14),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
                     ),
                   ],
                 ),

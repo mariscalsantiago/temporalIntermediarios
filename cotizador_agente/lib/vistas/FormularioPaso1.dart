@@ -759,7 +759,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                               IconButton(
                                 icon: Image.asset('assets/icon/cotizador/miscotizaciones.png'),
                                 onPressed: () {
-                                  Navigator.pushReplacement(context,  MaterialPageRoute(
+                                  Navigator.push(context,  MaterialPageRoute(
                                     builder: (context) => MisCotizaciones(),
                                   ));
                                 },),
@@ -779,7 +779,15 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                   },
                   onSelected: (value) {
                     switch (value) {
-
+                      case 2:
+                        break;
+                      case 3:
+                        break;
+                      case 4:
+                        Navigator.push(context,  MaterialPageRoute(
+                          builder: (context) => MisCotizaciones(),
+                        ));
+                        break;
                     }
                   }
               ),

@@ -35,7 +35,7 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
-                child: Text(widget.cotizacion.fecha, textAlign: TextAlign.left, style: TextStyle(fontSize: 12, fontWeight: FontWeight.normal,color: AppColors.color_appBar)),
+                child: Text(widget.cotizacion.fecha, textAlign: TextAlign.left, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400,color: AppColors.color_appBar)),
               ),
               Spacer(flex: 1,),
               widget.cotizacion.idFormato != Utilidades.FORMATO_COMPARATIVA ?
@@ -48,7 +48,8 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                       child: Text(
                         AppStrings.StringsMX.edicion,
                         style: TextStyle(
-                            color: AppColors.color_titulo,
+                            fontSize: 14,
+                            color: AppColors.color_appBar,
                             fontWeight: FontWeight.w400),
                       ),
                     ),
@@ -58,7 +59,8 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                       child: Text(
                         AppStrings.StringsMX.eliminar,
                         style: TextStyle(
-                            color: AppColors.color_titulo,
+                            fontSize: 14,
+                            color: AppColors.color_appBar,
                             fontWeight: FontWeight.w400),
                       ),
                     ),
@@ -68,12 +70,13 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                       child: Text(
                         AppStrings.StringsMX.descarga,
                         style: TextStyle(
-                            color: AppColors.color_titulo,
+                            fontSize: 14,
+                            color: AppColors.color_appBar,
                             fontWeight: FontWeight.w400),
                       ),
                     ),
                   ],
-                  initialValue: 1,
+                  initialValue: 0,
                   onCanceled: () {
                     print("You have canceled the menu.");
                   },
@@ -120,7 +123,8 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                         child: Text(
                           AppStrings.StringsMX.eliminar,
                           style: TextStyle(
-                              color: AppColors.color_titulo,
+                              fontSize: 14,
+                              color: AppColors.color_appBar,
                               fontWeight: FontWeight.w400),
                         ),
                       ),
@@ -129,12 +133,13 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                         child: Text(
                           AppStrings.StringsMX.descarga,
                           style: TextStyle(
-                              color: AppColors.color_titulo,
+                              fontSize: 14,
+                              color: AppColors.color_appBar,
                               fontWeight: FontWeight.w400),
                         ),
                       ),
                     ],
-                    initialValue: 1,
+                    initialValue: 0,
                     onCanceled: () {
                       print("You have canceled the menu.");
                     },
@@ -179,7 +184,7 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 16.0, bottom: 8.0),
-                child: Text(widget.cotizacion.titular, textAlign: TextAlign.left, style: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: AppColors.color_Text)),
+                child: Text(widget.cotizacion.titular, textAlign: TextAlign.left, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.color_Text)),
               ),
               Spacer(flex: 1,),
             ],

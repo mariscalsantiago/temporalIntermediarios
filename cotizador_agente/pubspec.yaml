@@ -14,7 +14,7 @@ description: Cotizador GMM
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 
 dependencies:
@@ -41,7 +41,6 @@ dependencies:
   open_file: ^2.0.3
   dio: ^3.0.2
   flutter_pdfview: ^1.0.0+10
-  flutter_full_pdf_viewer: ^1.0.6
   flutter_plugin_pdf_viewer: ^1.0.7
   cached_network_image: ^2.0.0
   firebase_database: 3.1.0
@@ -84,6 +83,7 @@ flutter:
     - assets/
     - assets/icon/
     - assets/icon/login/
+    - assets/icon/cotizador/
     - assets/img/
     - images/
     - images/perfil/

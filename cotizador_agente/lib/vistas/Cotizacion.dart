@@ -762,6 +762,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       child: Stack(
         children: <Widget>[
           Scaffold(
+            backgroundColor: Colors.white,
               appBar: AppBar(
                 iconTheme: IconThemeData(color: AppColors.color_primario),
                 backgroundColor: Colors.white,
@@ -914,7 +915,32 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                 children: <Widget>[
 
-                  TopBar(recargarFormulario: limpiarDatos, formatoComp: guardarFormatoComparativa,),
+                //  TopBar(recargarFormulario: limpiarDatos, formatoComp: guardarFormatoComparativa,),
+                  //Encabezado
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0.0, right: 0.0, left: 0.0),
+                    child: Container(
+                      color: AppColors.color_background,
+                      height: 74.0,
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0,top: 12.0, bottom: 12),
+                            child: Image.asset("assets/icon/cotizador/Solicitantes.png", height: 50, width: 50,),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
+                            child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 13.0, top: 25.0, bottom: 25.0, left: 140.0),
+                            child: Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: ListView.builder(
                         itemCount: 3,
@@ -925,7 +951,52 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                           switch(i){
 
                             case 0:
-                              return Column(
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Visibility(
+                                  visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() < 3 ? true : false,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Row(
+                                        children: <Widget>[
+                                          Expanded(
+                                              flex: 6,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 16.0, top: 26.0, right: 56.0),
+                                                child: Text("Agregar Cotización",
+                                                  style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600),
+                                                ),
+                                              )
+                                          ),
+                                          Spacer(),
+                                          Expanded(
+                                            flex: 0,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(right: 8.0),
+                                              child: IconButton(
+                                                icon: Image.asset("assets/icon/cotizador/icon_more.png", height: 24, width: 24,),
+                                                onPressed: _aumentar,
+                                              ),
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 8.0, left: 8.0, top: 11.0),
+                                        child: Divider(
+                                          color: AppColors.color_divider,
+                                          height: 2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                              break;
+
+                            case 1:
+                              /*return Column(
                                 children: <Widget>[
                                   Row(
                                     children: <Widget>[
@@ -939,7 +1010,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                     ],
                                   ),
 
-                                  /* Row(
+                                  *//* Row(
                                 children: <Widget>[
                                   Expanded(
                                       flex: 1,
@@ -970,12 +1041,12 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                   ),
 
                                 ],
-                              ),*/
+                              ),*//*
                                 ],
                               );
                               break;
 
-                            case 1:
+                            case 2:*/
 
                               int cont = 0;
 
@@ -1212,54 +1283,63 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             itemBuilder: (BuildContext ctxt, int j) {
 
 
-                                              return Padding(
-                                                padding: EdgeInsets.only(
-                                                    bottom: 48),
-                                                child: Column(
-                                                  children: <Widget>[
-                                                    //Titlulo de seccion
-                                                    Container(
-                                                      color: AppColors.color_sombra,
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          Padding(
-                                                            padding: const EdgeInsets.only(left: 24,top: 8,bottom: 8,),
-                                                            child: Text(
-                                                              (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), maxLines: 2, overflow: TextOverflow.ellipsis,
-                                                              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: AppColors.color_titulo),
+                                              return Padding(padding: EdgeInsets.only(bottom: 48, right: 16.0, left: 16.0),
+                                                child: Container(
+                                                  decoration: new BoxDecoration(
+                                                    border: Border.all(color: AppColors.color_Bordes),
+                                                      color: Colors.white,
+                                                      borderRadius: new BorderRadius.only(
+                                                        topLeft: const Radius.circular(16.0),
+                                                        topRight: const Radius.circular(16.0),
+                                                        bottomLeft: const Radius.circular(16.0),
+                                                        bottomRight: const Radius.circular(16.0),
+                                                      )),
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      //Titlulo de seccion
+                                                      Container(
+
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(left: 16,top: 8,bottom: 8,),
+                                                              child: Text(
+                                                                (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), maxLines: 2, overflow: TextOverflow.ellipsis,
+                                                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
 
-                                                    Container(
-                                                      color: AppColors.color_sombra,
-                                                      child: ListView.builder
-                                                        (
-                                                          itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
-                                                          shrinkWrap: true,
-                                                          physics: ScrollPhysics(),
-                                                          itemBuilder: (BuildContext ctxt, int indexdos) {
+                                                      Container(
 
-                                                            return Padding(
-                                                              padding: const EdgeInsets.only(left: 8, right:8, top:8, bottom: 8),
-                                                              child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
-                                                                  valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
-                                                            );
+                                                        child: ListView.builder
+                                                          (
+                                                            itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
+                                                            shrinkWrap: true,
+                                                            physics: ScrollPhysics(),
+                                                            itemBuilder: (BuildContext ctxt, int indexdos) {
 
-                                                          }
+                                                              return Padding(
+                                                                padding: const EdgeInsets.only(left: 0, right:0, top:8, bottom: 8),
+                                                                child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
+                                                                    valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
+                                                              );
 
+                                                            }
+
+                                                        ),
                                                       ),
-                                                    ),
 
-                                                  ],
+                                                    ],
+                                                  ),
                                                 ),
                                               );
 
                                             }),
 
-                                        Row(
+                                        /*Row(
                                           children: <Widget>[
                                             Expanded(
 
@@ -1274,7 +1354,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                   )),
                                             ),
                                           ],
-                                        ),
+                                        ),*/
 
                                       ],
                                     );
@@ -1283,44 +1363,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                               break;
 
-                            case 2:
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Visibility(
-                                  visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() < 3 ? true : false,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        flex: 2,
-                                        child: Container(
-                                          height: 50,
-                                          width: 50,
-                                          child: FittedBox(
-                                            child: FloatingActionButton(
-                                              onPressed: _aumentar,
-                                              heroTag: "btn1",
-                                              tooltip: "Agregar",
-                                              child: const Icon(Icons.add, color: Colors.white,),
-                                              backgroundColor: AppColors.color_primario,
-
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(flex: 6,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(16),
-                                            child: Text("Agregar Cotización",
-                                              style: TextStyle(color:AppColors.color_primario, fontSize: 20),
-                                            ),
-                                          )
-                                      ),
-
-                                    ],
-                                  ),
-                                ),
-                              );
-                              break;
                             default:
                               return Container();
                               break;
