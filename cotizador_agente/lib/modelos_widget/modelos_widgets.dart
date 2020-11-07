@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
@@ -215,7 +217,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                     widget.campo.etiqueta == null
                         ? widget.campo.nombre_campo.toUpperCase()
                         : widget.campo.etiqueta.toUpperCase(),
-                    style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                    style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto'): TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto'),
                   ),
                 ),
                 Container(
@@ -236,7 +238,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                     value:  widget.campo.valor,
                     items: getDropDownMenuItems(),
                     onChanged: isUnValor ? null : changedDropDownItem,
-                    disabledHint: Text("  "+ widget.campo.valores[0].descripcion.toString()),
+                    disabledHint: Text("  "+ widget.campo.valores[0].descripcion.toString(), style: TextStyle(color: AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),),
                     /*decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(top: 0, bottom: 0),
                       enabledBorder: UnderlineInputBorder(
@@ -264,7 +266,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
               padding: EdgeInsets.only(left: 8, bottom: 0),
               child: new Text(
                 v.descripcion.toString(),
-                style: widget.campo.enabled? TextStyle(color: AppColors.color_texto_campo, fontSize: 15) : TextStyle(color: Colors.grey, fontSize: 15),
+                style: widget.campo.enabled? TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto') : TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
               ),
             )));
 
@@ -1088,12 +1090,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   ),*/
                   Container(
                     margin: EdgeInsets.only(top: 8),
-                    height: 40,
+                    height: 50,
                     child: new SingleChildScrollView(
                       physics: NeverScrollableScrollPhysics(),
                       reverse: true,
                       child: TextFormField(
                         controller: _controller,
+                        style: TextStyle(color: AppColors.gnpTextUser, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                         key: ValueKey('Key_' + widget.campo.hashCode.toString() + "_" + DateTime.now().millisecondsSinceEpoch.toString()),
                         inputFormatters: [new WhitelistingTextInputFormatter(new RegExp(widget.campo.reg_ex)), //[0-9]
                           LengthLimitingTextInputFormatter(widget.campo.dato_longitud!=null ? widget.campo.dato_longitud.length == 2 ?  widget.campo.dato_longitud[1] : widget.campo.dato_longitud[0]: null ,)],
@@ -1216,12 +1219,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                               BorderSide(color: Colors.transparent)),
 
                           //labelStyle: TextStyle(color: AppColors.color_primario),
+                          labelText: widget.campo.etiqueta,
                           labelStyle: TextStyle(
-                              color: AppColors.color_texto_campo, fontSize: 15),
-                          hintStyle: TextStyle(
-                              color: AppColors.color_texto_campo, fontSize: 15),
-                          hasFloatingPlaceholder: false,
-                          hintText: widget.campo.etiqueta,
+                              color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                           //labelText: widget.campo.etiqueta),
                         ),
                       ),
@@ -1545,7 +1545,7 @@ class _ToggleConValoresState extends State<ToggleConValores> {
           if(index==0){
             return Row(
               children: <Widget>[
-                Text(widget.campo.etiqueta, style: TextStyle(fontSize: 15),),
+                Text(widget.campo.etiqueta, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.color_appBar, fontFamily: 'OpenSansRegular'),),
                 Spacer(flex: 2,),
                 Switch(
                   value: widget.isSwitched,

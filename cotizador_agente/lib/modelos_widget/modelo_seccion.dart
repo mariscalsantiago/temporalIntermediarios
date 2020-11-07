@@ -305,7 +305,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Expanded(flex: 9, child: Text(botonAgregarEtiqueta(widget.secc.id_seccion), style: TextStyle(color:AppColors.color_appBar,),)),
+                          Expanded(flex: 9, child: Text(botonAgregarEtiqueta(widget.secc.id_seccion), style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, fontFamily: 'OpenSansRegular'),)),
                           Expanded(
                             flex: 1,
                             child: Container(

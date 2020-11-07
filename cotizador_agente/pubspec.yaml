@@ -82,6 +82,7 @@ flutter:
 
     - assets/
     - assets/icon/
+    - assets/icon/cotizador/
     - assets/icon/login/
     - assets/icon/cotizador/
     - assets/img/
@@ -92,6 +93,12 @@ flutter:
     - images/perfil/otros/
     - images/perfil/perfil/
     - images/perfil/salud/
+
+
+  fonts:
+    - family: OpenSansRegular
+      fonts:
+          - asset: assets/fonts/Open_Sans/OpenSans-Regular.ttf
 
 
 flutter_icons:
