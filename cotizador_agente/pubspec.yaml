@@ -83,6 +83,7 @@ flutter:
 
     - assets/
     - assets/icon/
+    - assets/icon/cotizador/
     - assets/icon/login/
     - assets/img/
     - images/

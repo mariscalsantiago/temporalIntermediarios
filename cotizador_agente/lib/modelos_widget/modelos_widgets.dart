@@ -1090,7 +1090,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   ),*/
                   Container(
                     margin: EdgeInsets.only(top: 8),
-                    height: 40,
+                    height: 50,
                     child: new SingleChildScrollView(
                       physics: NeverScrollableScrollPhysics(),
                       reverse: true,
@@ -1219,12 +1219,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                               BorderSide(color: Colors.transparent)),
 
                           //labelStyle: TextStyle(color: AppColors.color_primario),
+                          labelText: widget.campo.etiqueta,
                           labelStyle: TextStyle(
                               color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
-                          hintStyle: TextStyle(
-                              color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
-                          hasFloatingPlaceholder: false,
-                          hintText: widget.campo.etiqueta,
                           //labelText: widget.campo.etiqueta),
                         ),
                       ),
