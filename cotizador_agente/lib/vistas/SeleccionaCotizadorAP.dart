@@ -127,8 +127,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         };
 
         Map<String, dynamic> jsonMap = {
-        "clave_negocio_operable": negocioOperable.idNegocioOperable.toString(),
-        "correo": datosUsuario.mail.toString(),
+        "clave_negocio_operable": "NOP0002010",//negocioOperable.idNegocioOperable.toString(),
+        "correo": "TallerdeProductos@gnp.com.mx"//datosUsuario.mail.toString(),
         };
         // make POST request
         Response response = await post(config.urlCotizadores, headers: headers, body: json.encode(jsonMap));
@@ -204,10 +204,10 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         children:  <Widget>[
 
           Visibility(
-            visible:  widget.negociosOperables[0].cotizadores != null,
+            visible:  widget.negociosOperables != null ? widget.negociosOperables[0].cotizadores != null : false,
             child: Expanded(
               child: new ListView.builder(
-                  itemCount: widget.negociosOperables.length,
+                  itemCount: widget.negociosOperables != null ? widget.negociosOperables.length : 0,
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   itemBuilder: (context, index){

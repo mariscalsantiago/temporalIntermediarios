@@ -273,11 +273,11 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
       setState(() {
         isLoading = true;
       });
-      var idApp = "2343";
+
       try{
         Map<String, String> headers = {"Accept": "application/json"};
 
-        var response = await http.get(Uri.encodeFull(config.urlFormularioPaso1 + idApp), headers: headers);
+        var response = await http.get(Uri.encodeFull(config.urlFormularioPaso1 + widget.cotizador), headers: headers);
 
         int statusCode = response.statusCode;
 

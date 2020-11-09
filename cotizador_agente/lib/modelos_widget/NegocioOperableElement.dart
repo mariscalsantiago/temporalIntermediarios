@@ -212,7 +212,7 @@ class _NegocioOperableElementState
 
 
                       return Visibility(
-                        visible: estaAbierto && widget.negocioOperable.cotizadores[j].estatus && widget.negocioOperable.cotizadores[j].visible_movil,
+                        visible: estaAbierto && widget.negocioOperable.cotizadores[j].estatus ,//estaAbierto && widget.negocioOperable.cotizadores[j].estatus && widget.negocioOperable.cotizadores[j].visible_movil,
                         child: Container(
                             color: Colors.white,
                             width: double.infinity,
