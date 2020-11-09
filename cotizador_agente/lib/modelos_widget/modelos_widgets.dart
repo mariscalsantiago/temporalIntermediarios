@@ -676,9 +676,9 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
               child: Container(
                   margin: EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
-                      color: AppColors.color_sombra,
+                      color: AppColors.color_background_blanco,
                       border: Border(
-                          bottom: BorderSide(color: AppColors.color_primario))),
+                          bottom: BorderSide(color: AppColors.color_mail))),
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -688,7 +688,7 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
                           widget.campo.etiqueta == null
                               ? widget.campo.nombre_campo
                               : widget.campo.etiqueta,
-                          style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                          style: widget.campo.enabled? TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto') : TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                         ),
                       ),
                       Container(
@@ -700,7 +700,7 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               //Jiffy( DateTime.parse(widget.campo.valor)).format("dd-MM-yyyy").toString()
-                              Text(Jiffy(widget.campo.valor).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),
+                              Text(Jiffy(widget.campo.valor).format("dd-MM-yyyy").toString(), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                                 textAlign: TextAlign.left,),
                               Icon(Icons.date_range, color: Colors.grey,)
                             ],
