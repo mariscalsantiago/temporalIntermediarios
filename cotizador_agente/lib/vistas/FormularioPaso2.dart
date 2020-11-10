@@ -758,15 +758,36 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
 
                               Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: widget.secciones[index], i:index, end:widget.secciones.length-1, formKey: formKey,actualizarSecciones: actualizarVistaConNuevoPlan,
-                                  actualizarCodigoPostalFamiliares:
-                                  actualizarCodigoPostalFamiliares,
-                                  validarCodigoPostalFamiliares:
-                                  validarCodigoPostalFamiliares,
-                                  borrarAdicional: borrarAdicional,
+                                padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                                child: Container(
+                                  color: AppColors.color_background,
+                                  child: ExpansionTile(
+                                    initiallyExpanded: true,
+                                    title: Text(widget.secciones[index].seccion,
+                                      style: new TextStyle(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.color_titleAlert,
+                                        fontFamily: "Roboto",
+                                      ),),
+                                    children: <Widget>[
+                                      Container(
+                                        color: AppColors.color_background_blanco,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: widget.secciones[index], i:index, end:widget.secciones.length-1, formKey: formKey,actualizarSecciones: actualizarVistaConNuevoPlan,
+                                            actualizarCodigoPostalFamiliares:
+                                            actualizarCodigoPostalFamiliares,
+                                            validarCodigoPostalFamiliares:
+                                            validarCodigoPostalFamiliares,
+                                            borrarAdicional: borrarAdicional,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              )
+                              ),
 
 
                             ],
@@ -894,16 +915,50 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
 
                                   return Padding(
-                                    padding: const EdgeInsets.all(16.0),
-                                    child:
-                                    isLoading == true ?
-                                    Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),) :
-                                    new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
-                                      actualizarCodigoPostalFamiliares:
-                                      actualizarCodigoPostalFamiliares,
-                                      validarCodigoPostalFamiliares:
-                                      validarCodigoPostalFamiliares,
-                                      borrarAdicional: borrarAdicional,
+                                    padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                                    child: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].campos.length != 0 ? Container(
+                                      color: AppColors.color_background,
+                                      child: ExpansionTile(
+                                        initiallyExpanded: true,
+                                        title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].seccion,
+                                          style: new TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.color_titleAlert,
+                                            fontFamily: "Roboto",
+                                          ),),
+                                        children: <Widget>[
+                                          Container(
+                                            color: AppColors.color_background_blanco,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(16.0),
+                                              child:
+                                              isLoading == true ?
+                                              Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),) :
+                                              new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
+                                                actualizarCodigoPostalFamiliares:
+                                                actualizarCodigoPostalFamiliares,
+                                                validarCodigoPostalFamiliares:
+                                                validarCodigoPostalFamiliares,
+                                                borrarAdicional: borrarAdicional,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ) :
+                                    Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child:
+                                      isLoading == true ?
+                                      Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),) :
+                                      new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
+                                        actualizarCodigoPostalFamiliares:
+                                        actualizarCodigoPostalFamiliares,
+                                        validarCodigoPostalFamiliares:
+                                        validarCodigoPostalFamiliares,
+                                        borrarAdicional: borrarAdicional,
+                                      ),
                                     ),
                                   );
 
