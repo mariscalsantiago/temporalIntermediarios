@@ -72,6 +72,14 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
       Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan =  widget.campo.valores[0].id;
     }*/
     isUnValor = widget.campo.valores.length > 1 ? false : true;
+    int numeroValores = 0;
+    if(!isUnValor){
+      widget.campo.valores.forEach((valor){
+        numeroValores = valor.visible ? numeroValores++ : numeroValores;
+      });
+      isUnValor = numeroValores > 1 ? false : true;
+    }
+
 
     if(widget.campo.valor == null){ //SE INICIALIZA CAMPO
 
