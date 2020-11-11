@@ -75,7 +75,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
     int numeroValores = 0;
     if(!isUnValor){
       widget.campo.valores.forEach((valor){
-        numeroValores = valor.visible ? numeroValores++ : numeroValores;
+        numeroValores = valor.visible ? numeroValores+1 : numeroValores;
       });
       isUnValor = numeroValores > 1 ? false : true;
     }
@@ -490,9 +490,9 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
     return Visibility(
       visible: widget.campo.visible,
       child: CheckboxListTile(
-        title: Text(widget.campo.etiqueta),
+        title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? AppColors.color_appBar : AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
         value: widget.currentValue,
-        activeColor: AppColors.color_naranja_primario,
+        activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.color_naranja_primario,
         onChanged: widget.campo.enabled ? (newValue) {
           setState(() {
             widget.currentValue = newValue;
@@ -569,9 +569,9 @@ class _CheckBoxDinamicoDependienteState extends State<CheckBoxDinamicoDependient
 
             if(index==0){
               return CheckboxListTile(
-                title: Text(widget.campo.etiqueta),
+                title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? AppColors.color_appBar : AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
                 value: widget.currentValue,
-                activeColor: AppColors.color_primario,
+                activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.color_naranja_primario,
                 onChanged: widget.campo.enabled ? (newValue) {
                   setState(() {
                     widget.currentValue = newValue;

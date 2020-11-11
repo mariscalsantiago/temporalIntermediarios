@@ -375,9 +375,10 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: AppColors.color_titulo,
-                            fontSize: 20),
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.color_Etiqueta,
+                            fontSize: 10),
                       ),
                       GestureDetector(
                         onTap: (){

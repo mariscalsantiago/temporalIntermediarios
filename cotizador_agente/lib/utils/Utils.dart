@@ -375,47 +375,50 @@ class Utilidades {
                onWillPop: ()async{
                   return false;
                },
-               child: AlertDialog(
-                  title: Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
-                  content: Container(
-                     height: 72,
-                    child: Column(
-                       children: <Widget>[
-                          SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Divider(color: AppColors.color_Bordes, height: 20,thickness: 1,),
+               child: Container(
+                  color: AppColors.color_titleAlert.withOpacity(0.6),
+                 child: AlertDialog(
+                    title: Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
+                    content: Container(
+                       height: 72,
+                      child: Column(
+                         children: <Widget>[
+                            SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Divider(color: AppColors.color_Bordes, height: 20,thickness: 1,),
+                            ),
+                         ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                       // usually buttons at the bottom of the dialog
+                      ButtonTheme(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0),),
+                        child: FlatButton(
+                          color: AppColors.color_naranja_primario,
+                          textColor: AppColors.color_background_blanco,
+                          child: Text(
+                            "Borrar",
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,fontFamily: 'OpenSansRegular'),
                           ),
-                       ],
-                    ),
-                  ),
-                  actions: <Widget>[
-                     // usually buttons at the bottom of the dialog
-                    ButtonTheme(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0),),
-                      child: FlatButton(
-                        color: AppColors.color_naranja_primario,
-                        textColor: AppColors.color_background_blanco,
-                        child: Text(
-                          "Borrar",
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,fontFamily: 'OpenSansRegular'),
+                          onPressed: positive,
                         ),
-                        onPressed: positive,
                       ),
-                    ),
-                    ButtonTheme(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0),),
-                      child: FlatButton(
-                        color: AppColors.color_naranja_primario,
-                        textColor: AppColors.color_background_blanco,
-                        child: Text(
-                          "Cancelar",
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,fontFamily: 'OpenSansRegular'),
+                      ButtonTheme(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0),),
+                        child: FlatButton(
+                          color: AppColors.color_naranja_primario,
+                          textColor: AppColors.color_background_blanco,
+                          child: Text(
+                            "Cancelar",
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,fontFamily: 'OpenSansRegular'),
+                          ),
+                          onPressed: negative,
                         ),
-                        onPressed: negative,
                       ),
-                    ),
-                  ],
+                    ],
+                 ),
                ),
             );
          },
