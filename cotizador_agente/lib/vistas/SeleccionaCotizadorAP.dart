@@ -204,7 +204,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         children:  <Widget>[
 
           Visibility(
-            visible:  widget.negociosOperables != null ? widget.negociosOperables[0].cotizadores != null : false,
+            visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
             child: Expanded(
               child: new ListView.builder(
                   itemCount: widget.negociosOperables != null ? widget.negociosOperables.length : 0,

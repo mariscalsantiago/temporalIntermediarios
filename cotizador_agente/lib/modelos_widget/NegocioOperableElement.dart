@@ -19,8 +19,7 @@ class NegocioOperableElement extends StatefulWidget {
   final NegocioOperable negocioOperable;
 }
 
-class _NegocioOperableElementState
-    extends State<NegocioOperableElement> {
+class _NegocioOperableElementState extends State<NegocioOperableElement> {
   //Inicializacion de pestaña
   bool estaAbierto = true;
   IconData icon = Icons.expand_more;
@@ -100,7 +99,7 @@ class _NegocioOperableElementState
       String encoded = stringToBase64.encode(dataLayer);
 
       setState(() {
-        _initialURL = "config.urlAccionIngreso + encoded";
+        _initialURL = config.urlAccionIngreso + encoded;
         Utilidades.LogPrint(" URLACCION: " + _initialURL);
       });
 

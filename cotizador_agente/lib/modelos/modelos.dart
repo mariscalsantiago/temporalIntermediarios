@@ -466,7 +466,7 @@ class FormularioCotizacion {
     });
 
     Map<String, dynamic> responseResumen = {
-      "idParticipante": datosUsuario.idparticipante.toString(),
+      "idParticipante": "TALLPRO",//datosUsuario.idparticipante.toString(),
       "nombreParticipante": datosUsuario.givenname,
       "parametroCotizador": Utilidades.idAplicacion,
       "seccion": secciones,
