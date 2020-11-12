@@ -72,6 +72,14 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
       Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan =  widget.campo.valores[0].id;
     }*/
     isUnValor = widget.campo.valores.length > 1 ? false : true;
+    int numeroValores = 0;
+    if(!isUnValor){
+      widget.campo.valores.forEach((valor){
+        numeroValores = valor.visible ? numeroValores+1 : numeroValores;
+      });
+      isUnValor = numeroValores > 1 ? false : true;
+    }
+
 
     if(widget.campo.valor == null){ //SE INICIALIZA CAMPO
 
@@ -482,9 +490,9 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
     return Visibility(
       visible: widget.campo.visible,
       child: CheckboxListTile(
-        title: Text(widget.campo.etiqueta),
+        title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? AppColors.color_appBar : AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
         value: widget.currentValue,
-        activeColor: AppColors.color_naranja_primario,
+        activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.color_naranja_primario,
         onChanged: widget.campo.enabled ? (newValue) {
           setState(() {
             widget.currentValue = newValue;
@@ -561,9 +569,9 @@ class _CheckBoxDinamicoDependienteState extends State<CheckBoxDinamicoDependient
 
             if(index==0){
               return CheckboxListTile(
-                title: Text(widget.campo.etiqueta),
+                title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? AppColors.color_appBar : AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
                 value: widget.currentValue,
-                activeColor: AppColors.color_primario,
+                activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.color_naranja_primario,
                 onChanged: widget.campo.enabled ? (newValue) {
                   setState(() {
                     widget.currentValue = newValue;
@@ -676,9 +684,9 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
               child: Container(
                   margin: EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
-                      color: AppColors.color_sombra,
+                      color: AppColors.color_background_blanco,
                       border: Border(
-                          bottom: BorderSide(color: AppColors.color_primario))),
+                          bottom: BorderSide(color: AppColors.color_mail))),
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -688,7 +696,7 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
                           widget.campo.etiqueta == null
                               ? widget.campo.nombre_campo
                               : widget.campo.etiqueta,
-                          style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                          style: widget.campo.enabled? TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto') : TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                         ),
                       ),
                       Container(
@@ -700,7 +708,7 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               //Jiffy( DateTime.parse(widget.campo.valor)).format("dd-MM-yyyy").toString()
-                              Text(Jiffy(widget.campo.valor).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),
+                              Text(Jiffy(widget.campo.valor).format("dd-MM-yyyy").toString(), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                                 textAlign: TextAlign.left,),
                               Icon(Icons.date_range, color: Colors.grey,)
                             ],

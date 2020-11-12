@@ -273,7 +273,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
       setState(() {
         isLoading = true;
       });
-     // var idApp = "2343";
+
       try{
         Map<String, String> headers = {"Accept": "application/json"};
 
@@ -1012,15 +1012,36 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
 
                                 Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: new SeccionDinamica( agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index], i:index, end:Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length-1, cantidad_asegurados: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.cantidad_asegurados, formKey: formKey,
-                                    actualizarCodigoPostalFamiliares:
-                                    actualizarCodigoPostalFamiliares,
-                                    validarCodigoPostalFamiliares:
-                                    widget.validarCodigoPostalFamiliares,
-                                    borrarAdicional: borrarAdicional,
+                                  padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                                  child: Container(
+                                    color: AppColors.color_background,
+                                    child: ExpansionTile(
+                                      initiallyExpanded: true,
+                                      title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
+                                        style: new TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.color_titleAlert,
+                                          fontFamily: "Roboto",
+                                        ),),
+                                      children: <Widget>[
+                                        Container(
+                                          color: AppColors.color_background_blanco,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: new SeccionDinamica( agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index], i:index, end:Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length-1, cantidad_asegurados: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.cantidad_asegurados, formKey: formKey,
+                                              actualizarCodigoPostalFamiliares:
+                                              actualizarCodigoPostalFamiliares,
+                                              validarCodigoPostalFamiliares:
+                                              widget.validarCodigoPostalFamiliares,
+                                              borrarAdicional: borrarAdicional,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                )
+                                ),
 
 
                               ],
@@ -1043,13 +1064,34 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
 
                           return Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index], i:index, end:Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length-1, cantidad_asegurados: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.cantidad_asegurados, formKey: formKey,
-                              actualizarCodigoPostalFamiliares:
-                              actualizarCodigoPostalFamiliares,
-                              validarCodigoPostalFamiliares:
-                              widget.validarCodigoPostalFamiliares,
-                              borrarAdicional: borrarAdicional,
+                            padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                            child: Container(
+                              color: AppColors.color_background,
+                              child: ExpansionTile(
+                                initiallyExpanded: true,
+                                title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
+                                  style: new TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.color_titleAlert,
+                                      fontFamily: "Roboto",
+                                  ),),
+                                children: <Widget>[
+                                  Container(
+                                    color: AppColors.color_background_blanco,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16.0),
+                                      child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index], i:index, end:Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length-1, cantidad_asegurados: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.cantidad_asegurados, formKey: formKey,
+                                        actualizarCodigoPostalFamiliares:
+                                        actualizarCodigoPostalFamiliares,
+                                        validarCodigoPostalFamiliares:
+                                        widget.validarCodigoPostalFamiliares,
+                                        borrarAdicional: borrarAdicional,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           );
                         }
