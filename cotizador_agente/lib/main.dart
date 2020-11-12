@@ -1,9 +1,8 @@
 
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Perfil/PerfilPage.dart';
+import 'package:cotizador_agente/vistas/Cotizacion.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
-import 'package:cotizador_agente/vistas/Inicio/Bienvenida.dart';
 import 'package:cotizador_agente/vistas/Inicio/LoginPage.dart';
 import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
 import 'package:cotizador_agente/vistas/SendEmail.dart';
@@ -139,7 +138,7 @@ class MyApp extends StatelessWidget {
         '/perfil': (buildContext) => PerfilPage(),
         '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
         '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
-        '/cotizadorUnicoAPPasoDos': (buildContext) => FormularioPaso2(),
+        '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
         '/cotizadorUnicoAPSendEmail': (buildContext) => SendEmail(),
       },
         debugShowCheckedModeBanner: false,

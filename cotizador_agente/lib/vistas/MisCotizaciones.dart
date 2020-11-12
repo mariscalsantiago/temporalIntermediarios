@@ -238,8 +238,8 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
           if (!blockSearch) {
             blockSearch = true;
-            return http.post("http://gmm-cotizadores-qa.gnp.com.mx/cotizacion/cotizaciones", body: json.encode(jsonMap), headers: headers).then((Response response) {
-              //Utilidades.LogPrint("RESPONSE COT G: " + response.body.toString());
+            return http.post(config.urlCotizacionesGuardadas, body: json.encode(jsonMap), headers: headers).then((Response response) {
+              Utilidades.LogPrint("RESPONSE COT G: " + response.body.toString());
 
               int statusCode = response.statusCode;
 
@@ -298,10 +298,8 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
                 }else{
                   //llenaTbl.stop();
-                  Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                    Navigator.pop(context);
-                    llenarTabla(context);
-                  });
+                  Utilidades.mostrarAlerta(Mensajes.titleLoSentimos, Mensajes.sinCotizaciones, context);
+
                 }
               }else{
                 //llenaTbl.stop();

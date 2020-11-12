@@ -273,11 +273,11 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
       setState(() {
         isLoading = true;
       });
-      var idApp = "2343";
+     // var idApp = "2343";
       try{
         Map<String, String> headers = {"Accept": "application/json"};
 
-        var response = await http.get(Uri.encodeFull(config.urlFormularioPaso1 + idApp), headers: headers);
+        var response = await http.get(Uri.encodeFull(config.urlFormularioPaso1 + widget.cotizador), headers: headers);
 
         int statusCode = response.statusCode;
 
@@ -626,8 +626,8 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
             Utilidades.cotizacionesApp.eliminarDeLaComparativa(Utilidades.cotizacionesApp.getCurrentLengthLista()-1);
 
           }else{
-           // Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoAP'));
-            Navigator.pop(context);
+            Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoAP'));
+          //  Navigator.pop(context);
           }
 
           return true;

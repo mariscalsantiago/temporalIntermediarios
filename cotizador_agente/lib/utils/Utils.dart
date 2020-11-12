@@ -51,6 +51,8 @@ class Utilidades {
    static const int FORMATO_COTIZACION = 1;
    static const int FORMATO_COMPARATIVA = 2;
    static const int FORMATO_COMISION = 3;
+   static const int FORMATO_COTIZACION_AP = 5;//Cambia para Cotizador AP
+   static const int FORMATO_COMISION_AP = 6;//Cambia para Cotizador AP
    static final String tipoCampoSelect = "select";
    static final String tipoCampoToggle = "toggle";
    static final String tipoCampoSwitch = "switch";
@@ -352,6 +354,7 @@ class Utilidades {
                            style: TextStyle(color: Utilidades.color_primario),
                         ),
                         onPressed: () {
+                           Navigator.pop(context);
                            Navigator.pop(context);
                            Navigator.pop(context);
                         },

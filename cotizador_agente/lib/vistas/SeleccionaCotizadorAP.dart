@@ -49,7 +49,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
         Map<String, dynamic> jsonMap = {
           "consultaNegocio": {
-            "idParticipante": datosUsuario.idparticipante.toString(),
+            "idParticipante": "TALLPRO",//datosUsuario.idparticipante.toString(),
           }
         };
 
@@ -127,8 +127,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         };
 
         Map<String, dynamic> jsonMap = {
-        "clave_negocio_operable": negocioOperable.idNegocioOperable.toString(),
-        "correo": datosUsuario.mail.toString(),
+        "clave_negocio_operable": "NOP0002010",//negocioOperable.idNegocioOperable.toString(),
+        "correo": "TallerdeProductos@gnp.com.mx", //datosUsuario.mail.toString(),
         };
         // make POST request
         Response response = await post(config.urlCotizadores, headers: headers, body: json.encode(jsonMap));

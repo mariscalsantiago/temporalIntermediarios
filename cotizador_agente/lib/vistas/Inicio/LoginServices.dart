@@ -44,7 +44,7 @@ Future<LoginDatosModel> logInServices(BuildContext context, String user, String 
   currentCuaLogros = datosPerfilador.intermediarios[0];
   currentCuaDesignaciones = datosPerfilador.intermediarios[0];
 
-  datosFisicos = await getPersonaFisica(datosUsuario.idparticipante, false);
+  /*datosFisicos = await getPersonaFisica(datosUsuario.idparticipante, false);
 
   if(datosFisicos==null){
     bool responseImporta = await getImporta(datosUsuario.idparticipante);
@@ -57,7 +57,7 @@ Future<LoginDatosModel> logInServices(BuildContext context, String user, String 
       return null;
     }
     return null;
-  }
+  }*/
  // getOptionalInformation();
 
   print("=> Log In <=");

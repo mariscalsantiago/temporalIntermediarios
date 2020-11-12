@@ -79,7 +79,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
             Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
 
-            //TO DO: Revisar esta cambio para ver si es correcto.
+            //TODO: Revisar esta cambio para ver si es correcto.
             Map<String, dynamic> jsonMap = {
               "idAplicacion": Utilidades.idAplicacion,
               "folioCotizacion": widget.folio,
@@ -87,7 +87,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
               "idPlan": widget.id_Plan
             };
 
-            http.Response response= await post("http://gmm-cotizadores-qa.gnp.com.mx/cotizacion/formato", body: json.encode(jsonMap), headers: headers);
+            http.Response response= await post(config.urlFormatoPDF, body: json.encode(jsonMap), headers: headers);
 
             int statusCode = response.statusCode;
 
@@ -154,8 +154,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   Future<String> _createFileFromString() async {
 
-      String nombreFormato = widget.idFormato == Utilidades.FORMATO_COTIZACION ? "Cotización-" :
-      (widget.idFormato == Utilidades.FORMATO_COMISION ? "Comisión-" : (widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Comparativa-" : ""  ));
+      String nombreFormato = (widget.idFormato == Utilidades.FORMATO_COTIZACION_AP) ? "Cotización-" :
+      ((widget.idFormato == Utilidades.FORMATO_COMISION_AP) ? "Comisión-" : (widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Comparativa-" : ""  ));
 
       final encodedStr = responseBase;
       Uint8List bytes = base64.decode(encodedStr);
@@ -187,7 +187,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
       String encoded = stringToBase64.encode(dataLayer);
 
       setState(() {
-        _initialURL = "config.urlAccionDescarga "+ encoded; // "https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=descargarMovil&dataLayer="
+        _initialURL = config.urlAccionDescarga + encoded; // "https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=descargarMovil&dataLayer="
         Utilidades.LogPrint("URLACCION: " + _initialURL);
       });
 
@@ -254,8 +254,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                       child:
                       Visibility(
                         visible: widget.id != null,
-                        child: Text( widget.idFormato == Utilidades.FORMATO_COTIZACION ?
-                        "Formato Cotización: " + widget.folio.toString() : (widget.idFormato == Utilidades.FORMATO_COMISION ? "Formato Comisión: " + widget.folio.toString() : ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Formato Comparativa: " + widget.folio.toString() : ""  )),
+                        child: Text( widget.idFormato == Utilidades.FORMATO_COTIZACION_AP ?
+                        "Formato Cotización: " + widget.folio.toString() : (widget.idFormato == Utilidades.FORMATO_COMISION_AP ? "Formato Comisión: " + widget.folio.toString() : ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Formato Comparativa: " + widget.folio.toString() : ""  )),
                           style:
                           TextStyle(fontSize: 20.0, color: AppColors.color_titulo),
                           textAlign: TextAlign.left,

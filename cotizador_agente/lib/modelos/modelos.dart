@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:flutter/material.dart';
 
 class CotizacionesApp {
   List<FormularioCotizacion> listaCotizaciones = List<FormularioCotizacion>();
@@ -2216,12 +2215,13 @@ class FormadePago {
   final String forma;
   final String ptotal;
   final String parcialidades;
+  final String pparcial;
 
-  FormadePago({this.forma, this.ptotal, this.parcialidades});
+  FormadePago({this.forma, this.ptotal, this.parcialidades, this.pparcial});
 
   factory FormadePago.fromJson(Map<String, dynamic> parsedJson) {
     return FormadePago(
-        forma: parsedJson["formaPago"], ptotal: parsedJson["primaTotal"].toString(), parcialidades: parsedJson["parcialidades"]);
+        forma: parsedJson["formaPago"], ptotal: parsedJson["primaTotal"].toString(), parcialidades: parsedJson["parcialidades"], pparcial: parsedJson["primaParcial"]);
   }
 }
 

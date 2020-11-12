@@ -4,16 +4,12 @@ import 'dart:io';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
-//import 'package:firebase_analytics/firebase_analytics.dart';
-//import 'package:firebase_performance/firebase_performance.dart';
-//import 'package:agentesgnp/Modelos/LoginModels.dart';
 
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
 import 'package:cotizador_agente/utils/CircleButton.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/Cotizacion.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
@@ -831,13 +827,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                     }, (){ //ACEPTAR
 
                                                       Navigator.pop(context);
-                                                      //Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
-
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) => CotizacionVista(),
-                                                          ));
+                                                      Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
 
                                                     });
                                                   }
@@ -848,13 +838,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                 }else{
                                                   print("No se cumplen reglas");
 
-                                                  //Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
-
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) => CotizacionVista(),
-                                                      ));
+                                                  Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres");
 
                                                 }
 
@@ -865,7 +849,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                             child: Padding(
                                               padding: const EdgeInsets.all(8.0),
                                               child: Text(
-                                                "Cotizar",
+                                                "COTIZAR",
                                                 style: TextStyle(fontSize: 15.0, letterSpacing: 1),
                                               ),
                                             ),

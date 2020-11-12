@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
-import 'package:cotizador_agente/vistas/Inicio/AvisoPrivacidad.dart';
 import 'package:cotizador_agente/vistas/Inicio/LoginServices.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -169,16 +168,16 @@ class LogInBodyState extends State<LogInBody> {
     loginPasswordController.clear();
     loginEmailController.clear();
     setState(() {});
-    if(await getAviso(datosUsuario.idparticipante)) {
-      Navigator.push(context,
-        MaterialPageRoute(builder: (context) =>
-            PrivacyAdvertisement(email:loginEmailController.text))
-      );
-    }else {
+//    if(await getAviso(datosUsuario.idparticipante)) {
+//      Navigator.push(context,
+//        MaterialPageRoute(builder: (context) =>
+//            PrivacyAdvertisement(email:loginEmailController.text))
+//      );
+//    }else {
       Navigator.pushNamed(context, '/cotizadorUnicoAP').then((val){
         //getHuella();
       });
-    }
+   // }
     _saving = false;
     setState(() {});
           
