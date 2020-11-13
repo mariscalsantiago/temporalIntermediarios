@@ -585,6 +585,23 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
   }
 
+  Widget showLoading() {
+    return Scaffold(
+        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
+        body: Center(
+          child: Container(
+              child: SizedBox(
+                width: 80.0,
+                height: 80.0,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 5.0,
+                ),
+              )),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -627,7 +644,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                 child: Form(
                   key: formKey,
                   child:
-                  //isLoading ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Utilidades.color_primario),),) :
+                  isLoading ? showLoading() :
                   new ListView.builder(
                       itemCount: widget.secciones.length+1,
                       shrinkWrap: true,
@@ -794,11 +811,8 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                         if(index==widget.secciones.length){ //Aqui va el formulario paso 2
                           try{
                             return Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2==null
-                                ?
-                            Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),)
-                                : isLoading == true ?
-                            Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),)
-                                : ListView.builder(
+                                ? showLoading() : isLoading == true
+                                ? showLoading() : ListView.builder(
                                 itemCount:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length+1,
                                 shrinkWrap: true,
                                 physics: ScrollPhysics(),
@@ -917,9 +931,9 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                             child: Padding(
                                               padding: const EdgeInsets.all(16.0),
                                               child:
-                                              isLoading == true ?
-                                              Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),) :
-                                              new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
+                                              isLoading == true
+                                                  ? showLoading()
+                                                  : new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
                                                 actualizarCodigoPostalFamiliares:
                                                 actualizarCodigoPostalFamiliares,
                                                 validarCodigoPostalFamiliares:
@@ -935,7 +949,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                       padding: const EdgeInsets.all(16.0),
                                       child:
                                       isLoading == true ?
-                                      Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),) :
+                                      showLoading() :
                                       new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
                                         actualizarCodigoPostalFamiliares:
                                         actualizarCodigoPostalFamiliares,
@@ -963,7 +977,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                           padding: const EdgeInsets.all(16.0),
                           child:
                           (isLoading == true || (widget.secciones.length-1)==0 )  ?
-                          Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Utilidades.color_primario),),) :
+                          showLoading() :
                           new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: widget.secciones[index], i:index, end:widget.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
                             actualizarCodigoPostalFamiliares:
                             actualizarCodigoPostalFamiliares,

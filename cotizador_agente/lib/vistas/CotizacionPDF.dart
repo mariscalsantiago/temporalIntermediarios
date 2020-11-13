@@ -371,12 +371,27 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
       body: Container(
         color: Colors.white,
         child: isLoading
-        ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),)
+        ? showLoading()
         : PDFView(filePath: pathPdf, autoSpacing: true)
       ),
 
       );
   }
 
-
+  Widget showLoading() {
+    return Scaffold(
+        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
+        body: Center(
+          child: Container(
+              child: SizedBox(
+                width: 80.0,
+                height: 80.0,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 5.0,
+                ),
+              )),
+        ));
+  }
 }

@@ -179,6 +179,24 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   }
 
+  Scaffold showLoading() {
+    return Scaffold(
+    backgroundColor: AppColors.color_titulo.withOpacity(0.8),
+      body: Center(
+        child: Container(
+            child: SizedBox(
+              width: 80.0,
+              height: 80.0,
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.transparent,
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+                strokeWidth: 5.0,
+              ),
+            )),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -200,14 +218,14 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         backgroundColor: Colors.white,
         title: Text("Selecciona un cotizador", style: TextStyle(color: Colors.black),),
       ),
-      body:  isLoading ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),): Column(
+      body:  isLoading ? showLoading() : Column(
         children:  <Widget>[
 
           Visibility(
             visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
             child: Expanded(
               child: new ListView.builder(
-                  itemCount: widget.negociosOperables != null ? widget.negociosOperables.length : 0,
+                  itemCount: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables.length : 0,
                   shrinkWrap: true,
                   physics: ScrollPhysics(),
                   itemBuilder: (context, index){

@@ -7,9 +7,7 @@ import 'dart:io';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:cotizador_agente/cotizador_analitycs_tags.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
-import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
@@ -106,6 +104,23 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     });
     //_flutterWebViewPlugin.onUrlChanged.listen((String url) { print("onResume Change Url => $url"); });
     bool noTieneComparativa = false;
+  }
+
+  Widget showLoading() {
+    return Scaffold(
+        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
+        body: Center(
+          child: Container(
+              child: SizedBox(
+                width: 80.0,
+                height: 80.0,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 5.0,
+                ),
+              )),
+        ));
   }
 
   generarCotizacion(BuildContext context) async{
@@ -948,7 +963,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                 ],
               ),
-              body: isLoading ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),): Column(
+              body: isLoading ? showLoading(): Column(
 
                 children: <Widget>[
 

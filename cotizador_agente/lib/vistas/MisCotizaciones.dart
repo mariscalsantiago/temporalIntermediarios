@@ -338,6 +338,23 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
     return success;
   }
 
+  Widget showLoading() {
+    return Scaffold(
+        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
+        body: Center(
+          child: Container(
+              child: SizedBox(
+                width: 80.0,
+                height: 80.0,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 5.0,
+                ),
+              )),
+        ));
+  }
+  
   mostrarMas() {
     setState(() {
       pagina++;
@@ -474,12 +491,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
   Widget listaGuardados() {
     if(isLoading==true)
     {
-      return Center(
-        child: CircularProgressIndicator(
-          valueColor: new AlwaysStoppedAnimation<Color>(
-              Utilidades.color_primario),
-        ),
-      );
+      return showLoading();
     }
     else if(cotizaciones == null) {
       return Container();

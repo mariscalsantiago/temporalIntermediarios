@@ -604,7 +604,22 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
     return verify;
   }
 
-
+  Widget showLoading() {
+    return Scaffold(
+        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
+        body: Center(
+          child: Container(
+              child: SizedBox(
+                width: 80.0,
+                height: 80.0,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.transparent,
+                  valueColor: AlwaysStoppedAnimation(Colors.white),
+                  strokeWidth: 5.0,
+                ),
+              )),
+        ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -824,7 +839,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                 Expanded(
                   child: Form(
                     key: formKey,
-                    child: (isLoading || (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion() == null)) ? Center(child: CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),),):
+                    child: (isLoading || (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion() == null)) ? showLoading() : //CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),)
                     new ListView.builder(
                         itemCount: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length+1,
                         shrinkWrap: true,
