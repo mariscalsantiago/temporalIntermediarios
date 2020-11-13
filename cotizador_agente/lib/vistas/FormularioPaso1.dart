@@ -116,22 +116,27 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
   }
 
   void recargar(){
-    setState(() {
+    Utilidades.mostrarAlertaCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
       Navigator.pop(context);
+    }, (){
+      print("RECARGA");
       setState(() {
-        isLoading = true;
-      });
-      Utilidades.cotizacionesApp.eliminarDeLaComparativa(Utilidades.cotizacionesApp.getCurrentLengthLista()-1);
-      widget.cotizacionGuardada = null;
-      this.getData().then((success){
+        Navigator.pop(context);
+        setState(() {
+          isLoading = true;
+        });
+        Utilidades.cotizacionesApp.eliminarDeLaComparativa(Utilidades.cotizacionesApp.getCurrentLengthLista()-1);
+        widget.cotizacionGuardada = null;
+        this.getData().then((success){
 
-        if(success == false){
-          setState(() {
-            isLoading = true;
-          });
-        }else{
-          isLoading = false;
-        }
+          if(success == false){
+            setState(() {
+              isLoading = true;
+            });
+          }else{
+            isLoading = false;
+          }
+        });
       });
     });
 
@@ -715,6 +720,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                               IconButton(
                                 icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
                                 onPressed: () {
+                                  Navigator.pop(context);
                                   recargar();
                                 },),
                             ],
@@ -798,10 +804,10 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
 
-                Visibility(
+                /*Visibility(
                   visible: !isLoading,
                   child: TopBar(recargarFormulario: recargar),
-                ),
+                ),*/
 
                 Row(
                   children: <Widget>[
@@ -878,6 +884,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                           Navigator.pop(context);
                                         }
                                       } else {
+                                        Utilidades.mostrarAlerta("ERRORR", "Faltan datos", context);
                                         print("invalid");
                                       }
                                     },
