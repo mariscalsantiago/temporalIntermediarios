@@ -21,6 +21,7 @@ import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -154,8 +155,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   Future<String> _createFileFromString() async {
 
-      String nombreFormato = (widget.idFormato == Utilidades.FORMATO_COTIZACION_AP) ? "Cotización-" :
-      ((widget.idFormato == Utilidades.FORMATO_COMISION_AP) ? "Comisión-" : (widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Comparativa-" : ""  ));
+      String nombreFormato = (widget.idFormato == Utilidades.FORMATO_COTIZACION_AP) || (widget.idFormato == Utilidades.FORMATO_COTIZACION) ? "Cotización-" :
+      ((widget.idFormato == Utilidades.FORMATO_COMISION_AP) || (widget.idFormato == Utilidades.FORMATO_COMISION) ? "Comisión-" : (widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Comparativa-" : ""  ));
 
       final encodedStr = responseBase;
       Uint8List bytes = base64.decode(encodedStr);
@@ -219,179 +220,176 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar:
-      PreferredSize(
-        preferredSize: Size.fromHeight(250.0),
-        child: Container(
-          color: Colors.white,
-          child: Column(
+    return LoadingOverlay(
+      isLoading: isLoading,
+      opacity: 0.8,
+      color: AppColors.color_titulo,
+      progressIndicator: CircularProgressIndicator(
+        backgroundColor: Colors.transparent,
+        valueColor: AlwaysStoppedAnimation(Colors.white),
+        strokeWidth: 5.0,
+      ),
+      child: Scaffold(
+        appBar:
+        PreferredSize(
+          preferredSize: Size.fromHeight(250.0),
+          child: Container(
+            color: Colors.white,
+            child: Column(
 
-            children: <Widget>[
-              AppBar(
-                iconTheme: IconThemeData(color: AppColors.color_primario),
-                backgroundColor: Colors.white,
-                title: Text("", style: TextStyle(fontSize: 24, color: AppColors.color_titulo)),
-              ),
-              Row(
-                children: <Widget>[
-                  Expanded(
-                    child: Container(
-                        child: Divider(
-                          //002e71
-                          thickness: 2,
-                          color: AppColors.color_titulo,
-                        )),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Row(
+              children: <Widget>[
+                AppBar(
+                  iconTheme: IconThemeData(color: AppColors.color_primario),
+                  backgroundColor: Colors.white,
+                  title: Text("", style: TextStyle(fontSize: 24, color: AppColors.color_titulo)),
+                ),
+                Row(
                   children: <Widget>[
                     Expanded(
-                      flex: 5,
-                      child:
-                      Visibility(
-                        visible: widget.id != null,
-                        child: Text( widget.idFormato == Utilidades.FORMATO_COTIZACION_AP ?
-                        "Formato Cotización: " + widget.folio.toString() : (widget.idFormato == Utilidades.FORMATO_COMISION_AP ? "Formato Comisión: " + widget.folio.toString() : ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Formato Comparativa: " + widget.folio.toString() : ""  )),
-                          style:
-                          TextStyle(fontSize: 20.0, color: AppColors.color_titulo),
-                          textAlign: TextAlign.left,
-                          overflow: TextOverflow.clip,
-                        ),
-                      ),
-                    ),
-                    Spacer(),
-                    Expanded(
-                      flex: 2,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                         // Navigator.of(context).pop();
-                          Navigator.pop(context);
-                        },
-                        heroTag: "btn1",
-                        tooltip: "Cerrar",
-                        backgroundColor: AppColors.color_primario,
-                        child: const Icon(Icons.close),
-                      ),
+                      child: Container(
+                          child: Divider(
+                            //002e71
+                            thickness: 2,
+                            color: AppColors.color_titulo,
+                          )),
                     ),
                   ],
                 ),
-              ),
-              Container(
-                child:  Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OutlineButton(
-                          textColor: AppColors.color_primario,
-                          child: Text("DESCARGAR"),
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 5,
+                        child:
+                        Visibility(
+                          visible: widget.id != null,
+                          child: Text( (widget.idFormato == Utilidades.FORMATO_COTIZACION_AP) || (widget.idFormato == Utilidades.FORMATO_COTIZACION) ?
+                          "Formato Cotización: " + widget.folio.toString() :
+                          ((widget.idFormato == Utilidades.FORMATO_COMISION_AP) || (widget.idFormato == Utilidades.FORMATO_COMISION) ?
+                          "Formato Comisión: " + widget.folio.toString() :
+                          ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Formato Comparativa: " + widget.folio.toString() : ""  )),
+                            style:
+                            TextStyle(fontSize: 20.0, color: AppColors.color_titulo),
+                            textAlign: TextAlign.left,
+                            overflow: TextOverflow.clip,
+                          ),
+                        ),
+                      ),
+                      Spacer(),
+                      Expanded(
+                        flex: 2,
+                        child: FloatingActionButton(
                           onPressed: () {
-                            setState(() {
-                              if(isLoading){
-                                null;
-                              } else{
-                                setState(() {
-                                  isDownload = true;
-                                  _initialWebView();
-                                  /*final FirebaseAnalytics analytics = new FirebaseAnalytics();
-                                  analytics.logEvent(name: CotizadorAnalitycsTags.descargaGMM, parameters: <String, dynamic>{});
+                           // Navigator.of(context).pop();
+                            Navigator.pop(context);
+                          },
+                          heroTag: "btn1",
+                          tooltip: "Cerrar",
+                          backgroundColor: AppColors.color_primario,
+                          child: const Icon(Icons.close),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  child:  Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: OutlineButton(
+                            textColor: AppColors.color_primario,
+                            child: Text("DESCARGAR"),
+                            onPressed: () {
+                              setState(() {
+                                if(isLoading){
+                                  null;
+                                } else{
+                                  setState(() {
+                                    isDownload = true;
+                                    _initialWebView();
+                                    /*final FirebaseAnalytics analytics = new FirebaseAnalytics();
+                                    analytics.logEvent(name: CotizadorAnalitycsTags.descargaGMM, parameters: <String, dynamic>{});
 
-                                  sendTag(CotizadorAnalitycsTags.descargaGMM);
-                                  setCurrentScreen(CotizadorAnalitycsTags.descargaGMM, "CotizacionPDF");*/
+                                    sendTag(CotizadorAnalitycsTags.descargaGMM);
+                                    setCurrentScreen(CotizadorAnalitycsTags.descargaGMM, "CotizacionPDF");*/
 
-                                });
-                                contador++;
-                                _saveFile();
+                                  });
+                                  contador++;
+                                  _saveFile();
+                                }
+                              });
+
+                            },
+
+                            borderSide: BorderSide(
+                              color: AppColors.color_primario, //Color of the border
+                              style: BorderStyle.solid, //Style of the border
+                              width: 0.8, //width of the border
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 5,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: OutlineButton(
+                            textColor: AppColors.color_primario,
+                            child: Text("ENVIAR"),
+                            onPressed: () {
+
+                              if(!isLoading){
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SendEmail(folio: widget.folio, idFormato: widget.idFormato, id: widget.id, id_Plan: widget.id_Plan,),
+                                    ));
                               }
-                            });
 
-                          },
-
-                          borderSide: BorderSide(
-                            color: AppColors.color_primario, //Color of the border
-                            style: BorderStyle.solid, //Style of the border
-                            width: 0.8, //width of the border
+                            },
+                            borderSide: BorderSide(
+                              color: AppColors.color_primario, //Color of the border
+                              style: BorderStyle.solid, //Style of the border
+                              width: 0.8, //width of the border
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      flex: 5,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: OutlineButton(
-                          textColor: AppColors.color_primario,
-                          child: Text("ENVIAR"),
-                          onPressed: () {
-
-                            if(!isLoading){
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SendEmail(folio: widget.folio, idFormato: widget.idFormato, id: widget.id, id_Plan: widget.id_Plan,),
-                                  ));
-                            }
-
-                          },
-                          borderSide: BorderSide(
-                            color: AppColors.color_primario, //Color of the border
-                            style: BorderStyle.solid, //Style of the border
-                            width: 0.8, //width of the border
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 0,
-                width: 0,
-                child: Visibility(
-                  visible: true,
-                  child: WebviewScaffold(
-                      url: _initialURL,
-                      withJavascript: true,
-                      withZoom: false,
-                      withLocalStorage: true,
-                      hidden:true,
-                      clearCache: true
+                    ],
                   ),
                 ),
-              ),
-            ],
+                Container(
+                  height: 0,
+                  width: 0,
+                  child: Visibility(
+                    visible: true,
+                    child: WebviewScaffold(
+                        url: _initialURL,
+                        withJavascript: true,
+                        withZoom: false,
+                        withLocalStorage: true,
+                        hidden:true,
+                        clearCache: true
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-      body: Container(
-        color: Colors.white,
-        child: isLoading
-        ? showLoading()
-        : PDFView(filePath: pathPdf, autoSpacing: true)
-      ),
+        body: Container(
+          color: Colors.white,
+          child:
+          isLoading ? Container() :
+          PDFView(filePath: pathPdf, autoSpacing: true)
+        ),
 
-      );
+        ),
+    );
   }
 
-  Widget showLoading() {
-    return Scaffold(
-        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
-        body: Center(
-          child: Container(
-              child: SizedBox(
-                width: 80.0,
-                height: 80.0,
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.transparent,
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
-                  strokeWidth: 5.0,
-                ),
-              )),
-        ));
-  }
 }

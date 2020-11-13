@@ -17,6 +17,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:flutter/foundation.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 //import 'package:cotizador_agente/cotizador_analitycs_tags.dart';
 
 
@@ -623,380 +624,390 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
       }
     },*/
 
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: AppColors.color_primario),
-          backgroundColor: Colors.white,
-          title: Text("Paso 2", style: TextStyle(color: Colors.black)),
+      child: LoadingOverlay(
+        isLoading: isLoading,
+        opacity: 0.8,
+        color: AppColors.color_titulo,
+        progressIndicator: CircularProgressIndicator(
+          backgroundColor: Colors.transparent,
+          valueColor: AlwaysStoppedAnimation(Colors.white),
+          strokeWidth: 5.0,
         ),
+        child: Scaffold(
+          appBar: AppBar(
+            iconTheme: IconThemeData(color: AppColors.color_primario),
+            backgroundColor: Colors.white,
+            title: Text("Paso 2", style: TextStyle(color: Colors.black)),
+          ),
 
-        body: Column(
+          body: Column(
 
-            children:<Widget>[
+              children:<Widget>[
 
-              TopBar(formKey: formKey, recargarFormularioConPlan: recargarPaso2, plan: plan,),
+                TopBar(formKey: formKey, recargarFormularioConPlan: recargarPaso2, plan: plan,),
 
-              /****** Termina panel superior *******/
-
-
-
-              Expanded(
-                child: Form(
-                  key: formKey,
-                  child:
-                  isLoading ? showLoading() :
-                  new ListView.builder(
-                      itemCount: widget.secciones.length+1,
-                      shrinkWrap: true,
-                      physics: ScrollPhysics(),
-                      itemBuilder: (BuildContext ctxt, int index) {
+                /****** Termina panel superior *******/
 
 
 
-                        //Para el primero
-                        if(index==0){
-                          return Column(
-                            children: <Widget>[
-
-                              Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.only(top: 32, left: 16, bottom: 24),
-                                child: Text(
-                                  widget.secciones[index].seccion,
-                                  textAlign: TextAlign.start,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.normal,
-                                      color: AppColors.color_titulo,
-                                      fontSize: 20),
-                                ),
-                              ),
-
-                              Container(//Etiquetas
-                                color: AppColors.color_sombra,
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
-                                    )),
-                                    Expanded(child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
-                                    ))
-                                  ],
-                                ),
-                              ),
+                Expanded(
+                  child: Form(
+                    key: formKey,
+                    child:
+                    isLoading ? Container() :
+                    new ListView.builder(
+                        itemCount: widget.secciones.length+1,
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        itemBuilder: (BuildContext ctxt, int index) {
 
 
-                              Container(//Puntos
-                                color: AppColors.color_sombra,
 
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      child: Container(
-                                        color: AppColors.color_sombra,
-                                        child: Column(
-                                          children: <Widget>[
-                                            Row(
-                                              children: <Widget>[
+                          //Para el primero
+                          if(index==0){
+                            return Column(
+                              children: <Widget>[
 
-                                                Spacer(),
-                                                CircleButton(backgroundColor: AppColors.color_titulo ,onTap: () => print("Cool"), iconData: Icons.check,),
-                                                Expanded(
-                                                  child: Container(
-                                                      child: Divider( //002e71
-                                                        thickness: 2,
-                                                        color: AppColors.color_primario,
-                                                        height: 0,
-                                                      )),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-
-                                    Expanded(
-                                      child: Container(
-                                        color: AppColors.color_sombra,
-                                        child: Column(
-                                          children: <Widget>[
-                                            Row(
-                                              children: <Widget>[
-                                                Expanded(
-                                                  child: Container(
-                                                      child: Divider( //002e71
-                                                        thickness: 2,
-                                                        color: AppColors.color_primario,
-
-                                                        height: 0,
-                                                      )),
-                                                ),
-                                                CircleButton(backgroundColor: AppColors.color_primario ,onTap: () => print("Cool")),
-
-                                                Spacer(),
-
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
+                                Container(
+                                  width: double.infinity,
+                                  padding: EdgeInsets.only(top: 32, left: 16, bottom: 24),
+                                  child: Text(
+                                    widget.secciones[index].seccion,
+                                    textAlign: TextAlign.start,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.normal,
+                                        color: AppColors.color_titulo,
+                                        fontSize: 20),
+                                  ),
                                 ),
 
-                              ),
-
-                              Container(//Etiquetas
-                                color: AppColors.color_sombra,
-                                child: Row(
-                                  children: <Widget>[
-                                    Expanded(child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
-                                    )),
-                                    Expanded(child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text("Paso 2", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
-                                    ))
-                                  ],
-                                ),
-                              ),
-
-
-
-
-
-                              Padding(
-                                padding: const EdgeInsets.only(top: 16.0, bottom: 16),
-                                child: Container(
-                                  color: AppColors.color_background,
-                                  child: ExpansionTile(
-                                    initiallyExpanded: true,
-                                    title: Text(widget.secciones[index].seccion,
-                                      style: new TextStyle(
-                                        fontSize: 14.0,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.color_titleAlert,
-                                        fontFamily: "Roboto",
-                                      ),),
+                                Container(//Etiquetas
+                                  color: AppColors.color_sombra,
+                                  child: Row(
                                     children: <Widget>[
-                                      Container(
-                                        color: AppColors.color_background_blanco,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: widget.secciones[index], i:index, end:widget.secciones.length-1, formKey: formKey,actualizarSecciones: actualizarVistaConNuevoPlan,
-                                            actualizarCodigoPostalFamiliares:
-                                            actualizarCodigoPostalFamiliares,
-                                            validarCodigoPostalFamiliares:
-                                            validarCodigoPostalFamiliares,
-                                            borrarAdicional: borrarAdicional,
+                                      Expanded(child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
+                                      )),
+                                      Expanded(child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
+                                      ))
+                                    ],
+                                  ),
+                                ),
+
+
+                                Container(//Puntos
+                                  color: AppColors.color_sombra,
+
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          color: AppColors.color_sombra,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Row(
+                                                children: <Widget>[
+
+                                                  Spacer(),
+                                                  CircleButton(backgroundColor: AppColors.color_titulo ,onTap: () => print("Cool"), iconData: Icons.check,),
+                                                  Expanded(
+                                                    child: Container(
+                                                        child: Divider( //002e71
+                                                          thickness: 2,
+                                                          color: AppColors.color_primario,
+                                                          height: 0,
+                                                        )),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      Expanded(
+                                        child: Container(
+                                          color: AppColors.color_sombra,
+                                          child: Column(
+                                            children: <Widget>[
+                                              Row(
+                                                children: <Widget>[
+                                                  Expanded(
+                                                    child: Container(
+                                                        child: Divider( //002e71
+                                                          thickness: 2,
+                                                          color: AppColors.color_primario,
+
+                                                          height: 0,
+                                                        )),
+                                                  ),
+                                                  CircleButton(backgroundColor: AppColors.color_primario ,onTap: () => print("Cool")),
+
+                                                  Spacer(),
+
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
+
                                 ),
-                              ),
+
+                                Container(//Etiquetas
+                                  color: AppColors.color_sombra,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
+                                      )),
+                                      Expanded(child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text("Paso 2", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
+                                      ))
+                                    ],
+                                  ),
+                                ),
 
 
-                            ],
-                          );
 
-                        }
 
-                        if(index==widget.secciones.length){ //Aqui va el formulario paso 2
-                          try{
-                            return Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2==null
-                                ? showLoading() : isLoading == true
-                                ? showLoading() : ListView.builder(
-                                itemCount:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length+1,
-                                shrinkWrap: true,
-                                physics: ScrollPhysics(),
-                                itemBuilder: (BuildContext ctxt, int index_paso2) {
 
-                                  //Botón de continuar al último
-                                  if(index_paso2 == Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length){
-                                    return  Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                                        children: <Widget>[
-                                          FlatButton(
-                                            color: AppColors.color_naranja_primario,
-                                            textColor: Colors.white,
-                                            disabledColor: Colors.grey,
-                                            disabledTextColor: Colors.black,
-                                            padding: EdgeInsets.all(8.0),
-                                            onPressed: () {
-                                              final bool v = formKey.currentState.validate();
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                                  child: Container(
+                                    color: AppColors.color_background,
+                                    child: ExpansionTile(
+                                      initiallyExpanded: true,
+                                      title: Text(widget.secciones[index].seccion,
+                                        style: new TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.color_titleAlert,
+                                          fontFamily: "Roboto",
+                                        ),),
+                                      children: <Widget>[
+                                        Container(
+                                          color: AppColors.color_background_blanco,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: widget.secciones[index], i:index, end:widget.secciones.length-1, formKey: formKey,actualizarSecciones: actualizarVistaConNuevoPlan,
+                                              actualizarCodigoPostalFamiliares:
+                                              actualizarCodigoPostalFamiliares,
+                                              validarCodigoPostalFamiliares:
+                                              validarCodigoPostalFamiliares,
+                                              borrarAdicional: borrarAdicional,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
 
-                                              formKey.currentState.save();
 
-                                              if (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.validarFormulario()) {
-                                                //Enviar a Analitycs
-                                                print("Cotizador Analitycs Tags");
-                                                //CotizadorAnalitycsTags.sendTagsFormulario(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion());
-                                                //CotizadorAnalitycsTags.sendTags('', Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa(1));
-                                                //_sendDataToSecondScreen(context);
-                                                print('El formulario es valido');
+                              ],
+                            );
+
+                          }
+
+                          if(index==widget.secciones.length){ //Aqui va el formulario paso 2
+                            try{
+                              return Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2==null
+                                  ? showLoading() : isLoading == true
+                                  ? showLoading() : ListView.builder(
+                                  itemCount:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length+1,
+                                  shrinkWrap: true,
+                                  physics: ScrollPhysics(),
+                                  itemBuilder: (BuildContext ctxt, int index_paso2) {
+
+                                    //Botón de continuar al último
+                                    if(index_paso2 == Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length){
+                                      return  Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          children: <Widget>[
+                                            FlatButton(
+                                              color: AppColors.color_naranja_primario,
+                                              textColor: Colors.white,
+                                              disabledColor: Colors.grey,
+                                              disabledTextColor: Colors.black,
+                                              padding: EdgeInsets.all(8.0),
+                                              onPressed: () {
+                                                final bool v = formKey.currentState.validate();
+
+                                                formKey.currentState.save();
+
+                                                if (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.validarFormulario()) {
+                                                  //Enviar a Analitycs
+                                                  print("Cotizador Analitycs Tags");
+                                                  //CotizadorAnalitycsTags.sendTagsFormulario(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion());
+                                                  //CotizadorAnalitycsTags.sendTags('', Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa(1));
+                                                  //_sendDataToSecondScreen(context);
+                                                  print('El formulario es valido');
 //                                              print(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.toJSON());
 //                                              Utilidades.LogPrint("Esto es para cotizar: " + json.encode(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa()));
-                                                setState(() {
-                                                  _initialWebView();
-                                                });
-                                                Regla r = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().calcularReglas();
+                                                  setState(() {
+                                                    _initialWebView();
+                                                  });
+                                                  Regla r = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().calcularReglas();
 
-                                                if(r!=null){
-                                                  print(r.mensaje);
-                                                  if(r.tipoRegla== Utilidades.REGLA_INFO){
+                                                  if(r!=null){
+                                                    print(r.mensaje);
+                                                    if(r.tipoRegla== Utilidades.REGLA_INFO){
 
 
-                                                    Utilidades.mostrarAlertaCallback("¿Desea Continuar?", r.mensaje, context, (){ //CANCELAR
+                                                      Utilidades.mostrarAlertaCallback("¿Desea Continuar?", r.mensaje, context, (){ //CANCELAR
 
-                                                      Navigator.pop(context);
+                                                        Navigator.pop(context);
 
-                                                    }, (){ //ACEPTAR
+                                                      }, (){ //ACEPTAR
 
-                                                      Navigator.pop(context);
-                                                      Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
+                                                        Navigator.pop(context);
+                                                        Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
 
-                                                    });
+                                                      });
+                                                    }
+                                                    if(r.tipoRegla== Utilidades.REGLA_STOPPER){
+                                                      Utilidades.mostrarAlerta("No es posible continuar", r.mensaje, context);
+                                                    }
+
+                                                  }else{
+                                                    print("No se cumplen reglas");
+
+                                                    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres");
+
                                                   }
-                                                  if(r.tipoRegla== Utilidades.REGLA_STOPPER){
-                                                    Utilidades.mostrarAlerta("No es posible continuar", r.mensaje, context);
-                                                  }
 
-                                                }else{
-                                                  print("No se cumplen reglas");
-
-                                                  Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres");
-
+                                                } else {
+                                                  print("invalid");
                                                 }
+                                              },
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  "COTIZAR",
+                                                  style: TextStyle(fontSize: 15.0, letterSpacing: 1),
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              height: 0,
+                                              width: 0,
+                                              child: Visibility(
+                                                visible: true,
+                                                child: WebviewScaffold(
+                                                    url: _initialURL,
+                                                    withJavascript: true,
+                                                    withZoom: false,
+                                                    withLocalStorage: true,
+                                                    hidden:true,
+                                                    clearCache: true
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
 
-                                              } else {
-                                                print("invalid");
-                                              }
-                                            },
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                "COTIZAR",
-                                                style: TextStyle(fontSize: 15.0, letterSpacing: 1),
+                                    }
+
+
+
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                                      child: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].campos.length != 0 ? Container(
+                                        color: AppColors.color_background,
+                                        child: ExpansionTile(
+                                          initiallyExpanded: true,
+                                          title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].seccion,
+                                            style: new TextStyle(
+                                              fontSize: 14.0,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.color_titleAlert,
+                                              fontFamily: "Roboto",
+                                            ),),
+                                          children: <Widget>[
+                                            Container(
+                                              color: AppColors.color_background_blanco,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(16.0),
+                                                child:
+                                                isLoading == true
+                                                    ? showLoading()
+                                                    : new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
+                                                  actualizarCodigoPostalFamiliares:
+                                                  actualizarCodigoPostalFamiliares,
+                                                  validarCodigoPostalFamiliares:
+                                                  validarCodigoPostalFamiliares,
+                                                  borrarAdicional: borrarAdicional,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Container(
-                                            height: 0,
-                                            width: 0,
-                                            child: Visibility(
-                                              visible: true,
-                                              child: WebviewScaffold(
-                                                  url: _initialURL,
-                                                  withJavascript: true,
-                                                  withZoom: false,
-                                                  withLocalStorage: true,
-                                                  hidden:true,
-                                                  clearCache: true
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
+                                      ) :
+                                      Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child:
+                                        isLoading == true ?
+                                        showLoading() :
+                                        new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
+                                          actualizarCodigoPostalFamiliares:
+                                          actualizarCodigoPostalFamiliares,
+                                          validarCodigoPostalFamiliares:
+                                          validarCodigoPostalFamiliares,
+                                          borrarAdicional: borrarAdicional,
+                                        ),
                                       ),
                                     );
 
-                                  }
+
+                                  });
+                            }catch(e){
+
+                            }
 
 
-
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 16.0, bottom: 16),
-                                    child: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].campos.length != 0 ? Container(
-                                      color: AppColors.color_background,
-                                      child: ExpansionTile(
-                                        initiallyExpanded: true,
-                                        title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].seccion,
-                                          style: new TextStyle(
-                                            fontSize: 14.0,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.color_titleAlert,
-                                            fontFamily: "Roboto",
-                                          ),),
-                                        children: <Widget>[
-                                          Container(
-                                            color: AppColors.color_background_blanco,
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(16.0),
-                                              child:
-                                              isLoading == true
-                                                  ? showLoading()
-                                                  : new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
-                                                actualizarCodigoPostalFamiliares:
-                                                actualizarCodigoPostalFamiliares,
-                                                validarCodigoPostalFamiliares:
-                                                validarCodigoPostalFamiliares,
-                                                borrarAdicional: borrarAdicional,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ) :
-                                    Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child:
-                                      isLoading == true ?
-                                      showLoading() :
-                                      new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
-                                        actualizarCodigoPostalFamiliares:
-                                        actualizarCodigoPostalFamiliares,
-                                        validarCodigoPostalFamiliares:
-                                        validarCodigoPostalFamiliares,
-                                        borrarAdicional: borrarAdicional,
-                                      ),
-                                    ),
-                                  );
-
-
-                                });
-                          }catch(e){
 
                           }
 
 
 
+                          //Secciones restantes estáticas restantes de paso 2
+                          return Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child:
+                            (isLoading == true || (widget.secciones.length-1)==0 )  ?
+                            showLoading() :
+                            new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: widget.secciones[index], i:index, end:widget.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
+                              actualizarCodigoPostalFamiliares:
+                              actualizarCodigoPostalFamiliares,
+                              validarCodigoPostalFamiliares:
+                              validarCodigoPostalFamiliares,
+                              borrarAdicional: borrarAdicional,
+                            ),
+                          );
                         }
-
-
-
-                        //Secciones restantes estáticas restantes de paso 2
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child:
-                          (isLoading == true || (widget.secciones.length-1)==0 )  ?
-                          showLoading() :
-                          new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: widget.secciones[index], i:index, end:widget.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
-                            actualizarCodigoPostalFamiliares:
-                            actualizarCodigoPostalFamiliares,
-                            validarCodigoPostalFamiliares:
-                            validarCodigoPostalFamiliares,
-                            borrarAdicional: borrarAdicional,
-                          ),
-                        );
-                      }
+                    ),
                   ),
+
                 ),
 
-              ),
 
 
 
 
-
-            ]
+              ]
+          ),
         ),
       ),
     );

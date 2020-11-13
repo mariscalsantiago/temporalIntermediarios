@@ -94,8 +94,9 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                         break;
 
                       case 2:
-                        String nombreFormato = widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION_AP ? "cotización " :
-                        (widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION_AP ? "comisión " : (widget.cotizacion.idFormato == Utilidades.FORMATO_COMPARATIVA ? "comparativa " : "cotización "));
+                        String nombreFormato = (widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION_AP) || (widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION) ? "cotización " :
+                        ((widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION_AP) || (widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION)
+                            ? "comisión " : (widget.cotizacion.idFormato == Utilidades.FORMATO_COMPARATIVA ? "comparativa " : "cotización "));
 
                         Utilidades.mostrarAlertaCallback("¿Desea eliminar la " + nombreFormato + widget.cotizacion.id.toString() + "?", "Esta acción no se puede deshacer", context, (){
 
@@ -149,8 +150,8 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
 
                         case 2:
 
-                          String nombreFormato = widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION_AP ? "cotización " :
-                          (widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION_AP ? "comisión " : (widget.cotizacion.idFormato == Utilidades.FORMATO_COMPARATIVA ? "comparativa " : "cotización "));
+                          String nombreFormato = (widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION_AP) || (widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION) ? "cotización " :
+                          ((widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION_AP) || (widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION) ? "comisión " : (widget.cotizacion.idFormato == Utilidades.FORMATO_COMPARATIVA ? "comparativa " : "cotización "));
 
                           Utilidades.mostrarAlertaCallback("¿Desea eliminar la " + nombreFormato + widget.cotizacion.id.toString() + "?", "Esta acción no se puede deshacer", context, (){
 

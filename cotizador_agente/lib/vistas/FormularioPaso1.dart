@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 class FormularioPaso1 extends StatefulWidget {
   FormularioPaso1({Key key, this.scaffoldKey, this.cotizador, this.cotizacionGuardada}) : super(key: key);
@@ -609,23 +610,6 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
     return verify;
   }
 
-  Widget showLoading() {
-    return Scaffold(
-        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
-        body: Center(
-          child: Container(
-              child: SizedBox(
-                width: 80.0,
-                height: 80.0,
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.transparent,
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
-                  strokeWidth: 5.0,
-                ),
-              )),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
     //WidgetsBinding.instance.addPostFrameCallback((_) => _onAfterBuild(context));
@@ -652,477 +636,487 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
           return true;
         },
-        child: new Scaffold(
-          appBar: AppBar(
-            iconTheme: IconThemeData(color: AppColors.color_primario),
-            backgroundColor: Colors.white,
-            title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 18, fontWeight: FontWeight.w500),),
-            actions: <Widget>[
-              PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
-                  offset: Offset(100, 100),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 1,
-                      child: Column(
-                        children: <Widget>[
-                          Divider(height: 4,color: AppColors.color_divider,),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Row(
-                              children: <Widget>[
-                                Text("ACCIONES",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: AppColors.color_popupmenu,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 10,
-                                    )
-                                ),
-                                Spacer(flex: 1,)
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value:2,
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
-                                child: Text(
-                                    "Guardar",
-                                    style: TextStyle(
-                                        color: AppColors.color_disable,//AppColors.color_appBar,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16)
-                                ),
-                              ),
-                              Spacer(flex: 2,),
-                              IconButton(
-                                icon: Image.asset('assets/icon/cotizador/guardar_Disable.png'),
-                                onPressed: () {
-
-                                },),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                            child: Divider(height: 2,color: AppColors.color_divider,),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    PopupMenuItem(
-                      value:3,
-                      child: Column(
-                        children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
-                                child: Text("Borrar datos",
-                                    style: TextStyle(
-                                        color: AppColors.color_appBar,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16)
-                                ),),
-                              Spacer(flex: 2,),
-                              IconButton(
-                                icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  recargar();
-                                },),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0, right: 8.0, bottom: 16.0),
-                            child: Divider(height: 2,color: AppColors.color_divider,),
-                          ),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 4,
-                      child: Column(
-                        children: <Widget>[
-                          Divider(height: 4,color: AppColors.color_divider,),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Row(
-                              children: <Widget>[
-                                Text("SOPORTE",
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: AppColors.color_popupmenu,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 10,)),
-                                Spacer(flex: 1,)
-                              ],
-                            ),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                                child: Text("Mis cotizaciones",
-                                    style: TextStyle(
-                                        color: AppColors.color_appBar,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16)
-                                ),),
-                              Spacer(flex: 2,),
-                              IconButton(
-                                icon: Image.asset('assets/icon/cotizador/miscotizaciones.png'),
-                                onPressed: () {
-                                  Navigator.push(context,  MaterialPageRoute(
-                                    builder: (context) => MisCotizaciones(),
-                                  ));
-                                },),
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                            child: Divider(height: 2,color: AppColors.color_divider,),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                  initialValue: 0,
-                  onCanceled: () {
-                    print("You have canceled the menu.");
-                  },
-                  onSelected: (value) {
-                    switch (value) {
-                      case 2:
-                        break;
-                      case 3:
-                        break;
-                      case 4:
-                        Navigator.push(context,  MaterialPageRoute(
-                          builder: (context) => MisCotizaciones(),
-                        ));
-                        break;
-                    }
-                  }
-              ),
-            ],
+        child: LoadingOverlay(
+          isLoading: isLoading,
+          opacity: 0.8,
+          color: AppColors.color_titulo,
+          progressIndicator: CircularProgressIndicator(
+            backgroundColor: Colors.transparent,
+            valueColor: AlwaysStoppedAnimation(Colors.white),
+            strokeWidth: 5.0,
           ),
-
-          body: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-
-                /*Visibility(
-                  visible: !isLoading,
-                  child: TopBar(recargarFormulario: recargar),
-                ),*/
-
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                          child: Divider( //002e71
-                            thickness: 2,
-                            color: AppColors.color_titulo,
-
-                            height: 0,
-                          )),
-                    ),
-                  ],
-                ),
-                /****** Termina panel superior *******/
-
-
-                /****** Comienza panel de coti *******/
-
-                Expanded(
-                  child: Form(
-                    key: formKey,
-                    child: (isLoading || (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion() == null)) ? showLoading() : //CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),)
-                    new ListView.builder(
-                        itemCount: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length+1,
-                        shrinkWrap: true,
-                        physics: ScrollPhysics(),
-                        itemBuilder: (BuildContext ctxt, int index) {
-
-
-                          //Botón de continuar al último
-                          if(index == Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length){
-                            return  Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: new Scaffold(
+            appBar: AppBar(
+              iconTheme: IconThemeData(color: AppColors.color_primario),
+              backgroundColor: Colors.white,
+              title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 18, fontWeight: FontWeight.w500),),
+              actions: <Widget>[
+                PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
+                    offset: Offset(100, 100),
+                    itemBuilder: (context) => [
+                      PopupMenuItem(
+                        value: 1,
+                        child: Column(
+                          children: <Widget>[
+                            Divider(height: 4,color: AppColors.color_divider,),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Row(
                                 children: <Widget>[
-                                  FlatButton(
-                                    color: AppColors.color_primario,
-                                    textColor: Colors.white,
-                                    disabledColor: Colors.grey,
-                                    disabledTextColor: Colors.black,
-                                    padding: EdgeInsets.all(8.0),
-                                    onPressed: () {
-                                      final bool v = formKey.currentState.validate();
-
-
-
-                                      formKey.currentState.save();
-
-
-                                      bool formularioValido = true;
-                                      setState(() {
-
-                                        List<Campo> campos =  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().obtenerSeccionesSimplificadas();
-
-
-                                        for(int i=0; (i < campos.length) && formularioValido; i++){
-
-                                          if(campos[i].isValid == false){
-                                            formularioValido = false;
-                                          }
-                                        }
-
-                                      });
-
-
-                                      if (formularioValido) {
-                                        _sendDataToSecondScreen(context, paso_2.secciones[0] );
-
-                                        if(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.toJSON() != null){
-                                          print(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.toJSON());
-                                        }else{
-                                          Navigator.pop(context);
-                                        }
-                                      } else {
-                                        Utilidades.mostrarAlerta("ERRORR", "Faltan datos", context);
-                                        print("invalid");
-                                      }
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        "CONTINUAR",
-                                        style: TextStyle(fontSize: 15.0, letterSpacing: 1),
-                                      ),
-                                    ),
-                                  )
+                                  Text("ACCIONES",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: AppColors.color_popupmenu,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 10,
+                                      )
+                                  ),
+                                  Spacer(flex: 1,)
                                 ],
                               ),
-                            );
-
-                          }
-
-
-
-                          //Para el primero
-                          if(index==0){
-                            return Column(
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value:2,
+                        child: Column(
+                          children: <Widget>[
+                            Row(
                               children: <Widget>[
-
-                                Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.only(top: 32, left: 16, bottom: 24),
-                                  child: Text(
-                                    Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
-                                    textAlign: TextAlign.start,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        color: AppColors.color_titulo,
-                                        fontSize: 20),
-                                  ),
-                                ),
-
-                                Container(//Etiquetas
-                                  color: AppColors.color_sombra,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
-                                      )),
-                                      Expanded(child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
-                                      ))
-                                    ],
-                                  ),
-                                ),
-
-
-                                Container(//Puntos
-                                  color: AppColors.color_sombra,
-
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(
-                                        child: Container(
-                                          color: AppColors.color_sombra,
-                                          child: Column(
-                                            children: <Widget>[
-                                              Row(
-                                                children: <Widget>[
-
-                                                  Spacer(),
-                                                  CircleButton(backgroundColor: AppColors.color_primario ,onTap: () => print("Cool")),
-                                                  Expanded(
-                                                    child: Container(
-                                                        child: Divider( //002e71
-                                                          thickness: 2,
-                                                          color: Colors.grey,
-                                                          height: 0,
-                                                        )),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      Expanded(
-                                        child: Container(
-                                          color: AppColors.color_sombra,
-                                          child: Column(
-                                            children: <Widget>[
-                                              Row(
-                                                children: <Widget>[
-                                                  Expanded(
-                                                    child: Container(
-                                                        child: Divider( //002e71
-                                                          thickness: 2,
-                                                          color: Colors.grey,
-
-                                                          height: 0,
-                                                        )),
-                                                  ),
-                                                  CircleButton(backgroundColor: Colors.grey ,onTap: () => print("Cool")),
-
-                                                  Spacer(),
-
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-
-                                ),
-
-                                Container(//Etiquetas
-                                  color: AppColors.color_sombra,
-                                  child: Row(
-                                    children: <Widget>[
-                                      Expanded(child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
-                                      )),
-                                      Expanded(child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text("Paso 2", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 15),),
-                                      ))
-                                    ],
-                                  ),
-                                ),
-
-
                                 Padding(
-                                  padding: const EdgeInsets.only(top: 16.0, bottom: 16),
-                                  child: Container(
-                                    color: AppColors.color_background,
-                                    child: ExpansionTile(
-                                      initiallyExpanded: true,
-                                      title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
-                                        style: new TextStyle(
-                                          fontSize: 14.0,
+                                  padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                  child: Text(
+                                      "Guardar",
+                                      style: TextStyle(
+                                          color: AppColors.color_disable,//AppColors.color_appBar,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColors.color_titleAlert,
-                                          fontFamily: "Roboto",
-                                        ),),
+                                          fontSize: 16)
+                                  ),
+                                ),
+                                Spacer(flex: 2,),
+                                IconButton(
+                                  icon: Image.asset('assets/icon/cotizador/guardar_Disable.png'),
+                                  onPressed: () {
+
+                                  },),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                              child: Divider(height: 2,color: AppColors.color_divider,),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      PopupMenuItem(
+                        value:3,
+                        child: Column(
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                  child: Text("Borrar datos",
+                                      style: TextStyle(
+                                          color: AppColors.color_appBar,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16)
+                                  ),),
+                                Spacer(flex: 2,),
+                                IconButton(
+                                  icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    recargar();
+                                  },),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0, right: 8.0, bottom: 16.0),
+                              child: Divider(height: 2,color: AppColors.color_divider,),
+                            ),
+                          ],
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: 4,
+                        child: Column(
+                          children: <Widget>[
+                            Divider(height: 4,color: AppColors.color_divider,),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Row(
+                                children: <Widget>[
+                                  Text("SOPORTE",
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: AppColors.color_popupmenu,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 10,)),
+                                  Spacer(flex: 1,)
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                                  child: Text("Mis cotizaciones",
+                                      style: TextStyle(
+                                          color: AppColors.color_appBar,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16)
+                                  ),),
+                                Spacer(flex: 2,),
+                                IconButton(
+                                  icon: Image.asset('assets/icon/cotizador/miscotizaciones.png'),
+                                  onPressed: () {
+                                    Navigator.push(context,  MaterialPageRoute(
+                                      builder: (context) => MisCotizaciones(),
+                                    ));
+                                  },),
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                              child: Divider(height: 2,color: AppColors.color_divider,),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    initialValue: 0,
+                    onCanceled: () {
+                      print("You have canceled the menu.");
+                    },
+                    onSelected: (value) {
+                      switch (value) {
+                        case 2:
+                          break;
+                        case 3:
+                          break;
+                        case 4:
+                          Navigator.push(context,  MaterialPageRoute(
+                            builder: (context) => MisCotizaciones(),
+                          ));
+                          break;
+                      }
+                    }
+                ),
+              ],
+            ),
+
+            body: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+
+                  /*Visibility(
+                    visible: !isLoading,
+                    child: TopBar(recargarFormulario: recargar),
+                  ),*/
+
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Container(
+                            child: Divider( //002e71
+                              thickness: 2,
+                              color: AppColors.color_titulo,
+
+                              height: 0,
+                            )),
+                      ),
+                    ],
+                  ),
+                  /****** Termina panel superior *******/
+
+
+                  /****** Comienza panel de coti *******/
+
+                  Expanded(
+                    child: Form(
+                      key: formKey,
+                      child: (isLoading || (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion() == null)) ? Container() : //CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(AppColors.color_primario),)
+                      new ListView.builder(
+                          itemCount: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length+1,
+                          shrinkWrap: true,
+                          physics: ScrollPhysics(),
+                          itemBuilder: (BuildContext ctxt, int index) {
+
+
+                            //Botón de continuar al último
+                            if(index == Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length){
+                              return  Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: <Widget>[
+                                    FlatButton(
+                                      color: AppColors.color_primario,
+                                      textColor: Colors.white,
+                                      disabledColor: Colors.grey,
+                                      disabledTextColor: Colors.black,
+                                      padding: EdgeInsets.all(8.0),
+                                      onPressed: () {
+                                        final bool v = formKey.currentState.validate();
+
+
+
+                                        formKey.currentState.save();
+
+
+                                        bool formularioValido = true;
+                                        setState(() {
+
+                                          List<Campo> campos =  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().obtenerSeccionesSimplificadas();
+
+
+                                          for(int i=0; (i < campos.length) && formularioValido; i++){
+
+                                            if(campos[i].isValid == false){
+                                              formularioValido = false;
+                                            }
+                                          }
+
+                                        });
+
+
+                                        if (formularioValido) {
+                                          _sendDataToSecondScreen(context, paso_2.secciones[0] );
+
+                                          if(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.toJSON() != null){
+                                            print(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.toJSON());
+                                          }else{
+                                            Navigator.pop(context);
+                                          }
+                                        } else {
+                                          Utilidades.mostrarAlerta("ERRORR", "Faltan datos", context);
+                                          print("invalid");
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          "CONTINUAR",
+                                          style: TextStyle(fontSize: 15.0, letterSpacing: 1),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+
+                            }
+
+
+
+                            //Para el primero
+                            if(index==0){
+                              return Column(
+                                children: <Widget>[
+
+                                  Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.only(top: 32, left: 16, bottom: 24),
+                                    child: Text(
+                                      Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
+                                      textAlign: TextAlign.start,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          color: AppColors.color_titulo,
+                                          fontSize: 20),
+                                    ),
+                                  ),
+
+                                  Container(//Etiquetas
+                                    color: AppColors.color_sombra,
+                                    child: Row(
                                       children: <Widget>[
-                                        Container(
-                                          color: AppColors.color_background_blanco,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: new SeccionDinamica( agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index], i:index, end:Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length-1, cantidad_asegurados: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.cantidad_asegurados, formKey: formKey,
-                                              actualizarCodigoPostalFamiliares:
-                                              actualizarCodigoPostalFamiliares,
-                                              validarCodigoPostalFamiliares:
-                                              widget.validarCodigoPostalFamiliares,
-                                              borrarAdicional: borrarAdicional,
+                                        Expanded(child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        )),
+                                        Expanded(child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        ))
+                                      ],
+                                    ),
+                                  ),
+
+
+                                  Container(//Puntos
+                                    color: AppColors.color_sombra,
+
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          child: Container(
+                                            color: AppColors.color_sombra,
+                                            child: Column(
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+
+                                                    Spacer(),
+                                                    CircleButton(backgroundColor: AppColors.color_primario ,onTap: () => print("Cool")),
+                                                    Expanded(
+                                                      child: Container(
+                                                          child: Divider( //002e71
+                                                            thickness: 2,
+                                                            color: Colors.grey,
+                                                            height: 0,
+                                                          )),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+
+                                        Expanded(
+                                          child: Container(
+                                            color: AppColors.color_sombra,
+                                            child: Column(
+                                              children: <Widget>[
+                                                Row(
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                      child: Container(
+                                                          child: Divider( //002e71
+                                                            thickness: 2,
+                                                            color: Colors.grey,
+
+                                                            height: 0,
+                                                          )),
+                                                    ),
+                                                    CircleButton(backgroundColor: Colors.grey ,onTap: () => print("Cool")),
+
+                                                    Spacer(),
+
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
                                       ],
                                     ),
+
                                   ),
-                                ),
+
+                                  Container(//Etiquetas
+                                    color: AppColors.color_sombra,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Expanded(child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        )),
+                                        Expanded(child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text("Paso 2", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 15),),
+                                        ))
+                                      ],
+                                    ),
+                                  ),
 
 
-                              ],
-                            );
-
-                          }
-
-
-
-
-                          if(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].id_seccion == 6){ // El ID 6 siempre va a ponerse en el paso 2
-
-                            List <Seccion> secciones = new List ();
-                            secciones.add(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index]);
-                            paso_2 = new PasoFormulario(secciones:secciones );
-                            // print("Para la sección dos:" + Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion.toString());
-                            return Container();
-                          }
-
-
-
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 16.0, bottom: 16),
-                            child: Container(
-                              color: AppColors.color_background,
-                              child: ExpansionTile(
-                                initiallyExpanded: true,
-                                title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
-                                  style: new TextStyle(
-                                      fontSize: 14.0,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.color_titleAlert,
-                                      fontFamily: "Roboto",
-                                  ),),
-                                children: <Widget>[
-                                  Container(
-                                    color: AppColors.color_background_blanco,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(16.0),
-                                      child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index], i:index, end:Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length-1, cantidad_asegurados: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.cantidad_asegurados, formKey: formKey,
-                                        actualizarCodigoPostalFamiliares:
-                                        actualizarCodigoPostalFamiliares,
-                                        validarCodigoPostalFamiliares:
-                                        widget.validarCodigoPostalFamiliares,
-                                        borrarAdicional: borrarAdicional,
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                                    child: Container(
+                                      color: AppColors.color_background,
+                                      child: ExpansionTile(
+                                        initiallyExpanded: true,
+                                        title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
+                                          style: new TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.color_titleAlert,
+                                            fontFamily: "Roboto",
+                                          ),),
+                                        children: <Widget>[
+                                          Container(
+                                            color: AppColors.color_background_blanco,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(16.0),
+                                              child: new SeccionDinamica( agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index], i:index, end:Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length-1, cantidad_asegurados: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.cantidad_asegurados, formKey: formKey,
+                                                actualizarCodigoPostalFamiliares:
+                                                actualizarCodigoPostalFamiliares,
+                                                validarCodigoPostalFamiliares:
+                                                widget.validarCodigoPostalFamiliares,
+                                                borrarAdicional: borrarAdicional,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
+
+
                                 ],
+                              );
+
+                            }
+
+
+
+
+                            if(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].id_seccion == 6){ // El ID 6 siempre va a ponerse en el paso 2
+
+                              List <Seccion> secciones = new List ();
+                              secciones.add(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index]);
+                              paso_2 = new PasoFormulario(secciones:secciones );
+                              // print("Para la sección dos:" + Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion.toString());
+                              return Container();
+                            }
+
+
+
+                            return Padding(
+                              padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+                              child: Container(
+                                color: AppColors.color_background,
+                                child: ExpansionTile(
+                                  initiallyExpanded: true,
+                                  title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
+                                    style: new TextStyle(
+                                        fontSize: 14.0,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.color_titleAlert,
+                                        fontFamily: "Roboto",
+                                    ),),
+                                  children: <Widget>[
+                                    Container(
+                                      color: AppColors.color_background_blanco,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index], i:index, end:Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones.length-1, cantidad_asegurados: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.cantidad_asegurados, formKey: formKey,
+                                          actualizarCodigoPostalFamiliares:
+                                          actualizarCodigoPostalFamiliares,
+                                          validarCodigoPostalFamiliares:
+                                          widget.validarCodigoPostalFamiliares,
+                                          borrarAdicional: borrarAdicional,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }
+                            );
+                          }
 
+                      ),
                     ),
-                  ),
 
-                ),
-              ]),
+                  ),
+                ]),
+          ),
         ),
       ),
     );

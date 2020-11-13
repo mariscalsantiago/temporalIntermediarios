@@ -9,6 +9,7 @@ import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 
 
@@ -127,8 +128,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         };
 
         Map<String, dynamic> jsonMap = {
-        "clave_negocio_operable": "NOP0002010",//negocioOperable.idNegocioOperable.toString(),
-        "correo": "TallerdeProductos@gnp.com.mx", //datosUsuario.mail.toString(),
+        "clave_negocio_operable": negocioOperable.idNegocioOperable.toString(), //"NOP0002010",
+        "correo": datosUsuario.mail.toString(), //"TallerdeProductos@gnp.com.mx", //
         };
         // make POST request
         Response response = await post(config.urlCotizadores, headers: headers, body: json.encode(jsonMap));
@@ -179,24 +180,6 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   }
 
-  Scaffold showLoading() {
-    return Scaffold(
-    backgroundColor: AppColors.color_titulo.withOpacity(0.8),
-      body: Center(
-        child: Container(
-            child: SizedBox(
-              width: 80.0,
-              height: 80.0,
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.transparent,
-                valueColor: AlwaysStoppedAnimation(Colors.white),
-                strokeWidth: 5.0,
-              ),
-            )),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -211,41 +194,51 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       }
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: AppColors.color_primario),
-        backgroundColor: Colors.white,
-        title: Text("Selecciona un cotizador", style: TextStyle(color: Colors.black),),
+    return LoadingOverlay(
+      isLoading: isLoading,
+      opacity: 0.8,
+      color: AppColors.color_titulo,
+      progressIndicator: CircularProgressIndicator(
+        backgroundColor: Colors.transparent,
+        valueColor: AlwaysStoppedAnimation(Colors.white),
+        strokeWidth: 5.0,
       ),
-      body:  isLoading ? showLoading() : Column(
-        children:  <Widget>[
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: AppColors.color_primario),
+          backgroundColor: Colors.white,
+          title: Text("Selecciona un cotizador", style: TextStyle(color: Colors.black),),
+        ),
+        body:  Column(
+          children:  <Widget>[
 
-          Visibility(
-            visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
-            child: Expanded(
-              child: new ListView.builder(
-                  itemCount: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables.length : 0,
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemBuilder: (context, index){
-                  return Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            blurRadius: 1.0,
-                            color: AppColors.color_borde,
-                            offset: Offset(1.0, 3.0),
-                          ),
-                        ]),
-                    child: NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
-                  );
-                }
+            Visibility(
+              visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
+              child: Expanded(
+                child: new ListView.builder(
+                    itemCount: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables.length : 0,
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemBuilder: (context, index){
+                    return Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              blurRadius: 1.0,
+                              color: AppColors.color_borde,
+                              offset: Offset(1.0, 3.0),
+                            ),
+                          ]),
+                      child: NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
+                    );
+                  }
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

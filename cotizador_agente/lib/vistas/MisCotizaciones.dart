@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:loading_overlay/loading_overlay.dart';
 
 import 'CotizacionPDF.dart';
 import 'FormularioPaso1.dart';
@@ -491,7 +492,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
   Widget listaGuardados() {
     if(isLoading==true)
     {
-      return showLoading();
+      return Container();
     }
     else if(cotizaciones == null) {
       return Container();
@@ -544,105 +545,115 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
   @override
   Widget build(BuildContext context) {
     nuevaBusqueda = false;
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: AppColors.color_primario),
-        backgroundColor: Colors.white,
-        title: Text("Mis Cotizaciones",
-          style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        actions: <Widget>[
-          PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
-            offset: Offset(100, 100),
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 1,
-                child: Column(
-                  children: <Widget>[
-                    Divider(height: 4,color: AppColors.color_divider,),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Row(
+    return LoadingOverlay(
+      isLoading: isLoading,
+      opacity: 0.8,
+      color: AppColors.color_titulo,
+      progressIndicator: CircularProgressIndicator(
+        backgroundColor: Colors.transparent,
+        valueColor: AlwaysStoppedAnimation(Colors.white),
+        strokeWidth: 5.0,
+      ),
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: AppColors.color_primario),
+          backgroundColor: Colors.white,
+          title: Text("Mis Cotizaciones",
+            style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),
+          ),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          actions: <Widget>[
+            PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
+              offset: Offset(100, 100),
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 1,
+                  child: Column(
+                    children: <Widget>[
+                      Divider(height: 4,color: AppColors.color_divider,),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          children: <Widget>[
+                            Text("ACCIONES",
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                    color: AppColors.color_popupmenu,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 10,
+                                )
+                            ),
+                            Spacer(flex: 1,)
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                PopupMenuItem(
+                  value: 2,
+                  child: Column(
+                    children: <Widget>[
+                      Row(
                         children: <Widget>[
-                          Text("ACCIONES",
-                              textAlign: TextAlign.start,
+                          Padding(
+                            padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                            child: Text(
+                              "Nueva cotización",
                               style: TextStyle(
-                                  color: AppColors.color_popupmenu,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 10,
-                              )
+                              color: AppColors.color_appBar,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16)
+                            ),
                           ),
-                          Spacer(flex: 1,)
+                          Spacer(flex: 2,),
+                          IconButton(
+                            icon: Icon(Icons.add, color: AppColors.color_primario,),
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                            },),
                         ],
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                        child: Divider(height: 2,color: AppColors.color_divider,),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-
-              PopupMenuItem(
-                value: 2,
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                          child: Text(
-                            "Nueva cotización",
-                            style: TextStyle(
-                            color: AppColors.color_appBar,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 16)
-                          ),
-                        ),
-                        Spacer(flex: 2,),
-                        IconButton(
-                          icon: Icon(Icons.add, color: AppColors.color_primario,),
-                          onPressed: () {
-                            Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
-                          },),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                      child: Divider(height: 2,color: AppColors.color_divider,),
-                    ),
-                  ],
-                ),
-              ),
-              ],
-              initialValue: 0,
-              onCanceled: () {
-                print("You have canceled the menu.");
-              },
-              onSelected: (value) {
-                  /*switch (value) {
-                    case 2:
-                      Navigator.pushReplacement(context,  MaterialPageRoute(
-                        builder: (context) => FormularioPaso1(),
-                      ));
-                      break;
-                  }*/
-              }
-          ),
-        ],
-      ),
-      body:  SafeArea(
-        top: true,
-        bottom: true,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: listaGuardados(),
+                ],
+                initialValue: 0,
+                onCanceled: () {
+                  print("You have canceled the menu.");
+                },
+                onSelected: (value) {
+                    /*switch (value) {
+                      case 2:
+                        Navigator.pushReplacement(context,  MaterialPageRoute(
+                          builder: (context) => FormularioPaso1(),
+                        ));
+                        break;
+                    }*/
+                }
             ),
           ],
+        ),
+        body:  SafeArea(
+          top: true,
+          bottom: true,
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: listaGuardados(),
+              ),
+            ],
+          ),
         ),
       ),
     );
