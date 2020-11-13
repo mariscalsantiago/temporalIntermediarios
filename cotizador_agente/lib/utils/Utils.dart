@@ -1,5 +1,6 @@
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:flutter/material.dart';
 class Utilidades {
@@ -305,194 +306,248 @@ class Utilidades {
    static void mostrarAlerta(
        String titulo, String mensaje, BuildContext context) {
       // flutter defined function
-      showDialog(
+      showMaterialModalBottomSheet(
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+         backgroundColor: Colors.transparent,
          context: context,
-         barrierDismissible: false,
-         builder: (context) {
-            // return object of type Dialog
-            return WillPopScope(
-               onWillPop: ()async{
-                  return false;
-               },
-               child: AlertDialog(
-                  title: new Text(titulo),
-                  content: new Text(mensaje),
-                  actions: <Widget>[
-                     FlatButton(
-                        child: new Text(
-                           "Aceptar",
-                           style: TextStyle(color: Utilidades.color_primario),
-                        ),
-                        onPressed: () {
-                           Navigator.pop(context);
-                        },
-                     )
-                  ],
-               ),
-            );
-         },
+         builder: (context, scrollController) => Container(
+            height: 186,
+            padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+            decoration : new BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                   topLeft: const Radius.circular(12.0),
+                   topRight: const Radius.circular(12.0),
+                )
+            ),
+            child:  Center(
+                child: Column(
+                   children: <Widget>[
+                      Padding(
+                         padding: EdgeInsets.only(top:0.0),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
+                      ),
+                      Padding(
+                         padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                         child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                      ),
+                      ButtonTheme(
+                         minWidth: 340.0,
+                         height: 40.0,
+                         buttonColor: AppColors.color_naranja_primario,
+                         child: RaisedButton(
+                            onPressed: () {
+                               Navigator.pop(context);
+                            },
+                            child: Text(
+                               "Aceptar",
+                               style: TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                         ),
+                      ),
+                   ],
+                )),
+         ),
       );
    }static void mostrarAlertas(
        String titulo, String mensaje, BuildContext context) {
       // flutter defined function
-      showDialog(
+      showMaterialModalBottomSheet(
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+         backgroundColor: Colors.transparent,
          context: context,
-         barrierDismissible: false,
-         builder: (context) {
-            // return object of type Dialog
-            return WillPopScope(
-               onWillPop: ()async{
-                  return false;
-               },
-               child: AlertDialog(
-                  title: new Text(titulo),
-                  content: new Text(mensaje),
-                  actions: <Widget>[
-                     FlatButton(
-                        child: new Text(
-                           "Aceptar",
-                           style: TextStyle(color: Utilidades.color_primario),
-                        ),
-                        onPressed: () {
-                           Navigator.pop(context);
-                           Navigator.pop(context);
-                           Navigator.pop(context);
-                        },
-                     )
-                  ],
-               ),
-            );
-         },
+         builder: (context, scrollController) => Container(
+            height: 164,
+            padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+            decoration : new BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                   topLeft: const Radius.circular(12.0),
+                   topRight: const Radius.circular(12.0),
+                )
+            ),
+            child:  Center(
+                child: Column(
+                   children: <Widget>[
+                      Padding(
+                         padding: EdgeInsets.only(top:0.0),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
+                      ),
+                      Padding(
+                         padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                         child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                      ),
+                      ButtonTheme(
+                         minWidth: 340.0,
+                         height: 40.0,
+                         buttonColor: AppColors.color_naranja_primario,
+                         child: RaisedButton(
+                            onPressed: () {
+                               Navigator.pop(context);
+                               Navigator.pop(context);
+                               Navigator.pop(context);
+                            },
+                            child: Text(
+                               "Aceptar",
+                               style: TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                         ),
+                      ),
+                   ],
+                )),
+         ),
       );
    }
 
    static void mostrarAlertaCallback(String titulo, String mensaje,
        BuildContext context, Function negative, Function positive) {
       // flutter defined function
-      showDialog(
+      showMaterialModalBottomSheet(
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+         backgroundColor: Colors.transparent,
          context: context,
-         barrierDismissible: false,
-         builder: (context) {
-            // return object of type Dialog
-            return WillPopScope(
-               onWillPop: ()async{
-                  return false;
-               },
-               child: Container(
-                  color: AppColors.color_titleAlert.withOpacity(0.6),
-                 child: AlertDialog(
-                    title: Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
-                    content: Container(
-                       height: 72,
-                      child: Column(
-                         children: <Widget>[
-                            SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Divider(color: AppColors.color_Bordes, height: 20,thickness: 1,),
+         builder: (context, scrollController) => Container(
+            height: 230,
+            padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+            decoration : new BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                   topLeft: const Radius.circular(12.0),
+                   topRight: const Radius.circular(12.0),
+                )
+            ),
+            child:  Center(
+                child: Column(
+                   children: <Widget>[
+                      Padding(
+                         padding: EdgeInsets.only(top:0.0),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
+                      ),
+                      Padding(
+                         padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                         child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                      ),
+                      ButtonTheme(
+                         minWidth: 340.0,
+                         height: 40.0,
+                         buttonColor: AppColors.color_naranja_primario,
+                         child: RaisedButton(
+                            onPressed: positive,
+                            child: Text(
+                               "Borrar",
+                               style: TextStyle(color: Colors.white, fontSize: 16),
                             ),
-                         ],
+                         ),
                       ),
-                    ),
-                    actions: <Widget>[
-                       // usually buttons at the bottom of the dialog
-                      ButtonTheme(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0),),
-                        child: FlatButton(
-                          color: AppColors.color_naranja_primario,
-                          textColor: AppColors.color_background_blanco,
-                          child: Text(
-                            "Borrar",
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,fontFamily: 'OpenSansRegular'),
-                          ),
-                          onPressed: positive,
-                        ),
-                      ),
-                      ButtonTheme(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0),),
-                        child: FlatButton(
-                          color: AppColors.color_naranja_primario,
-                          textColor: AppColors.color_background_blanco,
-                          child: Text(
-                            "Cancelar",
-                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16,fontFamily: 'OpenSansRegular'),
-                          ),
-                          onPressed: negative,
-                        ),
-                      ),
-                    ],
-                 ),
-               ),
-            );
-         },
+                   ],
+                )),
+         ),
       );
    }
 
    static void mostrarAlertCargaDeDatos(String titulo, String mensaje,
        BuildContext context, Function negative, Function positive) {
       // flutter defined function
-      showDialog(
+      showMaterialModalBottomSheet(
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+         backgroundColor: Colors.transparent,
          context: context,
-         barrierDismissible: false,
-         builder: (context) {
-            // return object of type Dialog
-            return WillPopScope(
-               onWillPop: ()async{
-                  return false;
-               },
-               child: AlertDialog(
-                  title: new Text(titulo),
-                  content: SingleChildScrollView(child: new Text(mensaje)),
-                  actions: <Widget>[
-                     // usually buttons at the bottom of the dialog
-                     new FlatButton(
-                        child: new Text(
-                           "Continuar con datos pre-cargados",
-                           style: TextStyle(color: Utilidades.color_primario),
+         builder: (context, scrollController) => Container(
+            height: 288,
+            padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+            decoration : new BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                   topLeft: const Radius.circular(12.0),
+                   topRight: const Radius.circular(12.0),
+                )
+            ),
+            child:  Center(
+                child: Column(
+                   children: <Widget>[
+                      Padding(
+                         padding: EdgeInsets.only(top:0.0),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
+                      ),
+                      Padding(
+                         padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                         child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                      ),
+                      Padding(
+                         padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                        child: ButtonTheme(
+                           minWidth: 340.0,
+                           height: 40.0,
+                           buttonColor: AppColors.color_naranja_primario,
+                           child: RaisedButton(
+                              onPressed: negative,
+                              child: Text(
+                                 "Continuar con datos pre-cargados",
+                                 style: TextStyle(color: Colors.white, fontSize: 16),
+                              ),
+                           ),
                         ),
-                        onPressed: negative,
-                     ),
-                     FlatButton(
-                        child: new Text(
-                           "Continuar con datos modificados",
-                           style: TextStyle(color: Utilidades.color_primario),
-                        ),
-                        onPressed: positive,
-                     )
-                  ],
-               ),
-            );
-         },
+                      ),
+                      ButtonTheme(
+                         minWidth: 340.0,
+                         height: 40.0,
+                         buttonColor: AppColors.color_naranja_primario,
+                         child: RaisedButton(
+                            onPressed: positive,
+                            child: Text(
+                               "Continuar con datos modificados",
+                               style: TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                         ),
+                      ),
+                   ],
+                )),
+         ),
       );
    }
 
    static void mostrarAlertaCallBackCustom(String titulo, String mensaje, BuildContext context,String buttonText,Function positive) {
       // flutter defined function
-      showDialog(
+      showMaterialModalBottomSheet(
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+         backgroundColor: Colors.transparent,
          context: context,
-         barrierDismissible: false,
-         builder: (context) {
-            // return object of type Dialog
-            return WillPopScope(
-               onWillPop: ()async{
-                  return false;
-               },
-               child: AlertDialog(
-                  title: new Text(titulo),
-                  content: SingleChildScrollView(child: new Text(mensaje)),
-                  actions: <Widget>[
-                     // usually buttons at the bottom of the dialog
-                     new FlatButton(
-                        child: new Text(
-                           buttonText,
-                           style: TextStyle(color: Utilidades.color_primario),
-                        ),
-                        onPressed: positive,
-                     ),
-                  ],
-               ),
-            );
-         },
+         builder: (context, scrollController) => Container(
+            height: 186,
+            padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+            decoration : new BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                   topLeft: const Radius.circular(12.0),
+                   topRight: const Radius.circular(12.0),
+                )
+            ),
+            child:  Center(
+                child: Column(
+                   children: <Widget>[
+                      Padding(
+                         padding: EdgeInsets.only(top:0.0),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
+                      ),
+                      Padding(
+                         padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                         child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                      ),
+                      ButtonTheme(
+                         minWidth: 340.0,
+                         height: 40.0,
+                         buttonColor: AppColors.color_naranja_primario,
+                         child: RaisedButton(
+                            onPressed: positive,
+                            child: Text(
+                               buttonText,
+                               style: TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                         ),
+                      ),
+                   ],
+                )),
+         ),
       );
    }
 

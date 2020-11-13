@@ -32,7 +32,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   void initState() {
     //negociosOper();
     super.initState();
-    _getNegociosOperables();
+    Future.delayed(Duration.zero, () {
+      _getNegociosOperables();
+    });
   }
 
   _getNegociosOperables( ) async {
