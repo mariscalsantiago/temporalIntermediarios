@@ -132,7 +132,7 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
   Widget build(BuildContext context) {
 
     return Visibility(
-      visible: widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null,
+      visible: widget.negocioOperable.cotizadores != null ? widget.negocioOperable.cotizadores.length>0 && widget.negocioOperable.cotizadores!=null : false,
       child: Column(
         children: <Widget>[
           /*Container(
@@ -201,7 +201,7 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
                 //child: FlatButton(onPressed:(){ FormularioPaso1;}, child: null),
                 child: ListView.builder(
 
-                    itemCount: widget.negocioOperable.cotizadores.length,
+                    itemCount: widget.negocioOperable.cotizadores != null ? widget.negocioOperable.cotizadores.length : 0,
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
                     itemBuilder: (BuildContext ctxt, int j) {
