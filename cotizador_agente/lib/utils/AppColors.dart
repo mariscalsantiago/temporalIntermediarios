@@ -10,7 +10,7 @@ class AppColors {
   static HexColor color_texto_campo = HexColor("343f61");
   static HexColor color_switch_apagado = HexColor("dcdcdc");
   static HexColor color_mail = HexColor("aac3ee");
-  static HexColor color_appBar = HexColor("#33445F");
+  static HexColor color_appBar = HexColor("33445F");
   static HexColor color_background = HexColor("#F6F9FD");
   static HexColor color_backgroundApp = HexColor("#F4F4F4");
   static HexColor color_borde = HexColor("E8EEF8");

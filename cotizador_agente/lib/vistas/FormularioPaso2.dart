@@ -7,9 +7,8 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
-import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
-import 'package:cotizador_agente/utils/CircleButton.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
@@ -44,6 +43,8 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
   String dataLayer= "";
   bool isLoadURL = false;
   bool isFinish = false;
+  bool isOpen = true;
+  bool isClose = false;
   //final FirebaseAnalytics analytics = new FirebaseAnalytics();
 
   String _something ="Cargando... ";
@@ -586,23 +587,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
   }
 
-  Widget showLoading() {
-    return Scaffold(
-        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
-        body: Center(
-          child: Container(
-              child: SizedBox(
-                width: 80.0,
-                height: 80.0,
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.transparent,
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
-                  strokeWidth: 5.0,
-                ),
-              )),
-        ));
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -637,14 +621,178 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
           appBar: AppBar(
             iconTheme: IconThemeData(color: AppColors.color_primario),
             backgroundColor: Colors.white,
-            title: Text("Paso 2", style: TextStyle(color: Colors.black)),
+            title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 18, fontWeight: FontWeight.w500),),
+            actions: <Widget>[
+              PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
+                  offset: Offset(100, 100),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 1,
+                      child: Column(
+                        children: <Widget>[
+                          Divider(height: 4,color: AppColors.color_divider,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text("ACCIONES",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      color: AppColors.color_popupmenu,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10,
+                                    )
+                                ),
+                                Spacer(flex: 1,)
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value:2,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                child: Text(
+                                    "Guardar",
+                                    style: TextStyle(
+                                        color: AppColors.color_disable,//AppColors.color_appBar,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16)
+                                ),
+                              ),
+                              Spacer(flex: 2,),
+                              IconButton(
+                                icon: Image.asset('assets/icon/cotizador/guardar_Disable.png'),
+                                onPressed: () {
+
+                                },),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                            child: Divider(height: 2,color: AppColors.color_divider,),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    PopupMenuItem(
+                      value:3,
+                      child: Column(
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                child: Text("Borrar datos",
+                                    style: TextStyle(
+                                        color: AppColors.color_appBar,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16)
+                                ),),
+                              Spacer(flex: 2,),
+                              IconButton(
+                                icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  actualizarVistaConNuevoPlan(plan);
+
+                                },),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0, right: 8.0, bottom: 16.0),
+                            child: Divider(height: 2,color: AppColors.color_divider,),
+                          ),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 4,
+                      child: Column(
+                        children: <Widget>[
+                          Divider(height: 4,color: AppColors.color_divider,),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text("SOPORTE",
+                                    textAlign: TextAlign.start,
+                                    style: TextStyle(
+                                      color: AppColors.color_popupmenu,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 10,)),
+                                Spacer(flex: 1,)
+                              ],
+                            ),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                                child: Text("Mis cotizaciones",
+                                    style: TextStyle(
+                                        color: AppColors.color_appBar,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16)
+                                ),),
+                              Spacer(flex: 2,),
+                              IconButton(
+                                icon: Image.asset('assets/icon/cotizador/miscotizaciones.png'),
+                                onPressed: () {
+                                  Navigator.push(context,  MaterialPageRoute(
+                                    builder: (context) => MisCotizaciones(),
+                                  ));
+                                },),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                            child: Divider(height: 2,color: AppColors.color_divider,),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  initialValue: 0,
+                  onCanceled: () {
+                    print("You have canceled the menu.");
+                  },
+                  onSelected: (value) {
+                    switch (value) {
+                      case 2:
+                        break;
+                      case 3:
+                        Navigator.pop(context);
+                        actualizarVistaConNuevoPlan(plan);
+                        break;
+                      case 4:
+                        Navigator.push(context,  MaterialPageRoute(
+                          builder: (context) => MisCotizaciones(),
+                        ));
+                        break;
+                    }
+                  }
+              ),
+            ],
           ),
+          /*AppBar(
+            iconTheme: IconThemeData(color: AppColors.color_primario),
+            backgroundColor: Colors.white,
+            title: Text("Paso 2", style: TextStyle(color: Colors.black)),
+          )*/
 
           body: Column(
 
               children:<Widget>[
 
-                TopBar(formKey: formKey, recargarFormularioConPlan: recargarPaso2, plan: plan,),
+               // TopBar(formKey: formKey, recargarFormularioConPlan: recargarPaso2, plan: plan,),
 
                 /****** Termina panel superior *******/
 
@@ -668,7 +816,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                             return Column(
                               children: <Widget>[
 
-                                Container(
+                                /*Container(
                                   width: double.infinity,
                                   padding: EdgeInsets.only(top: 32, left: 16, bottom: 24),
                                   child: Text(
@@ -697,8 +845,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                     ],
                                   ),
                                 ),
-
-
                                 Container(//Puntos
                                   color: AppColors.color_sombra,
 
@@ -759,7 +905,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                   ),
 
                                 ),
-
                                 Container(//Etiquetas
                                   color: AppColors.color_sombra,
                                   child: Row(
@@ -774,11 +919,133 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                       ))
                                     ],
                                   ),
+                                ),*/
+
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 0.0, right: 0.0, left: 0.0, bottom: 0.0),
+                                  child: Container(
+                                    color: AppColors.color_background,
+                                    height: 74.0,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 16.0,top: 12.0,),
+                                          child: Image.asset("assets/icon/cotizador/paso1.png", height: 50, width: 50,),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
+                                          child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
+                                        ),
+                                        Spacer(),
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 13.0,  left: 140.0, top:10.0, bottom: 10.0),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Visibility(visible: isOpen,
+                                                  child: IconButton(
+                                                    icon: Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
+                                                    onPressed: ((){
+                                                      //Mostrar container que indique en que paso se encuentra
+                                                      setState(() {
+                                                        isClose = true;
+                                                        isOpen = false;
+                                                      });
+                                                    }),)
+                                              ),
+                                              Visibility(visible: isClose,
+                                                  child: IconButton(
+                                                    icon: Image.asset("assets/icon/cotizador/expand_less.png", height: 24, width: 24,),
+                                                    onPressed: ((){
+                                                      //Mostrar container que indique en que paso se encuentra
+                                                      setState(() {
+                                                        isClose = false;
+                                                        isOpen = true;
+                                                      });
+                                                    }),)
+                                              ),
+
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-
-
-
-
+                                Visibility(
+                                    visible: isClose,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 0.0, bottom: 11.0),
+                                      child: Container(
+                                        color: AppColors.color_background,
+                                        height: 100,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(top: 8.0),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Row(
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 29.0),
+                                                    child: Container(
+                                                      width: 24,
+                                                      height: 24,
+                                                      child: FlatButton(
+                                                        onPressed: null,
+                                                        color: Colors.white,
+                                                        textColor: AppColors.color_TextActive,
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(15.0),
+                                                            side: BorderSide(color: AppColors.color_titulo)
+                                                        ),
+                                                        child: Text("1", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 29.0),
+                                                    child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.color_TextActive),),
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 35.0, top:0, bottom:0),
+                                                    child: Image.asset("assets/icon/cotizador/union.png", height: 24, width: 22,),
+                                                  )
+                                                ],
+                                              ),
+                                              Row(
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 29.0),
+                                                    child: Container(
+                                                      width: 24,
+                                                      height: 24,
+                                                      child: FlatButton(
+                                                        onPressed: null,
+                                                        color: Colors.grey,
+                                                        textColor: AppColors.color_appBar,
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius: BorderRadius.circular(15.0),
+                                                            side: BorderSide(color: AppColors.color_titulo)
+                                                        ),
+                                                        child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 29.0),
+                                                    child: Text("Elige", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.color_appBar),),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                ),
 
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16.0, bottom: 16),
@@ -821,8 +1088,8 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                           if(index==widget.secciones.length){ //Aqui va el formulario paso 2
                             try{
                               return Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2==null
-                                  ? showLoading() : isLoading == true
-                                  ? showLoading() : ListView.builder(
+                                  ? Container() : isLoading == true
+                                  ? Container() : ListView.builder(
                                   itemCount:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length+1,
                                   shrinkWrap: true,
                                   physics: ScrollPhysics(),
@@ -942,7 +1209,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                 padding: const EdgeInsets.all(16.0),
                                                 child:
                                                 isLoading == true
-                                                    ? showLoading()
+                                                    ? Container()
                                                     : new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
                                                   actualizarCodigoPostalFamiliares:
                                                   actualizarCodigoPostalFamiliares,
@@ -959,7 +1226,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                         padding: const EdgeInsets.all(16.0),
                                         child:
                                         isLoading == true ?
-                                        showLoading() :
+                                        Container() :
                                         new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc:  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2], i:index_paso2, end: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
                                           actualizarCodigoPostalFamiliares:
                                           actualizarCodigoPostalFamiliares,
@@ -987,7 +1254,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                             padding: const EdgeInsets.all(16.0),
                             child:
                             (isLoading == true || (widget.secciones.length-1)==0 )  ?
-                            showLoading() :
+                            Container() :
                             new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: widget.secciones[index], i:index, end:widget.secciones.length-1, formKey: formKey, actualizarSecciones: actualizarVistaConNuevoPlan,
                               actualizarCodigoPostalFamiliares:
                               actualizarCodigoPostalFamiliares,

@@ -5,8 +5,6 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
-import 'package:cotizador_agente/modelos_widget/modelo_topbar.dart';
-import 'package:cotizador_agente/utils/CircleButton.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
 import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
@@ -27,7 +25,6 @@ class FormularioPaso1 extends StatefulWidget {
   List<Seccion> seccionesPaso1;
   bool deboMostrarAlertaPrecarga = true;
   bool deboReemplazarGuardada = false;
-
 
   //List<Seccion> _secciones = [];//Cotización guardada
 
@@ -111,6 +108,8 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
   PasoFormulario paso_2;
   String recargacotizador;
   String platform = "";
+  bool isOpen = true;
+  bool isClose = false;
 
   refresh() {
     setState(() {});
@@ -830,6 +829,131 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                       ),
                     ],
                   ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0.0, right: 0.0, left: 0.0, bottom: 0.0),
+                    child: Container(
+                      color: AppColors.color_background,
+                      height: 74.0,
+                      child: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16.0,top: 12.0,),
+                            child: Image.asset("assets/icon/cotizador/paso1.png", height: 50, width: 50,),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
+                            child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 13.0,  left: 140.0, top:10.0, bottom: 10.0),
+                            child: Column(
+                              children: <Widget>[
+                                Visibility(visible: isOpen,
+                                child: IconButton(
+                                  icon: Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
+                                  onPressed: ((){
+                                    //Mostrar container que indique en que paso se encuentra
+                                    setState(() {
+                                      isClose = true;
+                                      isOpen = false;
+                                    });
+                                  }),)
+                                ),
+                                Visibility(visible: isClose,
+                                child: IconButton(
+                                  icon: Image.asset("assets/icon/cotizador/expand_less.png", height: 24, width: 24,),
+                                  onPressed: ((){
+                                    //Mostrar container que indique en que paso se encuentra
+                                    setState(() {
+                                      isClose = false;
+                                      isOpen = true;
+                                    });
+                                  }),)
+                                ),
+
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: isClose,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 0.0, bottom: 11.0),
+                      child: Container(
+                        color: AppColors.color_background,
+                        height: 100,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 29.0),
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      child: FlatButton(
+                                        onPressed: null,
+                                        color: Colors.white,
+                                        textColor: AppColors.color_TextActive,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(15.0),
+                                            side: BorderSide(color: AppColors.color_titulo)
+                                        ),
+                                        child: Text("1", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 29.0),
+                                    child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.color_TextActive),),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 35.0, top:0, bottom:0),
+                                    child: Image.asset("assets/icon/cotizador/union.png", height: 24, width: 22,),
+                                  )
+                                ],
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 29.0),
+                                    child: Container(
+                                      width: 24,
+                                      height: 24,
+                                      child: FlatButton(
+                                        onPressed: null,
+                                        color: Colors.grey,
+                                        textColor: AppColors.color_appBar,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(15.0),
+                                            side: BorderSide(color: AppColors.color_titulo)
+                                        ),
+                                        child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 29.0),
+                                    child: Text("Elige", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.color_appBar),),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  ),
                   /****** Termina panel superior *******/
 
 
@@ -917,7 +1041,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                               return Column(
                                 children: <Widget>[
 
-                                  Container(
+                                  /*Container(
                                     width: double.infinity,
                                     padding: EdgeInsets.only(top: 32, left: 16, bottom: 24),
                                     child: Text(
@@ -946,8 +1070,6 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                       ],
                                     ),
                                   ),
-
-
                                   Container(//Puntos
                                     color: AppColors.color_sombra,
 
@@ -1008,7 +1130,6 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                     ),
 
                                   ),
-
                                   Container(//Etiquetas
                                     color: AppColors.color_sombra,
                                     child: Row(
@@ -1023,7 +1144,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                         ))
                                       ],
                                     ),
-                                  ),
+                                  ),*/
 
 
                                   Padding(
