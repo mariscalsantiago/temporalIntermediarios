@@ -434,7 +434,7 @@ class Utilidades {
                          child: RaisedButton(
                             onPressed: positive,
                             child: Text(
-                               "Borrar",
+                               "Aceptar",
                                style: TextStyle(color: Colors.white, fontSize: 16),
                             ),
                          ),
