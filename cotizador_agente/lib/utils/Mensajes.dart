@@ -33,4 +33,18 @@ class Mensajes{
   static final String errorConfig = "Revise con el Administrador la configuración del Cotizador.";
   static final String errorConexion = "Se produjo un error al conectarse, intente  más tarde.";
 
+  //BOTONES
+  static final String btn_formatoComp = "Ver formato comparativo";
+  static final String btn_addCotizacion = "Agregar Cotización";
+  static final String misCotizaciones = "Mis cotizaciones";
+
+  static final String edicion = "Editar";
+  static final String eliminar = "Eliminar";
+  static final String descarga = "Descarga";
+  static final String titleSave = "Guardar cotización";
+  static final String lblSaveCot = "Selecciona los documentos que deseas \n"
+      "guardar.Recuerda que los podrás revisar \n"
+      "en la sección de Mis cotizaciones.";
+  static final String propuesta = "Nombre de propuesta";
+  static final String tabla_Comp = "Nombre de la tabla comparativa";
 }

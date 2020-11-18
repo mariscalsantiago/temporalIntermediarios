@@ -89,16 +89,6 @@ class StringsMX {
 
   //Test
   static const String longText="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-  //Cotizador
-  static const String edicion = "Editar";
-  static const String eliminar = "Eliminar";
-  static const String descarga = "Descarga";
-  static const String titleSave = "Guardar cotización";
-  static const String lblSaveCot = "Selecciona los documentos que deseas \n"
-      "guardar.Recuerda que los podrás revisar \n"
-      "en la sección de Mis cotizaciones.";
-  static const String propuesta = "Nombre de propuesta";
-  static const String tabla_Comp = "Nombre de la tabla comparativa";
 
 }
 

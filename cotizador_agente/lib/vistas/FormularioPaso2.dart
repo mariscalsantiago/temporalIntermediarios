@@ -736,7 +736,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                                child: Text("Mis cotizaciones",
+                                child: Text(Mensajes.misCotizaciones,
                                     style: TextStyle(
                                         color: AppColors.color_appBar,
                                         fontWeight: FontWeight.w500,

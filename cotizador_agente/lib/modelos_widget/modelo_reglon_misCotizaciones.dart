@@ -3,7 +3,6 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
-import 'package:cotizador_agente/Custom/Styles/Strings.dart' as AppStrings;
 
 class RenglonMisCotizaciones extends StatefulWidget {
 
@@ -46,7 +45,7 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                     PopupMenuItem(
                       value: 1,
                       child: Text(
-                        AppStrings.StringsMX.edicion,
+                        Mensajes.edicion,
                         style: TextStyle(
                             fontSize: 14,
                             color: AppColors.color_appBar,
@@ -57,7 +56,7 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                     PopupMenuItem(
                       value: 2,
                       child: Text(
-                        AppStrings.StringsMX.eliminar,
+                        Mensajes.eliminar,
                         style: TextStyle(
                             fontSize: 14,
                             color: AppColors.color_appBar,
@@ -68,7 +67,7 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                     PopupMenuItem(
                       value: 3,
                       child: Text(
-                        AppStrings.StringsMX.descarga,
+                        Mensajes.descarga,
                         style: TextStyle(
                             fontSize: 14,
                             color: AppColors.color_appBar,
@@ -122,7 +121,7 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                       PopupMenuItem(
                         value: 2,
                         child: Text(
-                          AppStrings.StringsMX.eliminar,
+                          Mensajes.eliminar,
                           style: TextStyle(
                               fontSize: 14,
                               color: AppColors.color_appBar,
@@ -132,7 +131,7 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                       PopupMenuItem(
                         value: 3,
                         child: Text(
-                          AppStrings.StringsMX.descarga,
+                          Mensajes.descarga,
                           style: TextStyle(
                               fontSize: 14,
                               color: AppColors.color_appBar,

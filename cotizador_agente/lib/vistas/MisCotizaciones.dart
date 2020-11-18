@@ -558,7 +558,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
         appBar: AppBar(
           iconTheme: IconThemeData(color: AppColors.color_primario),
           backgroundColor: Colors.white,
-          title: Text("Mis Cotizaciones",
+          title: Text(Mensajes.misCotizaciones,
             style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),
           ),
           leading: IconButton(

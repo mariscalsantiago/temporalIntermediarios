@@ -1439,7 +1439,7 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
   Widget build(BuildContext context) {
     return Container(
      // color: AppColors.color_sombra,
-      padding: EdgeInsets.only(top:8,left: 0, right:0,),
+      padding: EdgeInsets.only(left: 0, right:0,),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -1473,7 +1473,6 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                 Row(
                   children: <Widget>[
                     Expanded(
-                      flex: 1,
                       child: Container(
                         height: 32,
                         color: Colors.white,
