@@ -219,13 +219,13 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                 ),
                 Container(
                   width: double.infinity,
-                  margin: EdgeInsets.only(left: 8, top: 8),
+                  margin: EdgeInsets.only( top: 8),
                   padding: EdgeInsets.only(bottom: 8),
                   child: Text(
                     widget.campo.etiqueta == null
                         ? widget.campo.nombre_campo.toUpperCase()
                         : widget.campo.etiqueta.toUpperCase(),
-                    style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto'): TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto'),
+                    style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5) : TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5),
                   ),
                 ),
                 Container(
