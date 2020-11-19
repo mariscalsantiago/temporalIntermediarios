@@ -208,34 +208,46 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.chevron_left, size: 35,),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
           iconTheme: IconThemeData(color: AppColors.color_primario),
           backgroundColor: Colors.white,
-          title: Text("Selecciona un cotizador", style: TextStyle(color: Colors.black),),
+          title: Text("Cotizador Único GMM", style: TextStyle(color: Colors.black),),
         ),
         body:  Column(
           children:  <Widget>[
 
             Visibility(
               visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
-              child: Expanded(
-                child: new ListView.builder(
-                    itemCount: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables.length : 0,
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    itemBuilder: (context, index){
-                    return Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 1.0,
-                              color: AppColors.color_borde,
-                              offset: Offset(1.0, 3.0),
-                            ),
-                          ]),
-                      child: NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
-                    );
-                  }
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: Expanded(
+                  child: new ListView.builder(
+                      itemCount: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables.length : 0,
+                      shrinkWrap: true,
+                      physics: ScrollPhysics(),
+                      itemBuilder: (context, index){
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 1.0,
+                                  color: AppColors.color_borde,
+                                  offset: Offset(1.0, 3.0),
+                                ),
+                              ]),
+                          child: NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
+                        ),
+                      );
+                    }
+                  ),
                 ),
               ),
             ),

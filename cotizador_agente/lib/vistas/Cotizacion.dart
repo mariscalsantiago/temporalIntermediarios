@@ -808,9 +808,15 @@ class _CotizacionVistaState extends State<CotizacionVista> {
             Scaffold(
               backgroundColor: Colors.white,
                 appBar: AppBar(
+                  leading: IconButton(
+                    icon: Icon(Icons.chevron_left, size: 35,),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                   iconTheme: IconThemeData(color: AppColors.color_primario),
                   backgroundColor: Colors.white,
-                  title: Text("Tabla comparativa", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500)),
+                  title: Text("Tabla comparativa", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto")),
                   actions: <Widget>[
                     IconButton(
                       icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
