@@ -877,7 +877,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                   print(ispropuesta1.toString());
                                                 });
                                                 },
-                                                activeColor: AppColors.color_appBar,
+                                                activeColor: Colors.white,
                                                 checkColor: AppColors.color_TextActive,
                                               ),
                                               Expanded(
