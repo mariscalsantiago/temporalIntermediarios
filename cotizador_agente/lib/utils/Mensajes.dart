@@ -41,10 +41,9 @@ class Mensajes{
   static final String edicion = "Editar";
   static final String eliminar = "Eliminar";
   static final String descarga = "Descarga";
+  static final String guarda = "Guardar";
   static final String titleSave = "Guardar cotización";
-  static final String lblSaveCot = "Selecciona los documentos que deseas \n"
-      "guardar.Recuerda que los podrás revisar \n"
-      "en la sección de Mis cotizaciones.";
+  static final String lblSaveCot = "Selecciona los documentos que deseas guardar. Recuerda que los podrás revisar en la sección de Mis cotizaciones.";
   static final String propuesta = "Nombre de propuesta";
   static final String tabla_Comp = "Nombre de la tabla comparativa";
 }
