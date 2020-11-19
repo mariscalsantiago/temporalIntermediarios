@@ -259,10 +259,16 @@ class _SendEmailState extends State<SendEmail> {
       },
       child: Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              icon: Icon(Icons.chevron_left, size: 35,),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
             iconTheme: IconThemeData(color: AppColors.color_primario),
             backgroundColor: Colors.white,
             title: Text("Compartir",
-                style: TextStyle(fontSize: 24, color: AppColors.color_titulo)),
+                style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto")),
           ),
           body: Stack(
             children: <Widget>[

@@ -182,6 +182,7 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
                 )),
           ),*/
           ExpansionTile(
+            backgroundColor: AppColors.color_background_blanco,
             title: Text(widget.negocioOperable.negocioOperable,
             style: new TextStyle(
                 fontSize: 16.0,

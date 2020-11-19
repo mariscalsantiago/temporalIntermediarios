@@ -239,6 +239,12 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
               children: <Widget>[
                 AppBar(
+                  leading: IconButton(
+                    icon: Icon(Icons.chevron_left, size: 35,),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                   iconTheme: IconThemeData(color: AppColors.color_primario),
                   backgroundColor: Colors.white,
                   title: Text("", style: TextStyle(fontSize: 24, color: AppColors.color_titulo)),

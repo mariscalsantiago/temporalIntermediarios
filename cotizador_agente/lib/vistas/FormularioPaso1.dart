@@ -646,9 +646,15 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
           ),
           child: new Scaffold(
             appBar: AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.chevron_left, size: 35,),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
               iconTheme: IconThemeData(color: AppColors.color_primario),
               backgroundColor: Colors.white,
-              title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 18, fontWeight: FontWeight.w500),),
+              title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto"),),
               actions: <Widget>[
                 PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
                     offset: Offset(100, 100),

@@ -323,26 +323,6 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                               ),
                             ),
                           ),
-                          Visibility(
-                            visible: widget.secc.children_secc.isNotEmpty,
-                            child: Expanded(
-                              flex: 2,
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                child: Container(),/* FittedBox(
-                                  child: FloatingActionButton(
-                                    onPressed: _decrementar,
-                                    heroTag: "btn2",
-                                    tooltip: "Eliminar",
-                                    child: Icon(Icons.delete, color: Utilidades.color_primario,),
-                                    backgroundColor: Colors.white,
-                                    elevation: 0.5,
-                                  ),
-                                ), */
-                              ),
-                            ),
-                          ),
                         ],
                       ),
                       Divider(
