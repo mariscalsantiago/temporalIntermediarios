@@ -31,6 +31,8 @@ class AppColors {
   static HexColor color_titleAlert = HexColor("002E71");
   static HexColor color_btnHover = HexColor("FFB022");
   static HexColor color_LongPress = HexColor("FF8D21");
+  static HexColor azulGNP = HexColor("#003B7C");
+  static HexColor gnpbBackDisable2 = HexColor("#ECEDF0");
 }
 
 class HexColor extends Color {
