@@ -71,12 +71,17 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   String platform = "";
   bool esComparativa = false;
   final _formKey = GlobalKey<FormState>();
-  final namePropuesta1Controller = new TextEditingController();
-  final namePropuesta2Controller = new TextEditingController();
-  final nametablaCompController = new TextEditingController();
-  bool ispropuesta1 = false;
-  bool ispropuesta2 = false;
-  bool ispropuesta3 = false;
+  bool propuesta1 = false;
+  bool propuesta2 = false;
+  bool propuesta3 = false;
+
+  //ferificar que sean diferentes de null
+  void guardarPropuestas(String texto1, String texto2, String texto3){
+    print(texto1);
+    setState(() {
+      Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
+    });
+  }
 
 
   @override
@@ -823,6 +828,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                     IconButton(
                       icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
                       onPressed: () {
+                        //TextEditingController nombrePropuesta1Controller = TextEditingController();
                         showModalBottomSheet(
                           isScrollControlled: true,
                           barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
@@ -868,160 +874,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                         child: Column(children: <Widget>[
                                           Padding(
                                             padding: const EdgeInsets.only(top: 28.0, right: 24.0, left: 24.0),
-                                            child: Row(children: <Widget>[
-                                              Checkbox(
-                                                value: ispropuesta1,
-                                                onChanged: (bool value){
-                                                setState(() {
-                                                  ispropuesta1 = value;
-                                                  print(ispropuesta1.toString());
-                                                });
-                                                },
-                                                activeColor: Colors.white,
-                                                checkColor: AppColors.color_TextActive,
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: TextField(
-                                                  autofocus: ispropuesta1,
-                                                  controller: namePropuesta1Controller,
-                                                  keyboardType: TextInputType.text,
-                                                  inputFormatters: [WhitelistingTextInputFormatter(RegExp("[A-Za-zÁÉÍÓÚáéíóúñÑ ]"))],
-                                                  decoration: InputDecoration(
-                                                    contentPadding: EdgeInsets.only(left: 12.0),
-                                                    labelText: Mensajes.propuesta + " 1",
-                                                    hintStyle: TextStyle(fontSize: 16,
-                                                      fontWeight: FontWeight.normal,
-                                                      color: AppColors.gnpTextUser,
-                                                    ),
-                                                    focusColor: AppColors.color_primario,
-                                                    fillColor: AppColors.primary200,
-                                                    enabledBorder: new UnderlineInputBorder(
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.primary200
-                                                      ),
-                                                    ),
-                                                    border: new UnderlineInputBorder(
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.primary200
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 28.0, right: 24.0, left: 24.0),
-                                            child: Row(children: <Widget>[
-                                              Checkbox(
-                                                value: ispropuesta2,
-                                                onChanged: (bool value){
-                                                  setState(() {
-                                                    ispropuesta2 = value;
-                                                    print(ispropuesta2.toString());
-                                                  });
-                                                },
-                                                activeColor: Colors.white,
-                                                checkColor: AppColors.color_TextActive,
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: TextField(
-                                                  controller: namePropuesta2Controller,
-                                                  keyboardType: TextInputType.text,
-                                                  inputFormatters: [WhitelistingTextInputFormatter(RegExp("[A-Za-zÁÉÍÓÚáéíóúñÑ ]"))],
-                                                  decoration: InputDecoration(
-                                                    contentPadding: EdgeInsets.only(left: 12.0),
-                                                    labelText: Mensajes.propuesta + " 2",
-                                                    hintStyle: TextStyle(fontSize: 16,
-                                                      fontWeight: FontWeight.normal,
-                                                      color: AppColors.gnpTextUser,
-                                                    ),
-                                                    focusColor: AppColors.color_primario,
-                                                    fillColor: AppColors.primary200,
-                                                    enabledBorder: new UnderlineInputBorder(
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.primary200
-                                                      ),
-                                                    ),
-                                                    border: new UnderlineInputBorder(
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.primary200
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 28.0, right: 24.0, left: 24.0),
-                                            child: Row(children: <Widget>[
-                                              Checkbox(
-                                                value: ispropuesta3,
-                                                onChanged: (bool value){
-                                                  setState(() {
-                                                    ispropuesta3 = value;
-                                                    print(ispropuesta3.toString());
-                                                  });
-                                                },
-                                                activeColor: Colors.white,
-                                                checkColor: AppColors.color_TextActive,
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: TextField(
-                                                  controller: nametablaCompController,
-                                                  keyboardType: TextInputType.text,
-                                                  inputFormatters: [WhitelistingTextInputFormatter(RegExp("[A-Za-zÁÉÍÓÚáéíóúñÑ ]"))],
-                                                  decoration: InputDecoration(
-                                                    contentPadding: EdgeInsets.only(left: 12.0),
-                                                    labelText: Mensajes.tabla_Comp,
-                                                    hintStyle: TextStyle(fontSize: 16,
-                                                      fontWeight: FontWeight.normal,
-                                                      color: AppColors.gnpTextUser,
-                                                    ),
-                                                    focusColor: AppColors.color_primario,
-                                                    fillColor: AppColors.primary200,
-                                                    enabledBorder: new UnderlineInputBorder(
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.primary200
-                                                      ),
-                                                    ),
-                                                    border: new UnderlineInputBorder(
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.primary200
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],),
+                                            child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas,),
                                           ),
                                         ],),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 40.0, left: 0, right: 0),
-                                      child: Divider(height: 2,
-                                        color: AppColors.color_borde,),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 16.0,),
-                                      child: ButtonTheme(
-                                        minWidth: 340.0,
-                                        height: 40.0,
-                                        buttonColor: AppColors.color_naranja_primario,
-                                        child: RaisedButton(
-                                          onPressed: ((){
-
-                                            Navigator.pop(context);
-                                          }),
-                                          child: Text(Mensajes.guarda,
-                                            style: TextStyle(color: Colors.white, fontSize: 16),
-                                          ),
-                                        ),
                                       ),
                                     ),
                                   ],
@@ -1273,7 +1128,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                   Padding(
                                                     padding: const EdgeInsets.only(right:8.0, left: 8.0, top:16.0, bottom: 16.0),
                                                     child: Container(
-                                                        child: Text("Cotización " + cont.toString(),
+                                                        child: Text( Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Cotización " + (index+1).toString(),
                                                           style: TextStyle(
                                                               fontSize: 16,
                                                               fontWeight: FontWeight.w600,
@@ -1661,3 +1516,205 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
 
 }
+
+class listaCheck extends StatefulWidget {
+  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.guardarPropuestas, }) : super(key: key);
+
+  @override
+  _listaCheckState createState() => _listaCheckState();
+  bool ispropuesta1 = false,ispropuesta2 = false, ispropuesta3 = false;
+  final void Function(String t1, String t2, String t3) guardarPropuestas;
+  final namePropuesta1Controller = new TextEditingController();
+  final namePropuesta2Controller = new TextEditingController();
+  final nametablaCompController = new TextEditingController();
+
+}
+
+class _listaCheckState extends State<listaCheck> {
+  bool textPropuesta1;
+  String texto1;
+  String texto2;
+  String texto3;
+  @override
+  Widget build(BuildContext context) {
+    if(textPropuesta1 != null){
+      widget.ispropuesta1 = textPropuesta1;
+    }
+    if(texto1 != null){
+      widget.namePropuesta1Controller.text = texto1;
+    }
+    if(texto2 != null){
+      widget.namePropuesta2Controller.text = texto2;
+    }
+    if(texto3 != null){
+      widget.nametablaCompController.text = texto3;
+    }
+    return Column(
+      children: <Widget>[
+        Row(children: <Widget>[
+          Checkbox(
+            value: widget.ispropuesta1,
+            onChanged: (value){
+              setState(() {
+                widget.ispropuesta1 = value;
+                textPropuesta1 = widget.ispropuesta1;
+                print(value);
+              });
+            },
+            activeColor: Colors.white,
+            checkColor: AppColors.color_TextActive,
+          ),
+          Expanded(
+            flex: 1,
+            child: TextFormField(
+              onChanged: (text) {
+                setState(() {
+                  widget.namePropuesta1Controller.text = text;
+                  texto1 = widget.namePropuesta1Controller.text;
+                });
+              },
+              keyboardType: TextInputType.text,
+              inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 12.0),
+                labelText: Mensajes.propuesta + " 1",
+                hintStyle: TextStyle(fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  color: AppColors.gnpTextUser,
+                ),
+                focusColor: AppColors.color_primario,
+                fillColor: AppColors.primary200,
+                enabledBorder: new UnderlineInputBorder(
+                  borderSide: new BorderSide(
+                      color: AppColors.primary200
+                  ),
+                ),
+                border: new UnderlineInputBorder(
+                  borderSide: new BorderSide(
+                      color: AppColors.primary200
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],),
+        Row(children: <Widget>[
+          Checkbox(
+            value: widget.ispropuesta2,
+            onChanged: (bool value){
+              setState(() {
+                widget.ispropuesta2 = value;
+                print(widget.ispropuesta2.toString());
+              });
+            },
+            activeColor: Colors.white,
+            checkColor: AppColors.color_TextActive,
+          ),
+          Expanded(
+            flex: 1,
+            child: TextFormField(
+              onChanged: (text) {
+                setState(() {
+                  widget.namePropuesta2Controller.text = text;
+                  texto2 = widget.namePropuesta2Controller.text;
+                });
+              },
+              keyboardType: TextInputType.text,
+              inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 12.0),
+                labelText: Mensajes.propuesta + " 2",
+                hintStyle: TextStyle(fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  color: AppColors.gnpTextUser,
+                ),
+                focusColor: AppColors.color_primario,
+                fillColor: AppColors.primary200,
+                enabledBorder: new UnderlineInputBorder(
+                  borderSide: new BorderSide(
+                      color: AppColors.primary200
+                  ),
+                ),
+                border: new UnderlineInputBorder(
+                  borderSide: new BorderSide(
+                      color: AppColors.primary200
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],),
+        Row(children: <Widget>[
+          Checkbox(
+            value: widget.ispropuesta3,
+            onChanged: (bool value){
+              setState(() {
+                widget.ispropuesta3 = value;
+                print(widget.ispropuesta3.toString());
+              });
+            },
+            activeColor: Colors.white,
+            checkColor: AppColors.color_TextActive,
+          ),
+          Expanded(
+            flex: 1,
+            child: TextFormField(
+              onChanged: (text) {
+                setState(() {
+                  widget.nametablaCompController.text = text;
+                  texto3 = widget.nametablaCompController.text;
+                });
+              },
+              keyboardType: TextInputType.text,
+              inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 12.0),
+                labelText: Mensajes.tabla_Comp,
+                hintStyle: TextStyle(fontSize: 16,
+                  fontWeight: FontWeight.normal,
+                  color: AppColors.gnpTextUser,
+                ),
+                focusColor: AppColors.color_primario,
+                fillColor: AppColors.primary200,
+                enabledBorder: new UnderlineInputBorder(
+                  borderSide: new BorderSide(
+                      color: AppColors.primary200
+                  ),
+                ),
+                border: new UnderlineInputBorder(
+                  borderSide: new BorderSide(
+                      color: AppColors.primary200
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],),
+        Padding(
+          padding: const EdgeInsets.only(top: 40.0, left: 0, right: 0),
+          child: Divider(height: 2,
+            color: AppColors.color_borde,),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 16.0,),
+          child: ButtonTheme(
+            minWidth: 340.0,
+            height: 40.0,
+            buttonColor: AppColors.color_naranja_primario,
+            child: RaisedButton(
+              onPressed: ((){
+                Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = widget.namePropuesta1Controller.text;
+                Navigator.pop(context);
+                widget.guardarPropuestas(texto1,texto2,texto3);
+              }),
+              child: Text(Mensajes.guarda,
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
