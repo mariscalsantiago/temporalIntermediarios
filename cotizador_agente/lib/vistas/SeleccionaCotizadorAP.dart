@@ -223,14 +223,12 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
             Visibility(
               visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Expanded(
-                  child: new ListView.builder(
-                      itemCount: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables.length : 0,
-                      shrinkWrap: true,
-                      physics: ScrollPhysics(),
-                      itemBuilder: (context, index){
+              child: Expanded(
+                child: new ListView.builder(
+                    itemCount: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables.length : 0,
+                    shrinkWrap: true,
+                    physics: ScrollPhysics(),
+                    itemBuilder: (context, index){
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
                         child: Container(
@@ -244,10 +242,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                                 ),
                               ]),
                           child: NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
-                        ),
-                      );
+                        ),);
                     }
-                  ),
                 ),
               ),
             ),

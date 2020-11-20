@@ -311,7 +311,7 @@ class Utilidades {
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
-            height: 186,
+            height: 192,
             padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
             decoration : new BoxDecoration(
                 color: Colors.white,
@@ -407,7 +407,7 @@ class Utilidades {
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
-            height: 230,
+            height: 240,
             padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
             decoration : new BoxDecoration(
                 color: Colors.white,
