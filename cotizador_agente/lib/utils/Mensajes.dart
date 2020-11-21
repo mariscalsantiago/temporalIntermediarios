@@ -46,4 +46,6 @@ class Mensajes{
   static final String lblSaveCot = "Selecciona los documentos que deseas guardar. Recuerda que los podrás revisar en la sección de Mis cotizaciones.";
   static final String propuesta = "Nombre de propuesta";
   static final String tabla_Comp = "Nombre de la tabla comparativa";
+  static final String acciones = "ACCIONES";
+  static final String soporte = "SOPORTE";
 }

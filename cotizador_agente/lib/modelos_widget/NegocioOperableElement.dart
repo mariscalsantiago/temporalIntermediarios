@@ -223,7 +223,7 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
                                 child: Text(
                                   widget.negocioOperable.cotizadores[j].aplicacion,
                                   textAlign: TextAlign.left,
-                                  style: TextStyle(color: Colors.grey),
+                                  style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5),
                                 ),
                               ),
                               onPressed: () {

@@ -45,6 +45,8 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
   bool isFinish = false;
   bool isOpen = true;
   bool isClose = false;
+  bool isChangeicon1 = true;
+  bool isChangeicon2 = true;
   //final FirebaseAnalytics analytics = new FirebaseAnalytics();
 
   String _something ="Cargando... ";
@@ -618,6 +620,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
           strokeWidth: 5.0,
         ),
         child: Scaffold(
+          backgroundColor: Colors.white,
           appBar: AppBar(
             leading: IconButton(
               icon: Icon(Icons.chevron_left, size: 35,),
@@ -627,7 +630,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
             ),
             iconTheme: IconThemeData(color: AppColors.color_primario),
             backgroundColor: Colors.white,
-            title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 18, fontWeight: FontWeight.w500, fontFamily: "Roboto"),),
+            title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto", letterSpacing: 0.15),),
             actions: <Widget>[
               PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
                   offset: Offset(100, 100),
@@ -641,13 +644,13 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Row(
                               children: <Widget>[
-                                Text("ACCIONES",
+                                Text(Mensajes.acciones,
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                       color: AppColors.color_popupmenu,
                                       fontWeight: FontWeight.w500,
                                       fontSize: 10,
-                                    )
+                                      letterSpacing: 1.5,)
                                 ),
                                 Spacer(flex: 1,)
                               ],
@@ -664,12 +667,12 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
-                                child: Text(
-                                    "Guardar",
+                                child: Text(Mensajes.guarda,
                                     style: TextStyle(
                                         color: AppColors.color_disable,//AppColors.color_appBar,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 16)
+                                        fontSize: 16,
+                                    letterSpacing: 0.15)
                                 ),
                               ),
                               Spacer(flex: 2,),
@@ -696,11 +699,12 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                             children: <Widget>[
                               Padding(
                                 padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
-                                child: Text("Borrar datos",
+                                child: Text(Mensajes.titleLimpia,
                                     style: TextStyle(
                                         color: AppColors.color_appBar,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 16)
+                                        fontSize: 16,
+                                    letterSpacing: 0.15)
                                 ),),
                               Spacer(flex: 2,),
                               IconButton(
@@ -728,12 +732,13 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Row(
                               children: <Widget>[
-                                Text("SOPORTE",
+                                Text(Mensajes.soporte,
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                       color: AppColors.color_popupmenu,
                                       fontWeight: FontWeight.w500,
-                                      fontSize: 10,)),
+                                      fontSize: 10,
+                                      letterSpacing: 1.5,)),
                                 Spacer(flex: 1,)
                               ],
                             ),
@@ -746,7 +751,8 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                     style: TextStyle(
                                         color: AppColors.color_appBar,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 16)
+                                        fontSize: 16,
+                                    letterSpacing: 0.15)
                                 ),),
                               Spacer(flex: 2,),
                               IconButton(
@@ -1058,6 +1064,12 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                   child: Container(
                                     color: AppColors.color_background,
                                     child: ExpansionTile(
+                                      onExpansionChanged: (value){
+                                        setState(() {
+                                          isChangeicon1 = value;
+                                        });
+                                      },
+                                      trailing: (isChangeicon1 == true) ? Image.asset("assets/icon/cotizador/expand_less.png", height: 24, width: 24,) : Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
                                       initiallyExpanded: true,
                                       title: Text(widget.secciones[index].seccion,
                                         style: new TextStyle(
@@ -1200,6 +1212,12 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                       child: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].campos.length != 0 ? Container(
                                         color: AppColors.color_background,
                                         child: ExpansionTile(
+                                          onExpansionChanged: (value){
+                                            setState(() {
+                                              isChangeicon2 = value;
+                                            });
+                                          },
+                                          trailing: (isChangeicon2 == true) ? Image.asset("assets/icon/cotizador/expand_less.png", height: 24, width: 24,) : Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
                                           initiallyExpanded: true,
                                           title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].seccion,
                                             style: new TextStyle(

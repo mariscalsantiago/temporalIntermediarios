@@ -33,6 +33,7 @@ class AppColors {
   static HexColor color_LongPress = HexColor("FF8D21");
   static HexColor azulGNP = HexColor("#003B7C");
   static HexColor gnpbBackDisable2 = HexColor("#ECEDF0");
+  static HexColor secondary300 = HexColor("#FFD357");
 }
 
 class HexColor extends Color {

@@ -1461,7 +1461,8 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                           style: TextStyle(
                               color: AppColors.color_Etiqueta,
                               fontWeight: FontWeight.w400,
-                              fontSize: 12),
+                              fontSize: 12,
+                              letterSpacing: 0.4),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -1482,7 +1483,8 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                           style: TextStyle(
                               color: AppColors.color_appBar,
                               fontWeight: FontWeight.w400,
-                              fontSize: 14),
+                              fontSize: 14,
+                              letterSpacing: 0.25),
                           textAlign: TextAlign.left,
                         ),
                       ),
@@ -1568,7 +1570,7 @@ class _ToggleConValoresState extends State<ToggleConValores> {
 
                     });
                   },
-                  activeTrackColor: AppColors.color_naranja_primario.withOpacity(0.38),
+                  activeTrackColor: AppColors.secondary300.withOpacity(0.38),
                   activeColor: AppColors.color_naranja_primario,
                   inactiveTrackColor: AppColors.color_switch_simple_apagado.withOpacity(0.38),
                   inactiveThumbColor: AppColors.color_switch_simple_apagado,

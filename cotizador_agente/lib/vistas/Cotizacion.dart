@@ -823,7 +823,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   ),
                   iconTheme: IconThemeData(color: AppColors.color_primario),
                   backgroundColor: Colors.white,
-                  title: Text("Tabla comparativa", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto")),
+                  title: Text("Tabla comparativa", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto", letterSpacing: 0.15)),
                   actions: <Widget>[
                     IconButton(
                       icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
@@ -906,7 +906,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
-                              child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
+                              child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar, letterSpacing: 0.15),),
                             ),
                             Spacer(),
                             Padding(
@@ -925,7 +925,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                           itemBuilder: (BuildContext ctxt, int i) {
 
                             switch(i){
-
+                              //Agregar cotización
                               case 0:
                                 return Visibility(
                                   visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() < 3 ? true : false,
@@ -940,7 +940,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                 child: Padding(
                                                   padding: const EdgeInsets.only(right: 56.0),
                                                   child: Text(Mensajes.btn_addCotizacion,
-                                                    style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600),
+                                                    style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
                                                   ),
                                                 )
                                             ),
@@ -970,7 +970,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                   ),
                                 );
                                 break;
-
+                              //Cotizaciones
                               case 1:
 
                                 int cont = 0;
@@ -1018,7 +1018,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                                       }
 
-                                      bool mostrarText;
+                                      /*bool mostrarText;
                                       bool mostrarCampo;
 
                                       if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre == null ){
@@ -1028,7 +1028,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                       }else{
                                         mostrarText = false;
                                         mostrarCampo = true;
-                                      }
+                                      }*/
 
                                       List<Widget> getFormatos() {
                                         List<FlatButton> listabuttonDoc = new List<FlatButton>();
@@ -1046,7 +1046,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                   }
                                                 });
                                               },
-                                              child: Text("Ver " + doc.nombreDocumento.toLowerCase().replaceAll("ap", ""), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600),),
+                                              child: Text("Ver " + doc.nombreDocumento.toLowerCase().replaceAll("ap", ""), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),),
                                             ));
                                           }
                                         }
@@ -1090,7 +1090,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                       return Column(
                                         children: <Widget>[
                                           Padding(
-                                            padding: const EdgeInsets.only(right: 24.0, left: 300.0, top: 8.0),
+                                            padding: const EdgeInsets.only(right: 24.0, left: 300.0, top: 8.0, bottom: 0),
                                             child: Container(
                                                 width: 36,
                                                 height: 36,
@@ -1110,7 +1110,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             ),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(right: 32.0,left: 16.0, top: 0.0),
+                                            padding: const EdgeInsets.only(right: 16.0,left: 16.0),
                                             child: Container(
                                               height: 332,
                                               width: 312,
@@ -1165,7 +1165,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                                 Padding(
                                                                   padding: const EdgeInsets.only(right: 8.0),
                                                                   child: Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
-                                                                    style: TextStyle(color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400), textAlign: TextAlign.left,
+                                                                    style: TextStyle(color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,
                                                                   ),
                                                                 ),
                                                                 Visibility(
@@ -1184,7 +1184,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                         ] : <Widget>[
                                                           Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
                                                             style: TextStyle(
-                                                                color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400), textAlign: TextAlign.left,),
+                                                                color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,),
                                                         ],
                                                       ),
                                                     ),
@@ -1197,16 +1197,16 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                           padding: EdgeInsets.only(left: 8.0, right: 8.0),
                                                           width: 144,
                                                           height: 16,
-                                                          child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar),
-                                                            textAlign: TextAlign.right,),
+                                                          child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                            textAlign: TextAlign.center,),
                                                         ),
                                                         Container(
                                                           padding: const EdgeInsets.only(right: 8.0, left: 8.0),
                                                           width: 144,
                                                           height: 16,
                                                           child: Text(parcialidades,
-                                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar),
-                                                            textAlign: TextAlign.left,),
+                                                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                            textAlign: TextAlign.center,),
                                                         )
                                                       ],
                                                     ),
@@ -1217,16 +1217,18 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                       width: 144,
                                                       height: 40,
                                                       child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
-                                                        style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600),
-                                                        textAlign: TextAlign.right,),
+                                                        style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                                                        textAlign: TextAlign.center,
+                                                        overflow: TextOverflow.ellipsis,
+                                                      maxLines: 2,),
                                                     ),
                                                     Container(
                                                       padding: const EdgeInsets.only(right: 8.0, left: 8.0),
                                                       width: 144,
                                                       height: 40,
                                                       child: Text(montoParcial,
-                                                        style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600),
-                                                        textAlign: TextAlign.left,),
+                                                        style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                                                        textAlign: TextAlign.center,),
                                                     ),
                                                   ],),
                                                   Container(color: Colors.white,
@@ -1249,7 +1251,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                             editarDatos(index);
                                                           },
                                                           child: Text(Mensajes.edicion,
-                                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600), textAlign: TextAlign.left,),
+                                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
                                                         ),
                                                       ],
                                                     ),
@@ -1409,7 +1411,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                 }
                                               },
                                               child: Text(Mensajes.btn_formatoComp,
-                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600,),
+                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),
                                                 textAlign: TextAlign.center,),
                                             ),
                                           ),
@@ -1438,12 +1440,13 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                           //Titlulo de seccion
                                                           Container(
                                                             height: 40,
+                                                            width: 294,
                                                             child: Padding(
                                                               padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
                                                               child: Text(
-                                                                (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), maxLines: 2, overflow: TextOverflow.ellipsis,
-                                                                textAlign: TextAlign.center,
-                                                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert),
+                                                                (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
+                                                                textAlign: TextAlign.start,
+                                                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
                                                               ),
                                                             ),
                                                           ),

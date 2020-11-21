@@ -344,6 +344,11 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
         return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                child: Divider(height: 1,
+                  color: AppColors.color_divider,),
+              ),
               Row(children: <Widget>[
                 Expanded(
                   flex: 3,
@@ -351,7 +356,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                     alignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        widget.secc.seccion,
+                        widget.secc.seccion.toUpperCase(),
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
