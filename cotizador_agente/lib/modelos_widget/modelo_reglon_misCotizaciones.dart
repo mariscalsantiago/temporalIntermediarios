@@ -112,62 +112,59 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
                         break;
                     }
                   }
-              ) : Padding(
-                padding: const EdgeInsets.only(right: 2.0, left: 265.0),
-                child: PopupMenuButton(
-                    icon: Icon(Icons.more_vert, color: AppColors.color_primario,),
-                    offset: Offset(220, 120),
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 2,
-                        child: Text(
-                          Mensajes.eliminar,
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.color_appBar,
-                              fontWeight: FontWeight.w400),
-                        ),
+              ) : PopupMenuButton(
+                  icon: Icon(Icons.more_vert, color: AppColors.color_primario,),
+                  offset: Offset(220, 120),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 2,
+                      child: Text(
+                        Mensajes.eliminar,
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.color_appBar,
+                            fontWeight: FontWeight.w400),
                       ),
-                      PopupMenuItem(
-                        value: 3,
-                        child: Text(
-                          Mensajes.descarga,
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.color_appBar,
-                              fontWeight: FontWeight.w400),
-                        ),
+                    ),
+                    PopupMenuItem(
+                      value: 3,
+                      child: Text(
+                        Mensajes.descarga,
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.color_appBar,
+                            fontWeight: FontWeight.w400),
                       ),
-                    ],
-                    initialValue: 0,
-                    onCanceled: () {
-                      print("You have canceled the menu.");
-                    },
-                    onSelected: (value) {
-                      switch (value) {
+                    ),
+                  ],
+                  initialValue: 0,
+                  onCanceled: () {
+                    print("You have canceled the menu.");
+                  },
+                  onSelected: (value) {
+                    switch (value) {
 
 
-                        case 2:
+                      case 2:
 
-                          String nombreFormato = (widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION_AP) || (widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION) ? "cotización " :
-                          ((widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION_AP) || (widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION) ? "comisión " : (widget.cotizacion.idFormato == Utilidades.FORMATO_COMPARATIVA ? "comparativa " : "cotización "));
+                        String nombreFormato = (widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION_AP) || (widget.cotizacion.idFormato == Utilidades.FORMATO_COTIZACION) ? "cotización " :
+                        ((widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION_AP) || (widget.cotizacion.idFormato == Utilidades.FORMATO_COMISION) ? "comisión " : (widget.cotizacion.idFormato == Utilidades.FORMATO_COMPARATIVA ? "comparativa " : "cotización "));
 
-                          Utilidades.mostrarAlertaCallback("¿Desea eliminar la " + nombreFormato + widget.cotizacion.id.toString() + "?", "Esta acción no se puede deshacer", context, (){
+                        Utilidades.mostrarAlertaCallback("¿Desea eliminar la " + nombreFormato + widget.cotizacion.id.toString() + "?", "Esta acción no se puede deshacer", context, (){
 
-                            Navigator.of(context).pop();
-                          }, (){
-                            widget.eliminar(widget.cotizacion);
-                            Navigator.of(context).pop();
-                          });
+                          Navigator.of(context).pop();
+                        }, (){
+                          widget.eliminar(widget.cotizacion);
+                          Navigator.of(context).pop();
+                        });
 
-                          break;
+                        break;
 
-                        case 3:
-                          widget.vistaprevia(widget.cotizacion);
-                          break;
-                      }
+                      case 3:
+                        widget.vistaprevia(widget.cotizacion);
+                        break;
                     }
-                ),
+                  }
               ),
             ],
           ),
