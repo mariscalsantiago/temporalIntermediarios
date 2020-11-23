@@ -181,19 +181,37 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
         if(!widget.secc.existeUnCampoVisible()){
           return Container();
         }
-        return Column( children: <Widget>[
-          Container(
-            width: double.infinity,
-            child: Text(
-              widget.secc.seccion,
-              textAlign: TextAlign.start,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: AppColors.color_titulo,
-                  fontSize: 20),
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+              child: Divider(height: 1,
+                color: AppColors.color_divider,),
             ),
-          ),
+            Row(children: <Widget>[
+              Expanded(
+                flex: 3,
+                child: ButtonBar(
+                    alignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        widget.secc.seccion.toUpperCase(),
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.color_Etiqueta,
+                            fontSize: 10,
+                            letterSpacing: 1.5),
+                      ),//
+                    ]
+                ),
+              ),
+            ]
+            ),
+
           ListView.builder(
               itemCount: widget.secc.children_secc.length,
               shrinkWrap: true,
@@ -204,16 +222,18 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       _camposVisibles(_seccion.campos) ? Container(
-                        padding: const EdgeInsets.only(top: 16, bottom: 8),
+                        padding: const EdgeInsets.only(top: 16, bottom: 8,left: 8),
                         width: double.infinity,
                         child: Text(
                           _seccion.seccion,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: AppColors.color_titulo,
-                              fontSize: 20),
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.color_appBar,
+                              fontSize: 16,
+                              letterSpacing: 0.5),
                         ),
                       ): Container(),
                       ListView.builder(
