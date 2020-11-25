@@ -1,7 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
@@ -271,7 +271,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
     print(data.name);*/
     bool success = false;
 
-   // var config = AppConfig.of(context);
+   // config = AppConfig.of(context);
 
     final result = await InternetAddress.lookup('google.com');
 
@@ -284,7 +284,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
       try{
         Map<String, String> headers = {"Accept": "application/json"};
 
-        var response = await http.get(Uri.encodeFull(config.urlFormularioPaso1 + widget.cotizador), headers: headers);
+        var response = await http.get(Uri.encodeFull(AppConfig.of(context).urlFormularioPaso1 + widget.cotizador), headers: headers);
 
         int statusCode = response.statusCode;
 
@@ -640,7 +640,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
         child: LoadingOverlay(
           isLoading: isLoading,
           opacity: 0.8,
-          color: AppColors.color_titulo,
+          color: AppColors.primary700,
           progressIndicator: CircularProgressIndicator(
             backgroundColor: Colors.transparent,
             valueColor: AlwaysStoppedAnimation(Colors.white),
@@ -835,7 +835,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                         child: Container(
                             child: Divider( //002e71
                               thickness: 2,
-                              color: AppColors.color_titulo,
+                              color: AppColors.primary700,
 
                               height: 0,
                             )),
@@ -913,10 +913,10 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                       child: FlatButton(
                                         onPressed: null,
                                         color: Colors.white,
-                                        textColor: AppColors.color_TextActive,
+                                        textColor: AppColors.secondary900,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(15.0),
-                                            side: BorderSide(color: AppColors.color_titulo)
+                                            side: BorderSide(color: AppColors.primary700)
                                         ),
                                         child: Text("1", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
                                       ),
@@ -924,7 +924,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 29.0),
-                                    child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.color_TextActive),),
+                                    child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondary900),),
                                   ),
                                 ],
                               ),
@@ -949,7 +949,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                         textColor: AppColors.color_appBar,
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(15.0),
-                                            side: BorderSide(color: AppColors.color_titulo)
+                                            side: BorderSide(color: AppColors.primary700)
                                         ),
                                         child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
                                       ),

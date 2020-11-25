@@ -6,7 +6,6 @@ import 'package:cotizador_agente/Custom/Styles/Strings.dart' as AppStrings;
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/Custom/Widgets/CustomsAppBars.dart'
     as AppBar;
-import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:cotizador_agente/main.dart';
@@ -39,7 +38,7 @@ class _ConsultationPageState extends State<ConsultationPage>
   @override
   void initState() {
     listTem.clear();
-    sendTag("ConsultaTusClientes_Page");
+    //sendTag("ConsultaTusClientes_Page");
     refreshTotalPolizasClientes();
     for (int i = 0; ramos.length > i; i++) {
       setState(() {

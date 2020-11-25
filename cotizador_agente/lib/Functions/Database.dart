@@ -1,12 +1,11 @@
-import 'dart:convert';
-import 'package:firebase_database/firebase_database.dart';
+
+//import 'package:firebase_database/firebase_database.dart';
 import 'dart:core';
-import 'package:cotizador_agente/modelos/LoginModels.dart';
 //import 'package:agentesgnp/PagoMovil/constants.dart';
 //import 'MobilePayServiceDictionary.dart';
 import 'Validate.dart';
 
-DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+//DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
 String nodePayRecipeToCoexistence;
 String causeError;
 /*
@@ -169,7 +168,7 @@ void writeLoginBinnacle(String userData, String service, LogErrorType errorType,
   nodeName = nodeName.replaceAll(".", "-");
   nodeName = nodeName.replaceAll(":", "-");
   String _child = "$_nodeLogs/$_nodeSectionLog/$_binnacle/$_failed/$_errorType/$yearMonthNode/$nodeName";
-  _databaseReference.child("$_nodeLogs/$_writeLogs").once().then((DataSnapshot _snapshot) async {
+  /*_databaseReference.child("$_nodeLogs/$_writeLogs").once().then((DataSnapshot _snapshot) async {
     if(validateNotEmptyBoolWhitDefault(_snapshot.value,false)){
       _databaseReference.child("$_nodeLogs/$_nodeSectionLog/$_writeLogs").once().then((DataSnapshot _snapshot) async {
         if(validateNotEmptyBoolWhitDefault(_snapshot.value, false)){
@@ -181,7 +180,7 @@ void writeLoginBinnacle(String userData, String service, LogErrorType errorType,
         }
       });
     }
-  });
+  });*/
 }
 
 enum LogErrorType { serviceError, userError , appError}
@@ -189,7 +188,7 @@ enum LogErrorType { serviceError, userError , appError}
 
 void writeUserNode(String user,dynamic data) async {
   try {
-    await _databaseReference.reference().child("users").update({'$user': data});
+   // await _databaseReference.reference().child("users").update({'$user': data});
   }
   catch (e){
     print("Error Database: $e");

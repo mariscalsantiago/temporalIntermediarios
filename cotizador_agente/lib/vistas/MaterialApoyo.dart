@@ -52,7 +52,7 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
                     child: Text("Material de apoyo para venta",
                       overflow: TextOverflow.clip,
                       style: TextStyle(
-                          fontSize: 20.0, color: AppColors.color_titulo),
+                          fontSize: 20.0, color: AppColors.primary700),
                       textAlign: TextAlign.left,),
                   ),
                 ),
@@ -133,7 +133,7 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
                     "Nombre del documento",
                     style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.color_titulo,
+                    color: AppColors.primary700,
                     fontSize: 16),
                   ),
                 ),
@@ -146,7 +146,7 @@ class _MaterialApoyoState extends State<MaterialApoyo> {
                 child: Container(
                     child: Divider( //002e71
                       thickness: 0.5,
-                      color: AppColors.color_titulo,
+                      color: AppColors.primary700,
 
                       height: 0,
                     )),

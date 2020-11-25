@@ -223,7 +223,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
     return LoadingOverlay(
       isLoading: isLoading,
       opacity: 0.8,
-      color: AppColors.color_titulo,
+      color: AppColors.primary700,
       progressIndicator: CircularProgressIndicator(
         backgroundColor: Colors.transparent,
         valueColor: AlwaysStoppedAnimation(Colors.white),
@@ -247,7 +247,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                   ),
                   iconTheme: IconThemeData(color: AppColors.color_primario),
                   backgroundColor: Colors.white,
-                  title: Text("", style: TextStyle(fontSize: 24, color: AppColors.color_titulo)),
+                  title: Text("", style: TextStyle(fontSize: 24, color: AppColors.primary700)),
                 ),
                 Row(
                   children: <Widget>[
@@ -256,7 +256,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                           child: Divider(
                             //002e71
                             thickness: 2,
-                            color: AppColors.color_titulo,
+                            color: AppColors.primary700,
                           )),
                     ),
                   ],
@@ -276,7 +276,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                           "Formato Comisión: " + widget.folio.toString() :
                           ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Formato Comparativa: " + widget.folio.toString() : ""  )),
                             style:
-                            TextStyle(fontSize: 20.0, color: AppColors.color_titulo),
+                            TextStyle(fontSize: 20.0, color: AppColors.primary700),
                             textAlign: TextAlign.left,
                             overflow: TextOverflow.clip,
                           ),

@@ -1,27 +1,26 @@
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:flutter/material.dart';
 
-class PositiveButton extends StatelessWidget {
+class EnabledButton extends StatelessWidget {
 
   final GestureTapCallback onPressed;
   final String title;
+  bool enabled;
   EdgeInsets margin;
 
-  PositiveButton({@required this.title, @required this.onPressed, this.margin});
+  EnabledButton({@required this.title, @required this.onPressed, @required this.enabled, this.margin});
 
   @override
   Widget build(BuildContext context) {
-    if (this.margin == null) {
-      this.margin = EdgeInsets.fromLTRB(16, 24, 16, 24);
-    }
     return Container(
       height: 48,
-      margin: this.margin,
+      margin: this.margin ?? EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: FlatButton(
+          splashColor: this.enabled ? AppColors.color_LongPress : Colors.transparent,
           disabledColor: AppColors.gnpbBackDisable2,
-          color: AppColors.secondary900,
+          color: this.enabled ? AppColors.secondary900 : AppColors.gnpbBackDisable2,
           textColor: Colors.white,
-          onPressed: this.onPressed,
+          onPressed: this.enabled ? this.onPressed : () {},
           child: Text(this.title,
               style: TextStyle(
                   fontFamily: "Roboto",

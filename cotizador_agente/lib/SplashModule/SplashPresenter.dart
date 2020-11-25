@@ -17,30 +17,27 @@ class SplashPresenter implements SplashPresentation, SplashInteractorOutput {
   }
 
   @override
-  void finishSplash(SplashData splashData) {
-    // TODO: implement finishSplash
+  Future<SplashData> getSplashData() {
+    return interactor?.getSplashData();
   }
 
   @override
-  Future<SplashData> getSplashData() {
-    // TODO: implement getSplashData
-    throw UnimplementedError();
+  void finishSplash(SplashData splashData) {
+    interactor?.finishSplash(splashData);
   }
 
   @override
   void showHome() {
-    // TODO: implement showHome
+    router?.showHome();
   }
 
   @override
   void showLogin() {
-    // TODO: implement showLogin
+    router?.showLogin();
   }
 
   @override
   Future<bool> waitOnboarding() {
-    // TODO: implement waitOnboarding
-    throw UnimplementedError();
+    return router?.waitOnboarding();
   }
-
 }

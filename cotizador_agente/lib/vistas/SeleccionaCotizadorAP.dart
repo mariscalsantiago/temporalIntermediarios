@@ -199,7 +199,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     return LoadingOverlay(
       isLoading: isLoading,
       opacity: 0.8,
-      color: AppColors.color_titulo,
+      color: AppColors.primary700,
       progressIndicator: CircularProgressIndicator(
         backgroundColor: Colors.transparent,
         valueColor: AlwaysStoppedAnimation(Colors.white),

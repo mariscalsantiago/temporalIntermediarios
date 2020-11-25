@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static HexColor color_sombra = HexColor("F3F4F5");
-  static HexColor color_titulo = HexColor("002E71");
+  static HexColor primary700 = HexColor("002E71");
   static HexColor color_primario = HexColor("fc6c25");
   static HexColor color_texto = HexColor("000000");
   static HexColor color_filtro = HexColor("e4e4e4");
@@ -19,12 +19,11 @@ class AppColors {
   static HexColor color_Bordes = HexColor("CED8E8");
   static HexColor color_TextAppBar = HexColor("404040");
   static HexColor color_Text = HexColor("647085");
-  static HexColor color_TextActive = HexColor("FF6B0B");
   static HexColor primary200 = HexColor("AAC3EE");
   static HexColor gnpTextUser = HexColor("0C2040");
   static HexColor color_background_blanco = HexColor("FEFEFE");
   static HexColor color_switch_simple_apagado = HexColor("595959");
-  static HexColor color_naranja_primario = HexColor("FF6B0B");
+  static HexColor secondary900 = HexColor("FF6B0B");
   static HexColor color_popupmenu = HexColor("647085");
   static HexColor color_divider = HexColor("CED8E8");
   static HexColor color_disable = HexColor("A3AAB6");
@@ -34,6 +33,9 @@ class AppColors {
   static HexColor azulGNP = HexColor("#003B7C");
   static HexColor gnpbBackDisable2 = HexColor("#ECEDF0");
   static HexColor secondary300 = HexColor("#FFD357");
+  static HexColor secondary50 =  HexColor("#FFF8E2");
+  static HexColor gnpTextSystem2 = HexColor("#5A677D");
+  static HexColor gnpTextSytemt1 = HexColor("#33486C");
 }
 
 class HexColor extends Color {

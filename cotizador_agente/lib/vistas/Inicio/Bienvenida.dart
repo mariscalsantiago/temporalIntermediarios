@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
-import 'package:cotizador_agente/vistas/Inicio/LoginServices.dart';
-import 'package:firebase_database/firebase_database.dart';
+//import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
@@ -141,7 +139,7 @@ class _WelcomePageState extends State<WelcomePage>
 
     ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus();
     if(_connectivityStatus.available){
-      try{
+      /*try{
         Map dataFireBase;
         DatabaseReference db = FirebaseDatabase.instance.reference().child("Contenidos/Bienvenida");
         db.once().then((DataSnapshot snapshot) {
@@ -174,7 +172,7 @@ class _WelcomePageState extends State<WelcomePage>
       }catch(e) {
         Navigator.pushNamed(context, '/login', );
         print("Error welcome prefs: $e");
-      }
+      }*/
     }
     else{
       Navigator.pushNamed(context, '/login', );

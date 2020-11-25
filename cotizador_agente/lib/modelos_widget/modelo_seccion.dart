@@ -190,7 +190,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                   fontWeight: FontWeight.normal,
-                  color: AppColors.color_titulo,
+                  color: AppColors.primary700,
                   fontSize: 20),
             ),
           ),
@@ -212,7 +212,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               fontWeight: FontWeight.normal,
-                              color: AppColors.color_titulo,
+                              color: AppColors.primary700,
                               fontSize: 20),
                         ),
                       ): Container(),
@@ -316,7 +316,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                                   onPressed: _aumentar,
                                   heroTag: "btn1",
                                   tooltip: "Agregar "+ widget.secc.seccion,
-                                  child: Icon(Icons.add, color: AppColors.color_naranja_primario, size: 50,),
+                                  child: Icon(Icons.add, color: AppColors.secondary900, size: 50,),
                                   backgroundColor: AppColors.color_background_blanco,
                                   elevation: 0,
                                 ),

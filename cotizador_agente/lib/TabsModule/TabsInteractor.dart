@@ -14,59 +14,43 @@ class TabsInteractor implements TabsUseCase {
 
   @override
   Future<Footer> getFooterConfiguration() async {
-    try {
-     /* RemoteConfig remoteConfig = await RemoteConfigHandler.setupConfiguration(view.context);
-      String footerString = remoteConfig.getString(Constants.CONFIG_FOOTER);
-      var footerJson = jsonDecode(footerString);
-      var footer = Footer.fromJson(footerJson);
-      for (var i = 0; i < footer.secciones.length; i++) {
-        var titulo = footer.secciones[i].titulo ?? "";
-        if (titulo == "Tarjeta GMM") {
-          var enabled = await checkPolizasConexion();
-          footer.secciones[i].habilitado = enabled;
-        }
-      }
-      return footer;*/
-    } catch (e) {
       var footer = defaultFooter();
       for (var i = 0; i < footer.secciones.length; i++) {
         var titulo = footer.secciones[i].titulo ?? "";
-
       }
       return footer;
-    }
   }
 
   Footer defaultFooter() {
     return Footer(visibleEnSegundoNivel: false, secciones: [
       Secciones(
           posicion: 1,
-          titulo: "Directorio",
+          titulo: "Cotizar",
           icono: "",
           localIcon: "assets/images/tab_directorio.png",
           habilitado: true,
-          accion: "flutter_app/directorio"),
+          accion: "flutter_app/cotizar"),
       Secciones(
           posicion: 2,
-          titulo: "Mis Trámites",
+          titulo: "Pagar",
           icono: "",
           localIcon: "assets/images/tab_tramites.png",
           habilitado: true,
-          accion: "flutter_app/mis_tramites"),
+          accion: "flutter_app/pagar"),
       Secciones(
           posicion: 3,
-          titulo: "Tarjeta GMM",
+          titulo: "Emitir",
           icono: "",
           localIcon: "assets/images/tab_tarjeta.png",
           habilitado: true,
-          accion: "flutter_app/tarjeta_gmm"),
+          accion: "flutter_app/emitir"),
       Secciones(
           posicion: 4,
-          titulo: "Linea GNP",
+          titulo: "Menú",
           icono: "",
           localIcon: "assets/images/tab_linea.png",
           habilitado: true,
-          accion: "flutter_app/linea_gnp"),
+          accion: "flutter_app/menu"),
     ]);
   }
 

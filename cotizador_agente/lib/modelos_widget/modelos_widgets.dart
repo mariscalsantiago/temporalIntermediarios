@@ -492,7 +492,7 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
       child: CheckboxListTile(
         title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? AppColors.color_appBar : AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
         value: widget.currentValue,
-        activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.color_naranja_primario,
+        activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.secondary900,
         onChanged: widget.campo.enabled ? (newValue) {
           setState(() {
             widget.currentValue = newValue;
@@ -571,7 +571,7 @@ class _CheckBoxDinamicoDependienteState extends State<CheckBoxDinamicoDependient
               return CheckboxListTile(
                 title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? AppColors.color_appBar : AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
                 value: widget.currentValue,
-                activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.color_naranja_primario,
+                activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.secondary900,
                 onChanged: widget.campo.enabled ? (newValue) {
                   setState(() {
                     widget.currentValue = newValue;
@@ -1369,7 +1369,7 @@ class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
                     "Propuesta" + ' ' + (widget.cont).toString() : widget.comparativa.nombre,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: AppColors.color_titulo, fontSize: 24, fontWeight: FontWeight.bold,
+                        color: AppColors.primary700, fontSize: 24, fontWeight: FontWeight.bold,
                       ),
                     ),
                     GestureDetector(
@@ -1383,7 +1383,7 @@ class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
                         //padding: EdgeInsets.all(16.5),
                         child: Icon(
                           Icons.edit,
-                          color: AppColors.color_titulo,
+                          color: AppColors.primary700,
                         ),
                       ),
                     ),
@@ -1571,7 +1571,7 @@ class _ToggleConValoresState extends State<ToggleConValores> {
                     });
                   },
                   activeTrackColor: AppColors.secondary300.withOpacity(0.38),
-                  activeColor: AppColors.color_naranja_primario,
+                  activeColor: AppColors.secondary900,
                   inactiveTrackColor: AppColors.color_switch_simple_apagado.withOpacity(0.38),
                   inactiveThumbColor: AppColors.color_switch_simple_apagado,
                 ),
@@ -1842,7 +1842,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                     child: Text(widget.campo.valores[0].descripcion, style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.color_titulo,
+                      color: AppColors.primary700,
                     ),
                     ),
                   ),
@@ -1854,7 +1854,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                     child: Text(widget.campo.valores[1].descripcion, style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.color_titulo),
+                        color: AppColors.primary700),
                     ),
                   ),
                 ),
@@ -2038,7 +2038,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                               child: Text(widget.campo.valores[0].descripcion, style: TextStyle(
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.color_titulo,
+                                color: AppColors.primary700,
                               ),
                               ),
                             ),
@@ -2050,7 +2050,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                               child: Text(widget.campo.valores[1].descripcion, style: TextStyle(
                                   fontSize: 12.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.color_titulo),
+                                  color: AppColors.primary700),
                               ),
                             ),
                           ),
@@ -2134,7 +2134,7 @@ class _CardCoberturasState extends State<CardCoberturas> {
               width: double.infinity,
               padding: EdgeInsets.all(8.0),
               child: Text(widget.campo.etiqueta,
-                style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w600, fontSize: 16),),
+                style: TextStyle(color: AppColors.primary700, fontWeight: FontWeight.w600, fontSize: 16),),
             ),
 
             ListView.builder(
@@ -2153,7 +2153,7 @@ class _CardCoberturasState extends State<CardCoberturas> {
                         Visibility(
                           visible: widget.campo.valores[index].visible,
                           child: Text("\u2022 " + widget.campo.valores[index].descripcion,
-                            style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w400, fontSize: 16),),
+                            style: TextStyle(color: AppColors.primary700, fontWeight: FontWeight.w400, fontSize: 16),),
                         ),
                       ],
                     ),

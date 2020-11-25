@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/Custom/Widgets/CustomBodyTabPerfil.dart';
 import 'package:cotizador_agente/Custom/Widgets/CustomCardPerfil.dart';
-import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/main.dart';
 
@@ -127,7 +126,7 @@ loaderPersonales(){
 
 class PersonalesState extends State<Personales>{
   void initState() {
-    sendTag("Perfil_Personales");
+   // sendTag("Perfil_Personales");
     loaderPersonales();
     super.initState();
   }

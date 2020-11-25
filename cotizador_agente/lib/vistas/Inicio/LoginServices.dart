@@ -5,7 +5,7 @@ import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/Functions/Database.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
-import 'package:firebase_performance/firebase_performance.dart';
+//import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -669,8 +669,8 @@ Future<bool> fetchFotoDelete(BuildContext context) async {
 Future<String> fetchFoto(BuildContext context, File url) async {
   print("fetchFoto");
   _appEnvironmentConfig = AppConfig.of(context);
-  final Trace pfmFotografia = FirebasePerformance.instance.newTrace("EdicionFoto");
-  pfmFotografia.start();
+ // final Trace pfmFotografia = FirebasePerformance.instance.newTrace("EdicionFoto");
+ // pfmFotografia.start();
 
   try {
     var postUri = Uri.parse(_appEnvironmentConfig.serviceBCA + "/app/foto/${datosUsuario.idparticipante}");
@@ -683,7 +683,7 @@ Future<String> fetchFoto(BuildContext context, File url) async {
     responsePost.send().then((responseDataPost) {
       if (responseDataPost!=null && responseDataPost.statusCode == 200) {
         responseDataPost.stream.transform(utf8.decoder).listen((value) {
-          pfmFotografia.stop();
+         // pfmFotografia.stop();
 
           Map postMap = json.decode(value);
           //  print("response : $postMap");
@@ -709,7 +709,7 @@ Future<String> fetchFoto(BuildContext context, File url) async {
       }
     }).catchError((error) => throw Exception('Failed to load post response'));
   } catch (e) {
-    pfmFotografia.stop();
+   // pfmFotografia.stop();
     return null;
   }
 

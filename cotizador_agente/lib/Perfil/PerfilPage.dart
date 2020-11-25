@@ -3,7 +3,6 @@ import 'package:cotizador_agente/vistas/Inicio/LoginServices.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Widgets/CustomAlerts.dart';
-import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
@@ -626,7 +625,7 @@ class _PerfilPageState extends State<PerfilPage>
 
   @override
   void initState() {
-    sendTag("Perfil_Page");
+   // sendTag("Perfil_Page");
     // print(datosFisicosContacto.telefonoFijo);
     super.initState();
   }

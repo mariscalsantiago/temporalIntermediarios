@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'dart:core';
@@ -133,7 +134,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
           Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
 
-          Response response = await post(config.urlGeneraCotizacion, body: json.encode(widget.jsonMap), headers: headers);
+          Response response = await post(AppConfig.of(context).urlGeneraCotizacion, body: json.encode(widget.jsonMap), headers: headers);
           Utilidades.LogPrint(json.encode(widget.jsonMap));
           int statusCode = response.statusCode;
           if(response != null){
@@ -804,7 +805,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       child: LoadingOverlay(
         isLoading: isLoading,
         opacity: 0.8,
-        color: AppColors.color_titulo,
+        color: AppColors.primary700,
         progressIndicator: CircularProgressIndicator(
           backgroundColor: Colors.transparent,
           valueColor: AlwaysStoppedAnimation(Colors.white),
@@ -1006,7 +1007,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                   Text(
                                                     formapago.forma,
                                                     style: TextStyle(
-                                                        color: AppColors.color_titulo, fontWeight: FontWeight.w400),
+                                                        color: AppColors.primary700, fontWeight: FontWeight.w400),
                                                   ),
                                                   SizedBox(width: 60.0,),
                                                 ],
@@ -1246,7 +1247,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                       children: <Widget>[
                                                         IconButton(icon: Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),alignment: Alignment.centerRight,),
                                                         FlatButton(
-                                                          textColor: AppColors.color_TextActive,
+                                                          textColor: AppColors.secondary900,
                                                           onPressed: (){
                                                             editarDatos(index);
                                                           },
@@ -1402,7 +1403,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             padding: const EdgeInsets.all(16.0),
                                             child: FlatButton(
                                               disabledTextColor: AppColors.color_disable,
-                                              textColor: Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 ? AppColors.color_TextActive : AppColors.color_disable,
+                                              textColor: Utilidades.cotizacionesApp.getCotizacionesCompletas() >2 ? AppColors.secondary900 : AppColors.color_disable,
                                               onPressed: (){
                                                 if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >2){
                                                   guardarFormatoComparativa();
@@ -1565,7 +1566,7 @@ class _listaCheckState extends State<listaCheck> {
               });
             },
             activeColor: Colors.white,
-            checkColor: AppColors.color_TextActive,
+            checkColor: AppColors.secondary900,
           ),
           Expanded(
             flex: 1,
@@ -1611,7 +1612,7 @@ class _listaCheckState extends State<listaCheck> {
               });
             },
             activeColor: Colors.white,
-            checkColor: AppColors.color_TextActive,
+            checkColor: AppColors.secondary900,
           ),
           Expanded(
             flex: 1,
@@ -1657,7 +1658,7 @@ class _listaCheckState extends State<listaCheck> {
               });
             },
             activeColor: Colors.white,
-            checkColor: AppColors.color_TextActive,
+            checkColor: AppColors.secondary900,
           ),
           Expanded(
             flex: 1,
@@ -1703,7 +1704,7 @@ class _listaCheckState extends State<listaCheck> {
           child: ButtonTheme(
             minWidth: 340.0,
             height: 40.0,
-            buttonColor: AppColors.color_naranja_primario,
+            buttonColor: AppColors.secondary900,
             child: RaisedButton(
               onPressed: ((){
                 Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = widget.namePropuesta1Controller.text;

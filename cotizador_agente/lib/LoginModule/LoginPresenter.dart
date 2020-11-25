@@ -23,11 +23,6 @@ class LoginPresenter implements LoginPresentation, LoginInteractorOutput {
   }
 
   @override
-  void checkMail(String mail) {
-    interactor.checkMail(mail);
-  }
-
-  @override
   void showLoader() {
     router.showLoader();
   }
@@ -43,42 +38,32 @@ class LoginPresenter implements LoginPresentation, LoginInteractorOutput {
   }
 
   @override
-  void checkPassword(String email, String password, MaskedUser user) {
-    // TODO: implement checkPassword
-  }
-  @override
-  Future<String> lastLogin() {
-    // TODO: implement lastLogin
-    throw UnimplementedError();
-  }
-
-  @override
   void openOlvideContrasenia() {
-    // TODO: implement openOlvideContrasenia
-  }
-
-  @override
-  void openRegistro() {
-    // TODO: implement openRegistro
   }
 
   @override
   void showMailView() {
-    // TODO: implement showMailView
+    view?.showMailView();
   }
 
   @override
   void showPassword(MaskedUser user, String mail) {
-    // TODO: implement showPassword
+    view.showPassword(user,mail);
+  }
+
+  @override
+  void logInServices(String mail, String password, String user){
+    interactor.logInServices(mail, password, user);
   }
 
   @override
   void showValidatorAlert(String message) {
-    // TODO: implement showValidatorAlert
+    view?.showValidatorAlert(message);
   }
 
   @override
   void showValidatorAlertPass(String message) {
-    // TODO: implement showValidatorAlertPass
+    view?.showValidatorAlertPass(message);
   }
+
 }

@@ -68,18 +68,9 @@ class LoginRouter implements LoginWireFrame {
   }
 
   @override
-  void getNativeDeviceToken() {
-    // TODO: implement getNativeDeviceToken
-  }
-
-  @override
   void openOlvideContrasenia() {
     // TODO: implement openOlvideContrasenia
   }
 
-  @override
-  void openRegistro() {
-    // TODO: implement openRegistro
-  }
 
 }

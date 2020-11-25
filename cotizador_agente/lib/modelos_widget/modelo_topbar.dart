@@ -35,7 +35,7 @@ class _TopBarState extends State<TopBar> {
         value: 1,
         child: Text("Limpiar datos",
           style: TextStyle(
-              color: AppColors.color_titulo, fontWeight: FontWeight.w400),
+              color: AppColors.primary700, fontWeight: FontWeight.w400),
         ),
       ));
     }
@@ -57,7 +57,7 @@ class _TopBarState extends State<TopBar> {
         child: Text(
           "Formato Comparativa",
           style: TextStyle(
-              color: AppColors.color_titulo,
+              color: AppColors.primary700,
               fontWeight: FontWeight.w400),
         ),
       ),);
@@ -66,7 +66,7 @@ class _TopBarState extends State<TopBar> {
       listaitems.add(PopupMenuItem(
         value: 3,
         child: Text("Material de apoyo",
-          style: TextStyle(color: AppColors.color_titulo,
+          style: TextStyle(color: AppColors.primary700,
               fontWeight: FontWeight.w400),
         ),));
     }
@@ -208,7 +208,7 @@ class _TopBarState extends State<TopBar> {
                 child: Divider(
               //002e71
               thickness: 2,
-              color: AppColors.color_titulo,
+              color: AppColors.primary700,
 
               height: 0,
             )),

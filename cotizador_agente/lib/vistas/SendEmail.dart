@@ -286,7 +286,7 @@ class _SendEmailState extends State<SendEmail> {
                             style: TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w400,
-                                color: AppColors.color_titulo),
+                                color: AppColors.primary700),
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -329,7 +329,7 @@ class _SendEmailState extends State<SendEmail> {
                                           style: TextStyle(
                                               fontSize: 15.0,
                                               fontWeight: FontWeight.w500,
-                                              color: AppColors.color_titulo),
+                                              color: AppColors.primary700),
                                         ),
                                       ],
                                     ),
@@ -558,7 +558,7 @@ class _SendEmailState extends State<SendEmail> {
                                                     fontSize: 15.0,
                                                     fontWeight: FontWeight.w500,
                                                     color:
-                                                    AppColors.color_titulo),
+                                                    AppColors.primary700),
                                               ),
                                             ],
                                           ),

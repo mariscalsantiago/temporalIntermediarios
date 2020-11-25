@@ -32,7 +32,7 @@ void main() {
     apiKeyTipoDeCambio:'l7xx63f313ab37be41ecacb2301c7bbcad92',
     urlTipoDeCambio: 'http://api.service.gnp.com.mx/sce/cut/recuperarTipoCambio',
     agentCod: "EHERNA978487",
-    proyectId: 'gnp-appagentes-uat',
+    proyectId: 'gnp-accidentespersonales-uat',
     urlCampaniasService:'http://bca-ws-uat.gnp.com.mx',
     apiKeyCampaniasService:"d41d8cd98f00b204e9800998ecf8427e",
     urlNotifierService:'https://api-uat.oscpuat.gnp.com.mx',

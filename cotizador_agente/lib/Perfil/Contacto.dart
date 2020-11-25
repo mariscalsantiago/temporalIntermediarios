@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/Custom/Widgets/CustomBodyTabPerfil.dart';
 import 'package:cotizador_agente/Custom/Widgets/CustomCardPerfil.dart';
-import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/main.dart';
-
-import 'edicion_datos_perfil.dart';
 
 
 class Contacto extends StatefulWidget {
@@ -122,7 +119,7 @@ loaderContacto (){
 
 class ContactoState extends State<Contacto>{
   void initState() {
-    sendTag("Perfil_Contacto");
+   // sendTag("Perfil_Contacto");
     loaderContacto();
     super.initState();
   }

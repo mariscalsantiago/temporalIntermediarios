@@ -1,5 +1,8 @@
+import 'package:cotizador_agente/HomeModule/HomeController.dart';
+import 'package:cotizador_agente/LoginModule/LoginController.dart';
 import 'package:cotizador_agente/SplashModule/SplashContract.dart';
 import 'package:cotizador_agente/SplashModule/SplashController.dart';
+import 'package:flutter/material.dart';
 
 class SplashRouter implements SplashWireFrame {
 
@@ -11,17 +14,21 @@ class SplashRouter implements SplashWireFrame {
 
   @override
   void showHome() {
-    // TODO: implement showHome
+    Navigator.of(view.context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => HomeController()),
+            (Route<dynamic> route) => false);
   }
 
   @override
   void showLogin() {
-    // TODO: implement showLogin
+    Navigator.of(view.context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => LoginController()),
+            (Route<dynamic> route) => false);
   }
 
   @override
-  Future<bool> waitOnboarding() {
-    // TODO: implement waitOnboarding
-    throw UnimplementedError();
+  Future<bool> waitOnboarding() async {
+
   }
+
 }

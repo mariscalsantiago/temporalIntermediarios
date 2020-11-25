@@ -122,7 +122,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
               child: Container(
                   child: Divider( //002e71
                     thickness: 0.5,
-                    color: AppColors.color_titulo,
+                    color: AppColors.primary700,
                     height: 0,
                   )),
             ),
@@ -136,7 +136,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
             width: double.infinity,
             padding: EdgeInsets.only(right: 24, left: 24, top: 8, bottom: 8),
             child:  Text((widget.documento.descDocumento), maxLines: 10, overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 15.0, color: AppColors.color_titulo ), textAlign: TextAlign.left,),
+                style: TextStyle(fontSize: 15.0, color: AppColors.primary700 ), textAlign: TextAlign.left,),
           ),
         ),
 
@@ -146,7 +146,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
               child: Container(
                   child: Divider( //002e71
                     thickness: 0.5,
-                    color: AppColors.color_titulo,
+                    color: AppColors.primary700,
                     height: 0,
                   )),
             ),
@@ -160,7 +160,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
             width: double.infinity,
             padding: EdgeInsets.only(right: 24, left: 24, top: 8, bottom: 8),
             child:  Text((widget.documento.productos), maxLines: 10, overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 15.0, color: AppColors.color_titulo ), textAlign: TextAlign.left,),
+              style: TextStyle(fontSize: 15.0, color: AppColors.primary700 ), textAlign: TextAlign.left,),
           ),
         ),
         Row(
@@ -169,7 +169,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
               child: Container(
                   child: Divider( //002e71
                     thickness: 0.5,
-                    color: AppColors.color_titulo,
+                    color: AppColors.primary700,
                     height: 0,
                   )),
             ),
@@ -196,7 +196,7 @@ class _DropDownMaterialApoyoElementState extends State<DropDownMaterialApoyoElem
               child: Container(
                   child: Divider( //002e71
                     thickness: 0.5,
-                    color: AppColors.color_titulo,
+                    color: AppColors.primary700,
                     height: 0,
                   )),
             ),

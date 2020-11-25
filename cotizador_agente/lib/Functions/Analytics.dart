@@ -1,7 +1,8 @@
+/*
 import 'dart:core';
-import 'package:firebase_analytics/firebase_analytics.dart';
+//import 'package:firebase_analytics/firebase_analytics.dart';
 
-final FirebaseAnalytics analytics = new FirebaseAnalytics();
+//final FirebaseAnalytics analytics = new FirebaseAnalytics();
 
 Future<Null> sendPageAnalytics(String page) async {
   await analytics.logEvent(name: "$page", parameters: <String, dynamic>{});
@@ -35,3 +36,4 @@ Future<Null> sendBonusTag(String selected) async {
   if(selected.contains("Pymes")) await analytics.logEvent(name: "Bonos_Consulta_Pymes", parameters: <String, dynamic>{});
   if(selected.contains("Empresas")) await analytics.logEvent(name: "Bonos_Consulta_GrandesEmpresas", parameters: <String, dynamic>{});
 }
+*/

@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/NavigationHandler/NavigationHandler.dart';
 import 'package:cotizador_agente/TabsModule/TabsContract.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
@@ -12,7 +13,7 @@ class TabsRouter implements TabsWireFrame {
 
   @override
   void navigateToRoute(String route) {
-   // NavigationHandler.navigateToRoute(context: view.context, route: route);
+    NavigationHandler.navigateToRoute(context: view.context, route: route);
   }
 
   @override
@@ -24,4 +25,5 @@ class TabsRouter implements TabsWireFrame {
             description: "Por el momento este servicio no está disponible, inténtalo más tarde.",
             actions: null));
   }
+
 }

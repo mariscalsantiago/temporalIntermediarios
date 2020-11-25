@@ -204,7 +204,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
     cargaPaso.start();
     print(cargaPaso.name);*/
     bool success = false;
-    var config = AppConfig.of(context);
+    //var config = AppConfig.of(context);
     try{
       final result = await InternetAddress.lookup('google.com');
 
@@ -213,7 +213,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
           Map<String, String> headers = {"Content-Type": "application/json"};
 
-          Response response = await http.post(config.urlFormularioPaso2, body: json.encode(map_plan), headers: headers);
+          Response response = await http.post(AppConfig.of(context).urlFormularioPaso2, body: json.encode(map_plan), headers: headers);
           int statusCode = response.statusCode;
 
           if(response != null) {
@@ -613,7 +613,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
       child: LoadingOverlay(
         isLoading: isLoading,
         opacity: 0.8,
-        color: AppColors.color_titulo,
+        color: AppColors.primary700,
         progressIndicator: CircularProgressIndicator(
           backgroundColor: Colors.transparent,
           valueColor: AlwaysStoppedAnimation(Colors.white),
@@ -1004,10 +1004,10 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                       child: FlatButton(
                                                         onPressed: null,
                                                         color: Colors.white,
-                                                        textColor: AppColors.color_TextActive,
+                                                        textColor: AppColors.secondary900,
                                                         shape: RoundedRectangleBorder(
                                                             borderRadius: BorderRadius.circular(15.0),
-                                                            side: BorderSide(color: AppColors.color_titulo)
+                                                            side: BorderSide(color: AppColors.primary700)
                                                         ),
                                                         child: Text("1", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
                                                       ),
@@ -1015,7 +1015,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                   ),
                                                   Padding(
                                                     padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 29.0),
-                                                    child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.color_TextActive),),
+                                                    child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondary900),),
                                                   ),
                                                 ],
                                               ),
@@ -1040,7 +1040,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                         textColor: AppColors.color_appBar,
                                                         shape: RoundedRectangleBorder(
                                                             borderRadius: BorderRadius.circular(15.0),
-                                                            side: BorderSide(color: AppColors.color_titulo)
+                                                            side: BorderSide(color: AppColors.primary700)
                                                         ),
                                                         child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
                                                       ),
@@ -1121,7 +1121,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                           crossAxisAlignment: CrossAxisAlignment.stretch,
                                           children: <Widget>[
                                             FlatButton(
-                                              color: AppColors.color_naranja_primario,
+                                              color: AppColors.secondary900,
                                               textColor: Colors.white,
                                               disabledColor: Colors.grey,
                                               disabledTextColor: Colors.black,

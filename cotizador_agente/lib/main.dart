@@ -1,13 +1,13 @@
 
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Perfil/PerfilPage.dart';
+import 'package:cotizador_agente/SplashModule/SplashController.dart';
 import 'package:cotizador_agente/vistas/Cotizacion.dart';
 import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:cotizador_agente/vistas/Inicio/LoginPage.dart';
 import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
 import 'package:cotizador_agente/vistas/SendEmail.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -68,7 +68,7 @@ void main() {
     serviceConteoPolizas: "https://api-qa.oscp.gnp.com.mx/crm-agentes/conteo-polizas",
     serviceConteoClientes: "https://api-qa.oscp.gnp.com.mx/crm-agentes/conteo-clientes",
     agentCod: "EHERNA978487",
-    proyectId: 'gnp-appagentes-qa',
+    proyectId: 'gnp-accidentespersonales-qa',
     apiKeyTipoDeCambio:'l7xx63f313ab37be41ecacb2301c7bbcad92',
     urlTipoDeCambio:'http://api.service.gnp.com.mx/sce/cut/recuperarTipoCambio',
     urlCampaniasService:'http://bca-ws-qa.gnp.com.mx',
@@ -134,6 +134,7 @@ class MyApp extends StatelessWidget {
       ],
       initialRoute: '/',
       routes: {
+        '/splash': (buildContext) => SplashController(),
         '/login': (buildContext) => LoginPage(),
         '/perfil': (buildContext) => PerfilPage(),
         '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
@@ -141,13 +142,13 @@ class MyApp extends StatelessWidget {
         '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
         '/cotizadorUnicoAPSendEmail': (buildContext) => SendEmail(),
       },
-        debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       title: 'GNP',
       theme: ThemeData(primaryColor: Colors.deepOrange,
           textTheme: TextTheme(
               body1: TextStyle(fontSize: 18.0),
               body2: TextStyle(fontSize: 18.0))),
-      home: LoginPage(),
+      home: SplashController(),
     );
   }
 }

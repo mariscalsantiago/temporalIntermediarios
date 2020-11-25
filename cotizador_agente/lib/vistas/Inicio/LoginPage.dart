@@ -6,7 +6,6 @@ import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/vistas/Inicio/LoginServices.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:local_auth/local_auth.dart';
@@ -109,12 +108,12 @@ class _LoginPageState extends State<LoginPage>
       manufacturer = "Iphone";
       os = "IOs";
     }
-    sendTagInteractionWithANamedParam("DeviceInfo","Details", "$manufacturer-$device-$os-$version" );
+   // sendTagInteractionWithANamedParam("DeviceInfo","Details", "$manufacturer-$device-$os-$version" );
   }
 
   @override
   void initState() {
-    sendTag("Login_Page");
+   // sendTag("Login_Page");
     WidgetsBinding.instance.addObserver(this);
     getPrefer();
     _sendDeviceInfo();
@@ -361,13 +360,13 @@ class LogInBodyState extends State<LogInBody> {
                           enabledBorder: new UnderlineInputBorder(
                             borderSide: new BorderSide(
                                 color: myFocusNodeEmailLogin.hasFocus
-                                    ? AppColors.color_TextActive
+                                    ? AppColors.secondary900
                                     : AppColors.primary200),
                           ),
                           labelText: AppStrings.StringsMX.loginEmail,
                           labelStyle: TextStyle(
                               color: myFocusNodeEmailLogin.hasFocus
-                                  ? AppColors.color_TextActive
+                                  ? AppColors.secondary900
                                   : AppColors.gnpTextUser,
                               fontFamily: "Roboto",
                               fontStyle: FontStyle.normal,
@@ -434,13 +433,13 @@ class LogInBodyState extends State<LogInBody> {
                           enabledBorder: new UnderlineInputBorder(
                             borderSide: BorderSide(
                                 color: myFocusNodePasswordLogin.hasFocus
-                                    ? AppColors.color_TextActive
+                                    ? AppColors.secondary900
                                     : AppColors.primary200),
                           ),
                           labelText: AppStrings.StringsMX.loginPassword,
                           labelStyle: TextStyle(
                               color: myFocusNodePasswordLogin.hasFocus
-                                  ? AppColors.color_TextActive
+                                  ? AppColors.secondary900
                                   : AppColors.gnpTextUser,
                               fontFamily: "Roboto",
                               fontStyle: FontStyle.normal,

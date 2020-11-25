@@ -5,7 +5,9 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 class Utilidades {
 
-
+   static bool isVaidMail(String mail) {
+      return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(mail);
+   }
    // Campos que no deben ser enviados a Firebase para analytics
 
    static final List<Referencia> listaCamposNoAnalytics =[
@@ -334,7 +336,7 @@ class Utilidades {
                       ButtonTheme(
                          minWidth: 340.0,
                          height: 40.0,
-                         buttonColor: AppColors.color_naranja_primario,
+                         buttonColor: AppColors.secondary900,
                          child: RaisedButton(
                             onPressed: () {
                                Navigator.pop(context);
@@ -380,7 +382,7 @@ class Utilidades {
                       ButtonTheme(
                          minWidth: 340.0,
                          height: 40.0,
-                         buttonColor: AppColors.color_naranja_primario,
+                         buttonColor: AppColors.secondary900,
                          child: RaisedButton(
                             onPressed: () {
                                Navigator.pop(context);
@@ -430,7 +432,7 @@ class Utilidades {
                       ButtonTheme(
                          minWidth: 340.0,
                          height: 40.0,
-                         buttonColor: AppColors.color_naranja_primario,
+                         buttonColor: AppColors.secondary900,
                          child: RaisedButton(
                             onPressed: positive,
                             child: Text(
@@ -478,7 +480,7 @@ class Utilidades {
                         child: ButtonTheme(
                            minWidth: 340.0,
                            height: 40.0,
-                           buttonColor: AppColors.color_naranja_primario,
+                           buttonColor: AppColors.secondary900,
                            child: RaisedButton(
                               onPressed: negative,
                               child: Text(
@@ -491,7 +493,7 @@ class Utilidades {
                       ButtonTheme(
                          minWidth: 340.0,
                          height: 40.0,
-                         buttonColor: AppColors.color_naranja_primario,
+                         buttonColor: AppColors.secondary900,
                          child: RaisedButton(
                             onPressed: positive,
                             child: Text(
@@ -536,7 +538,7 @@ class Utilidades {
                       ButtonTheme(
                          minWidth: 340.0,
                          height: 40.0,
-                         buttonColor: AppColors.color_naranja_primario,
+                         buttonColor: AppColors.secondary900,
                          child: RaisedButton(
                             onPressed: positive,
                             child: Text(

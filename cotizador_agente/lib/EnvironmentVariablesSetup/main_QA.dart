@@ -28,7 +28,7 @@ void main() {
     serviceConteoPolizas: "https://api-qa.oscp.gnp.com.mx/crm-agentes/conteo-polizas",
     serviceConteoClientes: "https://api-qa.oscp.gnp.com.mx/crm-agentes/conteo-clientes",
     agentCod: "EHERNA978487",
-    proyectId: 'gnp-appagentes-qa',
+    proyectId: 'gnp-accidentespersonales-qa',
     apiKeyTipoDeCambio:'l7xx63f313ab37be41ecacb2301c7bbcad92',
     urlTipoDeCambio:'http://api.service.gnp.com.mx/sce/cut/recuperarTipoCambio',
     urlCampaniasService:'http://bca-ws-qa.gnp.com.mx',

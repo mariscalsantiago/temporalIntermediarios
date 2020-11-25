@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_reglon_misCotizaciones.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
@@ -107,7 +108,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
             "Authorization": loginData.jwt
           };
 
-          Response response = await http.post("config.urlBorraCotizacion", body: json.encode(jsonMap), headers: headers);
+          Response response = await http.post(AppConfig.of(context).urlBorraCotizacion, body: json.encode(jsonMap), headers: headers);
 
           if(response != null){
 
@@ -239,7 +240,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
           if (!blockSearch) {
             blockSearch = true;
-            return http.post(config.urlCotizacionesGuardadas, body: json.encode(jsonMap), headers: headers).then((Response response) {
+            return http.post(AppConfig.of(context).urlCotizacionesGuardadas, body: json.encode(jsonMap), headers: headers).then((Response response) {
               Utilidades.LogPrint("RESPONSE COT G: " + response.body.toString());
 
               int statusCode = response.statusCode;
@@ -341,7 +342,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   Widget showLoading() {
     return Scaffold(
-        backgroundColor: AppColors.color_titulo.withOpacity(0.8),
+        backgroundColor: AppColors.primary700.withOpacity(0.8),
         body: Center(
           child: Container(
               child: SizedBox(
@@ -548,7 +549,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
     return LoadingOverlay(
       isLoading: isLoading,
       opacity: 0.8,
-      color: AppColors.color_titulo,
+      color: AppColors.primary700,
       progressIndicator: CircularProgressIndicator(
         backgroundColor: Colors.transparent,
         valueColor: AlwaysStoppedAnimation(Colors.white),
