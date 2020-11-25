@@ -208,12 +208,12 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          leading: IconButton(
+          /*leading: IconButton(
             icon: Icon(Icons.chevron_left, size: 35,),
             onPressed: () {
               Navigator.of(context).pop();
             },
-          ),
+          ),*/
           iconTheme: IconThemeData(color: AppColors.color_primario),
           backgroundColor: Colors.white,
           title: Text("Cotizador Único GMM", style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),),
