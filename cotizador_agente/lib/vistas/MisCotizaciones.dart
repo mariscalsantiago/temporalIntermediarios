@@ -11,7 +11,7 @@ import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
@@ -108,7 +108,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
             "Authorization": loginData.jwt
           };
 
-          Response response = await http.post(AppConfig.of(context).urlBorraCotizacion, body: json.encode(jsonMap), headers: headers);
+          Response response = await http.post(AppConfig.of(context).urlBase + Constants.BORRA_COTIZACION, body: json.encode(jsonMap), headers: headers);
 
           if(response != null){
 
@@ -240,7 +240,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
           if (!blockSearch) {
             blockSearch = true;
-            return http.post(AppConfig.of(context).urlCotizacionesGuardadas, body: json.encode(jsonMap), headers: headers).then((Response response) {
+            return http.post(AppConfig.of(context).urlBase + Constants.COTIZACIONES_GUARDADAS, body: json.encode(jsonMap), headers: headers).then((Response response) {
               Utilidades.LogPrint("RESPONSE COT G: " + response.body.toString());
 
               int statusCode = response.statusCode;
@@ -550,10 +550,14 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
       isLoading: isLoading,
       opacity: 0.8,
       color: AppColors.primary700,
-      progressIndicator: CircularProgressIndicator(
-        backgroundColor: Colors.transparent,
-        valueColor: AlwaysStoppedAnimation(Colors.white),
-        strokeWidth: 5.0,
+      progressIndicator: SizedBox(
+        width: 100.0,
+        height: 100.0,
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.transparent,
+          valueColor: AlwaysStoppedAnimation(Colors.white),
+          strokeWidth: 5.0,
+        ),
       ),
       child: Scaffold(
         appBar: AppBar(

@@ -14,6 +14,7 @@ import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
 class FormularioPaso1 extends StatefulWidget {
   FormularioPaso1({Key key, this.scaffoldKey, this.cotizador, this.cotizacionGuardada}) : super(key: key);
@@ -284,7 +285,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
       try{
         Map<String, String> headers = {"Accept": "application/json"};
 
-        var response = await http.get(Uri.encodeFull(AppConfig.of(context).urlFormularioPaso1 + widget.cotizador), headers: headers);
+        var response = await http.get(Uri.encodeFull(AppConfig.of(context).urlBase + Constants.FORMULARIO_PASO1 + widget.cotizador), headers: headers);
 
         int statusCode = response.statusCode;
 
@@ -641,10 +642,14 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
           isLoading: isLoading,
           opacity: 0.8,
           color: AppColors.primary700,
-          progressIndicator: CircularProgressIndicator(
-            backgroundColor: Colors.transparent,
-            valueColor: AlwaysStoppedAnimation(Colors.white),
-            strokeWidth: 5.0,
+          progressIndicator: SizedBox(
+            width: 100.0,
+            height: 100.0,
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.transparent,
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+              strokeWidth: 5.0,
+            ),
           ),
           child: new Scaffold(
             backgroundColor: Colors.white,
@@ -657,7 +662,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
               ),
               iconTheme: IconThemeData(color: AppColors.color_primario),
               backgroundColor: Colors.white,
-              title: Text("Cotizador Accidentes Personales", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto", letterSpacing: 0.15),),
+              title: Text("Cotizador AP", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto", letterSpacing: 0.15),),
               actions: <Widget>[
                 PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
                     offset: Offset(100, 100),
@@ -855,7 +860,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
-                            child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
+                            child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
                           ),
                           Spacer(),
                           Padding(
