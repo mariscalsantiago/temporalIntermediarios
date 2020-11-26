@@ -72,6 +72,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
             success = true;
             var list = json.decode(response.body)['consultaPorParticipanteResponse']
             ["consultaNegocios"]["participante"]["listaNegocioOperable"] as List;
+
+            list.removeWhere((element) => element["negocioOperable"].toString() != "AP Worksite");
+
             setState(() {
               widget.negociosOperables = list.map((i) => NegocioOperable.fromJson(i)).toList();
             });
