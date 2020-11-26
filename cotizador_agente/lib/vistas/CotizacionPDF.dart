@@ -3,15 +3,12 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
 import 'dart:typed_data';
-
-//import 'package:agentesgnp/Functions/Analytics.dart';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/vistas/SendEmail.dart';
 import 'package:dio/dio.dart';
-//import 'package:firebase_analytics/firebase_analytics.dart';
-//import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/widgets.dart';
@@ -24,8 +21,7 @@ import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
-
-//import '../../cotizador_analitycs_tags.dart';
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
 
 
@@ -88,7 +84,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
               "idPlan": widget.id_Plan
             };
 
-            http.Response response= await post(config.urlFormatoPDF, body: json.encode(jsonMap), headers: headers);
+            http.Response response= await post(AppConfig.of(context).urlBase + Constants.GENERA_FORMATOPDF, body: json.encode(jsonMap), headers: headers);
 
             int statusCode = response.statusCode;
 
@@ -188,7 +184,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
       String encoded = stringToBase64.encode(dataLayer);
 
       setState(() {
-        _initialURL = config.urlAccionDescarga + encoded; // "https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=descargarMovil&dataLayer="
+        _initialURL = AppConfig.of(context).urlBaseAnalytics + Constants.DESCARGA + encoded; // "https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=descargarMovil&dataLayer="
         Utilidades.LogPrint("URLACCION: " + _initialURL);
       });
 
@@ -224,10 +220,14 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
       isLoading: isLoading,
       opacity: 0.8,
       color: AppColors.primary700,
-      progressIndicator: CircularProgressIndicator(
-        backgroundColor: Colors.transparent,
-        valueColor: AlwaysStoppedAnimation(Colors.white),
-        strokeWidth: 5.0,
+      progressIndicator: SizedBox(
+        width: 100.0,
+        height: 100.0,
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.transparent,
+          valueColor: AlwaysStoppedAnimation(Colors.white),
+          strokeWidth: 5.0,
+        ),
       ),
       child: Scaffold(
         appBar:
@@ -316,7 +316,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                 } else{
                                   setState(() {
                                     isDownload = true;
-                                    _initialWebView();
+                                   // _initialWebView();
                                     /*final FirebaseAnalytics analytics = new FirebaseAnalytics();
                                     analytics.logEvent(name: CotizadorAnalitycsTags.descargaGMM, parameters: <String, dynamic>{});
 

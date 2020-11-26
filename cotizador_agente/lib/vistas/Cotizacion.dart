@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
 
 
@@ -134,7 +135,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
           Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
 
-          Response response = await post(AppConfig.of(context).urlGeneraCotizacion, body: json.encode(widget.jsonMap), headers: headers);
+          Response response = await post(AppConfig.of(context).urlBase + Constants.GENERA_COTIZACION, body: json.encode(widget.jsonMap), headers: headers);
           Utilidades.LogPrint(json.encode(widget.jsonMap));
           int statusCode = response.statusCode;
           if(response != null){
@@ -355,7 +356,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
       case Utilidades.FORMATO_COMISION_AP:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION !=null){
-          _initialWebView();
+         // _initialWebView();
           deboGuardarCotizacion = false;
           Navigator.push(context,
               MaterialPageRoute(
@@ -389,7 +390,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
       case Utilidades.FORMATO_COTIZACION_AP:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION !=null){
-          _initialWebView();
+          //_initialWebView();
           deboGuardarCotizacion = false;
           Navigator.push(context,
               MaterialPageRoute(
@@ -497,7 +498,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         Utilidades.LogPrint("RESUMEN: " + resumen);*/
 
 
-            Response response = await post(config.urlGuardaCotizacion, body: json.encode(jsonMap), headers: headers);
+            Response response = await post(AppConfig.of(context).urlBase + Constants.GUARDA_COTIZACION, body: json.encode(jsonMap), headers: headers);
             int statusCode = response.statusCode;
             Utilidades.LogPrint("COT GUARDADA: \ " + json.encode(jsonMap).toString());
             Utilidades.LogPrint("RESPONSE COT G: " +json.encode(response.body).toString());
@@ -536,7 +537,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                     }
 
-                    _initialWebView();
+                   // _initialWebView();
 
 
                     Navigator.push(context,
@@ -753,12 +754,12 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
     if(esComparativa == false){
       setState(() {
-        _initialURL =  config.urlAnalytics + encoded;
+        _initialURL =  config.urlBaseAnalyticis + Constants.VISTA_PREVIA + encoded;
         Utilidades.LogPrint("VISTAPREVIA:" + _initialURL);
       });
     }else{
       setState(() {
-        _initialURL = config.urlAccionComparativa + encoded;
+        _initialURL = config.urlBaseAnalyticis + Constants.COMPARATIVA + encoded;
         Utilidades.LogPrint("COMPARATIVA:" + _initialURL);
       });
     }
@@ -806,10 +807,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         isLoading: isLoading,
         opacity: 0.8,
         color: AppColors.primary700,
-        progressIndicator: CircularProgressIndicator(
-          backgroundColor: Colors.transparent,
-          valueColor: AlwaysStoppedAnimation(Colors.white),
-          strokeWidth: 5.0,
+        progressIndicator: SizedBox(
+          width: 100.0,
+          height: 100.0,
+          child: CircularProgressIndicator(
+            backgroundColor: Colors.transparent,
+            valueColor: AlwaysStoppedAnimation(Colors.white),
+            strokeWidth: 5.0,
+          ),
         ),
         child: Stack(
           children: <Widget>[
@@ -907,7 +912,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
-                              child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar, letterSpacing: 0.15),),
+                              child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar, letterSpacing: 0.15),),
                             ),
                             Spacer(),
                             Padding(

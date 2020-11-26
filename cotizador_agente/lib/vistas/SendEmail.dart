@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 //import 'package:agentesgnp/Functions/Analytics.dart';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
@@ -14,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart';
 import 'package:flutter_tags/tag.dart';
+import 'package:loading_overlay/loading_overlay.dart';
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
 //import '../../cotizador_analitycs_tags.dart';
 
@@ -72,7 +75,7 @@ class _SendEmailState extends State<SendEmail> {
           };
 
 
-          Response response = await post(config.urlEnviaEmail, body: json.encode(jsonMap) , headers: headers);
+          Response response = await post(AppConfig.of(context).urlBase + Constants.ENVIA_EMAIL, body: json.encode(jsonMap) , headers: headers);
 
           int statusCode = response.statusCode;
 
@@ -211,7 +214,7 @@ class _SendEmailState extends State<SendEmail> {
     String encoded = stringToBase64.encode(dataLayer);
 
     setState(() {
-      _initialURL = "config.urlAccionEnviaMail" + encoded; // "https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=envioMovil&dataLayer="
+      _initialURL = AppConfig.of(context).urlBaseAnalytics + Constants.ENVIA_MAIL + encoded; // "https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=envioMovil&dataLayer="
       Utilidades.LogPrint("URLACCION: " + _initialURL);
     });
 
@@ -246,509 +249,523 @@ class _SendEmailState extends State<SendEmail> {
   @override
   Widget build(BuildContext context) {
 
-    return WillPopScope(
-      onWillPop: () async{
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.pushReplacement(context,  MaterialPageRoute(
-          builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
-        ));
+    return LoadingOverlay(
+      isLoading: isLoading,
+      opacity: 0.8,
+      color: AppColors.primary700,
+      progressIndicator: SizedBox(
+        width: 100.0,
+        height: 100.0,
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.transparent,
+          valueColor: AlwaysStoppedAnimation(Colors.white),
+          strokeWidth: 5.0,
+        ),
+      ),
+      child: WillPopScope(
+        onWillPop: () async{
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pushReplacement(context,  MaterialPageRoute(
+            builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
+          ));
 
 
-        return false;
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(Icons.chevron_left, size: 35,),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
+          return false;
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.chevron_left, size: 35,),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              iconTheme: IconThemeData(color: AppColors.color_primario),
+              backgroundColor: Colors.white,
+              title: Text("Compartir",
+                  style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto")),
             ),
-            iconTheme: IconThemeData(color: AppColors.color_primario),
-            backgroundColor: Colors.white,
-            title: Text("Compartir",
-                style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto")),
-          ),
-          body: Stack(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.only(right: 24, left: 24),
-                child: Column(
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            "Enviar cotización",
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.primary700),
-                            textAlign: TextAlign.left,
+            body: Stack(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(right: 24, left: 24),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Text(
+                              "Enviar cotización",
+                              overflow: TextOverflow.clip,
+                              style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.primary700),
+                              textAlign: TextAlign.left,
+                            ),
                           ),
-                        ),
-                        Spacer(),
-                        Padding(
-                          padding:
-                          EdgeInsets.only(right: 16, top: 32, bottom: 24),
-                          child: FloatingActionButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                              Navigator.pushReplacement(context,  MaterialPageRoute(
-                                builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
-                              ));
+                          Spacer(),
+                          Padding(
+                            padding:
+                            EdgeInsets.only(right: 16, top: 32, bottom: 24),
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                Navigator.pushReplacement(context,  MaterialPageRoute(
+                                  builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
+                                ));
 
-                            },
-                            heroTag: "btn1",
-                            tooltip: "Cerrar",
-                            backgroundColor: AppColors.color_primario,
-                            child: const Icon(Icons.close),
+                              },
+                              heroTag: "btn1",
+                              tooltip: "Cerrar",
+                              backgroundColor: AppColors.color_primario,
+                              child: const Icon(Icons.close),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: Form(
-                        key: formKey,
-                        child: ListView.builder(
-                            itemCount: 5,
-                            shrinkWrap: true,
-                            physics: ScrollPhysics(),
-                            itemBuilder: (BuildContext context, int index) {
-                              switch (index) {
-                                case 0:
-                                  return Container(
-                                    child: Row(
-                                      children: <Widget>[
-                                        Text(
-                                          "Mail",
-                                          style: TextStyle(
-                                              fontSize: 15.0,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColors.primary700),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  break;
+                        ],
+                      ),
+                      Expanded(
+                        child: Form(
+                          key: formKey,
+                          child: ListView.builder(
+                              itemCount: 5,
+                              shrinkWrap: true,
+                              physics: ScrollPhysics(),
+                              itemBuilder: (BuildContext context, int index) {
+                                switch (index) {
+                                  case 0:
+                                    return Container(
+                                      child: Row(
+                                        children: <Widget>[
+                                          Text(
+                                            "Mail",
+                                            style: TextStyle(
+                                                fontSize: 15.0,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.primary700),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    break;
 
-                                case 1:
-                                  return Container(
-                                    margin: EdgeInsets.only(bottom: 16),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Container(
-                                              padding: EdgeInsets.all(16.5),
-                                              child: Icon(
-                                                Icons.mail_outline,
-                                                color: AppColors.color_mail,
+                                  case 1:
+                                    return Container(
+                                      margin: EdgeInsets.only(bottom: 16),
+                                      child: Column(
+                                        children: <Widget>[
+                                          Row(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: EdgeInsets.all(16.5),
+                                                child: Icon(
+                                                  Icons.mail_outline,
+                                                  color: AppColors.color_mail,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          width: 1,
+                                                          color: AppColors.color_mail),
+                                                      bottom: BorderSide(
+                                                          width: 1,
+                                                          color: AppColors.color_mail),
+                                                      left: BorderSide(
+                                                          width: 1,
+                                                          color: AppColors.color_mail),
+                                                    )),
                                               ),
-                                              decoration: BoxDecoration(
-                                                  border: Border(
-                                                    top: BorderSide(
-                                                        width: 1,
-                                                        color: AppColors.color_mail),
-                                                    bottom: BorderSide(
-                                                        width: 1,
-                                                        color: AppColors.color_mail),
-                                                    left: BorderSide(
-                                                        width: 1,
-                                                        color: AppColors.color_mail),
-                                                  )),
-                                            ),
-                                            Flexible(
-                                              child: Container(
-                                                margin: EdgeInsets.only(top:8),
-                                                child: new TextFormField(
-                                                  readOnly: eMails.length >= 20 ? true : false,
-                                                  //enabled: eMails.length >= 2 ? false : true,
-                                                  controller: controller,
-                                                  maxLength: 129,
-                                                  maxLengthEnforced: true,
-                                                  //buildCounter: (BuildContext context, {int currentLength, int maxLength, bool isFocused}) => null,
-                                                  onFieldSubmitted: (term){
-                                                    eMail = controller.text;
-                                                    String val = ValidarEmail(eMail);
-                                                    if( val == null){
-                                                      controller.clear();
-                                                    }
-                                                  },
-
-                                                  onChanged: (val){
-
-                                                    if(val.contains(";")){
-                                                      eMail = controller.text.substring(0, controller.text.length-1);
+                                              Flexible(
+                                                child: Container(
+                                                  margin: EdgeInsets.only(top:8),
+                                                  child: new TextFormField(
+                                                    readOnly: eMails.length >= 20 ? true : false,
+                                                    //enabled: eMails.length >= 2 ? false : true,
+                                                    controller: controller,
+                                                    maxLength: 129,
+                                                    maxLengthEnforced: true,
+                                                    //buildCounter: (BuildContext context, {int currentLength, int maxLength, bool isFocused}) => null,
+                                                    onFieldSubmitted: (term){
+                                                      eMail = controller.text;
                                                       String val = ValidarEmail(eMail);
                                                       if( val == null){
                                                         controller.clear();
                                                       }
-                                                    }
+                                                    },
 
+                                                    onChanged: (val){
 
-                                                  },
-                                                  decoration: new InputDecoration(
-                                                    counter: SizedBox(
-                                                      width: 0,
-                                                      height: 0,
-                                                    ),
-                                                    suffixIcon:  Visibility(
-                                                      visible: eMails.length < 20,
-                                                      child: IconButton(
-                                                          icon: Icon(Icons.add_circle, color: AppColors.color_primario,),
-                                                          onPressed: () {
-                                                            eMail = controller.text;
-                                                            String val = ValidarEmail(eMail);
-                                                            if( val == null){
-                                                              controller.clear();
-                                                            }
-                                                          }),
-                                                    ),
-                                                    focusedBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      new BorderRadius.circular(
-                                                          0.0),
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.color_mail),
-                                                    ),
-                                                    fillColor: AppColors.color_mail,
-                                                    border: new OutlineInputBorder(
-                                                      borderRadius:
-                                                      new BorderRadius.circular(
-                                                          0.0),
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.color_mail),
-                                                    ),
-                                                    enabledBorder:  OutlineInputBorder(
-                                                      borderRadius:
-                                                      new BorderRadius.circular(
-                                                          0.0),
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.color_mail),
-                                                    ),
-                                                    errorBorder: OutlineInputBorder(
-                                                      borderRadius:
-                                                      new BorderRadius.circular(
-                                                          0.0),
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.color_mail),
-                                                    ),
-                                                    focusedErrorBorder:  OutlineInputBorder(
-                                                      borderRadius:
-                                                      new BorderRadius.circular(
-                                                          0.0),
-                                                      borderSide: new BorderSide(
-                                                          color: AppColors.color_mail),
-                                                    ),
-                                                  ),
-
-                                                  onSaved: (val){
-                                                    setState(() {
-
-                                                      email = val;
-                                                    });
-                                                  },
-
-                                                  validator: (val){
-                                                    String mensaje;
-
-                                                    if(eMails.isEmpty){
-
-                                                      if(val.length>0){
-
-                                                        eMail = controller.text;
-                                                        String valor = ValidarEmail(eMail);
-                                                        if( valor == null){
-
+                                                      if(val.contains(";")){
+                                                        eMail = controller.text.substring(0, controller.text.length-1);
+                                                        String val = ValidarEmail(eMail);
+                                                        if( val == null){
                                                           controller.clear();
-                                                          setState(() {
-                                                            esVacioMail = false;
-                                                          });
-                                                          //esVacioMail = false;
-                                                          //mensaje = null;
                                                         }
                                                       }
-                                                      else{
 
-                                                        setState(() {
-                                                          esVacioMail = true;
-                                                        });
-                                                      }
-                                                      /*
+
+                                                    },
+                                                    decoration: new InputDecoration(
+                                                      counter: SizedBox(
+                                                        width: 0,
+                                                        height: 0,
+                                                      ),
+                                                      suffixIcon:  Visibility(
+                                                        visible: eMails.length < 20,
+                                                        child: IconButton(
+                                                            icon: Icon(Icons.add_circle, color: AppColors.color_primario,),
+                                                            onPressed: () {
+                                                              eMail = controller.text;
+                                                              String val = ValidarEmail(eMail);
+                                                              if( val == null){
+                                                                controller.clear();
+                                                              }
+                                                            }),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                        new BorderRadius.circular(
+                                                            0.0),
+                                                        borderSide: new BorderSide(
+                                                            color: AppColors.color_mail),
+                                                      ),
+                                                      fillColor: AppColors.color_mail,
+                                                      border: new OutlineInputBorder(
+                                                        borderRadius:
+                                                        new BorderRadius.circular(
+                                                            0.0),
+                                                        borderSide: new BorderSide(
+                                                            color: AppColors.color_mail),
+                                                      ),
+                                                      enabledBorder:  OutlineInputBorder(
+                                                        borderRadius:
+                                                        new BorderRadius.circular(
+                                                            0.0),
+                                                        borderSide: new BorderSide(
+                                                            color: AppColors.color_mail),
+                                                      ),
+                                                      errorBorder: OutlineInputBorder(
+                                                        borderRadius:
+                                                        new BorderRadius.circular(
+                                                            0.0),
+                                                        borderSide: new BorderSide(
+                                                            color: AppColors.color_mail),
+                                                      ),
+                                                      focusedErrorBorder:  OutlineInputBorder(
+                                                        borderRadius:
+                                                        new BorderRadius.circular(
+                                                            0.0),
+                                                        borderSide: new BorderSide(
+                                                            color: AppColors.color_mail),
+                                                      ),
+                                                    ),
+
+                                                    onSaved: (val){
                                                       setState(() {
-                                                        esVacio = true;
-                                                        //mensaje = "Ingrese al menos un correo";
+
+                                                        email = val;
                                                       });
-                                                      */
-                                                    }else{
-                                                      if(val.length>0){
-                                                        eMail = controller.text;
-                                                        String valor = ValidarEmail(eMail);
-                                                        if( valor == null){
-                                                          controller.clear();
-                                                          //mensaje = null;
+                                                    },
+
+                                                    validator: (val){
+                                                      String mensaje;
+
+                                                      if(eMails.isEmpty){
+
+                                                        if(val.length>0){
+
+                                                          eMail = controller.text;
+                                                          String valor = ValidarEmail(eMail);
+                                                          if( valor == null){
+
+                                                            controller.clear();
+                                                            setState(() {
+                                                              esVacioMail = false;
+                                                            });
+                                                            //esVacioMail = false;
+                                                            //mensaje = null;
+                                                          }
+                                                        }
+                                                        else{
+
+                                                          setState(() {
+                                                            esVacioMail = true;
+                                                          });
+                                                        }
+                                                        /*
+                                                        setState(() {
+                                                          esVacio = true;
+                                                          //mensaje = "Ingrese al menos un correo";
+                                                        });
+                                                        */
+                                                      }else{
+                                                        if(val.length>0){
+                                                          eMail = controller.text;
+                                                          String valor = ValidarEmail(eMail);
+                                                          if( valor == null){
+                                                            controller.clear();
+                                                            //mensaje = null;
+                                                          }
                                                         }
                                                       }
-                                                    }
 
-                                                    return null;
-                                                  },
-                                                  keyboardType:
-                                                  TextInputType.emailAddress,
-                                                  style: new TextStyle(
-                                                    fontFamily: "Poppins",
+                                                      return null;
+                                                    },
+                                                    keyboardType:
+                                                    TextInputType.emailAddress,
+                                                    style: new TextStyle(
+                                                      fontFamily: "Poppins",
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-
-                                        /*Row(
-                                            children: <Widget>[
-                                              Visibility(
-                                                  visible: esVacio,
-                                                  child: Text("Al menos un destinatorio es requerido", style: TextStyle(
-                                                      fontFamily: "Roboto",
-                                                      fontSize: 12.0,
-                                                      fontWeight: FontWeight.w400,
-                                                      textBaseline: TextBaseline.alphabetic,
-                                                      color: Color.fromRGBO(211,47,47,1) ),
-                                                      textAlign: TextAlign.start))
-                                            ]
-                                        ),
-                                        */
-
-
-
-                                        Visibility(
-                                            visible: esVacioMail,
-                                            child: Container(
-                                              margin: EdgeInsets.only(top: 8),
-                                              child: Text("Al menos un destinatario es requerido", style: TextStyle(
-                                                  fontFamily: "Roboto",
-                                                  fontSize: 12.0,
-                                                  fontWeight: FontWeight.w400,
-                                                  textBaseline: TextBaseline.alphabetic,
-                                                  color: Color.fromRGBO(211,47,47,1) ),
-                                                  textAlign: TextAlign.right),
-                                            ))
-
-                                      ],
-                                    ),
-                                  );
-                                  break;
-
-                                case 3:
-                                  return Container(margin: EdgeInsets.only(top: 24),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Container(
-                                          width: double.infinity,
-                                          child: Row(
-                                            children: <Widget>[
-                                              Text(
-                                                "Comentario",
-                                                style: TextStyle(
-                                                    fontSize: 15.0,
-                                                    fontWeight: FontWeight.w500,
-                                                    color:
-                                                    AppColors.primary700),
-                                              ),
                                             ],
                                           ),
-                                        ),
-                                        Container(
-                                          width: double.infinity,
-                                          child: TextFormField(
-                                            keyboardType: TextInputType.multiline,
-                                            minLines: 4,
-                                            maxLines: 50,
-                                            maxLength: 999,
-                                            decoration: InputDecoration(
 
-                                              hintText: "Escribe tu mensaje...",
-                                              fillColor: AppColors.color_mail,
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                new BorderRadius.circular(
-                                                    0.0),
-                                                borderSide: new BorderSide(
-                                                    color: AppColors.color_mail),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                new BorderRadius.circular(
-                                                    0.0),
-                                                borderSide: new BorderSide(
-                                                    color: AppColors.color_mail),
-                                              ),
-                                              enabledBorder:  OutlineInputBorder(
-                                                borderRadius:
-                                                new BorderRadius.circular(
-                                                    0.0),
-                                                borderSide: new BorderSide(
-                                                    color: AppColors.color_mail),
-                                              ),
-                                              errorBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                new BorderRadius.circular(
-                                                    0.0),
-                                                borderSide: new BorderSide(
-                                                    color: AppColors.color_mail),
-                                              ),
-                                              focusedErrorBorder:  OutlineInputBorder(
-                                                borderRadius:
-                                                new BorderRadius.circular(
-                                                    0.0),
-                                                borderSide: new BorderSide(
-                                                    color: AppColors.color_mail),
-                                              ),
-                                            ),
-                                            validator: (val) {
-                                              if (val.length == 0) {
-                                                return "Ingrese algún comentario";
-                                              } else {
-                                                esVacio = false;
-                                                return null;
-
-                                              }
-                                            },
-                                            onSaved: (val){
-                                              setState(() {
-
-                                                comentarios = val;
-                                              });
-                                            },
+                                          /*Row(
+                                              children: <Widget>[
+                                                Visibility(
+                                                    visible: esVacio,
+                                                    child: Text("Al menos un destinatorio es requerido", style: TextStyle(
+                                                        fontFamily: "Roboto",
+                                                        fontSize: 12.0,
+                                                        fontWeight: FontWeight.w400,
+                                                        textBaseline: TextBaseline.alphabetic,
+                                                        color: Color.fromRGBO(211,47,47,1) ),
+                                                        textAlign: TextAlign.start))
+                                              ]
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  break;
-
-                                case 4:
-                                  return Container(
-                                      width: double.infinity,
-                                      margin: EdgeInsets.only(top: 100),
-                                      child: FlatButton(
-                                        color: AppColors.color_primario,
-                                        textColor: Colors.white,
-                                        disabledColor: Colors.grey,
-                                        disabledTextColor: Colors.black,
-                                        padding: EdgeInsets.all(8.0),
-                                        onPressed: () {
+                                          */
 
 
 
-                                          if (formKey.currentState.validate()){
-                                            formKey.currentState.save();
+                                          Visibility(
+                                              visible: esVacioMail,
+                                              child: Container(
+                                                margin: EdgeInsets.only(top: 8),
+                                                child: Text("Al menos un destinatario es requerido", style: TextStyle(
+                                                    fontFamily: "Roboto",
+                                                    fontSize: 12.0,
+                                                    fontWeight: FontWeight.w400,
+                                                    textBaseline: TextBaseline.alphabetic,
+                                                    color: Color.fromRGBO(211,47,47,1) ),
+                                                    textAlign: TextAlign.right),
+                                              ))
 
-                                            if(eMails.length>0 && eMails.length<21){
-                                              _initialWebView();
-                                              _sendEmailService();
-                                              //final FirebaseAnalytics analytics = new FirebaseAnalytics();
-                                              //analytics.logEvent(name: CotizadorAnalitycsTags.envioMailGMM, parameters: <String, dynamic>{});
+                                        ],
+                                      ),
+                                    );
+                                    break;
 
-                                              //sendTag(CotizadorAnalitycsTags.envioMailGMM);
-                                              //setCurrentScreen(CotizadorAnalitycsTags.envioMailGMM, "SendEmail");
+                                  case 3:
+                                    return Container(margin: EdgeInsets.only(top: 24),
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            width: double.infinity,
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  "Comentario",
+                                                  style: TextStyle(
+                                                      fontSize: 15.0,
+                                                      fontWeight: FontWeight.w500,
+                                                      color:
+                                                      AppColors.primary700),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Container(
+                                            width: double.infinity,
+                                            child: TextFormField(
+                                              keyboardType: TextInputType.multiline,
+                                              minLines: 4,
+                                              maxLines: 50,
+                                              maxLength: 999,
+                                              decoration: InputDecoration(
+
+                                                hintText: "Escribe tu mensaje...",
+                                                fillColor: AppColors.color_mail,
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                  new BorderRadius.circular(
+                                                      0.0),
+                                                  borderSide: new BorderSide(
+                                                      color: AppColors.color_mail),
+                                                ),
+                                                focusedBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                  new BorderRadius.circular(
+                                                      0.0),
+                                                  borderSide: new BorderSide(
+                                                      color: AppColors.color_mail),
+                                                ),
+                                                enabledBorder:  OutlineInputBorder(
+                                                  borderRadius:
+                                                  new BorderRadius.circular(
+                                                      0.0),
+                                                  borderSide: new BorderSide(
+                                                      color: AppColors.color_mail),
+                                                ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderRadius:
+                                                  new BorderRadius.circular(
+                                                      0.0),
+                                                  borderSide: new BorderSide(
+                                                      color: AppColors.color_mail),
+                                                ),
+                                                focusedErrorBorder:  OutlineInputBorder(
+                                                  borderRadius:
+                                                  new BorderRadius.circular(
+                                                      0.0),
+                                                  borderSide: new BorderSide(
+                                                      color: AppColors.color_mail),
+                                                ),
+                                              ),
+                                              validator: (val) {
+                                                if (val.length == 0) {
+                                                  return "Ingrese algún comentario";
+                                                } else {
+                                                  esVacio = false;
+                                                  return null;
+
+                                                }
+                                              },
+                                              onSaved: (val){
+                                                setState(() {
+
+                                                  comentarios = val;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    break;
+
+                                  case 4:
+                                    return Container(
+                                        width: double.infinity,
+                                        margin: EdgeInsets.only(top: 100),
+                                        child: FlatButton(
+                                          color: AppColors.color_primario,
+                                          textColor: Colors.white,
+                                          disabledColor: Colors.grey,
+                                          disabledTextColor: Colors.black,
+                                          padding: EdgeInsets.all(8.0),
+                                          onPressed: () {
+
+
+
+                                            if (formKey.currentState.validate()){
+                                              formKey.currentState.save();
+
+                                              if(eMails.length>0 && eMails.length<21){
+                                               // _initialWebView();
+                                                _sendEmailService();
+                                                //final FirebaseAnalytics analytics = new FirebaseAnalytics();
+                                                //analytics.logEvent(name: CotizadorAnalitycsTags.envioMailGMM, parameters: <String, dynamic>{});
+
+                                                //sendTag(CotizadorAnalitycsTags.envioMailGMM);
+                                                //setCurrentScreen(CotizadorAnalitycsTags.envioMailGMM, "SendEmail");
+                                              }
+
+
                                             }
 
 
-                                          }
-
-
-                                        },
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text(
-                                            "ENVIAR",
-                                            style: TextStyle(
-                                                fontSize: 15.0, letterSpacing: 1),
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "ENVIAR",
+                                              style: TextStyle(
+                                                  fontSize: 15.0, letterSpacing: 1),
+                                            ),
                                           ),
-                                        ),
-                                      ));
-                                  break;
+                                        ));
+                                    break;
 
-                                case 2:
-                                  return Tags(
-                                    key:_tagStateKey,
-                                    textField: null,
-                                    itemCount: eMails.length, // required
-                                    itemBuilder: (int index){
-                                      final item = eMails[index];
+                                  case 2:
+                                    return Tags(
+                                      key:_tagStateKey,
+                                      textField: null,
+                                      itemCount: eMails.length, // required
+                                      itemBuilder: (int index){
+                                        final item = eMails[index];
 
-                                      return ItemTags(
-                                        // Each ItemTags must contain a Key. Keys allow Flutter to
-                                        // uniquely identify widgets.
-                                        key: Key(index.toString()),
-                                        index: index, // required
-                                        title: item,
-                                        elevation: 0,
-                                        pressEnabled: false,
-                                        activeColor: Colors.transparent,
-                                        textActiveColor: Colors.black,
-                                        border: Border.all(color: AppColors.color_primario, width: 1.0),
-                                        //color: AppColors.color_primario,
-                                        //active: item.active,
-                                        //customData: item.customData,
-                                        textStyle: TextStyle( fontSize: 15.0, ),
-                                        combine: ItemTagsCombine.withTextBefore,
-                                        //image: ItemTagsImage(image: AssetImage("img.jpg");) OR null,
-                                        //icon: ItemTagsIcon(icon: Icons.add,) OR null,
-                                        removeButton: ItemTagsRemoveButton( ),
-                                        onRemoved: (){
-                                          // Remove the item from the data source.
-                                          setState(() {
-                                            // required
-                                            eMails.removeAt(index);
-                                          });
-                                          if(eMails.isEmpty){
+                                        return ItemTags(
+                                          // Each ItemTags must contain a Key. Keys allow Flutter to
+                                          // uniquely identify widgets.
+                                          key: Key(index.toString()),
+                                          index: index, // required
+                                          title: item,
+                                          elevation: 0,
+                                          pressEnabled: false,
+                                          activeColor: Colors.transparent,
+                                          textActiveColor: Colors.black,
+                                          border: Border.all(color: AppColors.color_primario, width: 1.0),
+                                          //color: AppColors.color_primario,
+                                          //active: item.active,
+                                          //customData: item.customData,
+                                          textStyle: TextStyle( fontSize: 15.0, ),
+                                          combine: ItemTagsCombine.withTextBefore,
+                                          //image: ItemTagsImage(image: AssetImage("img.jpg");) OR null,
+                                          //icon: ItemTagsIcon(icon: Icons.add,) OR null,
+                                          removeButton: ItemTagsRemoveButton( ),
+                                          onRemoved: (){
+                                            // Remove the item from the data source.
                                             setState(() {
                                               // required
-                                              esVacioMail = true;
+                                              eMails.removeAt(index);
                                             });
-                                          }
-                                        },
-                                        onPressed: (item) => false,//print(item),
-                                        onLongPressed: (item) => null,//print(item),
-                                      );
+                                            if(eMails.isEmpty){
+                                              setState(() {
+                                                // required
+                                                esVacioMail = true;
+                                              });
+                                            }
+                                          },
+                                          onPressed: (item) => false,//print(item),
+                                          onLongPressed: (item) => null,//print(item),
+                                        );
 
-                                    },
-                                  );
-                                  break;
+                                      },
+                                    );
+                                    break;
 
-                                default:
-                                  return Container();
-                              }
-                            }),
+                                  default:
+                                    return Container();
+                                }
+                              }),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 0,
-                width: 0,
-                child: Visibility(
-                  visible: true,
-                  child: WebviewScaffold(
-                      url: _initialURL,
-                      withJavascript: true,
-                      withZoom: false,
-                      withLocalStorage: true,
-                      hidden:true,
-                      clearCache: true
+                    ],
                   ),
                 ),
-              ),
-            ],
-          )),
+                Container(
+                  height: 0,
+                  width: 0,
+                  child: Visibility(
+                    visible: true,
+                    child: WebviewScaffold(
+                        url: _initialURL,
+                        withJavascript: true,
+                        withZoom: false,
+                        withLocalStorage: true,
+                        hidden:true,
+                        clearCache: true
+                    ),
+                  ),
+                ),
+              ],
+            )),
+      ),
     );
   }
 }

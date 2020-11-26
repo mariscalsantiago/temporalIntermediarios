@@ -10,6 +10,7 @@ import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
 
 
@@ -137,7 +138,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         "correo": datosUsuario.mail.toString(), //"TallerdeProductos@gnp.com.mx", //
         };
         // make POST request
-        Response response = await post(config.urlCotizadores, headers: headers, body: json.encode(jsonMap));
+        Response response = await post(config.urlBase + Constants.COTIZADORES, headers: headers, body: json.encode(jsonMap));
         // check the status code for the result
         int statusCode = response.statusCode;
         // this API passes back the id of the new item added to the body
@@ -203,10 +204,14 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       isLoading: isLoading,
       opacity: 0.8,
       color: AppColors.primary700,
-      progressIndicator: CircularProgressIndicator(
-        backgroundColor: Colors.transparent,
-        valueColor: AlwaysStoppedAnimation(Colors.white),
-        strokeWidth: 5.0,
+      progressIndicator: SizedBox(
+        width: 100.0,
+        height: 100.0,
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.transparent,
+          valueColor: AlwaysStoppedAnimation(Colors.white),
+          strokeWidth: 5.0,
+        ),
       ),
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -219,7 +224,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           ),*/
           iconTheme: IconThemeData(color: AppColors.color_primario),
           backgroundColor: Colors.white,
-          title: Text("Cotizador Único GMM", style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),),
+          title: Text("Cotizador AP", style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),),
         ),
         body:  Column(
           children:  <Widget>[
