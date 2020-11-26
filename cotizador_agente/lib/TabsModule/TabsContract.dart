@@ -6,6 +6,7 @@ abstract class TabsView {
 }
 
 abstract class TabsPresentation {
+  void showCotizador();
   Future<Footer> getFooterConfiguration();
   void navigateToRoute(String route);
   void showAlertNoHabilitado(String title);
@@ -20,6 +21,7 @@ abstract class TabsInteractorOutput {
 }
 
 abstract class TabsWireFrame {
+  void showCotizador();
   void navigateToRoute(String route);
   void showAlertNoHabilitado(String title);
 }

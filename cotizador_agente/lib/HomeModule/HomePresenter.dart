@@ -15,6 +15,11 @@ class HomePresenter implements HomePresentation, HomeInteractorOutput {
   }
 
   @override
+  void showAlert(String title, String message) {
+    router?.showAlert(title, message);
+  }
+
+  @override
   void navigationToRoute(setRamoPoliza, bool isPoliza) {
     router.navigationToRoute(setRamoPoliza, isPoliza);
   }

@@ -17,6 +17,11 @@ class TabsPresenter implements TabsPresentation, TabsInteractorOutput {
   }
 
   @override
+  void showCotizador() {
+    router.showCotizador();
+  }
+
+  @override
   Future<Footer> getFooterConfiguration() {
     return interactor?.getFooterConfiguration();
   }

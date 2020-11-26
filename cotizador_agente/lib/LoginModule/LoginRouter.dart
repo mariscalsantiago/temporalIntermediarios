@@ -1,18 +1,18 @@
 import 'dart:developer';
 
+import 'package:cotizador_agente/HomeModule/HomeController.dart';
 import 'package:cotizador_agente/LoginModule/LoginContract.dart';
 import 'package:cotizador_agente/LoginModule/LoginController.dart';
 import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
 import 'package:cotizador_agente/utils/AlertModule/MyDialog.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
-import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:local_auth/local_auth.dart';
+//import 'package:local_auth/local_auth.dart';
 
 class LoginRouter implements LoginWireFrame {
   LoginControllerState view;
-  final LocalAuthentication auth = LocalAuthentication();
+ // final LocalAuthentication auth = LocalAuthentication();
   static const platform = const MethodChannel("native_interaction");
   var mUser;
   var email;
@@ -28,7 +28,7 @@ class LoginRouter implements LoginWireFrame {
       Navigator.of(view.context).push(PageRouteBuilder(
           opaque: false,
           pageBuilder: (BuildContext context, _, __) {
-            return SeleccionaCotizadorAP();
+            return HomeController();
           }));
     }
   }
@@ -69,7 +69,6 @@ class LoginRouter implements LoginWireFrame {
 
   @override
   void openOlvideContrasenia() {
-    // TODO: implement openOlvideContrasenia
   }
 
 

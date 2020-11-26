@@ -13,6 +13,7 @@ class Mensajes{
   static final String titleContinuar = "¿Deseas continuar?";
   static final String titleAdver = "No se puede continuar";
   static final String legendCotizador = "Selecciona un cotizador";
+  static final String servicioNoDisp = "Servicio no disponible";
 
   //MENSAJES
   static final String recuperarPlan = "No es posible recuperar la cotización, el plan ya no se encuentra disponible.";
@@ -32,6 +33,7 @@ class Mensajes{
   //ERRORES
   static final String errorConfig = "Revise con el Administrador la configuración del Cotizador.";
   static final String errorConexion = "Se produjo un error al conectarse, intente  más tarde.";
+  static final String errorServicio= "Por el momento este servicio no está disponible, inténtalo más tarde.";
 
   //BOTONES
   static final String btn_formatoComp = "Ver formato comparativo";

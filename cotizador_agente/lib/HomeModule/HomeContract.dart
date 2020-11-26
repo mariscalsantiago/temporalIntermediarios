@@ -4,7 +4,7 @@ abstract class HomeView {
 }
 
 abstract class HomePresentation {
-
+  void showAlert(String title, String message);
   void navigationToRoute(HomeRamos setRamoPoliza, bool isPoliza);
 }
 
@@ -17,6 +17,7 @@ abstract class HomeInteractorOutput {
 }
 
 abstract class HomeWireFrame {
+  void showAlert(String title, String message);
   void navigationToRoute(HomeRamos setRamoPoliza, bool isPoliza);
 }
 
