@@ -774,6 +774,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         child: Stack(
           children: <Widget>[
             Scaffold(
+                resizeToAvoidBottomInset: true,
                 backgroundColor: Colors.white,
                 appBar: AppBar(
                   leading: IconButton(
@@ -795,53 +796,57 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                           barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
                           backgroundColor: Colors.transparent,
                           context: context,
-                          builder: (context) => Container(
-                            height: 500,
-                            padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
-                            decoration : new BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: new BorderRadius.only(
-                                  topLeft: const Radius.circular(12.0),
-                                  topRight: const Radius.circular(12.0),
-                                )
-                            ),
-                            child:  Center(
-                                child: Column(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 16.0, left: 24.0, right: 24.0),
-                                      child:Center(child: new Text(Mensajes.titleSave,
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                              color: AppColors.color_titleAlert,
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: 0.15))),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 16.0, bottom: 16.0, left: 12.0, right: 12.0),
-                                      child:SingleChildScrollView(child: new Text(Mensajes.lblSaveCot,
-                                          textAlign: TextAlign.justify,
-                                          style: TextStyle(
-                                              color: AppColors.color_appBar,
-                                              fontSize: 14.0,
-                                              fontWeight: FontWeight.w400,
-                                              letterSpacing: 0.25))),
-                                    ),
-                                    Flexible(
-                                      flex: 1,
-                                      child: Form(
-                                        key: _formKey,
-                                        child: Column(children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 16.0, right: 24.0, left: 24.0),
-                                            child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas,),
-                                          ),
-                                        ],),
+                          builder: (context) => AnimatedPadding(
+                            duration: Duration(milliseconds: 0),
+                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                            child: Container(
+                              height: 500,
+                              padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+                              decoration : new BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: new BorderRadius.only(
+                                    topLeft: const Radius.circular(12.0),
+                                    topRight: const Radius.circular(12.0),
+                                  )
+                              ),
+                              child:  Center(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 16.0, left: 24.0, right: 24.0),
+                                        child:Center(child: new Text(Mensajes.titleSave,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: AppColors.color_titleAlert,
+                                                fontSize: 16.0,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.15))),
                                       ),
-                                    ),
-                                  ],
-                                )),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 16.0, bottom: 16.0, left: 12.0, right: 12.0),
+                                        child:SingleChildScrollView(child: new Text(Mensajes.lblSaveCot,
+                                            textAlign: TextAlign.justify,
+                                            style: TextStyle(
+                                                color: AppColors.color_appBar,
+                                                fontSize: 14.0,
+                                                fontWeight: FontWeight.w400,
+                                                letterSpacing: 0.25))),
+                                      ),
+                                      Flexible(
+                                        flex: 1,
+                                        child: Form(
+                                          key: _formKey,
+                                          child: Column(children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.only(top: 16.0, right: 24.0, left: 24.0),
+                                              child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas,),
+                                            ),
+                                          ],),
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                            ),
                           ),
                         );
                       },),
@@ -1568,10 +1573,10 @@ class _listaCheckState extends State<listaCheck> {
             Checkbox(
               value: widget.ispropuesta2,
               onChanged: (bool value){
-                setState(() {
+                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {setState(() {
                   widget.ispropuesta2 = value;
                   print(widget.ispropuesta2.toString());
-                });
+                });}else{null;}
               },
               activeColor: Colors.white,
               checkColor: AppColors.secondary900,
@@ -1579,6 +1584,7 @@ class _listaCheckState extends State<listaCheck> {
             Expanded(
               flex: 1,
               child: TextFormField(
+                enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
                 onChanged: (text) {
                   setState(() {
                     widget.namePropuesta2Controller.text = text;
@@ -1617,10 +1623,10 @@ class _listaCheckState extends State<listaCheck> {
             Checkbox(
               value: widget.ispropuesta3,
               onChanged: (bool value){
-                setState(() {
+                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {setState(() {
                   widget.ispropuesta3 = value;
                   print(widget.ispropuesta3.toString());
-                });
+                });}else{null;}
               },
               activeColor: Colors.white,
               checkColor: AppColors.secondary900,
@@ -1628,6 +1634,7 @@ class _listaCheckState extends State<listaCheck> {
             Expanded(
               flex: 1,
               child: TextFormField(
+                enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
                 onChanged: (text) {
                   setState(() {
                     widget.nametablaCompController.text = text;
