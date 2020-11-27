@@ -46,6 +46,13 @@ class TabsInteractor implements TabsUseCase {
           accion: "flutter_app/emitir"),
       Secciones(
           posicion: 4,
+          titulo: "Renovar",
+          icono: "",
+          localIcon: "assets/renovar.png",
+          habilitado: false,
+          accion: "flutter_app/renovar"),
+      Secciones(
+          posicion: 5,
           titulo: "Menú",
           icono: "",
           localIcon: "assets/menu.png",

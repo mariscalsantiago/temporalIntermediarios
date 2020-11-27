@@ -74,6 +74,7 @@ class NavigationHandler {
                        pageBuilder: (BuildContext context, _, __) {
                          return SeleccionaCotizadorAP();
                        }));*/
+                   Navigator.pop(context);
                    Navigator.pushNamed(context, "/cotizadorUnicoAP",);
                  },
                  child: Row(children: <Widget>[
@@ -130,7 +131,7 @@ class NavigationHandler {
                  child: Row(children: <Widget>[
                    Padding(
                      padding: const EdgeInsets.only(top:28.0, right: 38),
-                     child: Image.asset("assets/cotizar.png", width: 12, height: 16,),
+                     child: Image.asset("assets/renovar.png", width: 12, height: 16,),
                    ),
                    Padding(
                      padding: const EdgeInsets.only(top: 28.0, right: 56),
