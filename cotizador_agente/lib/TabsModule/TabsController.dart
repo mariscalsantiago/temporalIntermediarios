@@ -18,6 +18,7 @@ class TabsControllerState extends State<TabsController> implements TabsView {
   TabsPresenter presenter;
   bool isSecondLevel;
   bool visibleFooter;
+  String tabselect = "";
 
   TabsControllerState(bool isSecondLevel) {
     this.isSecondLevel = isSecondLevel;
@@ -91,7 +92,7 @@ class TabsControllerState extends State<TabsController> implements TabsView {
       if (currentTab == null) {
         //newTabs.add(Container(width: 60, color: Colors.transparent));
       } else {
-        var color = AppColors.color_appBar;
+        var color = currentTab.titulo!=tabselect ? AppColors.color_appBar : AppColors.secondary900;
         var placeHolder = (currentTab.localIcon != null)
             ? Image.asset(currentTab.localIcon,
             width: 24, height: 24, color: color)
@@ -102,6 +103,11 @@ class TabsControllerState extends State<TabsController> implements TabsView {
             color: color,
             placeHolder: placeHolder,
             onPressed: () {
+              if(currentTab.titulo!=tabselect){
+                setState(() {
+                  tabselect = currentTab.titulo;
+                });
+              }
               if (currentTab.habilitado) {
                 _selectedTab(currentTab.accion);
               } else {
