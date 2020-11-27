@@ -182,15 +182,15 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
         setState(() {
           isLoading = true;
         });
-        try{
-          Map<String, dynamic> jsonMap = {
-            "idAplicacion": Utilidades.idAplicacion,
-            "pagina": pagina,
-            "idUsuario": "TALLPRO"//datosUsuario.idparticipante.toString()
-          };
 
+        Map<String, dynamic> jsonMap = {
+          "idAplicacion": Utilidades.idAplicacion,
+          "pagina": pagina,
+          "idUsuario": "TALLPRO"//datosUsuario.idparticipante.toString()
+        };
 
-          if (filtro != "") {
+        //FILTROS
+        /*if (filtro != "") {
 
             if (nuevaBusqueda) {
               cotizaciones.removeRange(0, cotizaciones.length);
@@ -230,95 +230,71 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                 break;
             }
 
-          }
-          //Utilidades.LogPrint("JSONMAP COT G: " + jsonMap.toString());
-          Map<String, String> headers = {
-            "Content-Type": "application/json",
-            "Authorization": loginData.jwt
-          };
+          }*/
+        //Utilidades.LogPrint("JSONMAP COT G: " + jsonMap.toString());
+        Map<String, String> headers = {
+          "Content-Type": "application/json",
+          "Authorization": loginData.jwt
+        };
 
 
-          if (!blockSearch) {
-            blockSearch = true;
-            return http.post(AppConfig.of(context).urlBase + Constants.COTIZACIONES_GUARDADAS, body: json.encode(jsonMap), headers: headers).then((Response response) {
-              Utilidades.LogPrint("RESPONSE COT G: " + response.body.toString());
+        if (!blockSearch) {
+          blockSearch = true;
+          return http.post(AppConfig.of(context).urlBase + Constants.COTIZACIONES_GUARDADAS, body: json.encode(jsonMap), headers: headers).then((Response response) {
+            Utilidades.LogPrint("RESPONSE COT G: " + response.body.toString());
 
-              int statusCode = response.statusCode;
+            int statusCode = response.statusCode;
 
-              if(response != null){
-                if(response.body != null && response.body.isNotEmpty){
-                  if (statusCode == 200) {
-                    success = true;
-                    registrosGuardados = json.decode(response.body)['registrosEncontrados'];
-                    //llenaTbl.stop();
-                    var list = json.decode(response.body)['cotizaciones'] as List;
+            if(response.body != null && response.body.isNotEmpty){
+              if (statusCode == 200) {
+                success = true;
+                registrosGuardados = json.decode(response.body)['registrosEncontrados'];
+                //llenaTbl.stop();
+                var list = json.decode(response.body)['cotizaciones'] as List;
 
-                    maxpagina = json.decode(response.body)['numeroPaginas'];
+                maxpagina = json.decode(response.body)['numeroPaginas'];
 
 
-                    //cambios en setState se egrega validacion con mounted
-                    if (this.mounted){
-                      setState(() {
-                        List<Cotizacion> newcotizaciones =
-                        list.map((i) => Cotizacion.fromJson(i)).toList();
-                        cotizaciones.addAll(newcotizaciones);
-                      });
-                    }
+                //cambios en setState se egrega validacion con mounted
+                if (this.mounted){
+                  setState(() {
+                    List<Cotizacion> newcotizaciones =
+                    list.map((i) => Cotizacion.fromJson(i)).toList();
+                    cotizaciones.addAll(newcotizaciones);
+                  });
+                }
 
                     /*setState(() {
                       List<Cotizacion> newcotizaciones =
                       list.map((i) => Cotizacion.fromJson(i)).toList();
                       cotizaciones.addAll(newcotizaciones);
                     });*/
-
                     isLoading = false;
-                  } else if (statusCode == 400) {
-                    //llenaTbl.stop();
-                    isLoading = false;
-                    Navigator.pop(context);
-                    Utilidades.mostrarAlerta(Mensajes.titleError + statusCode.toString(), "Bad Request", context);
+              } else if (statusCode != null) {
+                //llenaTbl.stop();
+                isLoading = false;
+                Navigator.pop(context);
+                String message = json.decode(response.body)['message'] != null
+                    ? json.decode(response.body)['message']
+                    : json.decode(response.body)['errors'][0] != null
+                    ? json.decode(response.body)['errors'][0]
+                    : "Error del servidor";
 
-                  } else if (statusCode != null) {
-                    //llenaTbl.stop();
-                    isLoading = false;
-                    Navigator.pop(context);
-                    String message = json.decode(response.body)['message'] != null
-                        ? json.decode(response.body)['message']
-                        : json.decode(response.body)['errors'][0] != null
-                        ? json.decode(response.body)['errors'][0]
-                        : "Error del servidor";
+                Utilidades.mostrarAlerta(Mensajes.titleError + statusCode.toString(), message, context);
+              }
 
-                    Utilidades.mostrarAlerta(Mensajes.titleError + statusCode.toString(), message, context);
-                  }
-
-                  if (registrosGuardados == 0) {
+              if (registrosGuardados == 0) {
 
                     Utilidades.mostrarAlerta(Mensajes.titleLoSentimos, Mensajes.sinCotizaciones, context);
                   }
 
-                  blockSearch = false;
+              blockSearch = false;
 
-                }else{
-                  //llenaTbl.stop();
-                  Utilidades.mostrarAlerta(Mensajes.titleLoSentimos, Mensajes.sinCotizaciones, context);
+            }else{
+              //llenaTbl.stop();
+              Utilidades.mostrarAlerta(Mensajes.titleLoSentimos, Mensajes.sinCotizaciones, context);
+            }
 
-                }
-              }else{
-                //llenaTbl.stop();
-                Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                  Navigator.pop(context);
-                  llenarTabla(context);
-                });
-              }
-
-            });
-          }
-
-        }catch(e){
-          //llenaTbl.stop();
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
-            llenarTabla(context);
           });
         }
 

@@ -89,7 +89,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
             int statusCode = response.statusCode;
 
             if(response != null) {
-              if (response.body != null && response.body.isNotEmpty) {
 
                 if (statusCode == 200) {
                   //formato.stop();
@@ -104,24 +103,11 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
                   Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), message, context);
 
-                }else{
-                  //formato.stop();
-                  Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                    Navigator.pop(context);
-                    getFormato(context);
-                  });
                 }
 
-              }else{
-                //formato.stop();
-                Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                  Navigator.pop(context);
-                  getFormato(context);
-                });
-              }
             }else{
               //formato.stop();
-              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleError, response.body, context,"Reintentar",(){
                 Navigator.pop(context);
                 getFormato(context);
               });
@@ -142,8 +128,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
             getFormato(context);
           });
         }
-
-
 
     return success;
 

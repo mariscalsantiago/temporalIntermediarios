@@ -22,7 +22,7 @@ void main() {
     pagoEnLinea:'https://api-dev.oscp.gnp.com.mx',
     privacyAdvertisement :'http://35.209.236.248/aviso',
     //COTIZADOR UNICO
-    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-uat.cloudfunctions.net/COT_CF_ConsultaNegocioCanal',
+    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-uat.cloudfunctions.net/',
     urlBase: 'https://gmm-cotizadores-uat.gnp.com.mx/',
     urlBaseAnalytics: 'https://gmm-cotizadores-uat.gnp.com.mx/?esMobile=true&accion=',
 

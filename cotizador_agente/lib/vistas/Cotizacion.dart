@@ -1,4 +1,7 @@
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
+import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
+import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'dart:core';
@@ -332,8 +335,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   guardaCotizacion(int index, int idformato) async{
 
-
-
     bool deboGuardarCotizacion = true;
     switch(idformato){
       case Utilidades.FORMATO_COMISION:
@@ -411,18 +412,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     bool success = false;
     if(deboGuardarCotizacion){
 
-
       /*final Trace saveCot = FirebasePerformance.instance.newTrace("CotizadorUnico_GuardarCotizacion");
       saveCot.start();
       print(saveCot.name);*/
 
-
-      try{
         final result = await InternetAddress.lookup('google.com');
 
         if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-          try{
 
             Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
 
@@ -479,7 +476,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
             }
 
-            ////TODO: Revisar esta cambio. HAY UNA BRECHA EN EL SERVICIO DEL BACK 1 - POLIZA, 2 - COMPARATIVA, 3 - COMISIONES
+            ////TO DO: Revisar esta cambio. HAY UNA BRECHA EN EL SERVICIO DEL BACK 1 - POLIZA, 2 - COMPARATIVA, 3 - COMISIONES
             Map<String, dynamic> jsonMap = {
               "idUsuario": "TALLPRO",//datosUsuario.idparticipante.toString(),
               "idAplicacion": Utilidades.idAplicacion,
@@ -496,95 +493,61 @@ class _CotizacionVistaState extends State<CotizacionVista> {
             /*Utilidades.LogPrint("REQUEST: " + Utilidades.cotizacionesApp.getCotizacionElement(index).requestCotizacion.toString());
         Utilidades.LogPrint("RESPONSE: " + json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).responseCotizacion).toString());
         Utilidades.LogPrint("RESUMEN: " + resumen);*/
+            var request = MyRequest(
+                baseUrl: AppConfig.of(context).urlBase,
+                path: Constants.GUARDA_COTIZACION,
+                method: Method.POST,
+                body: jsonEncode(jsonMap).toString(),
+                headers: headers
+            );
 
+            MyResponse response = await RequestHandler.httpRequest(request);
+            if(response.success){
+              Utilidades.LogPrint("COT GUARDADA: \ " + json.encode(jsonMap).toString());
+              Utilidades.LogPrint("RESPONSE COT G: " + response.response.toString());
+              //saveCot.stop();
+              this.setState(() {
+                isLoading = false;
+                success = true;
 
-            Response response = await post(AppConfig.of(context).urlBase + Constants.GUARDA_COTIZACION, body: json.encode(jsonMap), headers: headers);
-            int statusCode = response.statusCode;
-            Utilidades.LogPrint("COT GUARDADA: \ " + json.encode(jsonMap).toString());
-            Utilidades.LogPrint("RESPONSE COT G: " +json.encode(response.body).toString());
+                int folio = response.response["folio"];
+                switch(idformato){
+                  case Utilidades.FORMATO_COMISION:
+                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
+                    break;
 
+                  case Utilidades.FORMATO_COTIZACION:
+                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
+                    break;
 
-            if(response != null){
-              if(response.body != null && response.body.isNotEmpty){
-                if (statusCode == 200) {
-                  //saveCot.stop();
+                  case Utilidades.FORMATO_COMISION_AP:
+                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
+                    break;
 
-                  this.setState(() {
+                  case Utilidades.FORMATO_COTIZACION_AP:
+                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
+                    break;
 
-                    isLoading = false;
-                    success = true;
-
-
-                    int folio =  json.decode(response.body)["folio"];
-
-
-                    switch(idformato){
-                      case Utilidades.FORMATO_COMISION:
-                        Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
-                        break;
-
-                      case Utilidades.FORMATO_COTIZACION:
-                        Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
-                        break;
-
-                      case Utilidades.FORMATO_COMISION_AP:
-                        Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
-                        break;
-
-                      case Utilidades.FORMATO_COTIZACION_AP:
-                        Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
-                        break;
-
-                    }
-
-                   // _initialWebView();
-
-
-                    Navigator.push(context,
-                        MaterialPageRoute(
-                          builder: (context) => CotizacionPDF(
-                            id: index+1,
-                            folio: folio,
-                            idFormato: idformato,
-                            id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
-                          ),
-                        ));
-
-                  });
-
-                }else if(statusCode != null) {
-                  //saveCot.stop();
-                  isLoading = false;
-                  String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
-                  Utilidades.mostrarAlertas("Error: " + statusCode.toString(), message, context);
-                }else{
-                  //saveCot.stop();
-                  Utilidades.mostrarAlertas("Error: " + statusCode.toString(), response.body.toString(), context);
                 }
+                // _initialWebView();
 
-              }else{
-                //saveCot.stop();
-                Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                  Navigator.pop(context);
-                  guardaCotizacion(index, idformato);
-                });
-              }
+                Navigator.push(context,
+                    MaterialPageRoute(
+                      builder: (context) => CotizacionPDF(
+                        id: index+1,
+                        folio: folio,
+                        idFormato: idformato,
+                        id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
+                      ),
+                    ));
+
+              });
             }else{
               //saveCot.stop();
-              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                Navigator.pop(context);
-                guardaCotizacion(index, idformato);
-              });
+              isLoading = false;
+              String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+              Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
             }
-
-
-          }catch(e){
-            //saveCot.stop();
-            Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-              Navigator.pop(context);
-              guardaCotizacion(index, idformato);
-            });
-          }
 
         }else {
           //saveCot.stop();
@@ -593,19 +556,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
             guardaCotizacion(index, idformato);
           });
         }
-      }catch(e){
-        //saveCot.stop();
-        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
-          guardaCotizacion(index, idformato);
-        });
-      }
 
 
     }else{
       success = true;
     }
-
 
     return success;
 
