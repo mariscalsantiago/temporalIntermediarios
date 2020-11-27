@@ -15,11 +15,12 @@ class TabsRouter implements TabsWireFrame {
 
   @override
   void showCotizador(){
-    Navigator.of(view.context).push(PageRouteBuilder(
+    /*Navigator.of(view.context).push(PageRouteBuilder(
         opaque: false,
         pageBuilder: (BuildContext context, _, __) {
           return SeleccionaCotizadorAP();
-        }));
+        }));*/
+    Navigator.pushNamed(view.context, "/cotizadorUnicoAP",);
   }
 
   @override

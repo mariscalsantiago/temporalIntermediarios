@@ -89,7 +89,7 @@ class TabsControllerState extends State<TabsController> implements TabsView {
     for (var i = 0; i < tabs.length; i++) {
       var currentTab = tabs[i];
       if (currentTab == null) {
-        newTabs.add(Container(width: 60, color: Colors.transparent));
+        //newTabs.add(Container(width: 60, color: Colors.transparent));
       } else {
         var color = AppColors.color_appBar;
         var placeHolder = (currentTab.localIcon != null)

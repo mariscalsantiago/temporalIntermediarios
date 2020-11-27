@@ -30,7 +30,7 @@ class HomeControllerState extends State<HomeController>{
          // drawerScrimColor: AppColors.primary700.withOpacity(0.7),
           //key: _drawerKey,
           backgroundColor: Colors.white,
-          appBar: getAppBar(context),
+          //appBar: getAppBar(context),
           body: _getBodyRemoteConfig(),
           bottomNavigationBar: TabsController(
             isSecondLevel: false,
@@ -53,21 +53,29 @@ class HomeControllerState extends State<HomeController>{
 
   Widget _getBodyRemoteConfig() {
     return Container(
+      padding: EdgeInsets.only(top: 40),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 0.0),
+            padding: const EdgeInsets.only( bottom: 8, right: 16, left: 16),
             child: Row(
               children: <Widget>[
-                Divider(
-                  height: 1,
-                  thickness: 1,
-                  color: AppColors.primary700,
-                )
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Image.asset("assets/icon/splash/logoGNP.png",
+                      height: 40, width: 106, fit: BoxFit.contain),
+                ),
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 0.0),
+            child: Divider(
+              thickness: 1,
+              color: AppColors.primary700,
             ),
           )
         ],

@@ -955,7 +955,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                         ),
                                         Spacer(),
                                         Padding(
-                                          padding: const EdgeInsets.only(right: 13.0,  left: 140.0, top:10.0, bottom: 10.0),
+                                          padding: const EdgeInsets.only(right: 13.0, top:10.0, bottom: 10.0),
                                           child: Column(
                                             children: <Widget>[
                                               Visibility(visible: isOpen,

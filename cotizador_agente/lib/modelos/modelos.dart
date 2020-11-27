@@ -680,7 +680,6 @@ class PasoFormulario {
     secciones.forEach((secc) {
       print("busco en la seccion " + secc.id_seccion.toString());
       if (secc.id_seccion.toString() == idSeccion.toString()) {
-        print("encotnré la seccion");
 
         secc.filtrarSeccion(filtro);
       }

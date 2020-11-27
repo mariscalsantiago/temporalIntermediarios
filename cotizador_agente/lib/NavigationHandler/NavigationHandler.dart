@@ -53,7 +53,7 @@ class NavigationHandler {
      backgroundColor: Colors.transparent,
      context: context,
      builder: (context, scrollController) => Container(
-       height: 320,
+       height: 326,
        padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
        decoration : new BoxDecoration(
            color: Colors.white,
@@ -69,11 +69,12 @@ class NavigationHandler {
              children: <Widget>[
                GestureDetector(
                  onTap: (){
-                   Navigator.of(context).push(PageRouteBuilder(
+                   /*Navigator.of(context).push(PageRouteBuilder(
                        opaque: false,
                        pageBuilder: (BuildContext context, _, __) {
                          return SeleccionaCotizadorAP();
-                       }));
+                       }));*/
+                   Navigator.pushNamed(context, "/cotizadorUnicoAP",);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -146,7 +147,7 @@ class NavigationHandler {
                  child: Row(children: <Widget>[
                    Padding(
                      padding: const EdgeInsets.only(top:28.0, right: 38),
-                     child: Image.asset("assets/cotizar.png", width: 12, height: 16,),
+                     child: Image.asset("assets/endosar.png", width: 12, height: 16,),
                    ),
                    Padding(
                      padding: const EdgeInsets.only(top: 28.0, right: 56),
@@ -163,7 +164,7 @@ class NavigationHandler {
                  child: Row(children: <Widget>[
                    Padding(
                      padding: const EdgeInsets.only(top:28.0, right: 38),
-                     child: Image.asset("assets/cotizar.png", width: 12, height: 16,),
+                     child: Image.asset("assets/buscar.png", width: 12, height: 16,),
                    ),
                    Padding(
                      padding: const EdgeInsets.only(top: 28.0, right: 56),
