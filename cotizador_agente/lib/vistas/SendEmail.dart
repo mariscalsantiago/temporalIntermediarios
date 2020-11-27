@@ -3,6 +3,9 @@ import 'dart:io';
 
 //import 'package:agentesgnp/Functions/Analytics.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
+import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
+import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
@@ -56,11 +59,9 @@ class _SendEmailState extends State<SendEmail> {
     print(mytrace.name);*/
     bool success = false;
 
-    try{
       final result = await InternetAddress.lookup('google.com');
 
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        try{
 
           Map<String, String> headers = {
             "Content-type": "application/json",
@@ -74,76 +75,38 @@ class _SendEmailState extends State<SendEmail> {
             "idFormato": [widget.idFormato]
           };
 
+          var request = MyRequest(
+              baseUrl: AppConfig.of(context).urlBase,
+              path: Constants.ENVIA_EMAIL,
+              method: Method.POST,
+              body: jsonEncode(jsonMap).toString(),
+              headers: headers
+          );
 
-          Response response = await post(AppConfig.of(context).urlBase + Constants.ENVIA_EMAIL, body: json.encode(jsonMap) , headers: headers);
+          MyResponse response = await RequestHandler.httpRequest(request);
+          if(response.success){
+            //mytrace.stop();
+            this.setState(() {
+              isLoading = false;
+              success = true;
 
-          int statusCode = response.statusCode;
-
-          if(response != null) {
-            if (response.body != null && response.body.isNotEmpty) {
-
-              if (statusCode == 200) {
-                //mytrace.stop();
-                this.setState(() {
-                  isLoading = false;
-                  success = true;
-
-                  Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleExito, Mensajes.cotizacionEnviada, context, "Aceptar", (){
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                    Navigator.pushReplacement(context,  MaterialPageRoute(
-                      builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
-                    ));
-                  });
-
-                });
-              }else if (statusCode == 400) {
-                //mytrace.stop();
-                isLoading = false;
+              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleExito, Mensajes.cotizacionEnviada, context, "Aceptar", (){
                 Navigator.pop(context);
-
-                Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), "BAD REQUEST", context);
-
-              }
-              else if (statusCode == 500) {
-                //mytrace.stop();
-                isLoading = false;
                 Navigator.pop(context);
-                String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
-                Utilidades.mostrarAlertas(Mensajes.titleErrorEnvioCorreo, message, context);
-
-              }
-              else if(statusCode != null){
-                //mytrace.stop();
-                isLoading = false;
-                Navigator.pop(context);
-                String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
-
-                Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), message, context);
-              }
-
-            } else {
-              //mytrace.stop();
-              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                Navigator.pop(context);
-                _sendEmailService();
+                Navigator.pushReplacement(context,  MaterialPageRoute(
+                  builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
+                ));
               });
-            }
+
+            });
           }else{
             //mytrace.stop();
-            Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-              Navigator.pop(context);
-              _sendEmailService();
-            });
-          }
-
-        }catch(e){
-          //mytrace.stop();
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+            isLoading = false;
             Navigator.pop(context);
-            _sendEmailService();
-          });
-        }
+            String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+
+            Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
+          }
       }else {
         //mytrace.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
@@ -151,13 +114,6 @@ class _SendEmailState extends State<SendEmail> {
           _sendEmailService();
         });
       }
-    }catch(e){
-      //mytrace.stop();
-      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
-        _sendEmailService();
-      });
-    }
 
 
     return success;

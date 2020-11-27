@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/Functions/Database.dart';
 import 'package:cotizador_agente/LoginModule/LoginContract.dart';
 import 'package:cotizador_agente/LoginModule/LoginController.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
@@ -86,7 +87,7 @@ class LoginInteractor implements LoginUseCase {
     output?.showLoader();
     http.Response response = await http.post(config.serviceLogin,
         body: _loginJSONData,
-        headers: headers);
+        headers: headers).timeout(const Duration(seconds: 10));
 
     if(response != null){
       if(response.body != null && response.body.isNotEmpty){
@@ -115,7 +116,15 @@ class LoginInteractor implements LoginUseCase {
           emailSesion = _datosUsuario.emaillogin;
           output.showHome();
           return _datosUsuario;
-        }else{
+        }else if (response.statusCode == 401) {
+          ErrorLoginMessageModel().passErrorAlert();
+          writeLoginBinnacle(user, "${config.serviceLogin}", LogErrorType.userError, ErrorLoginMessageModel().passwordErrorTextAlert);
+          return null;
+        }else if (response.statusCode == 404) {
+          ErrorLoginMessageModel().userErrorAlert();
+          writeLoginBinnacle(user, "${config.serviceLogin}", LogErrorType.userError, ErrorLoginMessageModel().userErrorTextAlert);
+          return null;
+        } else{
           throw Exception(ErrorLoginMessageModel().statusErrorTextException);
         }
       }else{

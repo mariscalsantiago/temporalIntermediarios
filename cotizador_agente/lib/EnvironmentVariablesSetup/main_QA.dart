@@ -22,7 +22,7 @@ void main() {
     privacyAdvertisement :'http://35.209.236.248/aviso',
 
     //COTIZADOR UNICO
-    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/COT_CF_ConsultaNegocioCanal',
+    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/',
     urlBase: 'https://gmm-cotizadores-qa.gnp.com.mx/',
     urlBaseAnalytics: 'https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=',
 

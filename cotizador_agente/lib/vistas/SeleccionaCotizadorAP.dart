@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
+import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
+import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
+import 'package:cotizador_agente/RequestHandler/RequestHandlerDio.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos_widget/NegocioOperableElement.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
@@ -8,7 +12,6 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
@@ -45,64 +48,54 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       print(negociosOp.name);*/
     bool success = false;
     var config = AppConfig.of(context);
+    var headers = {
+      "Content-Type": "application/json"
+    };
 
-    final result = await InternetAddress.lookup('google.com');
+    Map<String, dynamic> jsonMap = {
+      "consultaNegocio": {
+        "idParticipante": "TALLPRO",//datosUsuario.idparticipante.toString(),
+      }
+    };
 
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      try{
+    var request = MyRequest(
+      baseUrl: config.urlNegociosOperables,
+      path: Constants.NEGOCIOS_OPERABLES,
+      method: Method.POST,
+      body: jsonEncode(jsonMap).toString(),
+      headers: headers
+    );
 
-        Map<String, dynamic> jsonMap = {
-          "consultaNegocio": {
-            "idParticipante": "TALLPRO",//datosUsuario.idparticipante.toString(),
-          }
-        };
+    MyResponse response = await RequestHandlerDio.httpRequest(request);
 
-        // make POST request
-        Response response = await post(config.urlNegociosOperables, body: jsonMap.toString());
-        // check the status code for the result
-        int statusCode = response.statusCode;
+    if(response.success){
+      try {
+        success = true;
+       // String body = response.response;
+        var list = response.response['consultaPorParticipanteResponse']
+        ["consultaNegocios"]["participante"]["listaNegocioOperable"] as List;
 
-        if (response.body != null && response.body.isNotEmpty) {
-          // this API passes back the id of the new item added to the body
-          String body = response.body;
-          print(body);
-          print(statusCode);
+        list.removeWhere((element) => element["negocioOperable"].toString() != "AP Worksite");
 
-          if(statusCode == 200){
-            //negociosOp.stop();
-            success = true;
-            var list = json.decode(response.body)['consultaPorParticipanteResponse']
-            ["consultaNegocios"]["participante"]["listaNegocioOperable"] as List;
+        setState(() {
+          widget.negociosOperables = list.map((i) => NegocioOperable.fromJson(i)).toList();
+        });
 
-            list.removeWhere((element) => element["negocioOperable"].toString() != "AP Worksite");
-
-            setState(() {
-              widget.negociosOperables = list.map((i) => NegocioOperable.fromJson(i)).toList();
-            });
-
-            widget.negociosOperables.forEach((negocio) {
-              _getCotizadores(negocio);
-            });
-            setState(() {
-              isLoading = false;
-            });
-
-          }else{
-            //negociosOp.stop();
-            isLoading = false;
-            Navigator.pop(context);
-            Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), "Bad Request", context);
-          }
-        }
-      } catch(e){
-        //negociosOp.stop();
+        widget.negociosOperables.forEach((negocio) {
+          _getCotizadores(negocio);
+        });
+        setState(() {
+          isLoading = false;
+        });
+      }catch(e){
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           _getNegociosOperables();
         });
       }
-    }else {
-      //negociosOp.stop();
+
+    }else{
+      isLoading = false;
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
         Navigator.pop(context);
         _getNegociosOperables();
@@ -137,39 +130,40 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         "clave_negocio_operable": negocioOperable.idNegocioOperable.toString(), //"NOP0002010",
         "correo": datosUsuario.mail.toString(), //"TallerdeProductos@gnp.com.mx", //
         };
-        // make POST request
-        Response response = await post(config.urlBase + Constants.COTIZADORES, headers: headers, body: json.encode(jsonMap));
-        // check the status code for the result
-        int statusCode = response.statusCode;
-        // this API passes back the id of the new item added to the body
 
-        if (response.body != null && response.body.isNotEmpty) {
+        var request = MyRequest(
+            baseUrl: config.urlBase,
+            path: Constants.COTIZADORES,
+            method: Method.POST,
+            body: jsonEncode(jsonMap).toString(),
+            headers: headers
+        );
 
-          String body = response.body;
-          Utilidades.LogPrint("COTIZADORES: " + json.decode(body).toString());
-          print(statusCode);
+        MyResponse response = await RequestHandlerDio.httpRequest(request);
 
-          if(statusCode == 200){
-            //cotizadores.stop();
-            var list = json.decode(response.body)['cotizadores'] as List;
+        if(response.success){
 
-            setState(() {
-              success = true;
-              negocioOperable.cotizadores = list.map((i) => Cotizadores.fromJson(i)).toList();
-              isLoading = false;
-            });
+          var list = response.response['cotizadores'] as List;
 
-          }else {
-            //cotizadores.stop();
+          setState(() {
+            success = true;
+            negocioOperable.cotizadores = list.map((i) => Cotizadores.fromJson(i)).toList();
             isLoading = false;
+          });
+
+        }else{
+          //cotizadores.stop();
+          isLoading = false;
+          Navigator.pop(context);
+
+          //Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), "Bad Request", context);
+          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleError, response.response, context,"Aceptar",(){
             Navigator.pop(context);
-
-            Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), "Bad Request", context);
-
-          }
+          });
         }
       }else {
-        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){Navigator.pop(context);
+        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+          Navigator.pop(context);
           _getCotizadores(negocioOperable);
         });
       }

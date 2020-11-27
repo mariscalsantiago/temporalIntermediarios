@@ -1,6 +1,7 @@
 library constants;
 
 //COTIZADOR UNICO
+const String NEGOCIOS_OPERABLES = "COT_CF_ConsultaNegocioCanal";
 const String COTIZADORES= "cotizador/negocio";
 const String GENERA_COTIZACION = "orquestador-cotizador/generar-cotizacion";
 const String BORRA_COTIZACION = "cotizacion/borrarCotizacion";

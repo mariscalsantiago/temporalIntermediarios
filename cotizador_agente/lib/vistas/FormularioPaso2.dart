@@ -2,6 +2,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
+import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
+import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 
@@ -11,8 +14,6 @@ import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:flutter/foundation.dart';
@@ -205,255 +206,217 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
     cargaPaso.start();
     print(cargaPaso.name);*/
     bool success = false;
-    //var config = AppConfig.of(context);
-    try{
-      final result = await InternetAddress.lookup('google.com');
 
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        try{
+    final result = await InternetAddress.lookup('google.com');
 
-          Map<String, String> headers = {"Content-Type": "application/json"};
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-          Response response = await http.post(AppConfig.of(context).urlBase + Constants.FORMULARIO_PASO2, body: json.encode(map_plan), headers: headers);
-          int statusCode = response.statusCode;
+      Map<String, String> headers = {"Content-Type": "application/json"};
 
-          if(response != null) {
-            if (response.body != null && response.body.isNotEmpty) {
+      var request = MyRequest(
+          baseUrl: AppConfig.of(context).urlBase,
+          path: Constants.FORMULARIO_PASO2,
+          method: Method.POST,
+          body: jsonEncode(map_plan).toString(),
+          headers: headers
+      );
 
-              setState(() {
+      MyResponse response = await RequestHandler.httpRequest(request);
 
-
-
-                PasoFormulario estePaso = PasoFormulario.fromJson(json.decode(response.body));
-                Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2 =  estePaso;
-                Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan= plan;
-
-
-                if(widget.cotizacionGuardada != null && (widget.preCargaFinalizada == false)){
-                  widget.preCargaFinalizada = true;
-                  Map<String,dynamic> resumenSecciones = json.decode(widget.cotizacionGuardada.responseResumen);
+      if(response.success){
+        setState(() {
+          PasoFormulario estePaso = PasoFormulario.fromJson(response.response);
+          Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2 =  estePaso;
+          Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan= plan;
 
 
+          if(widget.cotizacionGuardada != null && (widget.preCargaFinalizada == false)){
+            widget.preCargaFinalizada = true;
+            Map<String,dynamic> resumenSecciones = json.decode(widget.cotizacionGuardada.responseResumen);
 
-                  if(resumenSecciones != null){
-                    var lista_secciones = resumenSecciones['seccion'] as List;
+            if(resumenSecciones != null){
+              var lista_secciones = resumenSecciones['seccion'] as List;
 
-                    lista_secciones.forEach((s){
-                      var lista_campos = s['valores'] as List;
-                      int id_Seccion = s["idSeccion"];
-
-
-                      if(lista_campos != null && lista_campos.length > 0){
-
-                        if(lista_campos[0]["valores"] != null){
-                          //La lista campos se convierte en lista de secciones child
-
-                          estePaso.secciones.forEach((seccion_mult){
-                            if(seccion_mult.id_seccion == id_Seccion){
-                              for(int i=0; i< lista_campos.length; i++){
+              lista_secciones.forEach((s){
+                var lista_campos = s['valores'] as List;
+                int id_Seccion = s["idSeccion"];
 
 
+                if(lista_campos != null && lista_campos.length > 0){
 
-                                seccion_mult.addChild();
-                                var lista_camposmult = lista_campos[i]["valores"] as List;
-                                for(int j=0; j<lista_camposmult.length; j++){
-                                  if(lista_camposmult[j]["valor"] != null){
-                                    Campo campo_result = estePaso.buscarCampoPorID(seccion_mult.children_secc[i].campos, lista_camposmult[j]["idCampo"], false);
-                                    if(campo_result != null){
-                                      campo_result.valor = lista_camposmult[j]["valor"].toString();
-                                    }
+                      if(lista_campos[0]["valores"] != null){
+                        //La lista campos se convierte en lista de secciones child
+
+                        estePaso.secciones.forEach((seccion_mult){
+                          if(seccion_mult.id_seccion == id_Seccion){
+                            for(int i=0; i< lista_campos.length; i++){
+
+
+                              seccion_mult.addChild();
+                              var lista_camposmult = lista_campos[i]["valores"] as List;
+                              for(int j=0; j<lista_camposmult.length; j++){
+                                if(lista_camposmult[j]["valor"] != null){
+                                  Campo campo_result = estePaso.buscarCampoPorID(seccion_mult.children_secc[i].campos, lista_camposmult[j]["idCampo"], false);
+                                  if(campo_result != null){
+                                    campo_result.valor = lista_camposmult[j]["valor"].toString();
                                   }
                                 }
                               }
                             }
-                          });
+                          }
+                        });
 
-                        }else{
+                      }else{
 
-                          estePaso.secciones.forEach((secciones_este_paso){
-                            if(secciones_este_paso.id_seccion == id_Seccion){
-                              for(int i=0; i< lista_campos.length; i++){
+                        estePaso.secciones.forEach((secciones_este_paso){
+                          if(secciones_este_paso.id_seccion == id_Seccion){
+                            for(int i=0; i< lista_campos.length; i++){
 
-                                Campo c = estePaso.buscarCampoPorID(secciones_este_paso.campos, lista_campos[i]["idCampo"], false);
+                              Campo c = estePaso.buscarCampoPorID(secciones_este_paso.campos, lista_campos[i]["idCampo"], false);
 
-                                if(c!=null){
-                                  if(c.tipo_componente!= "card"){
+                              if(c!=null){
+                                if(c.tipo_componente!= "card"){
 
-                                    //print(c.nombre_campo);
+                                  //print(c.nombre_campo);
 
-                                    if(c.tipo_componente!="textbox" && c.tipo_componente!="checkbox" && c.tipo_componente!="date_relativa"){
+                                  if(c.tipo_componente!="textbox" && c.tipo_componente!="checkbox" && c.tipo_componente!="date_relativa"){
 
-                                      bool valorDisponible = false;
-                                      if(c.valores!=null){
-                                        for(int j = 0; j< c.valores.length; j++){
+                                    bool valorDisponible = false;
+                                    if(c.valores!=null){
+                                      for(int j = 0; j< c.valores.length; j++){
 
-                                          if(lista_campos[i]["valor"].toString() == c.valores[j].id){
-                                            valorDisponible = true;
-                                            break;
-                                          }
-
+                                        if(lista_campos[i]["valor"].toString() == c.valores[j].id){
+                                          valorDisponible = true;
+                                          break;
                                         }
+
+                                      }
+                                    }
+
+                                    if(valorDisponible){
+                                      c.valor = lista_campos[i]["valor"].toString();
+                                      if (c.seccion_dependiente != null) {
+                                        //print("voy a filtrar la seccion"+ c.seccion_dependiente);
+                                        Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().filtrarSeccion(
+                                            int.parse(c.seccion_dependiente),
+                                            int.parse(c.valor));
                                       }
 
-                                      if(valorDisponible){
-                                        c.valor = lista_campos[i]["valor"].toString();
-                                        if (c.seccion_dependiente != null) {
-                                          //print("voy a filtrar la seccion"+ c.seccion_dependiente);
-                                          Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().filtrarSeccion(
-                                              int.parse(c.seccion_dependiente),
-                                              int.parse(c.valor));
-                                        }
+                                      if(c.oculta){
 
-                                        if(c.oculta){
-
-                                          //ocultar campos
-                                          c.valores.forEach((valor){
-                                            if(valor.id == c.valor){
-                                              if(valor.oculta_campos.length>0){
-                                                //print("Este valor:"+ valor.descripcion.toString()+ ", oculta campos");
-                                                valor.oculta_campos.forEach((referencia){
-                                                  List <Campo> campos  =  Utilidades.buscaCampoPorID(referencia.id_seccion, referencia.id_campo, true);
-                                                  if(campos!=null){
-                                                    campos.forEach((campo){
-                                                      //print("El campo a ocultar es: "+ campo.etiqueta.toString());
+                                        //ocultar campos
+                                        c.valores.forEach((valor){
+                                          if(valor.id == c.valor){
+                                            if(valor.oculta_campos.length>0){
+                                              //print("Este valor:"+ valor.descripcion.toString()+ ", oculta campos");
+                                              valor.oculta_campos.forEach((referencia){
+                                                List <Campo> campos  =  Utilidades.buscaCampoPorID(referencia.id_seccion, referencia.id_campo, true);
+                                                if(campos!=null){
+                                                  campos.forEach((campo){
+                                                    //print("El campo a ocultar es: "+ campo.etiqueta.toString());
 
 
-                                                      //Se oculta el valor del campo padre
-                                                      if(campo.parent_campo!=null){
-                                                        Campo campo_padre = Utilidades.buscaCampoPorID(campo.parent_campo.id_seccion, campo.parent_campo.id_campo, true)[0];
-                                                        //print("Campo Padre es: "+campo_padre.etiqueta);
+                                                    //Se oculta el valor del campo padre
+                                                    if(campo.parent_campo!=null){
+                                                      Campo campo_padre = Utilidades.buscaCampoPorID(campo.parent_campo.id_seccion, campo.parent_campo.id_campo, true)[0];
+                                                      //print("Campo Padre es: "+campo_padre.etiqueta);
 
 
-                                                        if(campo_padre.valores!=null){
-                                                          //campo_padre.filtrarHijos(campo.id_campo.toString());
-                                                          if(campo_padre.valor == campo.id_campo.toString()){
+                                                      if(campo_padre.valores!=null){
+                                                        //campo_padre.filtrarHijos(campo.id_campo.toString());
+                                                        if(campo_padre.valor == campo.id_campo.toString()){
 
-                                                            bool esValorNoVisible = true;
-                                                            String id_inicial;
-                                                            //Verificar que el valor inicial sea visible.
-                                                            for (int i = 0; i<campo_padre.valores.length && esValorNoVisible; i++){
-                                                              if(campo_padre.valores[i].visible){
-                                                                esValorNoVisible = false;
-                                                                id_inicial= campo_padre.valores[i].id;
-                                                              }
+                                                          bool esValorNoVisible = true;
+                                                          String id_inicial;
+                                                          //Verificar que el valor inicial sea visible.
+                                                          for (int i = 0; i<campo_padre.valores.length && esValorNoVisible; i++){
+                                                            if(campo_padre.valores[i].visible){
+                                                              esValorNoVisible = false;
+                                                              id_inicial= campo_padre.valores[i].id;
                                                             }
-                                                            campo_padre.valor =  id_inicial;
-
                                                           }
-
-                                                          campo_padre.valores.forEach((valor){
-
-                                                            if(valor.id==campo.id_campo.toString()){
-                                                              valor.visible= false;
-                                                            }
-                                                          });
+                                                          campo_padre.valor =  id_inicial;
 
                                                         }
 
-                                                      }else{
-                                                        print("El campo padre es null");
+                                                        campo_padre.valores.forEach((valor){
+
+                                                          if(valor.id==campo.id_campo.toString()){
+                                                            valor.visible= false;
+                                                          }
+                                                        });
+
                                                       }
 
-                                                      //Se oculta el campo
-                                                      // print("oculto el campo"+ campo.etiqueta);
-                                                      campo.visible = false;
-                                                      campo.visibleLocal = false;
-                                                      // print("oculto el campo"+ campo.etiqueta+ campo.visible.toString());
+                                                    }else{
+                                                      print("El campo padre es null");
+                                                    }
+
+                                                    //Se oculta el campo
+                                                    // print("oculto el campo"+ campo.etiqueta);
+                                                    campo.visible = false;
+                                                    campo.visibleLocal = false;
+                                                    // print("oculto el campo"+ campo.etiqueta+ campo.visible.toString());
 
 
-                                                      c.campos_modificados.add(referencia);
-                                                      // print("Se agrego la referencia"+ referencia.id_campo.toString());
+                                                    c.campos_modificados.add(referencia);
+                                                    // print("Se agrego la referencia"+ referencia.id_campo.toString());
 
 
-                                                    });
-                                                  }
-                                                });
-                                              }
+                                                  });
+                                                }
+                                              });
                                             }
-                                          });
-
-                                        }
+                                          }
+                                        });
 
                                       }
-                                    }else{
-                                      c.valor = lista_campos[i]["valor"].toString();
-                                    }
 
+                                    }
+                                  }else{
+                                    c.valor = lista_campos[i]["valor"].toString();
                                   }
 
                                 }
 
                               }
-                            }
-                          });
 
-                        }
+                            }
+                          }
+                        });
 
                       }
-                    });
 
-                    Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan= plan;
-                  }
+                    }
+                  });
 
+                  Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan= plan;
                 }
 
-              });
-
-              if(statusCode == 200){
-                //cargaPaso.stop();
-                setState(() {
-                  isLoading = false;
-                  Utilidades.isloadingPlan = false;
-                  success = true;
-                });
-
-              }else if(statusCode == 400){
-                //cargaPaso.stop();
-                setState(() {
-                  isLoading = false;
-                  Utilidades.isloadingPlan = false;
-                });
-
-                Navigator.pop(context);
-                Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), "Bad Request", context);
-
-              }
-              else if(statusCode != null){
-                //cargaPaso.stop();
-                Navigator.pop(context);
-                String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
-                Utilidades.mostrarAlerta(Mensajes.titleError + statusCode.toString(),message, context);
-
-                setState(() {
-                  isLoading = false;
-                  success = true;
-                  Utilidades.isloadingPlan = false;
-                });
-
               }
 
-            } else {
-              //cargaPaso.stop();
-              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                Navigator.pop(context);
-                cargarSiguientePaso(map_plan);
-              });
-            }
+            });
+            //cargaPaso.stop();
+            setState(() {
+              isLoading = false;
+              Utilidades.isloadingPlan = false;
+              success = true;
+            });
+
           }else{
             //cargaPaso.stop();
-            Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-              Navigator.pop(context);
-              cargarSiguientePaso(map_plan);
+            Navigator.pop(context);
+            String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+            Utilidades.mostrarAlerta(Mensajes.titleError,message, context);
+
+            setState(() {
+              isLoading = false;
+              success = true;
+              Utilidades.isloadingPlan = false;
             });
+
           }
 
-        }catch(e){
-          //cargaPaso.stop();
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
-            cargarSiguientePaso(map_plan);
-          });
-        }
       }else {
         //cargaPaso.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
@@ -461,13 +424,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
           cargarSiguientePaso(map_plan);
         });
       }
-    }catch(e){
-      //cargaPaso.stop();
-      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
-        cargarSiguientePaso(map_plan);
-      });
-    }
 
     return success;
 
