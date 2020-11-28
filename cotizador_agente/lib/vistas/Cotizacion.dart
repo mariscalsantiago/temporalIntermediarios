@@ -800,7 +800,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                             duration: Duration(milliseconds: 0),
                             padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                             child: Container(
-                              height: 500,
+                              height: 430,
                               padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
                               decoration : new BoxDecoration(
                                   color: Colors.white,
@@ -838,7 +838,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                           key: _formKey,
                                           child: Column(children: <Widget>[
                                             Padding(
-                                              padding: const EdgeInsets.only(top: 16.0, right: 24.0, left: 24.0),
+                                              padding: const EdgeInsets.only(right: 24.0, left: 24.0),
                                               child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas,),
                                             ),
                                           ],),
@@ -1501,6 +1501,8 @@ class listaCheck extends StatefulWidget {
 
 class _listaCheckState extends State<listaCheck> {
   bool textPropuesta1;
+  bool textPropuesta2;
+  bool textPropuesta3;
   String texto1;
   String texto2;
   String texto3;
@@ -1508,6 +1510,12 @@ class _listaCheckState extends State<listaCheck> {
   Widget build(BuildContext context) {
     if(textPropuesta1 != null){
       widget.ispropuesta1 = textPropuesta1;
+    }
+    if(textPropuesta2 != null){
+      widget.ispropuesta2 = textPropuesta2;
+    }
+    if(textPropuesta3 != null){
+      widget.ispropuesta3 = textPropuesta3;
     }
     if(texto1 != null){
       widget.namePropuesta1Controller.text = texto1;
@@ -1568,15 +1576,20 @@ class _listaCheckState extends State<listaCheck> {
           ),
         ],),
         Padding(
-          padding: const EdgeInsets.only(top:28.0),
+          padding: const EdgeInsets.only(top:18.0),
           child: Row(children: <Widget>[
             Checkbox(
               value: widget.ispropuesta2,
               onChanged: (bool value){
-                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {setState(() {
+                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
+                  setState(() {
                   widget.ispropuesta2 = value;
+                  textPropuesta2 = widget.ispropuesta2;
                   print(widget.ispropuesta2.toString());
-                });}else{null;}
+                });
+                }else{
+                  null;
+                }
               },
               activeColor: Colors.white,
               checkColor: AppColors.secondary900,
@@ -1618,15 +1631,20 @@ class _listaCheckState extends State<listaCheck> {
           ],),
         ),
         Padding(
-          padding: const EdgeInsets.only(top:28.0),
+          padding: const EdgeInsets.only(top:20.0),
           child: Row(children: <Widget>[
             Checkbox(
               value: widget.ispropuesta3,
               onChanged: (bool value){
-                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {setState(() {
+                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
+                  setState(() {
                   widget.ispropuesta3 = value;
+                  textPropuesta3 = widget.ispropuesta3;
                   print(widget.ispropuesta3.toString());
-                });}else{null;}
+                });
+                }else{
+                  null;
+                }
               },
               activeColor: Colors.white,
               checkColor: AppColors.secondary900,
@@ -1668,12 +1686,12 @@ class _listaCheckState extends State<listaCheck> {
           ],),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 42.0, left: 0, right: 0),
+          padding: const EdgeInsets.only(top: 20.0, left: 0, right: 0),
           child: Divider(thickness: 1,
             color: AppColors.color_borde,),
         ),
         Padding(
-          padding: const EdgeInsets.only(top: 16.0, bottom: 16),
+          padding: const EdgeInsets.only(top: 8.0,),
           child: ButtonTheme(
             minWidth: 340.0,
             height: 40.0,
