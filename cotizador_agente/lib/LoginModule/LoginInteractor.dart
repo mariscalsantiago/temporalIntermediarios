@@ -152,6 +152,7 @@ class LoginInteractor implements LoginUseCase {
     );
 
     MyResponse response = await RequestHandler.httpRequest(request);
+    try{
     if (response.success) {
       mapPerfilador = response.response;
       PerfiladorModel _datosPerfilador = PerfiladorModel.fromJson(
@@ -170,7 +171,17 @@ class LoginInteractor implements LoginUseCase {
         return _datosPerfilador;
       }
     }else {
-      throw Exception(ErrorLoginMessageModel().responseBodyErrorTextException);
+      throw Exception(ErrorLoginMessageModel().responseNullErrorTextException);
+    }
+    }catch(e){
+      writeLoginBinnacle(datosUsuario.idparticipante,
+          "${config.service_perfilador}",
+          LogErrorType.serviceError,
+          response!= null?"(${!response.success}) ${response.response}":"null"
+      );
+      ErrorLoginMessageModel().serviceErrorAlert("$_serviceID - ${response!=null?!response.success:"null"}");
+      print("==$e==\n$_serviceID - ${response!=null?!response.success:"null"}\n=>$e<=");
+      return null;
     }
   }
 

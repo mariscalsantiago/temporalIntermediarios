@@ -80,11 +80,22 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   bool propuesta2 = false;
   bool propuesta3 = false;
 
-  //ferificar que sean diferentes de null
+  //verificar que sean diferentes de null
   void guardarPropuestas(String texto1, String texto2, String texto3){
     print(texto1);
     setState(() {
-      Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
+      if(texto1.isNotEmpty){
+        Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
+      }
+      if(texto2.isNotEmpty){
+        Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = texto2;
+      }
+      /*if(texto3.isNotEmpty){
+        Utilidades.cotizacionesApp.getCotizacionElement(0).comparativa.nombre = texto3;
+      }*/
+      /*if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
+        guardarFormatoComparativa();
+      }*/
     });
   }
 
@@ -913,11 +924,19 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             Spacer(),
                                             Expanded(
                                               flex: 0,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(right: 8.0),
-                                                child: IconButton(
-                                                  icon: Image.asset("assets/icon/cotizador/icon_more.png", height: 24, width: 24,),
-                                                  onPressed: _aumentar,
+                                              child: Container(
+                                                padding: const EdgeInsets.only(right: 8.0, bottom: 0.0),
+                                                height: 45,
+                                                width: 45,
+                                                child: FittedBox(
+                                                  child: FloatingActionButton(
+                                                    onPressed: _aumentar,
+                                                    elevation: 0.0,
+                                                    heroTag: "btn1",
+                                                    tooltip: "Agregar",
+                                                    child: Icon(Icons.add, color: AppColors.secondary900,),
+                                                    backgroundColor: Colors.white,
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -1061,6 +1080,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                 width: 36,
                                                 height: 36,
                                                 child: FloatingActionButton(
+                                                  heroTag: null, //Se establece en null para evitar que choque con el btn1 de Agregar
                                                   backgroundColor: Colors.white,
                                                   onPressed: ((){
                                                     setState(() {
@@ -1500,22 +1520,22 @@ class listaCheck extends StatefulWidget {
 }
 
 class _listaCheckState extends State<listaCheck> {
-  bool textPropuesta1;
-  bool textPropuesta2;
-  bool textPropuesta3;
-  String texto1;
-  String texto2;
-  String texto3;
+  bool propuesta1;
+  bool propuesta2;
+  bool propuesta3;
+  String texto1 = "";
+  String texto2 = "";
+  String texto3 = "";
   @override
   Widget build(BuildContext context) {
-    if(textPropuesta1 != null){
-      widget.ispropuesta1 = textPropuesta1;
+    if(propuesta1 != null){
+      widget.ispropuesta1 = propuesta1;
     }
-    if(textPropuesta2 != null){
-      widget.ispropuesta2 = textPropuesta2;
+    if(propuesta2 != null){
+      widget.ispropuesta2 = propuesta2;
     }
-    if(textPropuesta3 != null){
-      widget.ispropuesta3 = textPropuesta3;
+    if(propuesta3 != null){
+      widget.ispropuesta3 = propuesta3;
     }
     if(texto1 != null){
       widget.namePropuesta1Controller.text = texto1;
@@ -1534,7 +1554,7 @@ class _listaCheckState extends State<listaCheck> {
             onChanged: (value){
               setState(() {
                 widget.ispropuesta1 = value;
-                textPropuesta1 = widget.ispropuesta1;
+                propuesta1 = widget.ispropuesta1;
                 print(value);
               });
             },
@@ -1584,7 +1604,7 @@ class _listaCheckState extends State<listaCheck> {
                 if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
                   setState(() {
                   widget.ispropuesta2 = value;
-                  textPropuesta2 = widget.ispropuesta2;
+                  propuesta2 = widget.ispropuesta2;
                   print(widget.ispropuesta2.toString());
                 });
                 }else{
@@ -1639,7 +1659,7 @@ class _listaCheckState extends State<listaCheck> {
                 if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
                   setState(() {
                   widget.ispropuesta3 = value;
-                  textPropuesta3 = widget.ispropuesta3;
+                  propuesta3 = widget.ispropuesta3;
                   print(widget.ispropuesta3.toString());
                 });
                 }else{
@@ -1698,7 +1718,15 @@ class _listaCheckState extends State<listaCheck> {
             buttonColor: AppColors.secondary900,
             child: RaisedButton(
               onPressed: ((){
-                Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = widget.namePropuesta1Controller.text;
+                if(texto1.isNotEmpty && texto1 != null){
+                  Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = widget.namePropuesta1Controller.text;
+                }
+                if(texto2 != null && texto2.isNotEmpty){
+                  Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = widget.namePropuesta2Controller.text;
+                }
+                /*if(texto3.isNotEmpty && texto3 != null){
+                  Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.nametablaCompController.text;
+                }*/
                 Navigator.pop(context);
                 widget.guardarPropuestas(texto1,texto2,texto3);
               }),
