@@ -478,7 +478,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
             ////TO DO: Revisar esta cambio. HAY UNA BRECHA EN EL SERVICIO DEL BACK 1 - POLIZA, 2 - COMPARATIVA, 3 - COMISIONES
             Map<String, dynamic> jsonMap = {
-              "idUsuario": "TALLPRO",//datosUsuario.idparticipante.toString(),
+              "idUsuario": datosUsuario.idparticipante.toString(),
               "idAplicacion": Utilidades.idAplicacion,
               "codIntermediario": "0060661001",//"datosPerfilador.intermediarios".toString().replaceAll("[", "").replaceAll("]", ""),
               "idPlan": idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,

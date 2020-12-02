@@ -54,7 +54,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
     Map<String, dynamic> jsonMap = {
       "consultaNegocio": {
-        "idParticipante": "TALLPRO",//datosUsuario.idparticipante.toString(),
+        "idParticipante": datosUsuario.idparticipante.toString(),
       }
     };
 

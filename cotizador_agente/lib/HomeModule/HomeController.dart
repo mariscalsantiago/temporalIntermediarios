@@ -1,6 +1,8 @@
 import 'package:cotizador_agente/HomeModule/HomePresenter.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
+import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
 import 'package:flutter/material.dart';
 
 class HomeController extends StatefulWidget {
@@ -50,6 +52,13 @@ class HomeControllerState extends State<HomeController>{
     );
   }
 
+  static void showCotizar(BuildContext context) {
+    Navigator.of(context).push(PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return SeleccionaCotizadorAP();
+        }));
+  }
 
   Widget _getBodyRemoteConfig() {
     return Container(
@@ -77,7 +86,55 @@ class HomeControllerState extends State<HomeController>{
               thickness: 1,
               color: AppColors.primary700,
             ),
-          )
+          ),
+          Visibility(
+            visible: Utilidades.tabCotizarSelect,
+            child: Container(
+              padding: EdgeInsets.only(left: 16),
+              height: 72,
+              child: Row(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Image.asset("assets/default_cotizador.png",
+                            height: 56, width: 96, fit: BoxFit.contain),
+                      ),
+                    ],
+                  ),
+                  Flexible(
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(color: AppColors.color_Bordes,))
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Center(child: Text("GMM Individual",
+                            style: TextStyle(fontFamily: 'OpenSansRegular', fontSize: 16, color: AppColors.primary700, fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                          )),
+                          Expanded(
+                            child: Container(),
+                          ),
+                          Container(
+                            child: IconButton(
+                              icon: Icon(Icons.chevron_right, size: 35, color: AppColors.secondary900,),
+                              onPressed: () {
+                                showCotizar(context);
+                                setState(() {
+                                  Utilidades.tabCotizarSelect = true;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

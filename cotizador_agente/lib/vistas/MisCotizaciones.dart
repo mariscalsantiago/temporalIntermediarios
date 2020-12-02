@@ -186,7 +186,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
         Map<String, dynamic> jsonMap = {
           "idAplicacion": Utilidades.idAplicacion,
           "pagina": pagina,
-          "idUsuario": "TALLPRO"//datosUsuario.idparticipante.toString()
+          "idUsuario": datosUsuario.idparticipante.toString()
         };
 
         //FILTROS
@@ -583,20 +583,27 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                            child: Text(
-                              "Nueva cotización",
-                              style: TextStyle(
-                              color: AppColors.color_appBar,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16)
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                              child: Text(
+                                "Nueva cotización",
+                                style: TextStyle(
+                                color: AppColors.color_appBar,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16)
+                              ),
                             ),
                           ),
                           Spacer(flex: 2,),
                           IconButton(
                             icon: Icon(Icons.add, color: AppColors.color_primario,),
                             onPressed: () {
+                              Navigator.pop(context);
                               Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                             },),
                         ],

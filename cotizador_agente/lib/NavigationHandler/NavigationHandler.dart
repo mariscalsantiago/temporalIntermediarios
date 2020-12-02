@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/HomeModule/HomeController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
@@ -15,7 +16,11 @@ class NavigationHandler {
       case "flutter_app/home":
         break;
       case "flutter_app/cotizar":
-        showCotizar(context);
+        Navigator.of(context).push(PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (BuildContext context, _, __) {
+              return HomeController();
+            }));
         break;
       case "flutter_app/pagar":
         showPagar(context);
@@ -69,13 +74,12 @@ class NavigationHandler {
              children: <Widget>[
                GestureDetector(
                  onTap: (){
-                   /*Navigator.of(context).push(PageRouteBuilder(
+                   Navigator.pop(context);
+                   Navigator.of(context).push(PageRouteBuilder(
                        opaque: false,
                        pageBuilder: (BuildContext context, _, __) {
-                         return SeleccionaCotizadorAP();
-                       }));*/
-                   Navigator.pop(context);
-                   Navigator.pushNamed(context, "/cotizadorUnicoAP",);
+                         return HomeController();
+                       }));
                  },
                  child: Row(children: <Widget>[
                    Padding(
