@@ -93,9 +93,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       /*if(texto3.isNotEmpty){
         Utilidades.cotizacionesApp.getCotizacionElement(0).comparativa.nombre = texto3;
       }*/
-      /*if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
+      if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
         guardarFormatoComparativa();
-      }*/
+      }
     });
   }
 
@@ -498,7 +498,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
               "requestCotizacion": idformato == Utilidades.FORMATO_COMPARATIVA ? "{}" : Utilidades.cotizacionesApp.getCotizacionElement(index).requestCotizacion.toString(),
               "responseCotizacion": idformato == Utilidades.FORMATO_COMPARATIVA ? "{}" : json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).responseCotizacion).toString(),
               "responseResumen": resumen,
-              "nombreCotizacion": idformato != Utilidades.FORMATO_COMPARATIVA ? Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Propuesta " + (index+1).toString() : " ",
+              "nombreCotizacion": idformato != Utilidades.FORMATO_COMPARATIVA ? Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Propuesta " + (index+1).toString() : "Prueba AP",
             };
 
             /*Utilidades.LogPrint("REQUEST: " + Utilidades.cotizacionesApp.getCotizacionElement(index).requestCotizacion.toString());

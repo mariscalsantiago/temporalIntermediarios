@@ -36,6 +36,8 @@ class AppColors {
   static HexColor secondary50 =  HexColor("#FFF8E2");
   static HexColor gnpTextSystem2 = HexColor("#5A677D");
   static HexColor gnpTextSytemt1 = HexColor("#33486C");
+  static HexColor naranjaGNP = HexColor("#FF9E0A");
+  static HexColor border = HexColor("9DAEC8");
 }
 
 class HexColor extends Color {
