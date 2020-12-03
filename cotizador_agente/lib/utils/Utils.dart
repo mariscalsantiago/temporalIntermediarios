@@ -5,6 +5,8 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 class Utilidades {
 
+   static bool tabCotizarSelect = false;
+
    static bool isVaidMail(String mail) {
       return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(mail);
    }

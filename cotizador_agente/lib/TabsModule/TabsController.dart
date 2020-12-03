@@ -1,9 +1,11 @@
+import 'package:cotizador_agente/HomeModule/HomeController.dart';
 import 'package:cotizador_agente/TabsModule/Entity/Footer.dart';
 import 'package:cotizador_agente/TabsModule/Entity/Secciones.dart';
 import 'package:cotizador_agente/TabsModule/TabsContract.dart';
 import 'package:cotizador_agente/TabsModule/TabsPresenter.dart';
 import 'package:cotizador_agente/ThemeGNP/TabButton.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
+import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 
 class TabsController extends StatefulWidget {
@@ -106,6 +108,11 @@ class TabsControllerState extends State<TabsController> implements TabsView {
               if(currentTab.titulo!=tabselect){
                 setState(() {
                   tabselect = currentTab.titulo;
+                });
+              }
+              if(currentTab.titulo=="Cotizar"){
+                setState(() {
+                  Utilidades.tabCotizarSelect = true;
                 });
               }
               if (currentTab.habilitado) {
