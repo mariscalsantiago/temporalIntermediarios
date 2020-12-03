@@ -6,7 +6,6 @@ import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
 import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
 import 'package:cotizador_agente/RequestHandler/RequestHandlerDio.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
-import 'package:cotizador_agente/modelos_widget/NegocioOperableElement.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
@@ -31,6 +30,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
 
   bool isLoading = true;
+  NegocioOperable negocioSelected;
+  Cotizadores cotizadorSelected;
 
   @override
   void initState() {
@@ -71,14 +72,14 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     if(response.success){
       try {
         success = true;
-       // String body = response.response;
+
         var list = response.response['consultaPorParticipanteResponse']
         ["consultaNegocios"]["participante"]["listaNegocioOperable"] as List;
-
         list.removeWhere((element) => element["negocioOperable"].toString() != "AP Worksite");
 
         setState(() {
           widget.negociosOperables = list.map((i) => NegocioOperable.fromJson(i)).toList();
+          negocioSelected = widget.negociosOperables[0];
         });
 
         widget.negociosOperables.forEach((negocio) {
@@ -148,6 +149,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           setState(() {
             success = true;
             negocioOperable.cotizadores = list.map((i) => Cotizadores.fromJson(i)).toList();
+            cotizadorSelected = negocioOperable.cotizadores[0];
             isLoading = false;
           });
 
@@ -210,19 +212,27 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          /*leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: 35,),
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.clear, color: AppColors.secondary900, size: 28,),
             onPressed: () {
               Navigator.of(context).pop();
             },
-          ),*/
+          ),
           iconTheme: IconThemeData(color: AppColors.color_primario),
           backgroundColor: Colors.white,
-          title: Text("Cotizador AP", style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),),
+          title: Text("Seguros Masivos", style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),),
         ),
         body:  Column(
           children:  <Widget>[
 
+            Visibility(
+              visible: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 16.0, right: 33.5, left: 33.5, bottom: 40.0),
+                child: Image.asset("assets/img/img_negocios.png", height: 208, width: 294,),
+              ),
+            ),
             Visibility(
               visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
               child: Expanded(
@@ -231,25 +241,202 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
                     itemBuilder: (context, index){
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 24, left: 16, right: 16),
-                        child: Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 1.0,
-                                  color: AppColors.color_borde,
-                                  offset: Offset(1.0, 3.0),
+                      return Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                            child: Row(
+                              children: <Widget>[
+                                Text("NEGOCIO OPERABLE",
+                                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, letterSpacing: 0.32, color: AppColors.primary700),
+                                  textAlign: TextAlign.start,),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 3.0, left: 16.0, right: 16.0,),
+                            child: Divider(
+                              thickness: 1,
+                              color: AppColors.naranjaGNP,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 16, right: 16, top: 17.0),
+                            child: Container(
+                              padding: EdgeInsets.only(left: 16, right: 16,),
+                              height: 48,
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: AppColors.border, style: BorderStyle.solid, width: 1.0),
+                                  borderRadius: new BorderRadius.only(
+                                      topLeft: const Radius.circular(4.0),
+                                      topRight: const Radius.circular(4.0),
+                                      bottomLeft: const Radius.circular(4.0),
+                                      bottomRight: const Radius.circular(4.0)
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      blurRadius: 1.0,
+                                      color: Colors.white,
+                                      offset: Offset(2.0, 4.0),
+                                    ),
+                                  ]),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton(
+                                  elevation: 1,
+                                  value: negocioSelected,
+                                  isExpanded: true,
+                                  items: widget.negociosOperables.map((NegocioOperable negocio) {
+                                    return new DropdownMenuItem<NegocioOperable>(
+                                      onTap: () {
+                                        FocusScope.of(context).requestFocus(new FocusNode());
+                                      },
+                                      value: negocio,
+                                      child: new Text(
+                                        negocio.negocioOperable,
+                                        style: new TextStyle(color: Colors.black),
+                                      ),
+                                    );
+                                  }).toList(),
+                                  hint: Text(
+                                    "",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  onChanged: (NegocioOperable newValue) {
+                                    setState(() {
+                                      negocioSelected = newValue;
+                                      cotizadorSelected = negocioSelected.cotizadores[0];
+                                    });
+                                  },
                                 ),
-                              ]),
-                          child: NegocioOperableElement(negocioOperable: widget.negociosOperables[index],),
-                        ),);
+                              ),
+                            ),
+                          ),
+
+                          Visibility(
+                            visible: true,
+                            child: Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 31.0, right: 16.0, left: 16.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text("COTIZADOR",
+                                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, letterSpacing: 0.32, color: AppColors.primary700),
+                                        textAlign: TextAlign.start,),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 3.0, left: 16.0, right: 16.0,),
+                                  child: Divider(
+                                    thickness: 1,
+                                    color: AppColors.naranjaGNP,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16, right: 16, top: 17.0, bottom: 17.0),
+                                  child: Container(
+                                    padding: EdgeInsets.only(left: 16, right: 16, ),
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(color: AppColors.border, style: BorderStyle.solid, width: 1.0),
+                                        borderRadius: new BorderRadius.only(
+                                            topLeft: const Radius.circular(4.0),
+                                            topRight: const Radius.circular(4.0),
+                                            bottomLeft: const Radius.circular(4.0),
+                                            bottomRight: const Radius.circular(4.0)
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            blurRadius: 0.0,
+                                            color: Colors.white,
+                                            offset: Offset(2.0, 4.0),
+                                          ),
+                                        ]
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton(
+                                        elevation: 1,
+                                        value: cotizadorSelected,
+                                        isExpanded: true,
+                                        items: widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected)].cotizadores.map((Cotizadores cotizador) {
+                                          return new DropdownMenuItem<Cotizadores>(
+                                            onTap: () {
+                                              FocusScope.of(context).requestFocus(new FocusNode());
+                                            },
+                                            value: cotizador,
+                                            child: new Text(
+                                              cotizador.aplicacion,
+                                              style: new TextStyle(color: Colors.black),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        hint: Text(
+                                          "",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        onChanged: (Cotizadores newValue) {
+                                          setState(() {
+                                            cotizadorSelected = newValue;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        ],
+                      );
                     }
                 ),
               ),
             ),
           ],
+        ),
+        bottomSheet: Container(
+          color: Colors.white,
+          padding: const EdgeInsets.only(top: 31.0,bottom: 16.0, right: 16, left: 16),//
+          child: ButtonTheme(
+            minWidth: 400.0,
+            height: 45,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4.0),),
+            child: FlatButton(
+                color: AppColors.secondary900,
+                textColor: Colors.white,
+                child: Text("Cotizar",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, letterSpacing: 1.25),
+                ),
+                onPressed: () {
+                  CotizacionesApp nuevo = new CotizacionesApp();
+
+                  Utilidades.cotizacionesApp = nuevo;
+
+                  if(cotizadorSelected.mensaje != null) {
+                    Utilidades.mostrarAlertaCallback(
+                        Mensajes.titleContinuar, cotizadorSelected.mensaje, context, () {
+                      Navigator.pop(context);
+                    }, () {
+                      Navigator.pop(context);
+                      Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
+                      Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+                      //   seccionCotizador();
+                      Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                      Utilidades.deboCargarPaso1 = false;
+                    });
+                  } else{
+                    Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
+                    Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+                    //  seccionCotizador();
+                    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                    Utilidades.deboCargarPaso1 = false;
+                  }
+                }),
+          ),
         ),
       ),
     );
