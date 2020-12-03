@@ -286,18 +286,15 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
   }
 
   void changedDropDownItem(String valorSeleccionado) {
-    print("VALOR SELECCIONADO: " + valorSeleccionado + " CAMPO: " + widget.campo.id_campo.toString());
     widget.campo.valor = valorSeleccionado;
 
     if(widget.campo.esConsulta){
       widget.actualizarSecciones(valorSeleccionado);
       Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan = valorSeleccionado.toString();
-      print("actualizo a plan"+ Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan);
     }
 
 
     if (widget.campo.seccion_dependiente != null) {
-      print("voy a filtrar la seccion"+ widget.campo.seccion_dependiente);
       Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().filtrarSeccion(
           int.parse(widget.campo.seccion_dependiente),
           int.parse(valorSeleccionado));
@@ -320,7 +317,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
     //Liberar campos modificados
     widget.campo.campos_modificados.forEach((referencia){
-      print("Liberando campos modificados: "+ referencia.toString());
+
       List <Campo> campos  =  Utilidades.buscaCampoPorID(referencia.id_seccion, referencia.id_campo, true);
       if(campos!=null){
         campos.forEach((campo){
@@ -328,7 +325,6 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
           //Se regresa el valor del campo padre a su estado original
           if(campo.parent_campo!=null){
             Campo campo_padre = Utilidades.buscaCampoPorID(campo.parent_campo.id_seccion, campo.parent_campo.id_campo, true)[0];
-            print("Campo Padre es: "+referencia.toString());
 
             if(campo_padre.valores!=null){
               campo_padre.valores.forEach((valor){

@@ -38,11 +38,15 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     //negociosOper();
     super.initState();
     Future.delayed(Duration.zero, () {
-      _getNegociosOperables();
+      getNegociosOperables().then((success){
+        setState(() {
+          negocioSelected = widget.negociosOperables[0];
+        });
+      });
     });
   }
 
-  _getNegociosOperables( ) async {
+  getNegociosOperables( ) async {
 
     //final Trace negociosOp = FirebasePerformance.instance.newTrace("CotizadorUnico_NegociosOperables");
     /*negociosOp.start();
@@ -79,11 +83,14 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
         setState(() {
           widget.negociosOperables = list.map((i) => NegocioOperable.fromJson(i)).toList();
-          negocioSelected = widget.negociosOperables[0];
         });
 
         widget.negociosOperables.forEach((negocio) {
-          _getCotizadores(negocio);
+          getCotizadores(negocio).then((success){
+            setState(() {
+              cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
+            });
+          });
         });
         setState(() {
           isLoading = false;
@@ -91,7 +98,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       }catch(e){
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
-          _getNegociosOperables();
+          getNegociosOperables();
         });
       }
 
@@ -99,7 +106,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       isLoading = false;
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
         Navigator.pop(context);
-        _getNegociosOperables();
+        getNegociosOperables();
       });
     }
 
@@ -108,7 +115,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   }
 
 
-  _getCotizadores(NegocioOperable negocioOperable) async {
+  getCotizadores(NegocioOperable negocioOperable) async {
     // set up POST request arguments
     /*final Trace cotizadores = FirebasePerformance.instance.newTrace("CotizadorUnico_GetCotizadores");
     cotizadores.start();
@@ -149,7 +156,6 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           setState(() {
             success = true;
             negocioOperable.cotizadores = list.map((i) => Cotizadores.fromJson(i)).toList();
-            cotizadorSelected = negocioOperable.cotizadores[0];
             isLoading = false;
           });
 
@@ -166,7 +172,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       }else {
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
-          _getCotizadores(negocioOperable);
+          getCotizadores(negocioOperable);
         });
       }
 
@@ -174,7 +180,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       //cotizadores.stop();
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
         Navigator.pop(context);
-        _getCotizadores(negocioOperable);
+        getCotizadores(negocioOperable);
       });
     }
 
@@ -190,7 +196,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       isLoading = false;
     }else{
       if(widget.negociosOperables == null){
-        _getNegociosOperables();
+        getNegociosOperables();
       }else{
         isLoading = false;
       }
@@ -237,7 +243,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
               visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
               child: Expanded(
                 child: new ListView.builder(
-                    itemCount: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables.length : 0,
+                    itemCount: 1,
                     shrinkWrap: true,
                     physics: ScrollPhysics(),
                     itemBuilder: (context, index){
@@ -283,9 +289,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton(
                                   elevation: 1,
-                                  value: negocioSelected,
+                                  value: negocioSelected != null ? negocioSelected : widget.negociosOperables[0],
                                   isExpanded: true,
-                                  items: widget.negociosOperables.map((NegocioOperable negocio) {
+                                  items: widget.negociosOperables.map((NegocioOperable negocio) { //Declarar una lista y solo agregar los valores que contengan cotizadores y regresar esa lista de dropdownitems
                                     return new DropdownMenuItem<NegocioOperable>(
                                       onTap: () {
                                         FocusScope.of(context).requestFocus(new FocusNode());
@@ -297,10 +303,6 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                                       ),
                                     );
                                   }).toList(),
-                                  hint: Text(
-                                    "",
-                                    textAlign: TextAlign.center,
-                                  ),
                                   onChanged: (NegocioOperable newValue) {
                                     setState(() {
                                       negocioSelected = newValue;
@@ -357,9 +359,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                                     child: DropdownButtonHideUnderline(
                                       child: DropdownButton(
                                         elevation: 1,
-                                        value: cotizadorSelected,
+                                        value: cotizadorSelected != null ? cotizadorSelected : widget.negociosOperables[0].cotizadores[0],
                                         isExpanded: true,
-                                        items: widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected)].cotizadores.map((Cotizadores cotizador) {
+                                        items: widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected) < 0 ? 0 : widget.negociosOperables.indexOf(negocioSelected)].cotizadores.map((Cotizadores cotizador) {
                                           return new DropdownMenuItem<Cotizadores>(
                                             onTap: () {
                                               FocusScope.of(context).requestFocus(new FocusNode());
@@ -371,10 +373,6 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                                             ),
                                           );
                                         }).toList(),
-                                        hint: Text(
-                                          "",
-                                          textAlign: TextAlign.center,
-                                        ),
                                         onChanged: (Cotizadores newValue) {
                                           setState(() {
                                             cotizadorSelected = newValue;
