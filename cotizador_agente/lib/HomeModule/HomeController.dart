@@ -2,7 +2,6 @@ import 'package:cotizador_agente/HomeModule/HomePresenter.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
 import 'package:flutter/material.dart';
 
 class HomeController extends StatefulWidget {
@@ -53,11 +52,7 @@ class HomeControllerState extends State<HomeController>{
   }
 
   static void showCotizar(BuildContext context) {
-    Navigator.of(context).push(PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (BuildContext context, _, __) {
-          return SeleccionaCotizadorAP();
-        }));
+    Navigator.pushNamed(context, "/cotizadorUnicoAP",);
   }
 
   Widget _getBodyRemoteConfig() {
