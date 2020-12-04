@@ -1369,7 +1369,8 @@ class Seccion {
             checked: campo.checked,
             enabled: campo.enabled,
             reg_ex: campo.reg_ex,
-            visibleLocal: campo.visibleLocal);
+            visibleLocal: campo.visibleLocal,
+            oculta: campo.oculta);
 
         nuevosCampos.add(c);
       });

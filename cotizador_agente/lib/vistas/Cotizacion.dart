@@ -12,6 +12,7 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:cotizador_agente/cotizador_analitycs_tags.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
@@ -79,24 +80,182 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   bool propuesta1 = false;
   bool propuesta2 = false;
   bool propuesta3 = false;
+  bool comparativa = false;
 
   //verificar que sean diferentes de null
-  void guardarPropuestas(String texto1, String texto2, String texto3){
+  void guardarPropuestas(String texto1, String texto2, String texto3, String texto4){
     print(texto1);
     setState(() {
       if(texto1.isNotEmpty){
         Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
+        guardarFormato(0, Utilidades.FORMATO_COTIZACION_AP);
+        guardarFormato(0, Utilidades.FORMATO_COMISION_AP);
       }
       if(texto2.isNotEmpty){
         Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = texto2;
+        guardarFormato(1, Utilidades.FORMATO_COTIZACION_AP);
+        guardarFormato(1, Utilidades.FORMATO_COMISION_AP);
       }
-      /*if(texto3.isNotEmpty){
-        Utilidades.cotizacionesApp.getCotizacionElement(0).comparativa.nombre = texto3;
-      }*/
+      if(texto3.isNotEmpty){
+        Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = texto3;
+        guardarFormato(2, Utilidades.FORMATO_COTIZACION_AP);
+        guardarFormato(2, Utilidades.FORMATO_COMISION_AP);
+      }
       if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
         guardarFormatoComparativa();
       }
     });
+  }
+
+  guardarFormato( int idformato, int index) async {
+    //if(deboGuardarCotizacion){
+
+      /*final Trace saveCot = FirebasePerformance.instance.newTrace("CotizadorUnico_GuardarCotizacion");
+      saveCot.start();
+      print(saveCot.name);*/
+
+      final result = await InternetAddress.lookup('google.com');
+
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+
+
+        Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
+
+        String resumen;
+
+        if(idformato == Utilidades.FORMATO_COMPARATIVA){
+          List<Map<String, dynamic>> listRequest =  List<Map<String, dynamic>>();
+
+          for(int i = 0; i < Utilidades.cotizacionesApp.getCurrentLengthLista(); i++){
+
+            if(Utilidades.cotizacionesApp.getCotizacionElement(i).comparativa!=null){
+
+              Map<String, dynamic> comparativa = {
+                "responseResumen": Utilidades.cotizacionesApp.getCotizacionElement(i).generarResponseResumen(),
+                "formasPago": Utilidades.cotizacionesApp.getCotizacionElement(i).responseCotizacion["resumenCotizacion"]["formasPago"],
+                "secciones": Utilidades.cotizacionesApp.getCotizacionElement(i).responseCotizacion["resumenCotizacion"]["secciones"],
+              };
+
+              listRequest.add(comparativa);
+
+            }
+
+          }
+
+          Map<String, dynamic> comparativas = {
+            "comparativas": listRequest,
+          };
+
+          resumen = json.encode(comparativas);
+          //Utilidades.LogPrint("LA COMPARATIVA"+resumen);
+
+        }else{
+          resumen = json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).generarResponseResumen()).toString();
+        }
+
+        //Formar cadena del titular (HARDCODE a Peticion del BACKEND)
+        String titular = " ";
+
+        List<Campo> nombre= Utilidades.buscaCampoPorFormularioID(index, 2, 1, false);
+        List<Campo> primer_apellido= Utilidades.buscaCampoPorFormularioID(index, 2, 2, false);
+        List<Campo> segundo_apellido= Utilidades.buscaCampoPorFormularioID(index, 2, 3, false);
+
+        if(nombre!=null && primer_apellido!=null && segundo_apellido!=null ){
+
+          if(nombre.length>0 && primer_apellido.length>0 && segundo_apellido.length>0 ){
+
+            String t = ((nombre[0].getValorFormatted()).toString().trim() !="" ? nombre[0].getValorFormatted().toString().trim() + " " : "")  + ( (primer_apellido[0].getValorFormatted()).toString().trim() != "" ? primer_apellido[0].getValorFormatted()+ " " : "" ) + ( (segundo_apellido[0].getValorFormatted()).toString().trim() != "" ? segundo_apellido[0].getValorFormatted().toString().trim() : "");
+
+            if(t!=""){
+              titular = t;
+            }
+
+          }
+
+        }
+
+        ////TO DO: Revisar esta cambio. HAY UNA BRECHA EN EL SERVICIO DEL BACK 1 - POLIZA, 2 - COMPARATIVA, 3 - COMISIONES
+        Map<String, dynamic> jsonMap = {
+          "idUsuario": datosUsuario.idparticipante.toString(),
+          "idAplicacion": Utilidades.idAplicacion,
+          "codIntermediario": "0060661001",//"datosPerfilador.intermediarios".toString().replaceAll("[", "").replaceAll("]", ""),
+          "idPlan": idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
+          "idFormato": idformato,
+          "titularCotizacion": titular, //NOMBRE DEL TITULAR sacarlo de formulario
+          "requestCotizacion": idformato == Utilidades.FORMATO_COMPARATIVA ? "{}" : Utilidades.cotizacionesApp.getCotizacionElement(index).requestCotizacion.toString(),
+          "responseCotizacion": idformato == Utilidades.FORMATO_COMPARATIVA ? "{}" : json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).responseCotizacion).toString(),
+          "responseResumen": resumen,
+          "nombreCotizacion": idformato != Utilidades.FORMATO_COMPARATIVA ? Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Propuesta " + (index+1).toString() : "Prueba AP",
+        };
+
+        /*Utilidades.LogPrint("REQUEST: " + Utilidades.cotizacionesApp.getCotizacionElement(index).requestCotizacion.toString());
+        Utilidades.LogPrint("RESPONSE: " + json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).responseCotizacion).toString());
+        Utilidades.LogPrint("RESUMEN: " + resumen);*/
+        var request = MyRequest(
+            baseUrl: AppConfig.of(context).urlBase,
+            path: Constants.GUARDA_COTIZACION,
+            method: Method.POST,
+            body: jsonEncode(jsonMap).toString(),
+            headers: headers
+        );
+
+        MyResponse response = await RequestHandler.httpRequest(request);
+        if(response.success){
+          Utilidades.LogPrint("COT GUARDADA: \ " + json.encode(jsonMap).toString());
+          Utilidades.LogPrint("RESPONSE COT G: " + response.response.toString());
+          //saveCot.stop();
+          this.setState(() {
+            isLoading = false;
+
+            int folio = response.response["folio"];
+            switch(idformato){
+              case Utilidades.FORMATO_COMISION:
+                Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
+                break;
+
+              case Utilidades.FORMATO_COTIZACION:
+                Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
+                break;
+
+              case Utilidades.FORMATO_COMISION_AP:
+                Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
+                break;
+
+              case Utilidades.FORMATO_COTIZACION_AP:
+                Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
+                break;
+
+            }
+            // _initialWebView();
+
+            /*Navigator.push(context,
+                    MaterialPageRoute(
+                      builder: (context) => CotizacionPDF(
+                        id: index+1,
+                        folio: folio,
+                        idFormato: idformato,
+                        id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
+                      ),
+                    ));*/
+
+          });
+        }else{
+          //saveCot.stop();
+          isLoading = false;
+          String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+          Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
+        }
+
+      }else {
+        //saveCot.stop();
+        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+          Navigator.pop(context);
+          guardaCotizacion(index, idformato);
+        });
+      }
+
+
+   // }
   }
 
 
@@ -422,153 +581,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
     bool success = false;
     if(deboGuardarCotizacion){
-
-      /*final Trace saveCot = FirebasePerformance.instance.newTrace("CotizadorUnico_GuardarCotizacion");
-      saveCot.start();
-      print(saveCot.name);*/
-
-        final result = await InternetAddress.lookup('google.com');
-
-        if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-
-
-            Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
-
-            String resumen;
-
-            if(idformato == Utilidades.FORMATO_COMPARATIVA){
-              List<Map<String, dynamic>> listRequest =  List<Map<String, dynamic>>();
-
-              for(int i = 0; i < Utilidades.cotizacionesApp.getCurrentLengthLista(); i++){
-
-                if(Utilidades.cotizacionesApp.getCotizacionElement(i).comparativa!=null){
-
-                  Map<String, dynamic> comparativa = {
-                    "responseResumen": Utilidades.cotizacionesApp.getCotizacionElement(i).generarResponseResumen(),
-                    "formasPago": Utilidades.cotizacionesApp.getCotizacionElement(i).responseCotizacion["resumenCotizacion"]["formasPago"],
-                    "secciones": Utilidades.cotizacionesApp.getCotizacionElement(i).responseCotizacion["resumenCotizacion"]["secciones"],
-                  };
-
-                  listRequest.add(comparativa);
-
-                }
-
-              }
-
-              Map<String, dynamic> comparativas = {
-                "comparativas": listRequest,
-              };
-
-              resumen = json.encode(comparativas);
-              //Utilidades.LogPrint("LA COMPARATIVA"+resumen);
-
-            }else{
-              resumen = json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).generarResponseResumen()).toString();
-            }
-
-            //Formar cadena del titular (HARDCODE a Peticion del BACKEND)
-            String titular = " ";
-
-            List<Campo> nombre= Utilidades.buscaCampoPorFormularioID(index, 2, 1, false);
-            List<Campo> primer_apellido= Utilidades.buscaCampoPorFormularioID(index, 2, 2, false);
-            List<Campo> segundo_apellido= Utilidades.buscaCampoPorFormularioID(index, 2, 3, false);
-
-            if(nombre!=null && primer_apellido!=null && segundo_apellido!=null ){
-
-              if(nombre.length>0 && primer_apellido.length>0 && segundo_apellido.length>0 ){
-
-                String t = ((nombre[0].getValorFormatted()).toString().trim() !="" ? nombre[0].getValorFormatted().toString().trim() + " " : "")  + ( (primer_apellido[0].getValorFormatted()).toString().trim() != "" ? primer_apellido[0].getValorFormatted()+ " " : "" ) + ( (segundo_apellido[0].getValorFormatted()).toString().trim() != "" ? segundo_apellido[0].getValorFormatted().toString().trim() : "");
-
-                if(t!=""){
-                  titular = t;
-                }
-
-              }
-
-            }
-
-            ////TO DO: Revisar esta cambio. HAY UNA BRECHA EN EL SERVICIO DEL BACK 1 - POLIZA, 2 - COMPARATIVA, 3 - COMISIONES
-            Map<String, dynamic> jsonMap = {
-              "idUsuario": datosUsuario.idparticipante.toString(),
-              "idAplicacion": Utilidades.idAplicacion,
-              "codIntermediario": "0060661001",//"datosPerfilador.intermediarios".toString().replaceAll("[", "").replaceAll("]", ""),
-              "idPlan": idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
-              "idFormato": idformato,
-              "titularCotizacion": titular, //NOMBRE DEL TITULAR sacarlo de formulario
-              "requestCotizacion": idformato == Utilidades.FORMATO_COMPARATIVA ? "{}" : Utilidades.cotizacionesApp.getCotizacionElement(index).requestCotizacion.toString(),
-              "responseCotizacion": idformato == Utilidades.FORMATO_COMPARATIVA ? "{}" : json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).responseCotizacion).toString(),
-              "responseResumen": resumen,
-              "nombreCotizacion": idformato != Utilidades.FORMATO_COMPARATIVA ? Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Propuesta " + (index+1).toString() : "Prueba AP",
-            };
-
-            /*Utilidades.LogPrint("REQUEST: " + Utilidades.cotizacionesApp.getCotizacionElement(index).requestCotizacion.toString());
-        Utilidades.LogPrint("RESPONSE: " + json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).responseCotizacion).toString());
-        Utilidades.LogPrint("RESUMEN: " + resumen);*/
-            var request = MyRequest(
-                baseUrl: AppConfig.of(context).urlBase,
-                path: Constants.GUARDA_COTIZACION,
-                method: Method.POST,
-                body: jsonEncode(jsonMap).toString(),
-                headers: headers
-            );
-
-            MyResponse response = await RequestHandler.httpRequest(request);
-            if(response.success){
-              Utilidades.LogPrint("COT GUARDADA: \ " + json.encode(jsonMap).toString());
-              Utilidades.LogPrint("RESPONSE COT G: " + response.response.toString());
-              //saveCot.stop();
-              this.setState(() {
-                isLoading = false;
-                success = true;
-
-                int folio = response.response["folio"];
-                switch(idformato){
-                  case Utilidades.FORMATO_COMISION:
-                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
-                    break;
-
-                  case Utilidades.FORMATO_COTIZACION:
-                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
-                    break;
-
-                  case Utilidades.FORMATO_COMISION_AP:
-                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
-                    break;
-
-                  case Utilidades.FORMATO_COTIZACION_AP:
-                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
-                    break;
-
-                }
-                // _initialWebView();
-
-                Navigator.push(context,
-                    MaterialPageRoute(
-                      builder: (context) => CotizacionPDF(
-                        id: index+1,
-                        folio: folio,
-                        idFormato: idformato,
-                        id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
-                      ),
-                    ));
-
-              });
-            }else{
-              //saveCot.stop();
-              isLoading = false;
-              String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
-              Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
-            }
-
-        }else {
-          //saveCot.stop();
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
-            guardaCotizacion(index, idformato);
-          });
-        }
-
-
+      guardarFormato(idformato, index);
     }else{
       success = true;
     }
@@ -579,10 +592,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   void limpiarDatos(){
 
-    Utilidades.cotizacionesApp.limpiarComparativa();
+    Utilidades.mostrarAlertaCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
+      Navigator.pop(context);
+    }, (){
+      Utilidades.cotizacionesApp.limpiarComparativa();
 
-    Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoAP'));
-    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+      Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoAP'));
+      Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+    });
 
   }
 
@@ -757,6 +774,69 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   }
 
+  // ignore: missing_return
+  Widget showModalGuardar(){
+    double altoModal = Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 ? 497 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 ? 430 : 295;
+     showModalBottomSheet(
+      isScrollControlled: true,
+      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context) => AnimatedPadding(
+        duration: Duration(milliseconds: 0),
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Container(
+          height: altoModal,
+          padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+          decoration : new BoxDecoration(
+              color: Colors.white,
+              borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(12.0),
+                topRight: const Radius.circular(12.0),
+              )
+          ),
+          child:  Center(
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(top: 16.0, left: 24.0, right: 24.0),
+                    child:Center(child: new Text(Mensajes.titleSave,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: AppColors.color_titleAlert,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.15))),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16.0, bottom: 16.0, left: 12.0, right: 12.0),
+                    child:SingleChildScrollView(child: new Text(Mensajes.lblSaveCot,
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(
+                            color: AppColors.color_appBar,
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 0.25))),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: Form(
+                      key: _formKey,
+                      child: Column(children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(right: 24.0, left: 24.0),
+                          child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, ispropuesta4: comparativa, guardarPropuestas: guardarPropuestas,),
+                        ),
+                      ],),
+                    ),
+                  ),
+                ],
+              )),
+        ),
+      ),
+    );
+}
+
   @override
   Widget build(BuildContext context) {
 
@@ -798,70 +878,167 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   backgroundColor: Colors.white,
                   title: Text("Tabla comparativa", style: TextStyle(color: AppColors.color_appBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto", letterSpacing: 0.15)),
                   actions: <Widget>[
-                    IconButton(
-                      icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
-                      onPressed: () {
-                        //TextEditingController nombrePropuesta1Controller = TextEditingController();
-                        showModalBottomSheet(
-                          isScrollControlled: true,
-                          barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
-                          backgroundColor: Colors.transparent,
-                          context: context,
-                          builder: (context) => AnimatedPadding(
-                            duration: Duration(milliseconds: 0),
-                            padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-                            child: Container(
-                              height: 430,
-                              padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
-                              decoration : new BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: new BorderRadius.only(
-                                    topLeft: const Radius.circular(12.0),
-                                    topRight: const Radius.circular(12.0),
-                                  )
-                              ),
-                              child:  Center(
-                                  child: Column(
+                    PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
+                        offset: Offset(100, 100),
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            value: 1,
+                            child: Column(
+                              children: <Widget>[
+                                Divider(height: 4,color: AppColors.color_divider,),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Row(
                                     children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 16.0, left: 24.0, right: 24.0),
-                                        child:Center(child: new Text(Mensajes.titleSave,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: AppColors.color_titleAlert,
-                                                fontSize: 16.0,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: 0.15))),
+                                      Text(Mensajes.acciones,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                            color: AppColors.color_popupmenu,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 10,
+                                            letterSpacing: 1.5,
+                                          )
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(top: 16.0, bottom: 16.0, left: 12.0, right: 12.0),
-                                        child:SingleChildScrollView(child: new Text(Mensajes.lblSaveCot,
-                                            textAlign: TextAlign.justify,
-                                            style: TextStyle(
-                                                color: AppColors.color_appBar,
-                                                fontSize: 14.0,
-                                                fontWeight: FontWeight.w400,
-                                                letterSpacing: 0.25))),
-                                      ),
-                                      Flexible(
-                                        flex: 1,
-                                        child: Form(
-                                          key: _formKey,
-                                          child: Column(children: <Widget>[
-                                            Padding(
-                                              padding: const EdgeInsets.only(right: 24.0, left: 24.0),
-                                              child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas,),
-                                            ),
-                                          ],),
-                                        ),
-                                      ),
+                                      Spacer(flex: 1,)
                                     ],
-                                  )),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                      },),
+                          PopupMenuItem(
+                            value:2,
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                      child: Text(Mensajes.guarda,
+                                          style: TextStyle(
+                                              color: AppColors.color_appBar,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                              letterSpacing: 0.15)
+                                      ),
+                                    ),
+                                    Spacer(flex: 2,),
+                                    IconButton(
+                                      icon: Image.asset('assets/icon/cotizador/guardar_Enabled.png'),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        //TextEditingController nombrePropuesta1Controller = TextEditingController();
+                                        showModalGuardar();
+                                      },),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                                  child: Divider(height: 2,color: AppColors.color_divider,),
+                                ),
+                              ],
+                            ),
+                          ),
 
+                          PopupMenuItem(
+                            value:3,
+                            child: Column(
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                      child: Text(Mensajes.titleLimpia,
+                                          style: TextStyle(
+                                            color: AppColors.color_appBar,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            letterSpacing: 0.15,)
+                                      ),),
+                                    Spacer(flex: 2,),
+                                    IconButton(
+                                      icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        limpiarDatos();
+                                      },),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16.0, right: 8.0, bottom: 16.0),
+                                  child: Divider(height: 2,color: AppColors.color_divider,),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: 4,
+                            child: Column(
+                              children: <Widget>[
+                                Divider(height: 4,color: AppColors.color_divider,),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Text(Mensajes.soporte,
+                                          textAlign: TextAlign.start,
+                                          style: TextStyle(
+                                            color: AppColors.color_popupmenu,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 10,
+                                            letterSpacing: 1.5,)),
+                                      Spacer(flex: 1,)
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                                      child: Text(Mensajes.misCotizaciones,
+                                          style: TextStyle(
+                                            color: AppColors.color_appBar,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            letterSpacing: 0.15,)
+                                      ),),
+                                    Spacer(flex: 2,),
+                                    IconButton(
+                                      icon: Image.asset('assets/icon/cotizador/miscotizaciones.png'),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        Navigator.push(context,  MaterialPageRoute(
+                                          builder: (context) => MisCotizaciones(),
+                                        ));
+                                      },),
+                                  ],
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 16.0, right: 8.0),
+                                  child: Divider(height: 2,color: AppColors.color_divider,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        initialValue: 0,
+                        onCanceled: () {
+                          print("You have canceled the menu.");
+                        },
+                        onSelected: (value) {
+                          switch (value) {
+                            case 2:
+                              break;
+                            case 3:
+                              break;
+                            case 4:
+                              Navigator.push(context,  MaterialPageRoute(
+                                builder: (context) => MisCotizaciones(),
+                              ));
+                              break;
+                          }
+                        }
+                    ),
                   ],
                 ),
                 body: Column(//isLoading ? showLoading():
@@ -1507,14 +1684,15 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 }
 
 class listaCheck extends StatefulWidget {
-  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.guardarPropuestas, }) : super(key: key);
+  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.ispropuesta4, this.guardarPropuestas, }) : super(key: key);
 
   @override
   _listaCheckState createState() => _listaCheckState();
-  bool ispropuesta1 = false,ispropuesta2 = false, ispropuesta3 = false;
-  final void Function(String t1, String t2, String t3) guardarPropuestas;
+  bool ispropuesta1 = false,ispropuesta2 = false, ispropuesta3 = false, ispropuesta4 = false;
+  final void Function(String t1, String t2, String t3, String t4) guardarPropuestas;
   final namePropuesta1Controller = new TextEditingController();
   final namePropuesta2Controller = new TextEditingController();
+  final namePropuesta3Controller = new TextEditingController();
   final nametablaCompController = new TextEditingController();
 
 }
@@ -1523,9 +1701,11 @@ class _listaCheckState extends State<listaCheck> {
   bool propuesta1;
   bool propuesta2;
   bool propuesta3;
+  bool comparativa;
   String texto1 = "";
   String texto2 = "";
   String texto3 = "";
+  String texto4 = "";
   @override
   Widget build(BuildContext context) {
     if(propuesta1 != null){
@@ -1537,6 +1717,9 @@ class _listaCheckState extends State<listaCheck> {
     if(propuesta3 != null){
       widget.ispropuesta3 = propuesta3;
     }
+    if(comparativa != null){
+      widget.ispropuesta4 = comparativa;
+    }
     if(texto1 != null){
       widget.namePropuesta1Controller.text = texto1;
     }
@@ -1544,7 +1727,10 @@ class _listaCheckState extends State<listaCheck> {
       widget.namePropuesta2Controller.text = texto2;
     }
     if(texto3 != null){
-      widget.nametablaCompController.text = texto3;
+      widget.namePropuesta3Controller.text = texto3;
+    }
+    if(texto4 != null){
+      widget.nametablaCompController.text = texto4;
     }
     return Column(
       children: <Widget>[
@@ -1595,115 +1781,179 @@ class _listaCheckState extends State<listaCheck> {
             ),
           ),
         ],),
-        Padding(
-          padding: const EdgeInsets.only(top:18.0),
-          child: Row(children: <Widget>[
-            Checkbox(
-              value: widget.ispropuesta2,
-              onChanged: (bool value){
-                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
-                  setState(() {
-                  widget.ispropuesta2 = value;
-                  propuesta2 = widget.ispropuesta2;
-                  print(widget.ispropuesta2.toString());
-                });
-                }else{
-                  null;
-                }
-              },
-              activeColor: Colors.white,
-              checkColor: AppColors.secondary900,
-            ),
-            Expanded(
-              flex: 1,
-              child: TextFormField(
-                enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
-                onChanged: (text) {
-                  setState(() {
-                    widget.namePropuesta2Controller.text = text;
-                    texto2 = widget.namePropuesta2Controller.text;
+        Visibility(
+          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
+          child: Padding(
+            padding: const EdgeInsets.only(top:18.0),
+            child: Row(children: <Widget>[
+              Checkbox(
+                value: widget.ispropuesta2,
+                onChanged: (bool value){
+                  if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
+                    setState(() {
+                    widget.ispropuesta2 = value;
+                    propuesta2 = widget.ispropuesta2;
+                    print(widget.ispropuesta2.toString());
                   });
+                  }else{
+                    null;
+                  }
                 },
-                keyboardType: TextInputType.text,
-                inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(left: 12.0),
-                  labelText: Mensajes.propuesta + " 2",
-                  hintStyle: TextStyle(fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: AppColors.gnpTextUser,
-                  ),
-                  focusColor: AppColors.color_primario,
-                  fillColor: AppColors.primary200,
-                  enabledBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(
-                        color: AppColors.primary200
+                activeColor: Colors.white,
+                checkColor: AppColors.secondary900,
+              ),
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
+                  onChanged: (text) {
+                    setState(() {
+                      widget.namePropuesta2Controller.text = text;
+                      texto2 = widget.namePropuesta2Controller.text;
+                    });
+                  },
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(left: 12.0),
+                    labelText: Mensajes.propuesta + " 2",
+                    hintStyle: TextStyle(fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: AppColors.gnpTextUser,
                     ),
-                  ),
-                  border: new UnderlineInputBorder(
-                    borderSide: new BorderSide(
-                        color: AppColors.primary200
+                    focusColor: AppColors.color_primario,
+                    fillColor: AppColors.primary200,
+                    enabledBorder: new UnderlineInputBorder(
+                      borderSide: new BorderSide(
+                          color: AppColors.primary200
+                      ),
+                    ),
+                    border: new UnderlineInputBorder(
+                      borderSide: new BorderSide(
+                          color: AppColors.primary200
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],),
+            ],),
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top:20.0),
-          child: Row(children: <Widget>[
-            Checkbox(
-              value: widget.ispropuesta3,
-              onChanged: (bool value){
-                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
-                  setState(() {
-                  widget.ispropuesta3 = value;
-                  propuesta3 = widget.ispropuesta3;
-                  print(widget.ispropuesta3.toString());
-                });
-                }else{
-                  null;
-                }
-              },
-              activeColor: Colors.white,
-              checkColor: AppColors.secondary900,
-            ),
-            Expanded(
-              flex: 1,
-              child: TextFormField(
-                enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
-                onChanged: (text) {
-                  setState(() {
-                    widget.nametablaCompController.text = text;
-                    texto3 = widget.nametablaCompController.text;
-                  });
+        Visibility(
+          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2,
+          child: Padding(
+            padding: const EdgeInsets.only(top:20.0),
+            child: Row(children: <Widget>[
+              Checkbox(
+                value: widget.ispropuesta3,
+                onChanged: (bool value){
+                  if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2) {
+                    setState(() {
+                      widget.ispropuesta3 = value;
+                      propuesta3 = widget.ispropuesta3;
+                      print(widget.ispropuesta3.toString());
+                    });
+                  }else{
+                    null;
+                  }
                 },
-                keyboardType: TextInputType.text,
-                inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
-                decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(left: 12.0),
-                  labelText: Mensajes.tabla_Comp,
-                  hintStyle: TextStyle(fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                    color: AppColors.gnpTextUser,
-                  ),
-                  focusColor: AppColors.color_primario,
-                  fillColor: AppColors.primary200,
-                  enabledBorder: new UnderlineInputBorder(
-                    borderSide: new BorderSide(
-                        color: AppColors.primary200
+                activeColor: Colors.white,
+                checkColor: AppColors.secondary900,
+              ),
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2,
+                  onChanged: (text) {
+                    setState(() {
+                      widget.namePropuesta3Controller.text = text;
+                      texto3 = widget.namePropuesta3Controller.text;
+                    });
+                  },
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(left: 12.0),
+                    labelText: Mensajes.propuesta + " 3",
+                    hintStyle: TextStyle(fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: AppColors.gnpTextUser,
                     ),
-                  ),
-                  border: new UnderlineInputBorder(
-                    borderSide: new BorderSide(
-                        color: AppColors.primary200
+                    focusColor: AppColors.color_primario,
+                    fillColor: AppColors.primary200,
+                    enabledBorder: new UnderlineInputBorder(
+                      borderSide: new BorderSide(
+                          color: AppColors.primary200
+                      ),
+                    ),
+                    border: new UnderlineInputBorder(
+                      borderSide: new BorderSide(
+                          color: AppColors.primary200
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],),
+            ],),
+          ),
+        ),
+        Visibility(
+          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
+          child: Padding(
+            padding: const EdgeInsets.only(top:20.0),
+            child: Row(children: <Widget>[
+              Checkbox(
+                value: widget.ispropuesta4,
+                onChanged: (bool value){
+                  if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
+                    setState(() {
+                    widget.ispropuesta4 = value;
+                    comparativa = widget.ispropuesta4;
+                    print(widget.ispropuesta4.toString());
+                  });
+                  }else{
+                    null;
+                  }
+                },
+                activeColor: Colors.white,
+                checkColor: AppColors.secondary900,
+              ),
+              Expanded(
+                flex: 1,
+                child: TextFormField(
+                  enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
+                  onChanged: (text) {
+                    setState(() {
+                      widget.nametablaCompController.text = text;
+                      texto4 = widget.nametablaCompController.text;
+                    });
+                  },
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.only(left: 12.0),
+                    labelText: Mensajes.tabla_Comp,
+                    hintStyle: TextStyle(fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: AppColors.gnpTextUser,
+                    ),
+                    focusColor: AppColors.color_primario,
+                    fillColor: AppColors.primary200,
+                    enabledBorder: new UnderlineInputBorder(
+                      borderSide: new BorderSide(
+                          color: AppColors.primary200
+                      ),
+                    ),
+                    border: new UnderlineInputBorder(
+                      borderSide: new BorderSide(
+                          color: AppColors.primary200
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],),
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 0, right: 0),
@@ -1724,11 +1974,14 @@ class _listaCheckState extends State<listaCheck> {
                 if(texto2 != null && texto2.isNotEmpty){
                   Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = widget.namePropuesta2Controller.text;
                 }
+                if(texto3.isNotEmpty && texto3 != null){
+                  Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.namePropuesta3Controller.text;
+                }
                 /*if(texto3.isNotEmpty && texto3 != null){
                   Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.nametablaCompController.text;
                 }*/
                 Navigator.pop(context);
-                widget.guardarPropuestas(texto1,texto2,texto3);
+                widget.guardarPropuestas(texto1,texto2,texto3, texto4);
               }),
               child: Text(Mensajes.guarda,
                 style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600,letterSpacing: 1.25),

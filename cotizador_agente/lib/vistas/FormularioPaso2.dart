@@ -117,6 +117,16 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
   }
 
+  void limpiarDatos(){
+
+    Utilidades.mostrarAlertaCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
+      Navigator.pop(context);
+    }, (){
+      Navigator.pop(context);
+      actualizarVistaConNuevoPlan(plan);
+    });
+
+  }
 
   actualizarVistaConNuevoPlan(String p) async{
 
@@ -672,7 +682,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                 icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
                                 onPressed: () {
                                   Navigator.pop(context);
-                                  actualizarVistaConNuevoPlan(plan);
+                                  limpiarDatos();
 
                                 },),
                             ],
