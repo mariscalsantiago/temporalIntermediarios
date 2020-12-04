@@ -121,7 +121,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
   }
 
   void recargar(){
-    Utilidades.mostrarAlertaCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
+    Utilidades.mostrarAlertaBorrarCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
       Navigator.pop(context);
     }, (){
       print("RECARGA");

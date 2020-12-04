@@ -449,6 +449,52 @@ class Utilidades {
       );
    }
 
+   static void mostrarAlertaBorrarCallback(String titulo, String mensaje,
+       BuildContext context, Function negative, Function positive) {
+      // flutter defined function
+      showMaterialModalBottomSheet(
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+         backgroundColor: Colors.transparent,
+         context: context,
+         builder: (context, scrollController) => Container(
+            height: 168,
+            padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+            decoration : new BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                   topLeft: const Radius.circular(12.0),
+                   topRight: const Radius.circular(12.0),
+                )
+            ),
+            child:  Center(
+                child: Column(
+                   children: <Widget>[
+                      Padding(
+                         padding: EdgeInsets.only(top:0.0),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
+                      ),
+                      Padding(
+                         padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                         child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                      ),
+                      ButtonTheme(
+                         minWidth: 340.0,
+                         height: 40.0,
+                         buttonColor: AppColors.secondary900,
+                         child: RaisedButton(
+                            onPressed: positive,
+                            child: Text(
+                               "Aceptar",
+                               style: TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                         ),
+                      ),
+                   ],
+                )),
+         ),
+      );
+   }
+
    static void mostrarAlertCargaDeDatos(String titulo, String mensaje,
        BuildContext context, Function negative, Function positive) {
       // flutter defined function

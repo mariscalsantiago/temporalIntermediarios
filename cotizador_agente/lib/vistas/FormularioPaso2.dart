@@ -119,7 +119,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
   void limpiarDatos(){
 
-    Utilidades.mostrarAlertaCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
+    Utilidades.mostrarAlertaBorrarCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
       Navigator.pop(context);
     }, (){
       Navigator.pop(context);
@@ -666,26 +666,32 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                       value:3,
                       child: Column(
                         children: <Widget>[
-                          Row(
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
-                                child: Text(Mensajes.titleLimpia,
-                                    style: TextStyle(
-                                        color: AppColors.color_appBar,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16,
-                                    letterSpacing: 0.15)
-                                ),),
-                              Spacer(flex: 2,),
-                              IconButton(
-                                icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                  limpiarDatos();
+                          GestureDetector(
+                            onTap: (){
+                              Navigator.pop(context);
+                              limpiarDatos();
+                            },
+                            child: Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 0.0,right: 16.0, left: 16.0),
+                                  child: Text(Mensajes.titleLimpia,
+                                      style: TextStyle(
+                                          color: AppColors.color_appBar,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16,
+                                      letterSpacing: 0.15)
+                                  ),),
+                                Spacer(flex: 2,),
+                                IconButton(
+                                  icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    limpiarDatos();
 
-                                },),
-                            ],
+                                  },),
+                              ],
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 16.0, right: 8.0, bottom: 16.0),

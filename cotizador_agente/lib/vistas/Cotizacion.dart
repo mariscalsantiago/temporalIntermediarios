@@ -592,7 +592,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   void limpiarDatos(){
 
-    Utilidades.mostrarAlertaCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
+    Utilidades.mostrarAlertaBorrarCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
       Navigator.pop(context);
     }, (){
       Utilidades.cotizacionesApp.limpiarComparativa();
