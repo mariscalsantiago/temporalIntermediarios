@@ -186,7 +186,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
         Map<String, dynamic> jsonMap = {
           "idAplicacion": Utilidades.idAplicacion,
           "pagina": pagina,
-          "idUsuario": datosUsuario.idparticipante.toString()
+          "idUsuario": "TALLPRO"//datosUsuario.idparticipante.toString()
         };
 
         //FILTROS

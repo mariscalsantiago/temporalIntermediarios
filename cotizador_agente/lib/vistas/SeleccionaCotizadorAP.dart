@@ -37,13 +37,13 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   void initState() {
     //negociosOper();
     super.initState();
-    Future.delayed(Duration.zero, () {
+
       getNegociosOperables().then((success){
         setState(() {
           negocioSelected = widget.negociosOperables[0];
+          cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
         });
       });
-    });
   }
 
   getNegociosOperables( ) async {
@@ -85,11 +85,11 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           widget.negociosOperables = list.map((i) => NegocioOperable.fromJson(i)).toList();
         });
 
-        widget.negociosOperables.forEach((negocio) {
-          getCotizadores(negocio).then((success){
-            setState(() {
-              cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
-            });
+        widget.negociosOperables.forEach((negocio) async {
+          setState(() async {
+            negocio.cotizadores = await getCotizadores(negocio);
+            negocioSelected = widget.negociosOperables[0];
+            cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
           });
         });
         setState(() {
@@ -115,14 +115,14 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   }
 
 
-  getCotizadores(NegocioOperable negocioOperable) async {
+  Future<List<Cotizadores>> getCotizadores(NegocioOperable negocioOperable) async {
     // set up POST request arguments
     /*final Trace cotizadores = FirebasePerformance.instance.newTrace("CotizadorUnico_GetCotizadores");
     cotizadores.start();
     print(cotizadores.name);*/
-    bool success = false;
     var config = AppConfig.of(context);
-
+    List<dynamic> list;
+    List<Cotizadores> listCotizadores = List<Cotizadores>();
     try{
 
       final result = await InternetAddress.lookup('google.com');
@@ -151,14 +151,16 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
         if(response.success){
 
-          var list = response.response['cotizadores'] as List;
+          list = response.response['cotizadores'];
 
           setState(() {
-            success = true;
-            negocioOperable.cotizadores = list.map((i) => Cotizadores.fromJson(i)).toList();
+            //negocioOperable.cotizadores = list.map((i) => Cotizadores.fromJson(i)).toList();
             isLoading = false;
           });
-
+          for(int i =0; i<list.length; i++){
+            listCotizadores.add(Cotizadores.fromJson(list[i]));
+          }
+          return listCotizadores;
         }else{
           //cotizadores.stop();
           isLoading = false;
@@ -168,6 +170,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleError, response.response, context,"Aceptar",(){
             Navigator.pop(context);
           });
+          return listCotizadores;
         }
       }else {
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
@@ -182,9 +185,11 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         Navigator.pop(context);
         getCotizadores(negocioOperable);
       });
+      return listCotizadores;
+    //  return list.map((i) => Cotizadores.fromJson(i)).toList(); //TODO Regresar una excepción
     }
 
-    return success;
+    return listCotizadores;
 
   }
 
@@ -286,7 +291,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                                       offset: Offset(2.0, 4.0),
                                     ),
                                   ]),
-                              child: DropdownButtonHideUnderline(
+                              child: widget.negociosOperables[0] != null && widget.negociosOperables.length>0 ? DropdownButtonHideUnderline(
                                 child: DropdownButton(
                                   elevation: 1,
                                   value: negocioSelected != null ? negocioSelected : widget.negociosOperables[0],
@@ -310,7 +315,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                                     });
                                   },
                                 ),
-                              ),
+                              ) : Container(),
                             ),
                           ),
 
@@ -356,7 +361,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                                           ),
                                         ]
                                     ),
-                                    child: DropdownButtonHideUnderline(
+                                    child: widget.negociosOperables.length>0 && widget.negociosOperables[0].cotizadores.length> 0 ? DropdownButtonHideUnderline(
                                       child: DropdownButton(
                                         elevation: 1,
                                         value: cotizadorSelected != null ? cotizadorSelected : widget.negociosOperables[0].cotizadores[0],
@@ -379,7 +384,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                                           });
                                         },
                                       ),
-                                    ),
+                                    ) : Container(),
                                   ),
                                 ),
                               ],
