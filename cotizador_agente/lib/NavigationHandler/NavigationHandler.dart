@@ -1,4 +1,3 @@
-import 'package:cotizador_agente/HomeModule/HomeController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
@@ -12,15 +11,15 @@ class NavigationHandler {
 
   static Future<bool> navigateToRoute({BuildContext context, String route}) async {
     switch (route) {
-      case "flutter_app/home":
-        break;
       case "flutter_app/cotizar":
         showCotizar(context);
         break;
       case "flutter_app/pagar":
-        showPagar(context);
         break;
       case "flutter_app/emitir":
+        showPagar(context);
+        break;
+      case "flutter_app/renovar":
         showEmitir(context);
         break;
       case "flutter_app/menu":
