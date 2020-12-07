@@ -88,18 +88,18 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     setState(() {
       if(texto1.isNotEmpty){
         Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
-        guardarFormato(0, Utilidades.FORMATO_COTIZACION_AP);
-        guardarFormato(0, Utilidades.FORMATO_COMISION_AP);
+        guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 0, false);
+        guardarFormato(Utilidades.FORMATO_COMISION_AP, 0, false);
       }
       if(texto2.isNotEmpty){
         Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = texto2;
-        guardarFormato(1, Utilidades.FORMATO_COTIZACION_AP);
-        guardarFormato(1, Utilidades.FORMATO_COMISION_AP);
+        guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 1, false);
+        guardarFormato(Utilidades.FORMATO_COMISION_AP, 1, false);
       }
       if(texto3.isNotEmpty){
         Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = texto3;
-        guardarFormato(2, Utilidades.FORMATO_COTIZACION_AP);
-        guardarFormato(2, Utilidades.FORMATO_COMISION_AP);
+        guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 2, false);
+        guardarFormato(Utilidades.FORMATO_COMISION_AP, 2, false);
       }
       if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
         guardarFormatoComparativa();
@@ -107,7 +107,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     });
   }
 
-  guardarFormato( int idformato, int index) async {
+  guardarFormato( int idformato, int index, bool abrirPdf) async {
     //if(deboGuardarCotizacion){
 
       /*final Trace saveCot = FirebasePerformance.instance.newTrace("CotizadorUnico_GuardarCotizacion");
@@ -228,15 +228,18 @@ class _CotizacionVistaState extends State<CotizacionVista> {
             }
             // _initialWebView();
 
-            /*Navigator.push(context,
-                    MaterialPageRoute(
-                      builder: (context) => CotizacionPDF(
-                        id: index+1,
-                        folio: folio,
-                        idFormato: idformato,
-                        id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
-                      ),
-                    ));*/
+            if(abrirPdf){
+              Navigator.push(context,
+                  MaterialPageRoute(
+                    builder: (context) => CotizacionPDF(
+                      id: index+1,
+                      folio: folio,
+                      idFormato: idformato,
+                      id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
+                    ),
+                  ));
+            }
+
 
           });
         }else{
@@ -250,7 +253,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         //saveCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
-          guardaCotizacion(index, idformato);
+          guardaCotizacion(index, idformato, abrirPdf);
         });
       }
 
@@ -503,7 +506,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
 
 
-  guardaCotizacion(int index, int idformato) async{
+  guardaCotizacion(int index, int idformato, bool abrirPdf) async{
 
     bool deboGuardarCotizacion = true;
     switch(idformato){
@@ -581,7 +584,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
     bool success = false;
     if(deboGuardarCotizacion){
-      guardarFormato(idformato, index);
+      guardarFormato(idformato, index, abrirPdf);
     }else{
       success = true;
     }
@@ -718,7 +721,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     setState(() {
       esComparativa = true;
     });
-    guardaCotizacion(0, Utilidades.FORMATO_COMPARATIVA);
+    guardaCotizacion(0, Utilidades.FORMATO_COMPARATIVA, false);
   }
 
   Future _initialWebView() async {
@@ -1204,7 +1207,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                               onPressed: (){
                                                 setState(() {
                                                   if(i < 3){
-                                                    guardaCotizacion(index, Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i].id);
+                                                    guardaCotizacion(index, Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i].id, true);
                                                   }
                                                 });
                                               },
@@ -1598,39 +1601,42 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
 
                                                     return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
-                                                      child: Column(
-                                                        children: <Widget>[
-                                                          //Titlulo de seccion
-                                                          Container(
-                                                            height: 40,
-                                                            width: 294,
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
-                                                              child: Text(
-                                                                (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
-                                                                textAlign: TextAlign.start,
-                                                                style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
+                                                      child: Visibility(
+                                                        visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
+                                                        child: Column(
+                                                          children: <Widget>[
+                                                            //Titlulo de seccion
+                                                            Container(
+                                                              height: 40,
+                                                              width: 294,
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
+                                                                child: Text(
+                                                                  (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
+                                                                  textAlign: TextAlign.start,
+                                                                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
+                                                                ),
                                                               ),
                                                             ),
-                                                          ),
 
-                                                          ListView.builder(
-                                                              itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
-                                                              shrinkWrap: true,
-                                                              physics: ScrollPhysics(),
-                                                              itemBuilder: (BuildContext ctxt, int indexdos) {
+                                                            ListView.builder(
+                                                                itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
+                                                                shrinkWrap: true,
+                                                                physics: ScrollPhysics(),
+                                                                itemBuilder: (BuildContext ctxt, int indexdos) {
 
-                                                                return Padding(
-                                                                  padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
-                                                                  child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
-                                                                      valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
-                                                                );
+                                                                  return Padding(
+                                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                                    child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
+                                                                        valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
+                                                                  );
 
-                                                              }
+                                                                }
 
-                                                          ),
+                                                            ),
 
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
                                                     );
 
