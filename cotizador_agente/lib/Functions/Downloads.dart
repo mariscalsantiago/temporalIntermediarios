@@ -40,7 +40,7 @@ Future<Map> downloadOnGalleryMultipleImages(List pathList) async {
     if(await ShareExtend.getPermissions()){
       Dio dio = Dio();
       Directory pathDirectory = await getExternalStorageDirectory();
-      String pathGalleryGNP="${pathDirectory.path.substring(0,pathDirectory.path.indexOf("/Android/data/"))}/AgentesGNP/";
+      String pathGalleryGNP="${pathDirectory.path.substring(0,pathDirectory.path.indexOf("/Android/data/"))}/APPContrata/";
       Directory directoryGalleryGNP = new Directory(pathGalleryGNP);
       if(!await directoryGalleryGNP.exists()){
         try {
