@@ -11,10 +11,8 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
-import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
-
-
+import 'package:shimmer/shimmer.dart';
 
 class SeleccionaCotizadorAP extends StatefulWidget {
   List<NegocioOperable> negociosOperables = new List<NegocioOperable>();
@@ -193,6 +191,84 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   }
 
+  Widget loadingHome(){
+    return Scaffold(body: skeletonItem(), bottomSheet: skeletonButton());
+  }
+
+  Widget skeletonItem(){
+    return Container(
+      margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.fromLTRB(33, 72, 33, 0),
+            child: SizedBox(
+              width: 294,
+              height: 208,
+                child: Shimmer.fromColors(
+                    child: Container(color: Colors.grey.shade300),
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade300)
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
+            child: SizedBox(
+                width: double.infinity,
+                height: 20,
+                child: Shimmer.fromColors(
+                    child: Container(color: Colors.grey.shade300),
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade300)),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: Shimmer.fromColors(
+                    child: Container(color: Colors.grey.shade300),
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade300)),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 32, 16, 0),
+            child: SizedBox(
+                width: double.infinity,
+                height: 20,
+                child: Shimmer.fromColors(
+                    child: Container(color: Colors.grey.shade300),
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade300)),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: Shimmer.fromColors(
+                    child: Container(color: Colors.grey.shade300),
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade300)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget skeletonButton(){
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 31, 16, 16),
+      child: SizedBox(
+          width: double.infinity,
+          height: 45,
+          child: Shimmer.fromColors(
+              child: Container(color: Colors.grey.shade300),
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade300)),
+    );
+}
+
   @override
   Widget build(BuildContext context) {
 
@@ -207,199 +283,188 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       }
     }
 
-    return LoadingOverlay(
-      isLoading: isLoading,
-      opacity: 0.8,
-      color: AppColors.primary700,
-      progressIndicator: SizedBox(
-        width: 100.0,
-        height: 100.0,
-        child: CircularProgressIndicator(
-          backgroundColor: Colors.transparent,
-          valueColor: AlwaysStoppedAnimation(Colors.white),
-          strokeWidth: 5.0,
+    return isLoading ? loadingHome() : Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.clear, color: AppColors.secondary900, size: 28,),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-      ),
-      child: Scaffold(
+        iconTheme: IconThemeData(color: AppColors.color_primario),
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.clear, color: AppColors.secondary900, size: 28,),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
+        title: Text("Seguros Masivos", style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),),
+      ),
+      body:  Column(
+        children:  <Widget>[
+
+          Visibility(
+            visible: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16.0, right: 33.5, left: 33.5, bottom: 40.0),
+              child: Image.asset("assets/img/img_negocios.png", height: 208, width: 294,),
+            ),
           ),
-          iconTheme: IconThemeData(color: AppColors.color_primario),
-          backgroundColor: Colors.white,
-          title: Text("Seguros Masivos", style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),),
-        ),
-        body:  Column(
-          children:  <Widget>[
-
-            Visibility(
-              visible: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 16.0, right: 33.5, left: 33.5, bottom: 40.0),
-                child: Image.asset("assets/img/img_negocios.png", height: 208, width: 294,),
-              ),
-            ),
-            Visibility(
-              visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
-              child: Expanded(
-                child: new ListView.builder(
-                    itemCount: 1,
-                    shrinkWrap: true,
-                    physics: ScrollPhysics(),
-                    itemBuilder: (context, index){
-                      return Column(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                            child: Row(
-                              children: <Widget>[
-                                Text("NEGOCIO OPERABLE",
-                                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, letterSpacing: 0.32, color: AppColors.primary700),
-                                  textAlign: TextAlign.start,),
-                              ],
-                            ),
+          Visibility(
+            visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
+            child: Expanded(
+              child: new ListView.builder(
+                  itemCount: 1,
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  itemBuilder: (context, index){
+                    return Column(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                          child: Row(
+                            children: <Widget>[
+                              Text("NEGOCIO OPERABLE",
+                                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, letterSpacing: 0.32, color: AppColors.primary700),
+                                textAlign: TextAlign.start,),
+                            ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 3.0, left: 16.0, right: 16.0,),
-                            child: Divider(
-                              thickness: 1,
-                              color: AppColors.naranjaGNP,
-                            ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3.0, left: 16.0, right: 16.0,),
+                          child: Divider(
+                            thickness: 1,
+                            color: AppColors.naranjaGNP,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 16, right: 16, top: 17.0),
-                            child: Container(
-                              padding: EdgeInsets.only(left: 16, right: 16,),
-                              height: 48,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: AppColors.border, style: BorderStyle.solid, width: 1.0),
-                                  borderRadius: new BorderRadius.only(
-                                      topLeft: const Radius.circular(4.0),
-                                      topRight: const Radius.circular(4.0),
-                                      bottomLeft: const Radius.circular(4.0),
-                                      bottomRight: const Radius.circular(4.0)
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16, right: 16, top: 17.0),
+                          child: Container(
+                            padding: EdgeInsets.only(left: 16, right: 16,),
+                            height: 48,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: AppColors.border, style: BorderStyle.solid, width: 1.0),
+                                borderRadius: new BorderRadius.only(
+                                    topLeft: const Radius.circular(4.0),
+                                    topRight: const Radius.circular(4.0),
+                                    bottomLeft: const Radius.circular(4.0),
+                                    bottomRight: const Radius.circular(4.0)
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    blurRadius: 1.0,
+                                    color: Colors.white,
+                                    offset: Offset(2.0, 4.0),
                                   ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      blurRadius: 1.0,
-                                      color: Colors.white,
-                                      offset: Offset(2.0, 4.0),
+                                ]),
+                            child: widget.negociosOperables[0] != null && widget.negociosOperables.length>0 ? DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                elevation: 1,
+                                value: negocioSelected != null ? negocioSelected : widget.negociosOperables[0],
+                                isExpanded: true,
+                                items: widget.negociosOperables.map((NegocioOperable negocio) { //Declarar una lista y solo agregar los valores que contengan cotizadores y regresar esa lista de dropdownitems
+                                  return new DropdownMenuItem<NegocioOperable>(
+                                    onTap: () {
+                                      FocusScope.of(context).requestFocus(new FocusNode());
+                                    },
+                                    value: negocio,
+                                    child: new Text(
+                                      negocio.negocioOperable,
+                                      style: new TextStyle(color: Colors.black),
                                     ),
-                                  ]),
-                              child: widget.negociosOperables[0] != null && widget.negociosOperables.length>0 ? DropdownButtonHideUnderline(
-                                child: DropdownButton(
-                                  elevation: 1,
-                                  value: negocioSelected != null ? negocioSelected : widget.negociosOperables[0],
-                                  isExpanded: true,
-                                  items: widget.negociosOperables.map((NegocioOperable negocio) { //Declarar una lista y solo agregar los valores que contengan cotizadores y regresar esa lista de dropdownitems
-                                    return new DropdownMenuItem<NegocioOperable>(
-                                      onTap: () {
-                                        FocusScope.of(context).requestFocus(new FocusNode());
-                                      },
-                                      value: negocio,
-                                      child: new Text(
-                                        negocio.negocioOperable,
-                                        style: new TextStyle(color: Colors.black),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (NegocioOperable newValue) {
-                                    setState(() {
-                                      negocioSelected = newValue;
-                                      cotizadorSelected = negocioSelected.cotizadores[0];
-                                    });
-                                  },
-                                ),
-                              ) : Container(),
-                            ),
+                                  );
+                                }).toList(),
+                                onChanged: (NegocioOperable newValue) {
+                                  setState(() {
+                                    negocioSelected = newValue;
+                                    cotizadorSelected = negocioSelected.cotizadores[0];
+                                  });
+                                },
+                              ),
+                            ) : Container(),
                           ),
+                        ),
 
-                          Visibility(
-                            visible: true,
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 31.0, right: 16.0, left: 16.0),
-                                  child: Row(
-                                    children: <Widget>[
-                                      Text("COTIZADOR",
-                                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, letterSpacing: 0.32, color: AppColors.primary700),
-                                        textAlign: TextAlign.start,),
-                                    ],
-                                  ),
+                        Visibility(
+                          visible: true,
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: const EdgeInsets.only(top: 31.0, right: 16.0, left: 16.0),
+                                child: Row(
+                                  children: <Widget>[
+                                    Text("COTIZADOR",
+                                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12, letterSpacing: 0.32, color: AppColors.primary700),
+                                      textAlign: TextAlign.start,),
+                                  ],
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 3.0, left: 16.0, right: 16.0,),
-                                  child: Divider(
-                                    thickness: 1,
-                                    color: AppColors.naranjaGNP,
-                                  ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 3.0, left: 16.0, right: 16.0,),
+                                child: Divider(
+                                  thickness: 1,
+                                  color: AppColors.naranjaGNP,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 16, right: 16, top: 17.0, bottom: 17.0),
-                                  child: Container(
-                                    padding: EdgeInsets.only(left: 16, right: 16, ),
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: AppColors.border, style: BorderStyle.solid, width: 1.0),
-                                        borderRadius: new BorderRadius.only(
-                                            topLeft: const Radius.circular(4.0),
-                                            topRight: const Radius.circular(4.0),
-                                            bottomLeft: const Radius.circular(4.0),
-                                            bottomRight: const Radius.circular(4.0)
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 16, right: 16, top: 17.0, bottom: 17.0),
+                                child: Container(
+                                  padding: EdgeInsets.only(left: 16, right: 16, ),
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: AppColors.border, style: BorderStyle.solid, width: 1.0),
+                                      borderRadius: new BorderRadius.only(
+                                          topLeft: const Radius.circular(4.0),
+                                          topRight: const Radius.circular(4.0),
+                                          bottomLeft: const Radius.circular(4.0),
+                                          bottomRight: const Radius.circular(4.0)
+                                      ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          blurRadius: 0.0,
+                                          color: Colors.white,
+                                          offset: Offset(2.0, 4.0),
                                         ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            blurRadius: 0.0,
-                                            color: Colors.white,
-                                            offset: Offset(2.0, 4.0),
-                                          ),
-                                        ]
-                                    ),
-                                    child: widget.negociosOperables.length>0 && widget.negociosOperables[0].cotizadores.length> 0 ? DropdownButtonHideUnderline(
-                                      child: DropdownButton(
-                                        elevation: 1,
-                                        value: cotizadorSelected != null ? cotizadorSelected : widget.negociosOperables[0].cotizadores[0],
-                                        isExpanded: true,
-                                        items: widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected) < 0 ? 0 : widget.negociosOperables.indexOf(negocioSelected)].cotizadores.map((Cotizadores cotizador) {
-                                          return new DropdownMenuItem<Cotizadores>(
-                                            onTap: () {
-                                              FocusScope.of(context).requestFocus(new FocusNode());
-                                            },
-                                            value: cotizador,
-                                            child: new Text(
-                                              cotizador.aplicacion,
-                                              style: new TextStyle(color: Colors.black),
-                                            ),
-                                          );
-                                        }).toList(),
-                                        onChanged: (Cotizadores newValue) {
-                                          setState(() {
-                                            cotizadorSelected = newValue;
-                                          });
-                                        },
-                                      ),
-                                    ) : Container(),
+                                      ]
                                   ),
+                                  child: widget.negociosOperables.length>0 && widget.negociosOperables[0].cotizadores.length> 0 ? DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      elevation: 1,
+                                      value: cotizadorSelected != null ? cotizadorSelected : widget.negociosOperables[0].cotizadores[0],
+                                      isExpanded: true,
+                                      items: widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected) < 0 ? 0 : widget.negociosOperables.indexOf(negocioSelected)].cotizadores.map((Cotizadores cotizador) {
+                                        return new DropdownMenuItem<Cotizadores>(
+                                          onTap: () {
+                                            FocusScope.of(context).requestFocus(new FocusNode());
+                                          },
+                                          value: cotizador,
+                                          child: new Text(
+                                            cotizador.aplicacion,
+                                            style: new TextStyle(color: Colors.black),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (Cotizadores newValue) {
+                                        setState(() {
+                                          cotizadorSelected = newValue;
+                                        });
+                                      },
+                                    ),
+                                  ) : Container(),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
+                        ),
 
-                        ],
-                      );
-                    }
-                ),
+                      ],
+                    );
+                  }
               ),
             ),
-          ],
-        ),
-        bottomSheet: Container(
+          ),
+        ],
+      ),
+      bottomSheet: Visibility(
+        visible: widget.negociosOperables[0].cotizadores != null ? true : false,
+        child: Container(
           color: Colors.white,
           padding: const EdgeInsets.only(top: 31.0,bottom: 16.0, right: 16, left: 16),//
           child: ButtonTheme(
