@@ -63,8 +63,23 @@ android {
             }
         }
         debug {
-            minifyEnabled false
-            useProguard false
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    flavorDimensions "app"
+    productFlavors {
+        qa {
+            dimension "app"
+            resValue "string", "app_name", "QA-Contratacion"
+        }
+        uat {
+            dimension "app"
+            resValue "string", "app_name", "UAT-Contratacion"
+        }
+        pro {
+            dimension "app"
+            resValue "string", "app_name", "Contratacion"
         }
     }
 }
