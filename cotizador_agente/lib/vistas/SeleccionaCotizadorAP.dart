@@ -35,13 +35,19 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   void initState() {
     //negociosOper();
     super.initState();
+  }
 
-      getNegociosOperables().then((success){
-        setState(() {
-          negocioSelected = widget.negociosOperables[0];
-          cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
-        });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    getNegociosOperables().then((success){
+      if(widget.negociosOperables[0].cotizadores != null){
+      setState(() {
+        negocioSelected = widget.negociosOperables[0];
+        cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
       });
+      }
+    });
   }
 
   getNegociosOperables( ) async {
@@ -84,11 +90,11 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         });
 
         widget.negociosOperables.forEach((negocio) async {
-          setState(() async {
             negocio.cotizadores = await getCotizadores(negocio);
+            if(widget.negociosOperables[0].cotizadores != null){
             negocioSelected = widget.negociosOperables[0];
             cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
-          });
+            }
         });
         setState(() {
           isLoading = false;
