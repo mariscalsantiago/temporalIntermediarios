@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "mx.com.gnp.cotizador_agente"
+        applicationId "mx.com.gnp.soysociognp"
         minSdkVersion 19
         targetSdkVersion 28
         versionCode flutterVersionCode.toInteger()
@@ -71,15 +71,15 @@ android {
     productFlavors {
         qa {
             dimension "app"
-            resValue "string", "app_name", "QA-Contratacion"
+            resValue "string", "app_name", "QA-Soy Socio GNP"
         }
         uat {
             dimension "app"
-            resValue "string", "app_name", "UAT-Contratacion"
+            resValue "string", "app_name", "UAT-Soy Socio GNP"
         }
         pro {
             dimension "app"
-            resValue "string", "app_name", "Contratacion"
+            resValue "string", "app_name", "Soy Socio GNP"
         }
     }
 }

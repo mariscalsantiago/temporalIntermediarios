@@ -1,4 +1,4 @@
-package mx.com.gnp.cotizador_agente
+package mx.com.gnp.soysociognp
 
 import android.os.Bundle
 
