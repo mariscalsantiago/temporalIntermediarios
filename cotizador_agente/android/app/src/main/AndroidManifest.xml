@@ -16,7 +16,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="APP Contratación"
+        android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher">
 
         <provider
