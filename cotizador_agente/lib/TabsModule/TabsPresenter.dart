@@ -18,7 +18,7 @@ class TabsPresenter implements TabsPresentation, TabsInteractorOutput {
 
   @override
   void showCotizador() {
-    router.showCotizador();
+    router.showCotizadores();
   }
 
   @override

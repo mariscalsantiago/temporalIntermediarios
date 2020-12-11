@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
@@ -32,7 +33,11 @@ class NavigationHandler {
   }
 
   static void showCotizar(BuildContext context) {
-    Navigator.pushNamed(context, "/cotizadorUnicoAP",);
+    Navigator.of(context).push(PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return CotizarController();
+        }));
   }
 
   static void showPagar(BuildContext context) {

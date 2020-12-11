@@ -13,6 +13,7 @@ import 'package:cotizador_agente/utils/ConnectionManager.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
 class LoginInteractor implements LoginUseCase {
   LoginInteractorOutput output;
@@ -68,7 +69,7 @@ class LoginInteractor implements LoginUseCase {
     String _serviceID = "S1";
     print("Getting $_service");
     if (!await ConnectionManager.isConnected()) {
-      //output.showAlertC('Conexión no disponible', Constants.ALERTA_NO_CONEXION);
+      output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null);
     }
     emailSession = emailApp;
     var config = AppConfig.of(view.context);
@@ -138,7 +139,7 @@ class LoginInteractor implements LoginUseCase {
     print("Getting $_service");
 
     if (!await ConnectionManager.isConnected()) {
-      //output.showAlertC('Conexión no disponible', Constants.ALERTA_NO_CONEXION);
+      output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null);
     }
 
     var config = AppConfig.of(view.context);

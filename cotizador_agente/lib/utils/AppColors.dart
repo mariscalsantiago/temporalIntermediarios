@@ -38,6 +38,7 @@ class AppColors {
   static HexColor gnpTextSytemt1 = HexColor("#33486C");
   static HexColor naranjaGNP = HexColor("#FF9E0A");
   static HexColor border = HexColor("9DAEC8");
+  static HexColor divider = HexColor("#CED8E8");
 }
 
 class HexColor extends Color {

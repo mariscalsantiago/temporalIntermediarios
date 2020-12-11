@@ -214,7 +214,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                 child: Shimmer.fromColors(
                     child: Container(color: Colors.grey.shade300),
                     baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade300)
+                    highlightColor: Colors.grey.shade100)
             ),
           ),
           Padding(
@@ -225,7 +225,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                 child: Shimmer.fromColors(
                     child: Container(color: Colors.grey.shade300),
                     baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade300)),
+                    highlightColor: Colors.grey.shade100)),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -235,7 +235,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                 child: Shimmer.fromColors(
                     child: Container(color: Colors.grey.shade300),
                     baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade300)),
+                    highlightColor: Colors.grey.shade100)),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(16, 32, 16, 0),
@@ -245,7 +245,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                 child: Shimmer.fromColors(
                     child: Container(color: Colors.grey.shade300),
                     baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade300)),
+                    highlightColor: Colors.grey.shade100)),
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -255,7 +255,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                 child: Shimmer.fromColors(
                     child: Container(color: Colors.grey.shade300),
                     baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade300)),
+                    highlightColor: Colors.grey.shade100)),
           ),
         ],
       ),

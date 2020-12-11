@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/NavigationHandler/NavigationHandler.dart';
 import 'package:cotizador_agente/TabsModule/TabsContract.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
@@ -13,8 +14,12 @@ class TabsRouter implements TabsWireFrame {
   }
 
   @override
-  void showCotizador(){
-    Navigator.pushNamed(view.context, "/cotizadorUnicoAP",);
+  void showCotizadores(){
+    Navigator.of(view.context).push(PageRouteBuilder(
+        opaque: false,
+        pageBuilder: (BuildContext context, _, __) {
+          return CotizarController();
+        }));
   }
 
   @override

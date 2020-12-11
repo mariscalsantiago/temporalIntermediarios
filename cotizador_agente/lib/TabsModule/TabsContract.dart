@@ -21,7 +21,7 @@ abstract class TabsInteractorOutput {
 }
 
 abstract class TabsWireFrame {
-  void showCotizador();
+  void showCotizadores();
   void navigateToRoute(String route);
   void showAlertNoHabilitado(String title);
 }
