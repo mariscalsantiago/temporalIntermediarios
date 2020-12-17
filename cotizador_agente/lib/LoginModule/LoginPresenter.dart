@@ -33,8 +33,8 @@ class LoginPresenter implements LoginPresentation, LoginInteractorOutput {
   }
 
   @override
-  void showAlert(String title, String message, TipoDialogo tipo) {
-    router.showAlert(title, message, tipo);
+  void showAlert(String title, String message, TipoDialogo tipo, String txtbutton) {
+    router.showAlert(title, message, tipo, txtbutton);
   }
 
   @override

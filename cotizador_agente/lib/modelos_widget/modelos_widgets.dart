@@ -223,7 +223,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                   padding: EdgeInsets.only(bottom: 8),
                   child: Text(
                     widget.campo.etiqueta == null
-                        ? widget.campo.nombre_campo.toUpperCase()
+                        ? widget.campo.obligatorio == true ? widget.campo.nombre_campo.toUpperCase() + " *" :  widget.campo.nombre_campo.toUpperCase()
                         : widget.campo.etiqueta.toUpperCase(),
                     style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5) : TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5),
                   ),
@@ -1223,7 +1223,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                               BorderSide(color: Colors.transparent)),
 
                           //labelStyle: TextStyle(color: AppColors.color_primario),
-                          labelText: widget.campo.etiqueta,
+                          labelText: widget.campo.obligatorio == true ? widget.campo.etiqueta + " *" : widget.campo.etiqueta,
                           labelStyle: TextStyle(
                               color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                           //labelText: widget.campo.etiqueta),

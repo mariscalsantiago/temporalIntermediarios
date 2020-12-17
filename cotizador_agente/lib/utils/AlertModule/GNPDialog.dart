@@ -1,9 +1,10 @@
+import 'package:cotizador_agente/ThemeGNP/NegativeButton.dart';
 import 'package:cotizador_agente/ThemeGNP/PositiveButton.dart';
 import 'package:cotizador_agente/utils/AlertModule/MyDialog.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:flutter/material.dart';
 
-enum TipoDialogo { ADEVERTENCIA, EXITO }
+enum TipoDialogo { ADVERTENCIA, EXITO }
 
 class GNPDialog extends StatelessWidget {
   final String title, description;
@@ -21,14 +22,26 @@ class GNPDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (this.actions == null) {
-      this.actions = [
-        PositiveButton(
-            title: textButtonOk != null ? textButtonOk :"Aceptar",
-            margin: EdgeInsets.fromLTRB(16, 24, 16, 24),
-            onPressed: () {
-              Navigator.pop(context);
-            })
-      ];
+      if(tipo == TipoDialogo.ADVERTENCIA){
+        this.actions = [
+          NegativeButton(
+              title: textButtonOk != null ? textButtonOk :"CANCELAR",
+              margin: EdgeInsets.fromLTRB(16, 24, 16, 24),
+              onPressed: () {
+                Navigator.pop(context);
+              })
+        ];
+      }else{
+        this.actions = [
+          PositiveButton(
+              title: textButtonOk != null ? textButtonOk :"Aceptar",
+              margin: EdgeInsets.fromLTRB(16, 24, 16, 24),
+              onPressed: () {
+                Navigator.pop(context);
+              })
+        ];
+      }
+
     }
     return Align(
       alignment: Alignment.bottomCenter,
@@ -67,7 +80,7 @@ class GNPDialog extends StatelessWidget {
                     Visibility(
                         visible: (this.title == null) ? false : true,
                         child: Container(
-                          margin: EdgeInsets.fromLTRB(20, 24, 20, 0),
+                          margin: EdgeInsets.fromLTRB(24, 24, 24, 0),
                           child: Text(this.title ?? "",
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -82,7 +95,7 @@ class GNPDialog extends StatelessWidget {
                         visible: (this.description == null) ? false : true,
                         child: Container(
                           alignment: alignment == null ? Alignment.centerLeft: alignment,
-                          margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
+                          margin: EdgeInsets.fromLTRB(24, 16, 24, 0),
                           child: Text(this.description ?? "",
                               textAlign: TextAlign.left,
                               style: TextStyle(
@@ -104,10 +117,10 @@ class GNPDialog extends StatelessWidget {
   }
 
   Widget showIcon() {
-    if (tipo != null && tipo == TipoDialogo.ADEVERTENCIA) {
-      return Image.asset('assets/images/warning.png', width: 30.0, height: 30.0);
+    if (tipo != null && tipo == TipoDialogo.ADVERTENCIA) {
+      return Image.asset('assets/img/warning.png', width: 44.0, height: 38.0);
     } else if (tipo != null && tipo == TipoDialogo.EXITO) {
-      return Image.asset('assets/images/verified.png', width: 30.0, height: 30.0);
+      return Image.asset('assets/img/verified.png', width: 44.0, height: 38.0);
     } else {
       return Icon(Icons.arrow_back);
     }

@@ -19,3 +19,9 @@ const String COMPARATIVA = "comparativaMovil&dataLayer=";
 const String INGRESO = "ingresoMovil&dataLayer=";
 const String ALERTA_NO_CONEXION =
     "Verifica tu conexión a internet e inténtalo nuevamente.";
+
+//MENSAJES
+const String tlt_nocoinciden = "Correo electrónico o contraseña no \ncoinciden";
+const String tlt_noregistrado = "Correo electrónico no registrado";
+const String ms_nocoinciden = "Por seguridad, tu cuenta se bloqueará después de 3 intentos";
+const String ms_noregistrado = "El correo que ingresaste aún no ha sido registrado. Verifícalo e inténtalo nuevamente.";

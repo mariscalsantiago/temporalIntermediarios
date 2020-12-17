@@ -9,6 +9,7 @@ import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
 import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
 import 'package:cotizador_agente/utils/ConnectionManager.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -69,7 +70,7 @@ class LoginInteractor implements LoginUseCase {
     String _serviceID = "S1";
     print("Getting $_service");
     if (!await ConnectionManager.isConnected()) {
-      output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null);
+      output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
     }
     emailSession = emailApp;
     var config = AppConfig.of(view.context);
@@ -118,17 +119,19 @@ class LoginInteractor implements LoginUseCase {
           output.showHome();
           return _datosUsuario;
         }else if (response.statusCode == 401) {
-          ErrorLoginMessageModel().passErrorAlert();
-          writeLoginBinnacle(user, "${config.serviceLogin}", LogErrorType.userError, ErrorLoginMessageModel().passwordErrorTextAlert);
+          output?.hideLoader();
+          output.showAlert(Constants.tlt_nocoinciden, Constants.ms_nocoinciden, TipoDialogo.ADVERTENCIA, "CERRAR");
           return null;
         }else if (response.statusCode == 404) {
-          ErrorLoginMessageModel().userErrorAlert();
-          writeLoginBinnacle(user, "${config.serviceLogin}", LogErrorType.userError, ErrorLoginMessageModel().userErrorTextAlert);
+          output?.hideLoader();
+          output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
           return null;
         } else{
+          output?.hideLoader();
           throw Exception(ErrorLoginMessageModel().statusErrorTextException);
         }
       }else{
+        output?.hideLoader();
         throw Exception(ErrorLoginMessageModel().statusErrorTextException);
       }
     }
@@ -139,7 +142,7 @@ class LoginInteractor implements LoginUseCase {
     print("Getting $_service");
 
     if (!await ConnectionManager.isConnected()) {
-      output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null);
+      output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
     }
 
     var config = AppConfig.of(view.context);
