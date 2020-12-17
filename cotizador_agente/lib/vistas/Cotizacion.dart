@@ -83,26 +83,34 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   bool comparativa = false;
 
   //verificar que sean diferentes de null
-  void guardarPropuestas(String texto1, String texto2, String texto3, String texto4){
+  void guardarPropuestas(String texto1, String texto2, String texto3, String texto4, int idFormato, int index, bool abrirPdf){
     print(texto1);
     setState(() {
-      if(texto1.isNotEmpty){
-        Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
-        guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 0, false);
-        guardarFormato(Utilidades.FORMATO_COMISION_AP, 0, false);
+      if(abrirPdf == false){
+        if(texto1.isNotEmpty){
+          Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 0, false);
+          guardarFormato(Utilidades.FORMATO_COMISION_AP, 0, false);
+        }
+        if(texto2.isNotEmpty){
+          Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = texto2;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 1, false);
+          guardarFormato(Utilidades.FORMATO_COMISION_AP, 1, false);
+        }
+        if(texto3.isNotEmpty){
+          Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = texto3;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 2, false);
+          guardarFormato(Utilidades.FORMATO_COMISION_AP, 2, false);
+        }
+        if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
+          guardarFormatoComparativa();
+        }
       }
-      if(texto2.isNotEmpty){
-        Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = texto2;
-        guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 1, false);
-        guardarFormato(Utilidades.FORMATO_COMISION_AP, 1, false);
-      }
-      if(texto3.isNotEmpty){
-        Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = texto3;
-        guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 2, false);
-        guardarFormato(Utilidades.FORMATO_COMISION_AP, 2, false);
-      }
-      if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
-        guardarFormatoComparativa();
+      if(abrirPdf && texto1.isNotEmpty){
+        if(idFormato != Utilidades.FORMATO_COMPARATIVA){
+          Utilidades.cotizacionesApp.listaCotizaciones[index].comparativa.nombre = texto1;
+        }
+        guardarFormato(idFormato, index, true);
       }
     });
   }
@@ -584,7 +592,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
     bool success = false;
     if(deboGuardarCotizacion){
-      guardarFormato(idformato, index, abrirPdf);
+      if(abrirPdf){
+        showModalGuardar(idformato, index, abrirPdf);
+      }else{
+        guardarFormato(idformato, index, abrirPdf);
+      }
     }else{
       success = true;
     }
@@ -778,8 +790,8 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   }
 
   // ignore: missing_return
-  Widget showModalGuardar(){
-    double altoModal = Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 ? 497 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 ? 430 : 295;
+  Widget showModalGuardar(int idFormato, int index, bool abrirPdf){
+    double altoModal = Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 497 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 430 : 295;
      showModalBottomSheet(
       isScrollControlled: true,
       barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
@@ -828,7 +840,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                       child: Column(children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(right: 24.0, left: 24.0),
-                          child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, ispropuesta4: comparativa, guardarPropuestas: guardarPropuestas,),
+                          child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, ispropuesta4: comparativa, guardarPropuestas: guardarPropuestas, idFormato: idFormato, index: index, abrirPdf: abrirPdf),
                         ),
                       ],),
                     ),
@@ -931,7 +943,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                       onPressed: () {
                                         Navigator.pop(context);
                                         //TextEditingController nombrePropuesta1Controller = TextEditingController();
-                                        showModalGuardar();
+                                        showModalGuardar(0, 0 , false);
                                       },),
                                   ],
                                 ),
@@ -1568,10 +1580,10 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             padding: const EdgeInsets.all(16.0),
                                             child: FlatButton(
                                               disabledTextColor: AppColors.color_disable,
-                                              textColor: Utilidades.cotizacionesApp.getCotizacionesCompletas() >2 ? AppColors.secondary900 : AppColors.color_disable,
+                                              textColor: Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 ? AppColors.secondary900 : AppColors.color_disable,
                                               onPressed: (){
-                                                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >2){
-                                                  guardarFormatoComparativa();
+                                                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
+                                                  guardaCotizacion(index, Utilidades.FORMATO_COMPARATIVA, true);
                                                 }else{
                                                   return null;
                                                 }
@@ -1690,12 +1702,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 }
 
 class listaCheck extends StatefulWidget {
-  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.ispropuesta4, this.guardarPropuestas, }) : super(key: key);
+  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.ispropuesta4, this.guardarPropuestas, this.idFormato, this.index, this.abrirPdf}) : super(key: key);
 
   @override
   _listaCheckState createState() => _listaCheckState();
   bool ispropuesta1 = false,ispropuesta2 = false, ispropuesta3 = false, ispropuesta4 = false;
-  final void Function(String t1, String t2, String t3, String t4) guardarPropuestas;
+  bool abrirPdf;
+  int idFormato, index;
+  final void Function(String t1, String t2, String t3, String t4, int idFormato, int index, bool abrirPdf) guardarPropuestas;
   final namePropuesta1Controller = new TextEditingController();
   final namePropuesta2Controller = new TextEditingController();
   final namePropuesta3Controller = new TextEditingController();
@@ -1708,6 +1722,8 @@ class _listaCheckState extends State<listaCheck> {
   bool propuesta2;
   bool propuesta3;
   bool comparativa;
+  bool abrirPdf;
+  int idFormato, index;
   String texto1 = "";
   String texto2 = "";
   String texto3 = "";
@@ -1766,7 +1782,7 @@ class _listaCheckState extends State<listaCheck> {
               inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(left: 12.0),
-                labelText: Mensajes.propuesta + " 1",
+                labelText: widget.abrirPdf == true && widget.idFormato != Utilidades.FORMATO_COMPARATIVA ? Mensajes.propuesta +" "+ (widget.index + 1).toString() : widget.abrirPdf == true && widget.idFormato == Utilidades.FORMATO_COMPARATIVA ?  Mensajes.tabla_Comp : Mensajes.propuesta + " 1",
                 hintStyle: TextStyle(fontSize: 16,
                   fontWeight: FontWeight.normal,
                   color: AppColors.gnpTextUser,
@@ -1788,7 +1804,7 @@ class _listaCheckState extends State<listaCheck> {
           ),
         ],),
         Visibility(
-          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
+          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && widget.abrirPdf == false,
           child: Padding(
             padding: const EdgeInsets.only(top:18.0),
             child: Row(children: <Widget>[
@@ -1846,7 +1862,7 @@ class _listaCheckState extends State<listaCheck> {
           ),
         ),
         Visibility(
-          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2,
+          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && widget.abrirPdf == false,
           child: Padding(
             padding: const EdgeInsets.only(top:20.0),
             child: Row(children: <Widget>[
@@ -1904,7 +1920,7 @@ class _listaCheckState extends State<listaCheck> {
           ),
         ),
         Visibility(
-          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
+          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && widget.abrirPdf == false,
           child: Padding(
             padding: const EdgeInsets.only(top:20.0),
             child: Row(children: <Widget>[
@@ -1975,7 +1991,12 @@ class _listaCheckState extends State<listaCheck> {
             child: RaisedButton(
               onPressed: ((){
                 if(texto1.isNotEmpty && texto1 != null){
-                  Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = widget.namePropuesta1Controller.text;
+                  if(widget.abrirPdf && widget.idFormato != Utilidades.FORMATO_COMPARATIVA){
+                    Utilidades.cotizacionesApp.listaCotizaciones[widget.index].comparativa.nombre = widget.namePropuesta1Controller.text;
+                  }
+                  else{
+                    Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = widget.namePropuesta1Controller.text;
+                  }
                 }
                 if(texto2 != null && texto2.isNotEmpty){
                   Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = widget.namePropuesta2Controller.text;
@@ -1987,7 +2008,7 @@ class _listaCheckState extends State<listaCheck> {
                   Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.nametablaCompController.text;
                 }*/
                 Navigator.pop(context);
-                widget.guardarPropuestas(texto1,texto2,texto3, texto4);
+                widget.guardarPropuestas(texto1,texto2,texto3, texto4, widget.idFormato, widget.index, widget.abrirPdf);
               }),
               child: Text(Mensajes.guarda,
                 style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600,letterSpacing: 1.25),
