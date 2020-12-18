@@ -84,7 +84,8 @@ class NavigationHandler {
                ),
                GestureDetector(
                  onTap: (){
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.servicioNoDisp, Mensajes.errorConexion, context,"Aceptar",(){
+                   Navigator.pop(context);
+                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
                    });
                  },
@@ -101,7 +102,8 @@ class NavigationHandler {
                ),
                GestureDetector(
                  onTap: (){
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.servicioNoDisp, Mensajes.errorConexion, context,"Aceptar",(){
+                   Navigator.pop(context);
+                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
                    });
                  },
@@ -118,7 +120,8 @@ class NavigationHandler {
                ),
                GestureDetector(
                  onTap: (){
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.servicioNoDisp, Mensajes.errorConexion, context,"Aceptar",(){
+                   Navigator.pop(context);
+                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
                    });
                  },
@@ -135,7 +138,8 @@ class NavigationHandler {
                ),
                GestureDetector(
                  onTap: (){
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.servicioNoDisp, Mensajes.errorConexion, context,"Aceptar",(){
+                   Navigator.pop(context);
+                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
                    });
                  },
@@ -152,7 +156,7 @@ class NavigationHandler {
                ),
                GestureDetector(
                  onTap: (){
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.servicioNoDisp, Mensajes.errorConexion, context,"Aceptar",(){
+                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
                    });
                  },

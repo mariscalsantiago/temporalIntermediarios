@@ -187,8 +187,18 @@ class LoginControllerState extends State<LoginController> implements LoginView {
 
         _buttonIniciarSesion(),
         Container(
-          margin: EdgeInsets.fromLTRB(17, 160, 17, 16),
-          child: ReusableWidgets.getTextCenterBody("Versión 1.0.0"),
+          height: 24,
+          width: 326,
+          margin: EdgeInsets.fromLTRB(17, 140, 17, 16),
+          child: Text("Versión " + "1.0",
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.caption.copyWith(
+                  fontFamily: "Roboto",
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 12,
+                  letterSpacing: 0.32,
+                  color: AppColors.gnpTextSytemt1)),
         ),
       ],
     );
