@@ -1,4 +1,3 @@
-import 'package:cotizador_agente/HomeModule/HomeController.dart';
 import 'package:cotizador_agente/TabsModule/Entity/Footer.dart';
 import 'package:cotizador_agente/TabsModule/Entity/Secciones.dart';
 import 'package:cotizador_agente/TabsModule/Entity/TabsHelper.dart';

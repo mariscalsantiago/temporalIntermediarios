@@ -118,8 +118,8 @@ class ErrorLoginMessageModel {
   final String statusErrorTextException = "Error: Response status" ;
   final String responseBodyErrorTextException = "Error: Body response null or empty" ;
   final String responseNullErrorTextException = "Error: Response null" ;
-  final String passwordErrorTextAlert = "Contraseña Incorrecta" ;
-  final String userErrorTextAlert = "Usuario no encontrado o inválido." ;
+  final String passwordErrorTextAlert = "El campo es inválido." ;
+  final String userErrorTextAlert = "El campo es inválido." ;
 
   userErrorAlert() {
     mensajeStatus= ErrorLoginMessageModel(

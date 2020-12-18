@@ -60,11 +60,11 @@ class LoginRouter implements LoginWireFrame {
   }
 
   @override
-  void showAlert(String title, String message, TipoDialogo tipo) {
+  void showAlert(String title, String message, TipoDialogo tipo, String txtbutton) {
     showCustomDialog(
         context: view.context,
         builder: (context) => GNPDialog(
-            title: title, description: message, actions: null, tipo: tipo));
+            title: title, description: message, actions: null, tipo: tipo, textButtonOk: txtbutton,));
   }
 
   @override

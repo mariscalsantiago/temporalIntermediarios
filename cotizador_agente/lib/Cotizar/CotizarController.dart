@@ -41,7 +41,7 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
 
   AppBar getAppBar(BuildContext context) {
     return AppBar(
-      elevation: 0.5,
+      elevation: 0.0,
       centerTitle: true,
       title: Image.asset("assets/icon/splash/logoGNP.png",
           height: 40, width: 105.7, fit: BoxFit.contain),
@@ -63,7 +63,13 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-
+          Padding(
+            padding: const EdgeInsets.only(top: 0.0),
+            child: Divider(
+              thickness: 1,
+              color: AppColors.primary700,
+            ),
+          ),
           Card(
             elevation: 0,
             margin: EdgeInsets.fromLTRB(16, 16, 0, 0),

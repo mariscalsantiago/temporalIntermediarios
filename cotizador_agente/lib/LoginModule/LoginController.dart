@@ -101,10 +101,10 @@ class LoginControllerState extends State<LoginController> implements LoginView {
               },
               validator: (String value) {
                 if (value.trim().isEmpty) {
-                  return "Ingresa tu correo electrónico";
+                  return "Este campo es requerido";
                 } else if (!Utilidades.isVaidMail(value) && value.isNotEmpty) {
                  // AnalyticsHandler.logEvent(name: "aviso_correo_no_valido");
-                  return "Correo electrónico no válido. Ingrésalo nuevamente.";
+                  return "El campo es inválido.";
                 } else if (this.inputMessage != null) {
                   return this.inputMessage;
                 } else {
@@ -148,7 +148,8 @@ class LoginControllerState extends State<LoginController> implements LoginView {
                   obscureText: !_showPassword,
                   validator: (String value) {
                     if (value.isEmpty) {
-                      return 'Ingresa una contraseña';
+                      return 'Este campo es requerido';
+
                     } else if (this.inputMessage != null) {
                       //passwordController.clear();
                       return this.inputMessage;

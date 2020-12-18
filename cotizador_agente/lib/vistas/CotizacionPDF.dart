@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
@@ -71,7 +70,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
     getFormato(context);
   }
-
 
   getFormato(BuildContext context) async{
 
