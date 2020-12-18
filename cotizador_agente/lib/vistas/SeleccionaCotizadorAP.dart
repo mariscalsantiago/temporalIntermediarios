@@ -469,7 +469,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         ],
       ),
       bottomSheet: Visibility(
-        visible: widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected) < 0 ? 0 : widget.negociosOperables.indexOf(negocioSelected)].cotizadores != null ? true : false,
+        visible: widget.negociosOperables == null ? false : widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected) < 0 ? 0 : widget.negociosOperables.indexOf(negocioSelected)].cotizadores != null ? true : false,
         child: Container(
           color: Colors.white,
           padding: const EdgeInsets.only(top: 31.0,bottom: 16.0, right: 16, left: 16),//

@@ -36,19 +36,20 @@ class SplashControllerState extends State<SplashController>
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
-            return defaultSplash();
+            return defaultSplash(snapshot.data);
             break;
           case ConnectionState.waiting:
             return Container();
             break;
           default:
-            if (snapshot.data != null) {
+            /*if (snapshot.data != null) {
               return remoteSplash(snapshot.data);
             } else {
               var dSplash = SplashData(
                   imagen: "assets/images/logoGNP.png", duracion: 1500);
               return remoteSplash(dSplash);
-            }
+            }*/
+            return defaultSplash(snapshot.data);
         }
       },
     );
@@ -71,7 +72,7 @@ class SplashControllerState extends State<SplashController>
                 child: CachedNetworkImage(
                   imageUrl: splashData.imagen,
                   //placeholder: (context, url) => defaultSplash(),
-                  errorWidget: (context, url, error) => defaultSplash(),
+                  errorWidget: (context, url, error) => defaultSplash(splashData),
                 ),
               ),
             ),
@@ -85,9 +86,9 @@ class SplashControllerState extends State<SplashController>
                   width: 180.0,
                   height: 24,
                   child: CachedNetworkImage(
-                    imageUrl: splashData.imagen_pie,
+                    //imageUrl: splashData.imagen_pie,
                     //placeholder: (context, url) => defaultSplash(),
-                    errorWidget: (context, url, error) => defaultSplash(),
+                    errorWidget: (context, url, error) => defaultSplash(splashData),
                   ),
                 )),
           ),
@@ -96,7 +97,8 @@ class SplashControllerState extends State<SplashController>
     );
   }
 
-  Widget defaultSplash() {
+  Widget defaultSplash(SplashData splashData) {
+    presenter?.finishSplash(splashData);
     return Container(
       color: Colors.white,
       child: Column(
