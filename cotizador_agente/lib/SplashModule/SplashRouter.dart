@@ -26,9 +26,4 @@ class SplashRouter implements SplashWireFrame {
             (Route<dynamic> route) => false);
   }
 
-  @override
-  Future<bool> waitOnboarding() async {
-
-  }
-
 }

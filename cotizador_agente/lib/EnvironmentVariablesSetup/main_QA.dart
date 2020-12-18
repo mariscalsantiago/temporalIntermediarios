@@ -1,9 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
+
 import 'app_config.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   var configuredApp = new AppConfig(
     serviceEndPoint: 'http://10.67.83.12/AppCobros/rest/',
     ambient: Ambient.qa,

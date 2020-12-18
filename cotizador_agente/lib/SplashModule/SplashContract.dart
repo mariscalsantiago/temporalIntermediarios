@@ -18,11 +18,9 @@ abstract class SplashUseCase {
 abstract class SplashInteractorOutput {
   void showHome();
   void showLogin();
-  Future<bool> waitOnboarding();
 }
 
 abstract class SplashWireFrame {
   void showHome();
   void showLogin();
-  Future<bool> waitOnboarding();
 }

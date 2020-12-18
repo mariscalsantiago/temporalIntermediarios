@@ -7,6 +7,7 @@ import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
 import 'package:cotizador_agente/vistas/Inicio/LoginPage.dart';
 import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
 import 'package:cotizador_agente/vistas/SendEmail.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -42,8 +43,9 @@ enum editType {
   acompaniante
 }
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   var configuredApp = new AppConfig(
     serviceEndPoint: 'http://10.67.83.12/AppCobros/rest/',
     ambient: Ambient.qa,

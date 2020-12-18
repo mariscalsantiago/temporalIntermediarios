@@ -35,9 +35,4 @@ class SplashPresenter implements SplashPresentation, SplashInteractorOutput {
   void showLogin() {
     router?.showLogin();
   }
-
-  @override
-  Future<bool> waitOnboarding() {
-    return router?.waitOnboarding();
-  }
 }

@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:cotizador_agente/SplashModule/Entity/SplashData.dart';
 import 'package:cotizador_agente/SplashModule/SplashContract.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:package_info/package_info.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:version/version.dart';
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
 class SplashInteractor implements SplashUseCase {
   SplashInteractorOutput output;
@@ -12,20 +16,25 @@ class SplashInteractor implements SplashUseCase {
   }
 
   @override
-  Future<SplashData> getSplashData() {
-    return null;
+  Future<SplashData> getSplashData() async {
+    try {
+      RemoteConfig remoteConfig = await RemoteConfig.instance;
+      remoteConfig.setConfigSettings(RemoteConfigSettings(debugMode: true));
+      await remoteConfig.fetch(expiration: const Duration(seconds: 0));
+      await remoteConfig.activateFetched();
+      String splash = remoteConfig.getString(Constants.CONFIG_SPLASH);
+      var splashJson = jsonDecode(splash);
+      var sData = SplashData.fromJson(splashJson);
+      return sData;
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
   void finishSplash(SplashData splashData) async {
     await Future.delayed(Duration(milliseconds: splashData.duracion));
-    //var showOnboarding = await checkOnboarding();
-    /*if (await checkOnboarding()) {
-      await output?.waitOnboarding();
-
-    } else {*/
       output?.showLogin();
-    // }
   }
 
 

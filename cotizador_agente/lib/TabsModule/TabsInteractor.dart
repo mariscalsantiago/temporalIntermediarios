@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:cotizador_agente/TabsModule/Entity/Footer.dart';
 import 'package:cotizador_agente/TabsModule/Entity/Secciones.dart';
 import 'package:cotizador_agente/TabsModule/TabsContract.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
+import 'package:cotizador_agente/utils/RemoteConfigHandler.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
 class TabsInteractor implements TabsUseCase {
   TabsInteractorOutput output;
@@ -14,11 +19,16 @@ class TabsInteractor implements TabsUseCase {
 
   @override
   Future<Footer> getFooterConfiguration() async {
-      var footer = defaultFooter();
-      for (var i = 0; i < footer.secciones.length; i++) {
-        var titulo = footer.secciones[i].titulo ?? "";
-      }
+    try{
+      RemoteConfig remoteConfig = await RemoteConfigHandler.setupConfiguration(view.context);
+      String footerString = remoteConfig.getString(Constants.CONFIG_FOOTER);
+      var footerJson = jsonDecode(footerString);
+      var footer = Footer.fromJson(footerJson);
       return footer;
+    } catch(e){
+      var footer = defaultFooter();
+      return footer;
+    }
   }
 
   Footer defaultFooter() {

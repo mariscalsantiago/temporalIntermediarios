@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/SplashModule/Entity/SplashData.dart';
 import 'package:cotizador_agente/SplashModule/SplashContract.dart';
 import 'package:cotizador_agente/SplashModule/SplashPresenter.dart';
@@ -34,12 +35,12 @@ class SplashControllerState extends State<SplashController>
       future: presenter?.getSplashData(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
-          /*case ConnectionState.none:
+          case ConnectionState.none:
             return defaultSplash();
             break;
           case ConnectionState.waiting:
-            return defaultSplash();
-            break;*/
+            return Container();
+            break;
           default:
             if (snapshot.data != null) {
               return remoteSplash(snapshot.data);
@@ -55,7 +56,44 @@ class SplashControllerState extends State<SplashController>
 
   Widget remoteSplash(SplashData splashData) {
     presenter?.finishSplash(splashData);
-    return defaultSplash();
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: <Widget>[
+          Expanded(
+            flex: 2,
+            child: Container(
+              color: Colors.white,
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 200.0,
+                height: 75.64,
+                child: CachedNetworkImage(
+                  imageUrl: splashData.imagen,
+                  //placeholder: (context, url) => defaultSplash(),
+                  errorWidget: (context, url, error) => defaultSplash(),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 32.61),
+            child: Container(
+                color: Colors.white,
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  width: 180.0,
+                  height: 24,
+                  child: CachedNetworkImage(
+                    imageUrl: splashData.imagen_pie,
+                    //placeholder: (context, url) => defaultSplash(),
+                    errorWidget: (context, url, error) => defaultSplash(),
+                  ),
+                )),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget defaultSplash() {

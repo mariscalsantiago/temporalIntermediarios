@@ -17,5 +17,7 @@ const String ENVIA_COTIZACION = "cotizacionMovil&dataLayer=";
 const String ENVIA_MAIL = "envioMovil&dataLayer=";
 const String COMPARATIVA = "comparativaMovil&dataLayer=";
 const String INGRESO = "ingresoMovil&dataLayer=";
-const String ALERTA_NO_CONEXION =
-    "Verifica tu conexión a internet e inténtalo nuevamente.";
+const String ALERTA_NO_CONEXION = "Verifica tu conexión a internet e inténtalo nuevamente.";
+//remote config
+const String CONFIG_SPLASH = "splash_screen";
+const String CONFIG_FOOTER = "footer";

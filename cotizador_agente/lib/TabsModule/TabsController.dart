@@ -1,6 +1,7 @@
 import 'package:cotizador_agente/HomeModule/HomeController.dart';
 import 'package:cotizador_agente/TabsModule/Entity/Footer.dart';
 import 'package:cotizador_agente/TabsModule/Entity/Secciones.dart';
+import 'package:cotizador_agente/TabsModule/Entity/TabsHelper.dart';
 import 'package:cotizador_agente/TabsModule/TabsContract.dart';
 import 'package:cotizador_agente/TabsModule/TabsPresenter.dart';
 import 'package:cotizador_agente/ThemeGNP/TabButton.dart';
@@ -30,9 +31,9 @@ class TabsControllerState extends State<TabsController> implements TabsView {
   @override
   void initState() {
     super.initState();
-    /*WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       TabsHelper.statusChanged(this.visibleFooter);
-    });*/
+    });
   }
 
   @override

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>710643010995-7f7metjroednpte8ppvcm4fvpv11jbfr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.710643010995-7f7metjroednpte8ppvcm4fvpv11jbfr</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDiPg2YeQH-AuEoV61Cf0fwHEh4FEJPUwo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>710643010995</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>mx.com.gnp.soysociognpapp</string>
+	<key>PROJECT_ID</key>
+	<string>gnp-accidentespersonales-qa</string>
+	<key>STORAGE_BUCKET</key>
+	<string>gnp-accidentespersonales-qa.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:710643010995:ios:1a7659f72c66454381cfc6</string>
+	<key>DATABASE_URL</key>
+	<string>https://gnp-accidentespersonales-qa.firebaseio.com</string>
+</dict>
+</plist>
