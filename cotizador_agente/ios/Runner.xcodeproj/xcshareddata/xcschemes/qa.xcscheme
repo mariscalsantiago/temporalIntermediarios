@@ -23,7 +23,7 @@
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "Release-qa"
+      buildConfiguration = "Debug-qa"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -72,7 +72,7 @@
       buildConfiguration = "Debug-qa">
    </AnalyzeAction>
    <ArchiveAction
-      buildConfiguration = "Debug-qa"
+      buildConfiguration = "Release-qa"
       revealArchiveInOrganizer = "YES">
    </ArchiveAction>
 </Scheme>
