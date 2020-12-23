@@ -203,10 +203,10 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   Widget skeletonItem(){
     return Container(
-      margin: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+      margin: EdgeInsets.only(left: 10, right: 10, top: 48, bottom: 0),
       child: Column(
         children: <Widget>[
-          Padding(
+         /* Padding(
             padding: EdgeInsets.fromLTRB(33, 72, 33, 0),
             child: SizedBox(
               width: 294,
@@ -216,7 +216,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                     baseColor: Colors.grey.shade300,
                     highlightColor: Colors.grey.shade100)
             ),
-          ),
+          ),*/
           Padding(
             padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
             child: SizedBox(
@@ -306,13 +306,13 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       body:  Column(
         children:  <Widget>[
 
-          Visibility(
+          /*Visibility(
             visible: widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
             child: Padding(
               padding: const EdgeInsets.only(top: 16.0, right: 33.5, left: 33.5, bottom: 40.0),
               child: Image.asset("assets/img/img_negocios.png", height: 208, width: 294,),
             ),
-          ),
+          ),*/
           Visibility(
             visible:  widget.negociosOperables != null && widget.negociosOperables.length>0 ? widget.negociosOperables[0].cotizadores != null : false,
             child: Expanded(
@@ -324,7 +324,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                     return Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                          padding: const EdgeInsets.only(top: 10.0,right: 16.0, left: 16.0),
                           child: Row(
                             children: <Widget>[
                               Text("NEGOCIO OPERABLE",
