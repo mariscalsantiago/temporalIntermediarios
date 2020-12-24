@@ -206,6 +206,45 @@ class FormularioCotizacion {
     return map;
   }
 
+  Map<String, dynamic> getJSONComparativaSinAsegurados() {
+    Map<String, dynamic> map = paso2.toJSON();
+    map["cotizacionGMMRequest"].addAll(paso1.toJSON()["cotizacionGMMRequest"]);
+
+    //La cotizacion debe saber con qué plan se cotiza
+    map["cotizacionGMMRequest"]["idPlan"] = Utilidades.buscaCampoPorID(Utilidades.referenciaPlan.id_seccion, Utilidades.referenciaPlan.id_campo, false)[0].valor;
+
+    List<int> planesPRevios = List<int>();
+
+    int total =  Utilidades.cotizacionesApp.getCurrentLengthLista();
+
+    for(int i=0; i<total-1; i++){
+      if(Utilidades.cotizacionesApp.getCotizacionElement(i).comparativa!=null){
+        planesPRevios.add(int.parse(Utilidades.buscaCampoPorFormularioID(i,Utilidades.referenciaPlan.id_seccion, Utilidades.referenciaPlan.id_campo, false)[0].valor));
+      }
+    }
+
+    map["cotizacionGMMRequest"]["planesPrevios"] = planesPRevios;
+    print("PLANES PREVIOS: " + planesPRevios.toString());
+
+    //TODO: Hardcode id titular, siempre el uno
+    map["cotizacionGMMRequest"]["titular"]["id"] = 1;
+
+    //TODO: HARCODED Para sólo un usuario, revisar para múltiples asegurados
+    map["cotizacionGMMRequest"]["descuentos"][0]["idPersona"] = 1;
+    map["cotizacionGMMRequest"]["asegurados"] = [];
+
+    //map["cotizacionGMMRequest"].remove("contratante");
+
+    //map["cotizacionGMMRequest"]["contratante"]["cpContratante"] = "09880";
+    //map["cotizacionGMMRequest"]["contratante"]["id"] = "1";
+
+    //TODO:Se eliminaba el contratante por que el codigo postal no se estaba enviando.
+
+    print("JSON COMPARATIVA: " + map.toString());
+
+    return map;
+  }
+
   List<Map<String, dynamic>> obtenerListaCampos(List<Map<String, dynamic>> acumCampos, List<Campo> campos) {
     for (int i = 0; i < campos.length; i++) {
       Campo c = campos[i];

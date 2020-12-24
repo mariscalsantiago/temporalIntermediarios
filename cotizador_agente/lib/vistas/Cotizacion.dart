@@ -281,7 +281,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   void initState() {
 
     if(widget.jsonMap==null){
-      widget.jsonMap = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa();
+      //widget.jsonMap = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa();
+      //eliminar la linea funciona para no mandar adicionales
+      widget.jsonMap = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativaSinAsegurados();
     }
     generarCotizacion(context).then((success){
       if(success == false){
@@ -1359,7 +1361,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                               ],
                                                             ),
                                                           ),
-                                                        ] : <Widget>[
+                                                        ] : <Widget>[//
                                                           Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
                                                             style: TextStyle(
                                                                 color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,),
