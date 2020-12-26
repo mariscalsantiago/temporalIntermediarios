@@ -85,7 +85,7 @@ class SplashControllerState extends State<SplashController>
                   width: 180.0,
                   height: 24,
                   child: CachedNetworkImage(
-                    imageUrl: splashData.imagen_pie,
+                    imageUrl: splashData.imagen,
                     //placeholder: (context, url) => defaultSplash(),
                     //errorWidget: (context, url, error) => defaultSplash(),
                   ),

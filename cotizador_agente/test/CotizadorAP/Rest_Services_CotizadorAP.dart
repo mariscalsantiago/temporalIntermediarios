@@ -34,13 +34,13 @@ main(){
     test('Validando si la petición para obtener negocios operables fue correcta', () async {
       when(client.post(negocios + Constants.NEGOCIOS_OPERABLES, headers: headers, body: jsonMap))
           .thenAnswer((_) async => http.Response('[]', 200));
-      expect(await getNegociosOperables(client), isA<List<NegocioOperable>>());
+      expect(await getNegociosOperables(headers, jsonMap), isA<List<NegocioOperable>>());
     });
 
     test('La petición fue fallida', () async {
       when(client.post(negocios + Constants.NEGOCIOS_OPERABLES, headers: headers, body: jsonMap))
           .thenAnswer((_) async => http.Response('Failed!', 400));
-      expect(await getNegociosOperables(null), throwsException);
+      expect(await getNegociosOperables(null, null), throwsException);
     });
   });
 
@@ -67,7 +67,7 @@ main(){
     test('Validando si la petición fue correcta', () async {
       when(client.post(baseURL + Constants.COTIZADORES, headers: headers, body: jsonMap))
           .thenAnswer((_) async => http.Response('[]', 200));
-      expect(await getCotizadores(client, negocio), isA<List<Cotizadores>>());
+      expect(await getCotizadores(headers, jsonMap), isA<List<Cotizadores>>());
     });
 
     test('La petición fue fallida', () async {

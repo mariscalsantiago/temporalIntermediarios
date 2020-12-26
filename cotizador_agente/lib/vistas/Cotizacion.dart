@@ -279,7 +279,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   @override
   void initState() {
-
     if(widget.jsonMap==null){
       //widget.jsonMap = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa();
       //eliminar la linea funciona para no mandar adicionales
@@ -740,7 +739,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   Future _initialWebView() async {
 
-    if(esComparativa == false){
+    /*if(esComparativa == false){
       parameters = {"data" : lista_secciones};
       _dataLayer = json.encode(parameters);
     }else{
@@ -787,8 +786,13 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       }
 
 
+    }*/
+    Response response = await post("https://www.google-analytics.com/batch?", body: "v=1&tid=UA-146126625-2&cid=555&t=pageview&dp=%2FIntento\nv=1&tid=UA-146126625-2&cid=555&t=pageview&dp=%2FIntento1", headers: { "Content-Type": "text/plain" });
+    if(response.statusCode == 200){
+      print(response.body.toString());
+    }else{
+      return false;
     }
-
   }
 
   // ignore: missing_return
@@ -1607,54 +1611,80 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                     bottomLeft: const Radius.circular(4.0),
                                                     bottomRight: const Radius.circular(4.0),
                                                   )),
-                                              child: ListView.builder(
-                                                  itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones.length,
-                                                  shrinkWrap: true,
-                                                  physics: ScrollPhysics(),
-                                                  itemBuilder: (BuildContext ctxt, int j) {
-
-
-                                                    return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
-                                                      child: Visibility(
-                                                        visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
-                                                        child: Column(
-                                                          children: <Widget>[
-                                                            //Titlulo de seccion
-                                                            Container(
-                                                              height: 40,
-                                                              width: 294,
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
-                                                                child: Text(
-                                                                  (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
-                                                                  textAlign: TextAlign.start,
-                                                                  style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                            ListView.builder(
-                                                                itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
-                                                                shrinkWrap: true,
-                                                                physics: ScrollPhysics(),
-                                                                itemBuilder: (BuildContext ctxt, int indexdos) {
-
-                                                                  return Padding(
-                                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
-                                                                    child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
-                                                                        valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
-                                                                  );
-
-                                                                }
-
-                                                            ),
-
-                                                          ],
-                                                        ),
+                                              child: Column(
+                                                children: <Widget>[
+                                                  Container(
+                                                    height: 40,
+                                                    width: 294,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
+                                                      child: Text(
+                                                        ("Prima total"), overflow: TextOverflow.ellipsis,
+                                                        textAlign: TextAlign.start,
+                                                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
                                                       ),
-                                                    );
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                    child: RenglonTablaDoscolumna(titulo: "Titular",
+                                                        valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, bottom: 12.0,),
+                                                    child: RenglonTablaDoscolumna(titulo: "Total",
+                                                        valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
+                                                    ),
+                                                  ),
+                                                  ListView.builder(
+                                                      itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones.length,
+                                                      shrinkWrap: true,
+                                                      physics: ScrollPhysics(),
+                                                      itemBuilder: (BuildContext ctxt, int j) {
 
-                                                  }),
+                                                        return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
+                                                          child: Visibility(
+                                                            visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
+                                                            child: Column(
+                                                              children: <Widget>[
+                                                                //Titulo de seccion
+                                                                Container(
+                                                                  height: 40,
+                                                                  width: 294,
+                                                                  child: Padding(
+                                                                    padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
+                                                                    child: Text(
+                                                                      (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
+                                                                      textAlign: TextAlign.start,
+                                                                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                ListView.builder(
+                                                                    itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
+                                                                    shrinkWrap: true,
+                                                                    physics: ScrollPhysics(),
+                                                                    itemBuilder: (BuildContext ctxt, int indexdos) {
+
+                                                                      return Padding(
+                                                                        padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                                        child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
+                                                                            valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
+                                                                      );
+
+                                                                    }
+
+                                                                ),
+
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+
+                                                      }),
+                                                ],
+                                              ),
                                             ),
                                           ),
 
