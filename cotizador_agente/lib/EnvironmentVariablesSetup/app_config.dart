@@ -26,8 +26,8 @@ class AppConfig extends InheritedWidget {
     @required this.privacyAdvertisement,
     @required this.urlNegociosOperables,
     @required this.urlBase,
-    @required this.urlBaseAnalytics,
-
+    @required this.urlSendAnalytics,
+    @required this.idContenedorAnalytics,
 
   }) : super(child: child);
 
@@ -47,8 +47,8 @@ class AppConfig extends InheritedWidget {
   final String privacyAdvertisement;
   final String urlNegociosOperables;
   final String urlBase;
-  final String urlBaseAnalytics;
-
+  final String urlSendAnalytics;
+  final String idContenedorAnalytics;
 
   static AppConfig of(BuildContext context) {
     return context.inheritFromWidgetOfExactType(AppConfig);

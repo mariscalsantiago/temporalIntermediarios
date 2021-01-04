@@ -17,7 +17,6 @@ import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:flutter_tags/tag.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -455,7 +454,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                       },
 
                                       validator: (val){
-                                        String mensaje;
+
 
                                         if(eMails.isEmpty){
 
@@ -483,7 +482,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                             String valor = ValidarEmail(eMail);
                                             if( valor == null){
                                               controller.clear();
-                                              //mensaje = null;
                                             }
                                           }
                                         }
@@ -753,7 +751,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                 } else{
                                   setState(() {
                                     isDownload = true;
-                                   // _initialWebView();
+                                    Utilidades.sendAnalytics(context, "Acciones", "Descargar");
+                                    // _initialWebView();
                                    /* final FirebaseAnalytics analytics = new FirebaseAnalytics();
                                     analytics.logEvent(name: CotizadorAnalitycsTags.descargaGMM, parameters: <String, dynamic>{});
 
