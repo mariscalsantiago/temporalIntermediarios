@@ -8,7 +8,6 @@ void main() {
   var configuredApp = new AppConfig(
     ambient: Ambient.prod,
     serviceLogin: 'https://cuentas.gnp.com.mx/auth/login',
-    //  serviceBCA: 'https://bca-ws-qa.gnp.com.mx',
     apikeyBCABonos:'5d245910-efbe-4a6f-9074-b5d1eb8a8309',
     apikeyBCA: '9a780a70-c5fc-4bee-86cf-5650cce16516',
     apikeyAppAgentes: 'l7xxed71b90a2ed941668463e3a01513d582',
@@ -17,14 +16,14 @@ void main() {
     serviceConteoClientes: "https://api.service.oscp.gnp.com.mx/crm-agentes/conteo-clientes",
     proyectId: 'gnp-accidentespersonales-pro',
     urlNotifierService:'https://api.service.gnp.com.mx',
-    //urlProrrogadosService: 'https://api-dev.oscp.gnp.com.mx',
     pagoEnLinea:'https://api-dev.oscp.gnp.com.mx',
     privacyAdvertisement :'https://contenidosappagentes.gnp.com.mx/aviso',
 
     //COTIZADOR UNICO
     urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-pro.cloudfunctions.net/',
     urlBase: 'https://gmm-cotizadores.gnp.com.mx/',
-    urlBaseAnalytics: 'https://gmm-cotizadores.gnp.com.mx/?esMobile=true&accion=',
+    urlSendAnalytics: 'https://www.google-analytics.com/collect?',
+    idContenedorAnalytics: 'UA-146126625-2',
 
     child: new MyApp(),
 

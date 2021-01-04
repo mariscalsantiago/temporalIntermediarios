@@ -237,6 +237,7 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
                                     Utilidades.idAplicacion = int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
                                     Utilidades.tipoDeNegocio = widget.negocioOperable.cotizadores[j].aplicacion;
                                  //   seccionCotizador();
+                                    Utilidades.sendAnalytics(context, "Cotizador", Utilidades.tipoDeNegocio);
                                     Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                                     Utilidades.deboCargarPaso1 = false;
                                   });
@@ -244,6 +245,7 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
                                   Utilidades.idAplicacion = int.parse(widget.negocioOperable.cotizadores[j].id_aplicacion.toString());
                                   Utilidades.tipoDeNegocio = widget.negocioOperable.cotizadores[j].aplicacion;
                                 //  seccionCotizador();
+                                  Utilidades.sendAnalytics(context, "Cotizador", Utilidades.tipoDeNegocio);
                                   Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                                   Utilidades.deboCargarPaso1 = false;
                                 }

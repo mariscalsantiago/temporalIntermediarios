@@ -1,5 +1,10 @@
+import 'dart:io';
+
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
+import 'package:http/http.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import 'package:flutter/material.dart';
@@ -626,4 +631,19 @@ class Utilidades {
    }
 
 
+  static void sendAnalytics(BuildContext context, String ea,String el) async {
+
+    var config = AppConfig.of(context);
+    var idContenedor = config.idContenedorAnalytics;
+
+    String categoria = Platform.isIOS ? "iOS" : "Android" + "/" + Utilidades.idAplicacion.toString() + "/" + datosUsuario.idparticipante;
+    var parametros = "v=1&tid=$idContenedor&cid=555&t=event&ec=SoySocioGNP/$categoria&ea=$ea&el=$el";
+    Response response = await post(config.urlSendAnalytics + parametros, body: null,
+        headers: { "Content-Type": "text/plain" });
+
+    print(config.urlSendAnalytics + parametros);
+    if(response.statusCode == 200){
+      print(response.body.toString());
+    }
+  }
 }

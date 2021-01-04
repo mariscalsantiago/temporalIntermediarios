@@ -15,7 +15,6 @@ import 'package:cotizador_agente/CotizadorUnico/CotizacionPDF.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter_tags/tag.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
@@ -424,7 +423,6 @@ class _SendEmailState extends State<SendEmail> {
                                                     },
 
                                                     validator: (val){
-                                                      String mensaje;
 
                                                       if(eMails.isEmpty){
 
@@ -439,7 +437,6 @@ class _SendEmailState extends State<SendEmail> {
                                                               esVacioMail = false;
                                                             });
                                                             //esVacioMail = false;
-                                                            //mensaje = null;
                                                           }
                                                         }
                                                         else{
@@ -448,19 +445,13 @@ class _SendEmailState extends State<SendEmail> {
                                                             esVacioMail = true;
                                                           });
                                                         }
-                                                        /*
-                                                        setState(() {
-                                                          esVacio = true;
-                                                          //mensaje = "Ingrese al menos un correo";
-                                                        });
-                                                        */
+
                                                       }else{
                                                         if(val.length>0){
                                                           eMail = controller.text;
                                                           String valor = ValidarEmail(eMail);
                                                           if( valor == null){
                                                             controller.clear();
-                                                            //mensaje = null;
                                                           }
                                                         }
                                                       }
@@ -621,6 +612,7 @@ class _SendEmailState extends State<SendEmail> {
                                               if(eMails.length>0 && eMails.length<21){
                                                // _initialWebView();
                                                 _sendEmailService();
+                                                Utilidades.sendAnalytics(context, "Acciones", "Enviar");
                                                 /*final FirebaseAnalytics analytics = new FirebaseAnalytics();
                                                 analytics.logEvent(name: CotizadorAnalitycsTags.envioMailGMM, parameters: <String, dynamic>{});
 

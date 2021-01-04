@@ -487,6 +487,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                 ), //all(16.0),
                  child: GestureDetector(
                    onTap: () {
+                     Utilidades.sendAnalytics(context, "Acciones", "Vista Previa");
                      mostrarVistaPrevia(cotizacion);
                      },
                    child: RenglonMisCotizaciones(

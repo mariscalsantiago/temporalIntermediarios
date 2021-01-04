@@ -13,7 +13,6 @@ import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loading_overlay/loading_overlay.dart';
@@ -1116,9 +1115,9 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                   print('El formulario es valido');
 //                                              print(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.toJSON());
 //                                              Utilidades.LogPrint("Esto es para cotizar: " + json.encode(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa()));
-                                                  setState(() {
-                                                    //_initialWebView();
-                                                  });
+
+                                                  Utilidades.sendAnalytics(context, "Acciones", "Cotizar");
+
                                                   Regla r = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().calcularReglas();
 
                                                   if(r!=null){

@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
 import 'package:cotizador_agente/CotizadorUnico/CotizacionPDF.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
@@ -587,6 +586,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
     }
 
+    if(idformato == Utilidades.FORMATO_COMPARATIVA){
+      Utilidades.sendAnalytics(context, "Acciones", "Comparativa");
+    }else{
+      Utilidades.sendAnalytics(context, "Acciones", "Vista Previa");
+    }
 
     bool success = false;
     if(deboGuardarCotizacion){
@@ -731,6 +735,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     setState(() {
       esComparativa = true;
     });
+    Utilidades.sendAnalytics(context, "Acciones", "Comparativa");
     guardaCotizacion(0, Utilidades.FORMATO_COMPARATIVA, false);
   }
 
@@ -784,17 +789,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
 
     }*/
-    Map<String,dynamic> body = {
-      "ec": "App Agentes / ",
-      "ea": "Click directorio",
-      "el": "visita"
-    };
-    Response response = await post("https://www.google-analytics.com/batch?", body: "v=1&tid=UA-146126625-2&cid=555&t=pageview&dp=%2FIntento\nv=1&tid=UA-146126625-2&cid=555&t=pageview&dp=%2FIntento1", headers: { "Content-Type": "text/plain" });
-    if(response.statusCode == 200){
-      print(response.body.toString());
-    }else{
-      return false;
-    }
+
   }
 
   // ignore: missing_return
@@ -1769,17 +1764,33 @@ class _listaCheckState extends State<listaCheck> {
     return Column(
       children: <Widget>[
         Row(children: <Widget>[
-          Checkbox(
-            value: widget.ispropuesta1,
-            onChanged: (value){
-              setState(() {
-                widget.ispropuesta1 = value;
-                propuesta1 = widget.ispropuesta1;
-                print(value);
-              });
-            },
-            activeColor: Colors.white,
-            checkColor: AppColors.secondary900,
+          Container(
+            width: 22,
+            height: 22,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: AppColors.secondary900,
+                width:4,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(2)),
+            ),
+            child: Theme(
+              data: ThemeData(
+                unselectedWidgetColor: Colors.white
+              ),
+              child: Checkbox(
+                value: widget.ispropuesta1,
+                onChanged: (value){
+                  setState(() {
+                    widget.ispropuesta1 = value;
+                    propuesta1 = widget.ispropuesta1;
+                    print(value);
+                  });
+                },
+                activeColor: Colors.white,
+                checkColor: AppColors.secondary900,
+              ),
+            ),
           ),
           Expanded(
             flex: 1,
@@ -1820,21 +1831,37 @@ class _listaCheckState extends State<listaCheck> {
           child: Padding(
             padding: const EdgeInsets.only(top:18.0),
             child: Row(children: <Widget>[
-              Checkbox(
-                value: widget.ispropuesta2,
-                onChanged: (bool value){
-                  if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
-                    setState(() {
-                    widget.ispropuesta2 = value;
-                    propuesta2 = widget.ispropuesta2;
-                    print(widget.ispropuesta2.toString());
-                  });
-                  }else{
-                    null;
-                  }
-                },
-                activeColor: Colors.white,
-                checkColor: AppColors.secondary900,
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppColors.secondary900,
+                    width:4,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                ),
+                child: Theme(
+                  data: ThemeData(
+                      unselectedWidgetColor: Colors.white
+                  ),
+                  child: Checkbox(
+                    value: widget.ispropuesta2,
+                    onChanged: (bool value){
+                      if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
+                        setState(() {
+                        widget.ispropuesta2 = value;
+                        propuesta2 = widget.ispropuesta2;
+                        print(widget.ispropuesta2.toString());
+                      });
+                      }else{
+                        null;
+                      }
+                    },
+                    activeColor: Colors.white,
+                    checkColor: AppColors.secondary900,
+                  ),
+                ),
               ),
               Expanded(
                 flex: 1,
@@ -1876,23 +1903,39 @@ class _listaCheckState extends State<listaCheck> {
         Visibility(
           visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && widget.abrirPdf == false,
           child: Padding(
-            padding: const EdgeInsets.only(top:20.0),
+            padding: const EdgeInsets.only(top:18.0),
             child: Row(children: <Widget>[
-              Checkbox(
-                value: widget.ispropuesta3,
-                onChanged: (bool value){
-                  if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2) {
-                    setState(() {
-                      widget.ispropuesta3 = value;
-                      propuesta3 = widget.ispropuesta3;
-                      print(widget.ispropuesta3.toString());
-                    });
-                  }else{
-                    null;
-                  }
-                },
-                activeColor: Colors.white,
-                checkColor: AppColors.secondary900,
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppColors.secondary900,
+                    width:4,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                ),
+                child: Theme(
+                  data: ThemeData(
+                      unselectedWidgetColor: Colors.white
+                  ),
+                  child: Checkbox(
+                    value: widget.ispropuesta3,
+                    onChanged: (bool value){
+                      if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2) {
+                        setState(() {
+                          widget.ispropuesta3 = value;
+                          propuesta3 = widget.ispropuesta3;
+                          print(widget.ispropuesta3.toString());
+                        });
+                      }else{
+                        null;
+                      }
+                    },
+                    activeColor: Colors.white,
+                    checkColor: AppColors.secondary900,
+                  ),
+                ),
               ),
               Expanded(
                 flex: 1,
@@ -1936,21 +1979,37 @@ class _listaCheckState extends State<listaCheck> {
           child: Padding(
             padding: const EdgeInsets.only(top:20.0),
             child: Row(children: <Widget>[
-              Checkbox(
-                value: widget.ispropuesta4,
-                onChanged: (bool value){
-                  if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
-                    setState(() {
-                    widget.ispropuesta4 = value;
-                    comparativa = widget.ispropuesta4;
-                    print(widget.ispropuesta4.toString());
-                  });
-                  }else{
-                    null;
-                  }
-                },
-                activeColor: Colors.white,
-                checkColor: AppColors.secondary900,
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppColors.secondary900,
+                    width:4,
+                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                ),
+                child: Theme(
+                  data: ThemeData(
+                      unselectedWidgetColor: Colors.white
+                  ),
+                  child: Checkbox(
+                    value: widget.ispropuesta4,
+                    onChanged: (bool value){
+                      if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
+                        setState(() {
+                        widget.ispropuesta4 = value;
+                        comparativa = widget.ispropuesta4;
+                        print(widget.ispropuesta4.toString());
+                      });
+                      }else{
+                        null;
+                      }
+                    },
+                    activeColor: Colors.white,
+                    checkColor: AppColors.secondary900,
+                  ),
+                ),
               ),
               Expanded(
                 flex: 1,

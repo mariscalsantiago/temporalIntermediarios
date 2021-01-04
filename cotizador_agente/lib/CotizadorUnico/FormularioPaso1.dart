@@ -431,6 +431,8 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
       this.getData().then((success){ //Validar que este cotizador sea válido.
 
+        //ENVIAR ANALYTICS
+        Utilidades.sendAnalytics(context, "Acciones", "Ingreso");
         if(success!=null){
           print("Success es: "+ success.toString());
         }else{
