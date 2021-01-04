@@ -12,12 +12,12 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:cotizador_agente/cotizador_analitycs_tags.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
+import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos_widget/modelos_widgets.dart';
-import 'package:cotizador_agente/vistas/CotizacionPDF.dart';
+import 'package:cotizador_agente/CotizadorUnico/CotizacionPDF.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:http/http.dart';
@@ -43,9 +43,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   int cotiz=1;
   Map<String, dynamic> resumenCot;
   String nombreCot;
-  FlutterWebviewPlugin _flutterWebViewPlugin = new FlutterWebviewPlugin();
-  String _initialURL="";
-  String _dataLayer = "";
   Map<String, dynamic> parameters =  Map<String, dynamic>();
   List<Map<String, dynamic>> lista_secciones =  List<Map<String, dynamic>> ();
   Map<String, dynamic> parameters_Calculo = Map<String, dynamic>();
@@ -521,7 +518,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     switch(idformato){
       case Utilidades.FORMATO_COMISION:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION !=null){
-          _initialWebView();
+         // _initialWebView();
           deboGuardarCotizacion = false;
           Navigator.push(context,
               MaterialPageRoute(
@@ -557,7 +554,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
       case Utilidades.FORMATO_COTIZACION:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION !=null){
-          _initialWebView();
+         // _initialWebView();
           deboGuardarCotizacion = false;
           Navigator.push(context,
               MaterialPageRoute(
@@ -787,6 +784,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
 
     }*/
+    Map<String,dynamic> body = {
+      "ec": "App Agentes / ",
+      "ea": "Click directorio",
+      "el": "visita"
+    };
     Response response = await post("https://www.google-analytics.com/batch?", body: "v=1&tid=UA-146126625-2&cid=555&t=pageview&dp=%2FIntento\nv=1&tid=UA-146126625-2&cid=555&t=pageview&dp=%2FIntento1", headers: { "Content-Type": "text/plain" });
     if(response.statusCode == 200){
       print(response.body.toString());
@@ -1081,7 +1083,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
-                              child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar, letterSpacing: 0.15),),
+                              child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar, letterSpacing: 0.15),),
                             ),
                             Spacer(),
                             Padding(
@@ -1201,17 +1203,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                                       }
 
-                                      /*bool mostrarText;
-                                      bool mostrarCampo;
-
-                                      if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre == null ){
-                                        mostrarText = true;
-                                        mostrarCampo = false;
-
-                                      }else{
-                                        mostrarText = false;
-                                        mostrarCampo = true;
-                                      }*/
 
                                       List<Widget> getFormatos() {
                                         List<FlatButton> listabuttonDoc = new List<FlatButton>();
@@ -1700,22 +1691,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                 break;
                             }
                           }),
-                    ),
-                    Container(
-                      height: 0,
-                      width: 0,
-                      child: Visibility(
-                        visible: true,
-                        child: WebviewScaffold(
-                          url: _initialURL,
-                          withJavascript: true,
-                          withZoom: false,
-                          withLocalStorage: true,
-                          hidden:true,
-                          clearCache: true,
-                          clearCookies: true,
-                        ),
-                      ),
                     ),
                   ],
                 )

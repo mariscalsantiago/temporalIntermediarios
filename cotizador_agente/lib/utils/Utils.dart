@@ -71,9 +71,7 @@ class Utilidades {
    static bool cargarNuevoPaso;
    static bool editarEnComparativa = false;
    static bool isInternet = true;
-   static bool isShowGMM = false;
-   static String keyGTM = "aHR0cHM6Ly9taW5pZmllZC5jYy9hcGkvbWluaWZ5";
-   static Map<String,dynamic> seccCot =  new Map<String,dynamic>();
+  static Map<String,dynamic> seccCot =  new Map<String,dynamic>();
    static List<Map<String, dynamic>> lista_seccionesC =  List<Map<String, dynamic>> ();
 
    static Color color_sombra =

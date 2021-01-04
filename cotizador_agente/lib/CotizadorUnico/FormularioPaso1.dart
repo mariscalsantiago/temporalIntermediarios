@@ -9,8 +9,8 @@ import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
-import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
+import 'package:cotizador_agente/CotizadorUnico/FormularioPaso2.dart';
+import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
@@ -856,7 +856,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
-                            child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
+                            child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
                           ),
                           Spacer(),
                           Padding(
@@ -911,28 +911,29 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                     child: Container(
                                       width: 24,
                                       height: 24,
-                                      child: FlatButton(
-                                        onPressed: null,
+                                      decoration: BoxDecoration(
                                         color: Colors.white,
-                                        textColor: AppColors.secondary900,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(15.0),
-                                            side: BorderSide(color: AppColors.primary700)
+                                        border: Border.all(color: AppColors.color_borde, style: BorderStyle.solid, width: 1.0),
+                                        borderRadius: new BorderRadius.only(
+                                            topLeft: const Radius.circular(12.0),
+                                            topRight: const Radius.circular(12.0),
+                                            bottomLeft: const Radius.circular(12.0),
+                                            bottomRight: const Radius.circular(12.0)
                                         ),
-                                        child: Text("1", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
                                       ),
+                                      child: Text("1", style: TextStyle(color: AppColors.secondary900,fontSize: 16, fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
                                     ),
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(top: 0.0, bottom: 0.0, left: 29.0),
-                                    child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondary900),),
+                                    child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.secondary900), textAlign: TextAlign.start,),
                                   ),
                                 ],
                               ),
                               Row(
                                 children: <Widget>[
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 35.0, top:0, bottom:0),
+                                    padding: const EdgeInsets.only(left: 30.0, top:0, bottom:0),
                                     child: Image.asset("assets/icon/cotizador/union.png", height: 24, width: 22,),
                                   )
                                 ],
@@ -944,16 +945,17 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                     child: Container(
                                       width: 24,
                                       height: 24,
-                                      child: FlatButton(
-                                        onPressed: null,
-                                        color: Colors.grey,
-                                        textColor: AppColors.color_appBar,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(15.0),
-                                            side: BorderSide(color: AppColors.primary700)
+                                      decoration: BoxDecoration(
+                                        color: AppColors.color_Bordes,
+                                        border: Border.all(color: AppColors.color_Bordes, style: BorderStyle.solid, width: 1.0),
+                                        borderRadius: new BorderRadius.only(
+                                            topLeft: const Radius.circular(12.0),
+                                            topRight: const Radius.circular(12.0),
+                                            bottomLeft: const Radius.circular(12.0),
+                                            bottomRight: const Radius.circular(12.0)
                                         ),
-                                        child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
                                       ),
+                                      child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
                                     ),
                                   ),
                                   Padding(

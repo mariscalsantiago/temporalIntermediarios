@@ -1,4 +1,4 @@
-import 'dart:convert';
+
 import 'dart:io';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
@@ -6,7 +6,6 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:http/http.dart';
 
 class NegocioOperableElement extends StatefulWidget {
   const NegocioOperableElement({Key key, this.negocioOperable})
@@ -23,8 +22,6 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
   //Inicializacion de pestaña
   bool estaAbierto = true;
   IconData icon = Icons.expand_more;
-  //FlutterWebviewPlugin _flutterWebViewPlugin = new FlutterWebviewPlugin();
-  String _initialURL="";
   List<Object> parameters =  List<Object>();
   String dataLayer="";
   String platform = "";
@@ -92,7 +89,7 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
   }
 
   Future _initialWebView() async{
-    if(isFinish == true){
+   /* if(isFinish == true){
       dataLayer = json.encode(Utilidades.seccCot);
       Utilidades.LogPrint("DATA: " + dataLayer);
       Codec<String, String> stringToBase64 = utf8.fuse(base64);
@@ -125,7 +122,7 @@ class _NegocioOperableElementState extends State<NegocioOperableElement> {
         }
 
       }
-    }
+    }*/
   }
 
   @override

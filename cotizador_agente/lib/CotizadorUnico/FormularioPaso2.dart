@@ -11,11 +11,10 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
+import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
@@ -39,8 +38,6 @@ class FormularioPaso2 extends StatefulWidget {
 class _FormularioPaso2State extends State<FormularioPaso2> {
   bool isLoading = true;
   String plan;
-  FlutterWebviewPlugin _flutterWebViewPlugin = new FlutterWebviewPlugin();
-  String _initialURL="";
   Map<String, dynamic> parameters =  Map<String, dynamic>();
   String dataLayer= "";
   bool isLoadURL = false;
@@ -51,7 +48,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
   bool isChangeicon2 = true;
   //final FirebaseAnalytics analytics = new FirebaseAnalytics();
 
-  String _something ="Cargando... ";
   final formKey = GlobalKey<FormState>();
 
   void actualizarCodigoPostalFamiliares() {
@@ -453,7 +449,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
   Future _initialWebView() async {
 
-    dataLayer = json.encode(Utilidades.seccCot);
+   /* dataLayer = json.encode(Utilidades.seccCot);
     Codec<String, String> stringToBase64 = utf8.fuse(base64);
     String encoded = stringToBase64.encode(dataLayer);
 
@@ -486,7 +482,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
       }
 
     }
-
+*/
   }
 
 
@@ -923,7 +919,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
-                                          child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
+                                          child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
                                         ),
                                         Spacer(),
                                         Padding(
@@ -978,16 +974,17 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                     child: Container(
                                                       width: 24,
                                                       height: 24,
-                                                      child: FlatButton(
-                                                        onPressed: null,
+                                                      decoration: BoxDecoration(
                                                         color: Colors.white,
-                                                        textColor: AppColors.secondary900,
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(15.0),
-                                                            side: BorderSide(color: AppColors.primary700)
+                                                        border: Border.all(color: AppColors.color_borde, style: BorderStyle.solid, width: 1.0),
+                                                        borderRadius: new BorderRadius.only(
+                                                            topLeft: const Radius.circular(12.0),
+                                                            topRight: const Radius.circular(12.0),
+                                                            bottomLeft: const Radius.circular(12.0),
+                                                            bottomRight: const Radius.circular(12.0)
                                                         ),
-                                                        child: Text("1", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
                                                       ),
+                                                      child: Text("1", style: TextStyle(color: AppColors.secondary900,fontSize: 16, fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
                                                     ),
                                                   ),
                                                   Padding(
@@ -999,7 +996,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                               Row(
                                                 children: <Widget>[
                                                   Padding(
-                                                    padding: const EdgeInsets.only(left: 35.0, top:0, bottom:0),
+                                                    padding: const EdgeInsets.only(left: 30.0, top:0, bottom:0),
                                                     child: Image.asset("assets/icon/cotizador/union.png", height: 24, width: 22,),
                                                   )
                                                 ],
@@ -1011,16 +1008,18 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                     child: Container(
                                                       width: 24,
                                                       height: 24,
-                                                      child: FlatButton(
-                                                        onPressed: null,
-                                                        color: Colors.grey,
-                                                        textColor: AppColors.color_appBar,
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(15.0),
-                                                            side: BorderSide(color: AppColors.primary700)
+                                                      decoration: BoxDecoration(
+                                                        color: AppColors.color_Bordes,
+                                                        border: Border.all(color: AppColors.color_Bordes, style: BorderStyle.solid, width: 1.0),
+                                                        borderRadius: new BorderRadius.only(
+                                                            topLeft: const Radius.circular(12.0),
+                                                            topRight: const Radius.circular(12.0),
+                                                            bottomLeft: const Radius.circular(12.0),
+                                                            bottomRight: const Radius.circular(12.0)
                                                         ),
-                                                        child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),),
                                                       ),
+                                                      child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
+
                                                     ),
                                                   ),
                                                   Padding(
@@ -1158,21 +1157,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                 child: Text(
                                                   "COTIZAR",
                                                   style: TextStyle(fontSize: 15.0, letterSpacing: 1),
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              height: 0,
-                                              width: 0,
-                                              child: Visibility(
-                                                visible: true,
-                                                child: WebviewScaffold(
-                                                    url: _initialURL,
-                                                    withJavascript: true,
-                                                    withZoom: false,
-                                                    withLocalStorage: true,
-                                                    hidden:true,
-                                                    clearCache: true
                                                 ),
                                               ),
                                             ),

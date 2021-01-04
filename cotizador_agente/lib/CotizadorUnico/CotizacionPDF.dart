@@ -50,8 +50,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
   PDFDocument doc;
   Dio dio;
   Future<Directory> downloadsDirectory;
-  FlutterWebviewPlugin _flutterWebViewPlugin = new FlutterWebviewPlugin();
-  String _initialURL="";
   bool isDownload = false;
   List<Object> parameters =  List<Object>();
   String dataLayer="";
@@ -170,7 +168,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
   }
 
   Future _initialWebView() async{
-    if(isDownload == true){
+    /*if(isDownload == true){
 
       dataLayer = json.encode(Utilidades.seccCot);
       Utilidades.LogPrint("DATA: " + dataLayer);
@@ -205,7 +203,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
         }
 
       }
-    }
+    }*/
   }
 
   sendEmailService() async {
@@ -756,12 +754,12 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                   setState(() {
                                     isDownload = true;
                                    // _initialWebView();
-                                    /*final FirebaseAnalytics analytics = new FirebaseAnalytics();
+                                   /* final FirebaseAnalytics analytics = new FirebaseAnalytics();
                                     analytics.logEvent(name: CotizadorAnalitycsTags.descargaGMM, parameters: <String, dynamic>{});
 
                                     sendTag(CotizadorAnalitycsTags.descargaGMM);
-                                    setCurrentScreen(CotizadorAnalitycsTags.descargaGMM, "CotizacionPDF");*/
-
+                                    setCurrentScreen(CotizadorAnalitycsTags.descargaGMM, "CotizacionPDF");
+*/
                                   });
                                   contador++;
                                   _saveFile();
@@ -800,21 +798,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                         ),
                       ),
                     ],
-                  ),
-                ),
-                Container(
-                  height: 0,
-                  width: 0,
-                  child: Visibility(
-                    visible: true,
-                    child: WebviewScaffold(
-                        url: _initialURL,
-                        withJavascript: true,
-                        withZoom: false,
-                        withLocalStorage: true,
-                        hidden:true,
-                        clearCache: true
-                    ),
                   ),
                 ),
               ],

@@ -1,8 +1,7 @@
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/MisCotizaciones.dart';
-import 'package:cotizador_agente/vistas/MaterialApoyo.dart';
+import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
 import 'package:flutter/material.dart';
 
 class TopBar extends StatefulWidget {
@@ -168,11 +167,6 @@ class _TopBarState extends State<TopBar> {
                         break;
 
                       case 3:
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MaterialApoyo(),
-                            ));
 
                         break;
 

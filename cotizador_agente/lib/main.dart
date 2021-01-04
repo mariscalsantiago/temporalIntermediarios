@@ -2,11 +2,11 @@
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Perfil/PerfilPage.dart';
 import 'package:cotizador_agente/SplashModule/SplashController.dart';
-import 'package:cotizador_agente/vistas/Cotizacion.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso1.dart';
+import 'package:cotizador_agente/CotizadorUnico/Cotizacion.dart';
+import 'package:cotizador_agente/CotizadorUnico/FormularioPaso1.dart';
 import 'package:cotizador_agente/vistas/Inicio/LoginPage.dart';
-import 'package:cotizador_agente/vistas/SeleccionaCotizadorAP.dart';
-import 'package:cotizador_agente/vistas/SendEmail.dart';
+import 'package:cotizador_agente/CotizadorUnico/SeleccionaCotizadorAP.dart';
+import 'package:cotizador_agente/CotizadorUnico/SendEmail.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -16,7 +16,7 @@ import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 
 import 'CotizacionPDF.dart';
-import 'FormularioPaso1.dart';
+import '../CotizadorUnico/FormularioPaso1.dart';
 
 import 'dart:async';
 

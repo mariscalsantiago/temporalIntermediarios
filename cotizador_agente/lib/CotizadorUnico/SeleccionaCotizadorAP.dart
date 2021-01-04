@@ -52,11 +52,19 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   getNegociosOperables( ) async {
 
-    //final Trace negociosOp = FirebasePerformance.instance.newTrace("CotizadorUnico_NegociosOperables");
-    /*negociosOp.start();
-      print(negociosOp.name);*/
+   /* final Trace negociosOp = FirebasePerformance.instance.newTrace("SoySocio_NegociosOperables");
+    negociosOp.start();
+    print(negociosOp.name);*/
+
     bool success = false;
     var config = AppConfig.of(context);
+
+  /*  final FirebaseAnalytics analytics = new FirebaseAnalytics();
+    analytics.logEvent(name: CotizadorAnalitycsTags.cotizadorGMM, parameters: <String, dynamic>{});
+
+    sendTag(CotizadorAnalitycsTags.cotizadorGMM);
+    setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorAP");
+*/
     var headers = {
       "Content-Type": "application/json"
     };
@@ -120,10 +128,11 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
 
   Future<List<Cotizadores>> getCotizadores(NegocioOperable negocioOperable) async {
-    // set up POST request arguments
-    /*final Trace cotizadores = FirebasePerformance.instance.newTrace("CotizadorUnico_GetCotizadores");
+
+    /*final Trace cotizadores = FirebasePerformance.instance.newTrace("SoySocio_GetCotizadores");
     cotizadores.start();
     print(cotizadores.name);*/
+
     var config = AppConfig.of(context);
     List<dynamic> list;
     List<Cotizadores> listCotizadores = List<Cotizadores>();
@@ -294,7 +303,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.clear, color: AppColors.secondary900, size: 28,),
+          icon: Image.asset('assets/icon/cotizador/backbutton.png', width: 16, height: 16,),
           onPressed: () {
             Navigator.of(context).pop();
           },

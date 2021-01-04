@@ -9,14 +9,13 @@ import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
-import 'package:cotizador_agente/vistas/CotizacionPDF.dart';
+import 'package:cotizador_agente/CotizadorUnico/CotizacionPDF.dart';
 //import 'package:firebase_analytics/firebase_analytics.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:http/http.dart';
 import 'package:flutter_tags/tag.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
@@ -47,8 +46,6 @@ class _SendEmailState extends State<SendEmail> {
 
   bool esVacio =false;
   bool esVacioMail = false;
-  FlutterWebviewPlugin _flutterWebViewPlugin = new FlutterWebviewPlugin();
-  String _initialURL="";
   Map<String, dynamic> parameters =  Map<String, dynamic>();
   String dataLayer="";
 
@@ -164,7 +161,7 @@ class _SendEmailState extends State<SendEmail> {
 
   Future _initialWebView() async{
 
-    dataLayer = json.encode(Utilidades.seccCot);
+    /*dataLayer = json.encode(Utilidades.seccCot);
 
     Codec<String, String> stringToBase64 = utf8.fuse(base64);
     String encoded = stringToBase64.encode(dataLayer);
@@ -197,7 +194,7 @@ class _SendEmailState extends State<SendEmail> {
       }
 
     }
-
+*/
   }
 
   final GlobalKey<TagsState> _tagStateKey = GlobalKey<TagsState>();
@@ -624,11 +621,11 @@ class _SendEmailState extends State<SendEmail> {
                                               if(eMails.length>0 && eMails.length<21){
                                                // _initialWebView();
                                                 _sendEmailService();
-                                                //final FirebaseAnalytics analytics = new FirebaseAnalytics();
-                                                //analytics.logEvent(name: CotizadorAnalitycsTags.envioMailGMM, parameters: <String, dynamic>{});
+                                                /*final FirebaseAnalytics analytics = new FirebaseAnalytics();
+                                                analytics.logEvent(name: CotizadorAnalitycsTags.envioMailGMM, parameters: <String, dynamic>{});
 
-                                                //sendTag(CotizadorAnalitycsTags.envioMailGMM);
-                                                //setCurrentScreen(CotizadorAnalitycsTags.envioMailGMM, "SendEmail");
+                                                sendTag(CotizadorAnalitycsTags.envioMailGMM);
+                                                setCurrentScreen(CotizadorAnalitycsTags.envioMailGMM, "SendEmail");*/
                                               }
 
 
@@ -702,21 +699,6 @@ class _SendEmailState extends State<SendEmail> {
                         ),
                       ),
                     ],
-                  ),
-                ),
-                Container(
-                  height: 0,
-                  width: 0,
-                  child: Visibility(
-                    visible: true,
-                    child: WebviewScaffold(
-                        url: _initialURL,
-                        withJavascript: true,
-                        withZoom: false,
-                        withLocalStorage: true,
-                        hidden:true,
-                        clearCache: true
-                    ),
                   ),
                 ),
               ],
