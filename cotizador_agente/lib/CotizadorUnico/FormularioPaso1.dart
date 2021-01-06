@@ -1034,7 +1034,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                             Navigator.pop(context);
                                           }
                                         } else {
-                                          Utilidades.mostrarAlerta("ERRORR", "Faltan datos", context);
+                                          Utilidades.mostrarAlerta("Error", "Faltan datos obligatorios por capturar", context);
                                           print("invalid");
                                         }
                                       },
