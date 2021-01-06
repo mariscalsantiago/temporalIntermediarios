@@ -1077,12 +1077,12 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                               child: Image.asset("assets/icon/cotizador/Solicitantes.png", height: 50, width: 50,),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
+                              padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, left: 16.0),
                               child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar, letterSpacing: 0.15),),
                             ),
                             Spacer(),
                             Padding(
-                              padding: const EdgeInsets.only(right: 13.0, top: 25.0, bottom: 25.0, left: 140.0),
+                              padding: const EdgeInsets.only(right: 25.0, top: 10.0, bottom: 10.0),
                               child: Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
                             ),
                           ],

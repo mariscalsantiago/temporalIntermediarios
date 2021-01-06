@@ -245,7 +245,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
           Navigator.pop(context);
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleExito, Mensajes.cotizacionEnviada, context, "Aceptar", (){
             Navigator.pop(context);
-            Navigator.pop(context);
             Navigator.pushReplacement(context,  MaterialPageRoute(
               builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
             ));
