@@ -1169,7 +1169,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 16.0, bottom: 16),
-                                      child: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].campos.length != 0 || (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].children_secc.length != 0 && Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].children_secc_sin_filtro.length > 1) ? Container(
+                                      child: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].campos.length != 0 ? Container(
                                         color: AppColors.color_background,
                                         child: ExpansionTile(
                                           onExpansionChanged: (value){
