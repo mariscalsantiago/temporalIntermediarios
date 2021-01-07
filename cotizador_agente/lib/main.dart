@@ -66,7 +66,8 @@ void main() async {
     //COTIZADOR UNICO
     urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/',
     urlBase: 'https://gmm-cotizadores-qa.gnp.com.mx/',
-    urlBaseAnalytics: 'https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=',
+    urlSendAnalytics: 'https://www.google-analytics.com/collect?',
+    idContenedorAnalytics: 'UA-146126625-2',
 
     child: new MyApp(),
   );
