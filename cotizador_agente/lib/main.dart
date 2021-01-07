@@ -8,6 +8,7 @@ import 'package:cotizador_agente/vistas/Inicio/LoginPage.dart';
 import 'package:cotizador_agente/CotizadorUnico/SeleccionaCotizadorAP.dart';
 import 'package:cotizador_agente/CotizadorUnico/SendEmail.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -46,6 +47,7 @@ enum editType {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  Crashlytics.instance.enableInDevMode = true;
   var configuredApp = new AppConfig(
     serviceEndPoint: 'http://10.67.83.12/AppCobros/rest/',
     ambient: Ambient.qa,
