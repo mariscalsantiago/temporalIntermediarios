@@ -10,6 +10,7 @@ import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 import 'package:shimmer/shimmer.dart';
@@ -52,9 +53,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   getNegociosOperables( ) async {
 
-   /* final Trace negociosOp = FirebasePerformance.instance.newTrace("SoySocio_NegociosOperables");
+    final Trace negociosOp = FirebasePerformance.instance.newTrace("SoySocio_NegociosOperables");
     negociosOp.start();
-    print(negociosOp.name);*/
+    print(negociosOp.name);
 
     bool success = false;
     var config = AppConfig.of(context);
@@ -88,7 +89,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     if(response.success){
       try {
         success = true;
-
+        negociosOp.stop();
         var list = response.response['consultaPorParticipanteResponse']
         ["consultaNegocios"]["participante"]["listaNegocioOperable"] as List;
         list.removeWhere((element) => element["idNegocioOperable"].toString() != "NOP0002010");
@@ -108,6 +109,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           isLoading = false;
         });
       }catch(e){
+        negociosOp.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           getNegociosOperables();
@@ -115,6 +117,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       }
 
     }else{
+      negociosOp.stop();
       isLoading = false;
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
         Navigator.pop(context);
@@ -129,9 +132,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   Future<List<Cotizadores>> getCotizadores(NegocioOperable negocioOperable) async {
 
-    /*final Trace cotizadores = FirebasePerformance.instance.newTrace("SoySocio_GetCotizadores");
+    final Trace cotizadores = FirebasePerformance.instance.newTrace("SoySocio_GetCotizadores");
     cotizadores.start();
-    print(cotizadores.name);*/
+    print(cotizadores.name);
 
     var config = AppConfig.of(context);
     List<dynamic> list;
@@ -163,6 +166,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         MyResponse response = await RequestHandlerDio.httpRequest(request);
 
         if(response.success){
+          cotizadores.stop();
 
           list = response.response['cotizadores'];
 
@@ -175,7 +179,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           }
           return listCotizadores;
         }else{
-          //cotizadores.stop();
+          cotizadores.stop();
           isLoading = false;
           Navigator.pop(context);
 
@@ -193,7 +197,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       }
 
     }catch(e){
-      //cotizadores.stop();
+      cotizadores.stop();
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
         Navigator.pop(context);
         getCotizadores(negocioOperable);
