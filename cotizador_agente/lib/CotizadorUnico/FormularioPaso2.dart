@@ -917,7 +917,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                           child: Image.asset("assets/icon/cotizador/paso1.png", height: 50, width: 50,),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
+                                          padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, left: 16.0),
                                           child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
                                         ),
                                         Spacer(),
@@ -1169,7 +1169,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 16.0, bottom: 16),
-                                      child: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].campos.length != 0 || (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].children_secc.length != 0 && Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].children_secc_sin_filtro.length > 1) ? Container(
+                                      child: Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].campos.length != 0 ? Container(
                                         color: AppColors.color_background,
                                         child: ExpansionTile(
                                           onExpansionChanged: (value){

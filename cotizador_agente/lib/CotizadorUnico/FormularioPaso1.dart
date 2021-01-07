@@ -857,7 +857,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                             child: Image.asset("assets/icon/cotizador/paso1.png", height: 50, width: 50,),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 44, left: 16.0),
+                            padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, left: 16.0),
                             child: Text("Cotiza", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar),),
                           ),
                           Spacer(),
@@ -1034,7 +1034,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                             Navigator.pop(context);
                                           }
                                         } else {
-                                          Utilidades.mostrarAlerta("ERRORR", "Faltan datos", context);
+                                          Utilidades.mostrarAlerta("Error", "Faltan datos obligatorios por capturar", context);
                                           print("invalid");
                                         }
                                       },
