@@ -8,6 +8,7 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -169,9 +170,9 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   llenarTabla(BuildContext context) async {
 
-    /*final Trace llenaTbl = FirebasePerformance.instance.newTrace("CotizadorUnico_CotizacionesGuardadas");
+    final Trace llenaTbl = FirebasePerformance.instance.newTrace("SoySocio_CotizacionesGuardadas");
     llenaTbl.start();
-    print(llenaTbl.name);*/
+    print(llenaTbl.name);
     bool success = false;
 
     try {
@@ -249,7 +250,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
               if (statusCode == 200) {
                 success = true;
                 registrosGuardados = json.decode(response.body)['registrosEncontrados'];
-                //llenaTbl.stop();
+                llenaTbl.stop();
                 var list = json.decode(response.body)['cotizaciones'] as List;
 
                 maxpagina = json.decode(response.body)['numeroPaginas'];
@@ -271,7 +272,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                     });*/
                     isLoading = false;
               } else if (statusCode != null) {
-                //llenaTbl.stop();
+                llenaTbl.stop();
                 isLoading = false;
                 Navigator.pop(context);
                 String message = json.decode(response.body)['message'] != null
@@ -291,7 +292,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
               blockSearch = false;
 
             }else{
-              //llenaTbl.stop();
+              llenaTbl.stop();
               Utilidades.mostrarAlerta(Mensajes.titleLoSentimos, Mensajes.sinCotizaciones, context);
             }
 
@@ -299,14 +300,14 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
         }
 
       } else {
-        //llenaTbl.stop();
+        llenaTbl.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           llenarTabla(context);
         });
       }
     }catch(e){
-      //llenaTbl.stop();
+      llenaTbl.stop();
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
         Navigator.pop(context);
         llenarTabla(context);

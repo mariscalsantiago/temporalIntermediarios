@@ -13,6 +13,7 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 //import 'package:firebase_performance/firebase_performance.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
@@ -114,9 +115,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   guardarFormato( int idformato, int index, bool abrirPdf) async {
     //if(deboGuardarCotizacion){
 
-      /*final Trace saveCot = FirebasePerformance.instance.newTrace("CotizadorUnico_GuardarCotizacion");
+      final Trace saveCot = FirebasePerformance.instance.newTrace("SoySocio_GuardarCotizacion");
       saveCot.start();
-      print(saveCot.name);*/
+      print(saveCot.name);
 
       final result = await InternetAddress.lookup('google.com');
 
@@ -205,6 +206,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
         MyResponse response = await RequestHandler.httpRequest(request);
         if(response.success){
+          saveCot.stop();
           Utilidades.LogPrint("COT GUARDADA: \ " + json.encode(jsonMap).toString());
           Utilidades.LogPrint("RESPONSE COT G: " + response.response.toString());
           //saveCot.stop();
@@ -247,14 +249,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
           });
         }else{
-          //saveCot.stop();
+          saveCot.stop();
           isLoading = false;
           String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
           Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
         }
 
       }else {
-        //saveCot.stop();
+        saveCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           guardaCotizacion(index, idformato, abrirPdf);
@@ -300,9 +302,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   generarCotizacion(BuildContext context) async{
 
-    /*final Trace generaCot = FirebasePerformance.instance.newTrace("CotizadorUnico_GenerarCotizacion");
+    final Trace generaCot = FirebasePerformance.instance.newTrace("SoySocio_GenerarCotizacion");
     generaCot.start();
-    print(generaCot.name);*/
+    print(generaCot.name);
     bool success = false;
 
 
@@ -323,7 +325,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
             Utilidades.LogPrint("RESPONSE COT: " + response.body.toString());
             if(response.body != null && response.body.isNotEmpty){
               if (statusCode == 200) {
-                //generaCot.stop();
+                generaCot.stop();
 
                 this.setState(() {
                   success = true;
@@ -450,13 +452,13 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                 });
               }else if(statusCode == 400){
-                //generaCot.stop();
+                generaCot.stop();
                 isLoading = false;
                 Navigator.pop(context);
                 Utilidades.mostrarAlertas("Error: " + statusCode.toString(), "Bad Request", context);
 
               }else if(statusCode != null) {
-                //generaCot.stop();
+                generaCot.stop();
                 isLoading = false;
                 //Navigator.pop(context);
                 String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
@@ -466,14 +468,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
               }
 
             }else{
-              //generaCot.stop();
+              generaCot.stop();
               Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
                 Navigator.pop(context);
                 generarCotizacion(context);
               });
             }
           }else{
-            //generaCot.stop();
+            generaCot.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
               Navigator.pop(context);
               generarCotizacion(context);
@@ -481,7 +483,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
           }
 
         }catch(e){
-          //generaCot.stop();
+          generaCot.stop();
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
             Navigator.pop(context);
             generarCotizacion(context);
@@ -489,7 +491,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         }
 
       }else{
-        //generaCot.stop();
+        generaCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           generarCotizacion(context);
@@ -497,7 +499,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       }
 
     }catch(e){
-      //generaCot.stop();
+      generaCot.stop();
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
         Navigator.pop(context);
         generarCotizacion(context);

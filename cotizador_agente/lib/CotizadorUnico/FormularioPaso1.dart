@@ -11,6 +11,7 @@ import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/CotizadorUnico/FormularioPaso2.dart';
 import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
@@ -269,9 +270,9 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
   getData() async {
 
-    /*final Trace data = FirebasePerformance.instance.newTrace("CotizadorUnico_GetPasoUno");
+    final Trace data = FirebasePerformance.instance.newTrace("SoySocio_GetPasoUno");
     data.start();
-    print(data.name);*/
+    print(data.name);
     bool success = false;
 
     final result = await InternetAddress.lookup('google.com');
@@ -296,6 +297,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
         MyResponse response = await RequestHandler.httpRequest(request);
 
         if(response.success){
+          data.stop();
           success = true;
           this.setState(() {
             isLoading = false;
@@ -390,7 +392,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
           });
 
         }else{
-          //data.stop();
+          data.stop();
           isLoading = false;
           Navigator.pop(context);
           String message = response.response['message'] != null ? response.response['message'] :
@@ -400,14 +402,14 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
         }
 
       }catch(e){
-        //data.stop();
+        data.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           getData();
         });
       }
     }else{
-        //data.stop();
+        data.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           getData();

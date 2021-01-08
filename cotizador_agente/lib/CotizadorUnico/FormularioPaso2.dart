@@ -12,6 +12,7 @@ import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -207,9 +208,9 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
     setState(() {
       isLoading = true;
     });
-    /*final Trace cargaPaso = FirebasePerformance.instance.newTrace("CotizadorUnico_PasoDos");
+    final Trace cargaPaso = FirebasePerformance.instance.newTrace("SoySocio_PasoDos");
     cargaPaso.start();
-    print(cargaPaso.name);*/
+    print(cargaPaso.name);
     bool success = false;
 
     final result = await InternetAddress.lookup('google.com');
@@ -229,6 +230,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
       MyResponse response = await RequestHandler.httpRequest(request);
 
       if(response.success){
+        cargaPaso.stop();
         setState(() {
           PasoFormulario estePaso = PasoFormulario.fromJson(response.response);
           Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2 =  estePaso;
@@ -409,7 +411,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
             });
 
           }else{
-            //cargaPaso.stop();
+            cargaPaso.stop();
             Navigator.pop(context);
             String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
             Utilidades.mostrarAlerta(Mensajes.titleError,message, context);
@@ -423,7 +425,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
           }
 
       }else {
-        //cargaPaso.stop();
+        cargaPaso.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           cargarSiguientePaso(map_plan);

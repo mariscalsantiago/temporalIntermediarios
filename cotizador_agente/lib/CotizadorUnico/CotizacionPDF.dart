@@ -10,6 +10,7 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/widgets.dart';
@@ -70,9 +71,9 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   getFormato(BuildContext context) async{
 
-    /*final Trace formato = FirebasePerformance.instance.newTrace("CotizadorUnico_GetPDF");
+    final Trace formato = FirebasePerformance.instance.newTrace("SoySocio_GetPDF");
     formato.start();
-    print(formato.name);*/
+    print(formato.name);
     bool success = false;
 
         try{
@@ -98,13 +99,13 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
             if(response != null) {
 
                 if (statusCode == 200) {
-                  //formato.stop();
+                  formato.stop();
                   success = true;
                   responseBase = response.body;
                   _createFileFromString();
 
                 }else if(statusCode != null){
-                  //formato.stop();
+                  formato.stop();
                   isLoading = false;
                   String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
 
@@ -113,7 +114,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                 }
 
             }else{
-              //formato.stop();
+              formato.stop();
               Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleError, response.body, context,"Reintentar",(){
                 Navigator.pop(context);
                 getFormato(context);
@@ -121,7 +122,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
             }
 
           }else {
-            //formato.stop();
+            formato.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
               Navigator.pop(context);
               getFormato(context);
@@ -129,7 +130,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
           }
 
         }catch(e){
-          //formato.stop();
+          formato.stop();
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
             Navigator.pop(context);
             getFormato(context);
@@ -207,9 +208,9 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   sendEmailService() async {
 
-    /*final Trace mytrace = FirebasePerformance.instance.newTrace("CotizadorUnico_EnviaEmail");
+    final Trace mytrace = FirebasePerformance.instance.newTrace("SoySocio_EnviaEmail");
     mytrace.start();
-    print(mytrace.name);*/
+    print(mytrace.name);
     bool success = false;
 
     final result = await InternetAddress.lookup('google.com');
@@ -238,7 +239,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
       MyResponse response = await RequestHandler.httpRequest(request);
       if(response.success){
-        //mytrace.stop();
+        mytrace.stop();
         this.setState(() {
           isLoading = false;
           success = true;
@@ -252,7 +253,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
         });
       }else{
-        //mytrace.stop();
+        mytrace.stop();
         isLoading = false;
         Navigator.pop(context);
         String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
@@ -260,7 +261,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
         Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
       }
     }else {
-      //mytrace.stop();
+      mytrace.stop();
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
         Navigator.pop(context);
         sendEmailService();
