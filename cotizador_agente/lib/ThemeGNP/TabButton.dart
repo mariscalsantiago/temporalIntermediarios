@@ -32,6 +32,7 @@ class TabButton extends StatelessWidget {
                       width: 24,
                       height: 24,
                       imageUrl: icono,
+                      color: this.color,
                       placeholder: (context, url) => skeletonIcon(),
                       errorWidget: (context, url, error) => this.placeHolder),
                   Padding(padding: EdgeInsets.all(4)),
