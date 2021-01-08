@@ -753,8 +753,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                       case 2:
                         break;
                       case 3:
-                       /* Navigator.pop(context);
-                        actualizarVistaConNuevoPlan(plan);*/
+                        limpiarDatos();
                         break;
                       case 4:
                         Navigator.push(context,  MaterialPageRoute(

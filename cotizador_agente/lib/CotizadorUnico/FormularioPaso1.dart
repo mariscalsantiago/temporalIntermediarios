@@ -811,6 +811,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                         case 2:
                           break;
                         case 3:
+                          recargar();
                           break;
                         case 4:
                           Navigator.push(context,  MaterialPageRoute(
