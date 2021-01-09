@@ -1,302 +1,119 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/CotizacionesGuardadas.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
-import 'package:cotizador_agente/vistas/SendEmail.dart';
+
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/Perfil/PerfilPage.dart';
+import 'package:cotizador_agente/SplashModule/SplashController.dart';
+import 'package:cotizador_agente/CotizadorUnico/Cotizacion.dart';
+import 'package:cotizador_agente/CotizadorUnico/FormularioPaso1.dart';
+import 'package:cotizador_agente/vistas/Inicio/LoginPage.dart';
+import 'package:cotizador_agente/CotizadorUnico/SeleccionaCotizadorAP.dart';
+import 'package:cotizador_agente/CotizadorUnico/SendEmail.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'package:cotizador_agente/utils/validadores.dart';
-import 'package:http/http.dart' as http;
-import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:flutter/material.dart';
-import 'package:cotizador_agente/vistas/Cotizacion.dart';
-import 'package:load/load.dart';
-import 'package:localstorage/localstorage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() {
-  runApp(
-    LoadingProvider(
-      child: MyApp(),
-    ),
+int timerMinuts = 20;
+int timerSec = 1200;
+DateTime sessionStartDate;
+var inWebView = false;
+var isLogActive = true;
+
+void printLog(String where, String what) {
+  if (isLogActive) {
+    print("_" + where + ": " + what);
+  } else {}
+}
+
+enum editType {
+  salud,
+  estudios,
+  familiar,
+  texto,
+  correo,
+  telefono,
+  direccion,
+  poliza,
+  contatoEmergencia,
+  nickname,
+  visa,
+  pasaporte,
+  playera,
+  condiciones,
+  deportes,
+  acompaniante
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  Crashlytics.instance.enableInDevMode = true;
+  var configuredApp = new AppConfig(
+    serviceEndPoint: 'http://10.67.83.12/AppCobros/rest/',
+    ambient: Ambient.qa,
+    serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
+  //  serviceBCA: 'https://bca-ws-qa.gnp.com.mx',
+    apikeyBCABonos:'04985d13-d1d4-4032-9fe6-faa14c18d464',
+    apikeyBCA: 'd41d8cd98f00b204e9800998ecf8427e',
+    apikeyAppAgentes: 'l7xxfb568d77704046d0b5a80256fe00f829',
+    service_perfilador: "https://api-qa.oscp.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
+    serviceConteoPolizas: "https://api-qa.oscp.gnp.com.mx/crm-agentes/conteo-polizas",
+    serviceConteoClientes: "https://api-qa.oscp.gnp.com.mx/crm-agentes/conteo-clientes",
+    proyectId: 'gnp-accidentespersonales-qa',
+    urlNotifierService:'https://api-qa.oscp.gnp.com.mx',
+    //urlProrrogadosService: 'https://api-dev.oscp.gnp.com.mx',
+    pagoEnLinea:'https://api-dev.oscp.gnp.com.mx',
+    privacyAdvertisement :'http://35.209.236.248/aviso',
+
+    //COTIZADOR UNICO
+    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/',
+    urlBase: 'https://gmm-cotizadores-qa.gnp.com.mx/',
+    urlSendAnalytics: 'https://www.google-analytics.com/collect?',
+    idContenedorAnalytics: 'UA-146126625-2',
+
+    child: new MyApp(),
   );
+
+  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
+  runApp(configuredApp);
+  // });
+  // runApp(configuredApp);
 }
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        // ... app-specific localization delegate[s] here
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en'), // English
+        const Locale('es'), // español
+      ],
+      initialRoute: '/',
+      routes: {
+        '/splash': (buildContext) => SplashController(),
+        '/login': (buildContext) => LoginPage(),
+        '/perfil': (buildContext) => PerfilPage(),
+        '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
+        '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
+        '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
+        '/cotizadorUnicoAPSendEmail': (buildContext) => SendEmail(),
+      },
+      debugShowCheckedModeBanner: false,
       title: 'GNP',
-      theme: ThemeData(primaryColor: Colors.white),
-      key: scaffoldKey,
-      home: MyHomePage(title: 'GNP'),
-      //  home: SendEmail(),
-      //home: CotizacionVista(),
-      //home: CotizacionesGuardadas(),
-
+      theme: ThemeData(primaryColor: Colors.deepOrange,
+          textTheme: TextTheme(
+              body1: TextStyle(fontSize: 18.0),
+              body2: TextStyle(fontSize: 18.0))),
+      home: SplashController(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.scaffoldKey}) : super(key: key);
-
-  final GlobalKey<ScaffoldState> scaffoldKey;
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState(scaffoldKey);
-}
-
-class _MyHomePageState extends State<MyHomePage> with Validadores {
-  final formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> scaffoldKey;
-
-  _MyHomePageState(this.scaffoldKey);
-
-  //Se van a guardar los datos de la forma aquí createdoc[rango_edad]
-  var createDoc = {};
-
-  final LocalStorage storage = new LocalStorage('formulario_1');
-
-  final colorHex = const Color(0xFFCECFD1);
-  final colorLetters = const Color(0xFF002E71);
-  bool reNew = false;
-  bool isLoading = true;
-
-  Paint _paint;
-
-  Drawhorizontalline() {
-    _paint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 1
-      ..strokeCap = StrokeCap.round;
-  }
-
-  refresh() {
-    setState(() {});
-  }
-
-  agregarAlDiccionario(String key, String value) {
-    setState(() {
-      //El metodo que ya funciona
-      print("llegue al metodo del diccionario");
-      createDoc[key] = value;
-      print(createDoc);
-      guardarLocalStorage();
-
-      // Otro metodo
-      storage.setItem(key, createDoc);
-      print("esto etoy guardando" + json.encode(storage.getItem(key)));
-    });
-  }
-
-  guardarLocalStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'PASO1';
-    prefs.setString(key, createDoc.toString());
-
-    final value = prefs.getString(key) ?? "no hay";
-    print('read: $value');
-  }
-
-  Formulario data;
-
-  Future<String> getData() async {
-    var response = await http.get(
-        Uri.encodeFull(
-            "http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=1818"),
-        headers: {"Accept": "application/json"});
-
-    if (response.statusCode == 200) {
-      //return Formulario.fromJson(json.decode(response.body));
-      this.setState(() {
-        //data = json.decode(response.body);
-        isLoading = false;
-        data = Formulario.fromJson(json.decode(response.body));
-      });
-    } else {
-      print("VVV");
-      throw Exception('Failed to load post');
-    }
-
-    return "Success!";
-  }
-
-  @override
-  void initState() {
-    this.getData();
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawLine(Offset(-90.0, 0.0), Offset(90.0, 0.0), _paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-
-        title: Text("GNP"),
-
-      ),
-
-      body: Column(
-
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-
-          Container(
-            color: Utilidades.sombra,
-            child: Row( //Barra de menú superior
-              children: <Widget>[
-                Expanded(
-                  flex: 7,
-                  child:  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: OutlineButton(
-                      textColor: Utilidades.color_primario,
-                      child: Text("COTIZACIONES GUARDADAS"),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CotizacionesGuardadas(),
-                            ));
-                      },
-                      borderSide: BorderSide(
-                        color: Utilidades.color_primario, //Color of the border
-                        style: BorderStyle.solid, //Style of the border
-                        width: 0.8, //width of the border
-                      ),
-                    ),
-                  ),
-                ),
-
-
-                Expanded(
-
-                  flex: 3,
-                  child: Container(
-                    width: double.infinity,
-                    child: (
-                        PopupMenuButton(
-
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 1,
-                              child: Text(
-                                "Guardar",
-                                style: TextStyle(
-                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 2,
-                              child: Text(
-                                "Limpiar datos",
-                                style: TextStyle(
-                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 3,
-                              child: Text(
-                                "Imprimir",
-                                style: TextStyle(
-                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 4,
-                              child: Text(
-                                "Material de apoyo",
-                                style: TextStyle(
-                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                          ],
-                          initialValue: 2,
-                          onCanceled: () {
-                            print("You have canceled the menu.");
-                          },
-                          onSelected: (value) {
-                            print("value:$value");
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                "MÁS",
-                                style: TextStyle(fontSize: 14.0, color: Utilidades.color_primario),
-                                textAlign: TextAlign.right,
-
-                              ),
-                              Icon(Icons.more_vert, color: Utilidades.color_primario,),
-                            ],
-                          ),
-                        )
-
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                    child: Divider( //002e71
-                      thickness: 2,
-                      color: Utilidades.color_titulo,
-
-                      height: 0,
-                    )),
-              ),
-            ],
-          ),
-          /****** Termina panel superior *******/
-
-
-          /****** Comienza panel de coti *******/
-
-          Expanded(
-            child: Form(
-              key: formKey,
-              child: isLoading
-                  ? Center(
-                child: CircularProgressIndicator(),
-              )
-                  : new ListView.builder
-                (
-                  itemCount: data.secciones.length-1,
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemBuilder: (BuildContext ctxt, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: data.secciones[index], i:index, end:data.secciones.length-1, cantidad_asegurados: data.cantidad_asegurados, formKey: formKey,),
-                    );
-                  }
-              ),
-            ),
-
-          ),
-        ]),
-      );
-  }
-}
