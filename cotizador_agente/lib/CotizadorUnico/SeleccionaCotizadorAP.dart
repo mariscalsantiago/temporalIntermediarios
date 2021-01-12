@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/CotizadorUnico/Analytics/Analytics.dart';
+import 'package:cotizador_agente/CotizadorUnico/Analytics/CotizadorAnalyticsTags.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
@@ -14,6 +16,7 @@ import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 import 'package:shimmer/shimmer.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class SeleccionaCotizadorAP extends StatefulWidget {
   List<NegocioOperable> negociosOperables = new List<NegocioOperable>();
@@ -60,12 +63,13 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     bool success = false;
     var config = AppConfig.of(context);
 
-  /*  final FirebaseAnalytics analytics = new FirebaseAnalytics();
+    /*final FirebaseAnalytics analytics = new FirebaseAnalytics();
     analytics.logEvent(name: CotizadorAnalitycsTags.cotizadorGMM, parameters: <String, dynamic>{});
 
     sendTag(CotizadorAnalitycsTags.cotizadorGMM);
-    setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorAP");
-*/
+    setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorAP");*/
+    AnalyticsServices().sendTag(CotizadorAnalitycsTags.cotizadorGMM);
+    AnalyticsServices().setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorAP");
     var headers = {
       "Content-Type": "application/json"
     };
@@ -108,12 +112,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         setState(() {
           isLoading = false;
         });
-      }catch(e){
+      }catch(e,s){
         negociosOp.stop();
-        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
-          getNegociosOperables();
-        });
+        await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
       }
 
     }else{
@@ -196,14 +197,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         });
       }
 
-    }catch(e){
+    }catch(e, s){
       cotizadores.stop();
-      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
-        getCotizadores(negocioOperable);
-      });
-      return listCotizadores;
-    //  return list.map((i) => Cotizadores.fromJson(i)).toList(); //TODO Regresar una excepción
+      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
     return listCotizadores;
@@ -511,13 +507,18 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                       Navigator.pop(context);
                       Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
                       Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
-                      //   seccionCotizador();
+                      //Analytics
+                      Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
+                      Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);
                       Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                       Utilidades.deboCargarPaso1 = false;
                     });
                   } else{
                     Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
                     Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+                    //Analytics
+                    Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
+                    Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);
                     //  seccionCotizador();
                     Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                     Utilidades.deboCargarPaso1 = false;

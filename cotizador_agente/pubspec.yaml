@@ -53,8 +53,8 @@ dependencies:
   version: ^1.2.0
   shimmer: ^1.1.1
   firebase_remote_config: ^0.4.1
-  firebase_crashlytics: ^0.1.2+2
-  firebase_analytics: ^5.0.14
+  firebase_crashlytics: ^0.2.4
+  firebase_analytics: ^6.2.0
   firebase_core: ^0.5.1
   firebase_performance: ^0.3.2
 

@@ -1,25 +1,31 @@
 
+import 'dart:convert';
+
+import 'package:cotizador_agente/CotizadorUnico/Analytics/Analytics.dart';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 class CotizadorAnalitycsTags {
   static const String cotizadorGMM = "gmm_cotizador_ingreso";
   static const String descargaGMM = "gmm_cotizador_descarga";
   static const String envioMailGMM = "gmm_cotizador_envioEmail";
+  static var config;
+  static String contenedor = "";
 
+  static void sendTagsFormulario(FormularioCotizacion formularioCotizacion, BuildContext context) async {
 
-  /*static void sendTagsFormulario(FormularioCotizacion formularioCotizacion) async {
-
-    final FirebaseAnalytics analytics = new FirebaseAnalytics();
-
+    config = AppConfig.of(context);
     List <Seccion> seccionesFormulario= List<Seccion> ();
 
     //Hacer copia local de los campos del formulario
     seccionesFormulario.addAll(backPaso1(formularioCotizacion.paso1.secciones));
     seccionesFormulario.addAll(backPaso1(formularioCotizacion.paso2.secciones));
 
-    enviarTagsFormularioSeccion(analytics,seccionesFormulario);
-
+    enviarTagsFormularioSeccion(seccionesFormulario);
   }
 
   //Métodos para copiar Secciones.
@@ -79,18 +85,40 @@ class CotizadorAnalitycsTags {
     return _secciones;
   }
 
-  static void enviarTagsFormularioSeccion(FirebaseAnalytics analytics, List<Seccion> secciones) async {
+  static Map<String,dynamic> newTag(String paramaName, dynamic valor){
+    Map<String, dynamic> esteTag = new Map<String, dynamic>();
+
+    if(config.ambient == Ambient.qa){
+      contenedor = config.idContenedorAnalytics;
+    }else if (config.ambient == Ambient.uat){
+      contenedor = config.idContenedorAnalytics;
+    }else if(config.ambient == Ambient.prod){
+      contenedor = config.idContenedorAnalytics;
+    }
+
+    esteTag["v"] = "1";
+    esteTag["tid"] = config.idContenedorAnalytics;
+    esteTag["cid"] = "555";
+    esteTag["t"] = "event";
+    esteTag["ec"] = Utilidades.getCategoria();
+    esteTag["ea"] = paramaName;
+    esteTag["el"] = valor;
+
+    return esteTag;
+
+  }
+
+  static void enviarTagsFormularioSeccion( List<Seccion> secciones) async {
     String tagName = 'gmm_cotizador_titular';
 
-    //El método itera todos los campos para almacentarlos en dos listas: Adicionales y del Titular
+    //El método itera todos los campos para almacenarlos en dos listas: Adicionales y del Titular
     //DEspúes de acomodar todos los campos en listas liniales, luego entonces se envían los parámetros
 
     Map<String, dynamic> parameters_titular = Map<String, dynamic>();
+    List<Map<String, dynamic>> tagList = List<Map<String, dynamic>> ();
 
     List <Campo> campos_titular = List<Campo> ();
     List <Seccion> secciones_adicionales  = List <Seccion> ();
-
-    List <Campo> campos_adicionales = List<Campo> ();
 
     //BUSCAR Clasificar Campos
     for(var seccion in secciones){
@@ -130,6 +158,7 @@ class CotizadorAnalitycsTags {
               valor = valor == 'true' ? 'Si' : valor;
               valor = valor == 'false' ? 'No' : valor;
               parameters_titular[paramaName] = valor; //Agregar a parámetros
+              tagList.add(newTag(seccion.seccion + "/" + campo.etiqueta, valor));
               //sendTagInteractionWithANamedParam(tag, "value", valor);
               //print(tag + " { value: " + valor + " }");
             }
@@ -219,6 +248,7 @@ class CotizadorAnalitycsTags {
 
     int num_adicional = 1; //En el cotizador
 
+    //Mandar a llamar el método que se tiene en utilidades para enviar parameters_titular
     for(var seccion in secciones_adicionales){
 
       Map<String, dynamic> parameters_adicionales = Map<String, dynamic>();
@@ -256,6 +286,8 @@ class CotizadorAnalitycsTags {
             valor = valor == 'true' ? 'Si' : valor;
             valor = valor == 'false' ? 'No' : valor;
             parameters_adicionales[paramaName] = valor; //Agregar a parámetros
+            //parameters_titular["adicional_"+ num_adicional.toString()+"_"+paramaName] = valor; //Agregar a parámetros de titular
+
             //sendTagInteractionWithANamedParam(tag, "value", valor);
             //print(tag + " { value: " + valor + " }");
           }
@@ -264,79 +296,22 @@ class CotizadorAnalitycsTags {
 
       }
 
+
       // TAGGING
+
       num_adicional ++;
+
+
     }
 
+
     //tagging
-    await analytics.logEvent(name: "gmm_cotizador_titular", parameters: parameters_titular);
+    AnalyticsServices().sendTagWithDynamicParams( "gmm_cotizador_titular", parameters_titular);
     print("gmm_cotizador_titular");
     print(parameters_titular.toString());
 
   }
 
-  static void sendTagsFormularioSeccion(FirebaseAnalytics analytics, String seccionTag, List<Seccion> secciones, Map<String, dynamic> parameters) async {
-    String tagName = 'gmm_cotizador_titular';
-
-    for(var seccion in secciones) {
-      if (seccion.multiplicador == 0) {
-        print('\n**************************************');
-        sendTagsFormularioCampo(analytics, seccion, parameters);
-
-        if(seccion.id_seccion == Utilidades.familiarSeccion) {
-          tagName = 'gmm_cotizador_familiares_adicionales';
-        }
-        else {
-          tagName = 'gmm_cotizador_titular';
-        }
-
-        //tagging
-        await analytics.logEvent(name: tagName, parameters: parameters);
-
-        print(tagName);
-        print(parameters.toString());
-        print('**************************************\n');
-      }
-      if (seccion.children_secc != null ) {
-        sendTagsFormularioSeccion(analytics, (seccionTag + ( seccionTag.length>0 ? '_' : '' ) + seccion.seccion.replaceAll(new RegExp(r' '), '_')), seccion.children_secc, parameters);
-      }
-    }
-  }
-
-  static void sendTagsFormularioCampo(FirebaseAnalytics analytics, Seccion seccion, Map<String, dynamic> parameters) {
-    for(var campo in seccion.campos) {
-
-      Referencia esteCampo = Referencia(id_campo: campo.id_campo, id_seccion: seccion.id_seccion);
-
-      bool seEncuentraEnListaNegra = false;
-
-      for(var ref in Utilidades.listaCamposNoAnalytics){
-        if(ref.equals(esteCampo)){
-          seEncuentraEnListaNegra = true;
-        }
-      }
-
-      if(!seEncuentraEnListaNegra){
-        if (campo.visible == true) {  // + "-" + campo.nombre_campo.replaceAll(new RegExp(r'id_'), '');
-          var paramaName = campo.nombre_campo.replaceAll(new RegExp(r'id_'), '');
-          //tag = tag.toUpperCase();
-          dynamic valor = campo.valor!=null ? campo.valor : seccion.seccion;
-          if(campo.tipo_componente == Utilidades.tipoCampoSelect || campo.tipo_componente == Utilidades.tipoCampoToggle || campo.tipo_componente == Utilidades.tipoCampoSwitch) {
-            Valor _valor = campo.valores.singleWhere((v) => v.id == valor);
-            valor = _valor.descripcion;
-            valor = valor == 'ocultar' ? 'No' : valor;
-            valor = valor == 'mostrar' ? 'Si' : valor;
-          }
-          valor = valor == 'true' ? 'Si' : valor;
-          valor = valor == 'false' ? 'No' : valor;
-          parameters[paramaName] = valor;
-          //sendTagInteractionWithANamedParam(tag, "value", valor);
-          //print(tag + " { value: " + valor + " }");
-        }
-      }
-
-    }
-  }
 
   static List<Campo> obtenerCamposSimplificados(List<Campo> acumCampos, List<Campo> campos) {
 
@@ -397,7 +372,7 @@ class CotizadorAnalitycsTags {
     return acumCampos;
   }
 
-//Método para GTM
+  //Método para GTM
   static List<Map<String, dynamic>>  getListaSeccionesGTM(FormularioCotizacion formularioCotizacion){
 
     List <Seccion> seccionesFormulario= List<Seccion> ();
@@ -419,6 +394,7 @@ class CotizadorAnalitycsTags {
         for(int j=0; j<temporalPaso1.length; j++){
 
           if(ref.id_seccion == temporalPaso1[j].id_seccion){
+
             seccionesFormulario.add(temporalPaso1[j]);
           }
         }
@@ -430,21 +406,24 @@ class CotizadorAnalitycsTags {
 
             seccionesFormulario.add(temporalPaso2[k]);
           }
+
         }
+
       }
+
     }
 
-    List<Map<String, dynamic>> secciones_gtm = generarTagsGTM(seccionesFormulario);
-    Utilidades.LogPrint("SECCIONES_GTM: " + secciones_gtm.toString());
+    List<Map<String, dynamic>> secciones_gtm2 = generarTagsGTM2(seccionesFormulario);
+    Utilidades.LogPrint("SECCIONES_GTM: " + secciones_gtm2.toString());
 
-    return  secciones_gtm;
+    return  secciones_gtm2;
+
 
   }
 
-  static List<Map<String, dynamic>>  generarTagsGTM(List<Seccion> secciones) {
-
+  static List<Map<String, dynamic>>  generarTagsGTM2(List<Seccion> secciones) {
     //Lista de Secciones
-
+    List<Map<String, dynamic>> seccionAdicionales = new List<Map<String, dynamic>>();
     List<Map<String, dynamic>> lista_secciones =  List<Map<String, dynamic>> ();
 
     //BUSCAR Clasificar Campos
@@ -482,6 +461,7 @@ class CotizadorAnalitycsTags {
             //Formatear campo para agregarlo a parámetros.
 
             if (campo.visible == true) {  // + "-" + campo.nombre_campo.replaceAll(new RegExp(r'id_'), '');
+              //var paramaName = campo.nombre_campo.replaceAll(new RegExp(r'id_'), '');
 
               //Para coberturas_basicas se cambia el nombre de la etiqueta porque Tagmanger se configuró de esa forma
               if(seccion.nombreRequestCotizacion == "planes" && campo.nombre_campo == "coberturas_basicas"){
@@ -495,7 +475,8 @@ class CotizadorAnalitycsTags {
                 String libre = "ampliacionHospitalariaLibre";
                 dynamic valor = campo.getValorFormatted()!=null ? campo.getValorFormatted().toString() : seccion.seccion;
                 if(  valor == "9" || valor == "15" ) {
-
+                  //if(  (valor is String) ) {
+                  //if( valor =! true ) {
                   Valor _valor = campo.valores.singleWhere((v) =>
                   v.id == valor);
                   if (_valor.id == "9" && valor == "9") {
@@ -504,12 +485,50 @@ class CotizadorAnalitycsTags {
                   else if (_valor.id == "15" && valor == "15") {
                     campo.nombre_campo = libre;
                   }
+                  //campo.valor = "Amparada";
+                  //}
                 }
 
               }
 
               String paramaName = seccion.nombreRequestCotizacion+ "-"+campo.nombre_campo;
-
+              String prefijo;
+              switch(seccion.nombreRequestCotizacion){
+                case "general":
+                  prefijo = "Cotización";
+                  break;
+                case "titular":
+                  prefijo = "Titular";
+                  break;
+                case "planes":
+                  prefijo = "Planes de Cotización";
+                  break;
+                case "contratante":
+                  prefijo = "Contratante Dif. al Titular";
+                  break;
+                case "coberturas":
+                  prefijo = "Coberturas";
+                  break;
+                default:
+                  prefijo = "Planes de Cotización";
+                  break;
+              }
+              //Formatear nombre de la etiqueta, debido a que web así lo manejo
+              if(paramaName == "contratante-tipo_persona"){
+                campo.etiqueta = "Tipo de Persona";
+              }else if(paramaName == "contratante-contratante_diferente"){
+                campo.etiqueta = "Contratante";
+              }
+              if(paramaName == "planes-id_tipo_sumaasegurada"){
+                campo.etiqueta = "Tipo de Reinstalación";
+              }
+              if(paramaName == "coberturas-id_amp_hospitalaria"){
+                campo.etiqueta = "Factor Ampliación Hospitalaria Definida";
+              }
+              if(paramaName == "planes-estancia_extranjero"){
+                campo.etiqueta = "Estancia en el Extranjero";
+              }
+              prefijo = prefijo + " / " + campo.etiqueta;
               //Formatear nombre de paranmetro
 
               //tag = tag.toUpperCase();
@@ -538,6 +557,9 @@ class CotizadorAnalitycsTags {
               valor = valor == 'true' ? 'Si' : valor;
               valor = valor == 'false' ? 'No' : valor;
               esta_seccion[paramaName] = valor; //Agregar a parámetros
+              if(valor != ""){
+                seccionAdicionales.add(newTag(prefijo, valor));
+              }
               //sendTagInteractionWithANamedParam(tag, "value", valor);
               //print(tag + " { value: " + valor + " }");
             }
@@ -546,7 +568,6 @@ class CotizadorAnalitycsTags {
 
         }
 
-        lista_secciones.add(esta_seccion);
       }else{ // Es de los adicionales
 
 
@@ -561,7 +582,7 @@ class CotizadorAnalitycsTags {
 
           if(seccion.children_secc[0].id_valor==null){
             esta_seccion["cotizador-no_dependientes"] = seccion.children_secc.length; //Generales
-
+            seccionAdicionales.add(newTag("Adicional / No. Dependientes", seccion.children_secc.length));
           }
 
           int idPersona = 1;
@@ -584,6 +605,7 @@ class CotizadorAnalitycsTags {
                 //Formatear campo para agregarlo a parámetros.
 
                 if (campo.visible == true) {  // + "-" + campo.nombre_campo.replaceAll(new RegExp(r'id_'), '');
+                  //var paramaName = campo.nombre_campo.replaceAll(new RegExp(r'id_'), '');
 
                   String num;
                   if(secc_hija.id_valor !=null){
@@ -595,6 +617,13 @@ class CotizadorAnalitycsTags {
                   }
 
                   String paramaName = seccion.nombreRequestCotizacion+ "-"+num+"-"+campo.nombre_campo;
+                  String prefijo;
+                  if(int.parse(num) > 0){
+                    prefijo = "Adicional " +num+ " / " + campo.etiqueta;
+                  }else{
+                    prefijo = "Titular / " + campo.etiqueta;
+                  }
+
 
                   //Formatear nombre de paranmetro
 
@@ -613,6 +642,7 @@ class CotizadorAnalitycsTags {
                   valor = valor == 'false' ? 'No' : valor;
                   esta_seccion[paramaName] = valor; //Agregar a parámetros
                   //sendTagInteractionWithANamedParam(tag, "value", valor);
+                  seccionAdicionales.add(newTag(prefijo, valor));
                   //print(tag + " { value: " + valor + " }");
                 }else{
                   String num;
@@ -625,7 +655,12 @@ class CotizadorAnalitycsTags {
                   }
 
                   String paramaName = seccion.nombreRequestCotizacion+ "-"+num+"-"+campo.nombre_campo;
-
+                  String prefijo;
+                  if(int.parse(num) > 0){
+                    prefijo = "Adicional " +num+ " / " + campo.etiqueta;
+                  }else{
+                    prefijo = "Titular / " + campo.etiqueta;
+                  }
                   //Formatear nombre de paranmetro
 
                   //tag = tag.toUpperCase();
@@ -642,6 +677,7 @@ class CotizadorAnalitycsTags {
                   valor = valor == 'true' ? 'Si' : valor;
                   valor = valor == 'false' ? 'No' : valor;
                   esta_seccion[paramaName] = valor; //Agregar a parámetros
+                  seccionAdicionales.add(newTag(prefijo, valor));
                 }
 
               }
@@ -654,7 +690,89 @@ class CotizadorAnalitycsTags {
         lista_secciones.add(esta_seccion);
       }
     }
-    return lista_secciones;
+
+    return seccionAdicionales;
+
+
   }
-*/
+
+  static List<Map<String, dynamic>> generarSeccionDatosCotizador() {
+
+    List<Map<String, dynamic>> seccionDatos = new List<Map<String, dynamic>>();
+    String prefijo = "Datos Generales Cotizador";
+    seccionDatos.add(CotizadorAnalitycsTags.newTag(prefijo + " / Id Aplicación", Utilidades.idAplicacion.toString()));
+    seccionDatos.add(CotizadorAnalitycsTags.newTag(prefijo + " / Tipo de Negocio", Utilidades.tipoDeNegocio));
+    seccionDatos.add(CotizadorAnalitycsTags.newTag(prefijo + " / Id Participante", datosUsuario.idparticipante));
+
+    return seccionDatos;
+
+  }
+
+  static List<Map<String, dynamic>> generarSeccionCalculo(Response response) {
+
+    List<dynamic> datosAsegurados = new List<dynamic>();
+    List<Map<String, dynamic>> seccionCalculo = new List<Map<String, dynamic>>();
+
+    //SECCIÓN: calculo Analytics
+   // String numeroPagos = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["numeroPagos"].toString();
+    String primaBase = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["primaBase"].toStringAsFixed(2);
+    String iva = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["iva"].toStringAsFixed(2);
+    String primaTotal = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["primaTotal"].toStringAsFixed(2);
+    String recargoPagoFraccionado = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["recargoPagoFraccionado"].toStringAsFixed(2);
+   /* String primaComisionable = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["primaComisionable"].toStringAsFixed(2);
+    String porcentajeComision = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["porcentajeComision"].toStringAsFixed(2);
+    String comision = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["comision"].toStringAsFixed(2);*/
+    String parcialidad = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["parcialidad"].toStringAsFixed(2);
+    String derechoPoliza = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["derechoPoliza"].toStringAsFixed(2);
+
+    String prefijo = "Resultado del Cálculo";
+
+    seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Prima Neta", primaBase.toString()));
+    seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / IVA", iva.toString()));
+    seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Prima Total", primaTotal.toString()));
+    seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Recargo Pago Fraccionado", recargoPagoFraccionado.toString()));
+    seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Parcialidad", parcialidad.toString()));
+    seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Derecho Póliza", derechoPoliza.toString()));
+
+    datosAsegurados = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["asegurados"];
+    if(datosAsegurados != null){
+      if(datosAsegurados.length > 0){
+
+        //Búsqueda de datos por asegurado
+        for(int i = 0; i < datosAsegurados.length; i++){
+
+          String aseguradoPB= datosAsegurados[i]["primaBase"].toStringAsFixed(2);
+          String aseguradoRPF = datosAsegurados[i]["recargoPagoFraccionado"].toStringAsFixed(2);
+          String aseguradoDP = datosAsegurados[i]["derechoPoliza"].toStringAsFixed(2);
+          String aseguradoiva = datosAsegurados[i]["iva"].toStringAsFixed(2);
+          String aseguradoPT = datosAsegurados[i]["primaTotal"].toStringAsFixed(2);
+         /* String aseguradoPrimaC = datosAsegurados[i]["primaComisionable"].toStringAsFixed(2);
+          String aseguradoPorC = datosAsegurados[i]["porcentajeComision"].toStringAsFixed(2);
+          String aseguradoCom = datosAsegurados[i]["comision"].toStringAsFixed(2);*/
+          String idAseg;
+          if((datosAsegurados[i]["idAsegurado"]).toString() == "1"){
+            idAseg = "Titular";
+          }else{
+            idAseg = "Asegurado " + (datosAsegurados[i]["idAsegurado"]-1).toString();
+          }
+
+          seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Prima Base $idAseg", aseguradoPB.toString()));
+          seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Recargo Pago Fraccionado $idAseg", aseguradoRPF.toString()));
+          seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Derecho Póliza $idAseg", aseguradoDP.toString()));
+          seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / IVA $idAseg", aseguradoiva.toString()));
+          seccionCalculo.add(CotizadorAnalitycsTags.newTag(prefijo + " / Prima Total $idAseg", aseguradoPT.toString()));
+          return seccionCalculo;
+        }
+      }
+    }
+  }
+
+  static enviarTags(BuildContext context, List<Map<String,dynamic>> listTags){
+    for(int j=0; j<listTags.length; j++){
+      Utilidades.sendAnalytics(context,listTags[j]["ea"],listTags[j]["el"]);
+    }
+
+  }
+
+
 }

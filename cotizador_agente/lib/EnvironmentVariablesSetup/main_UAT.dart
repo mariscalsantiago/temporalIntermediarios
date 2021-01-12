@@ -24,8 +24,8 @@ void main() {
     //COTIZADOR UNICO
     urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-uat.cloudfunctions.net/',
     urlBase: 'https://gmm-cotizadores-uat.gnp.com.mx/',
-    urlSendAnalytics: 'https://www.google-analytics.com/collect?',
-    idContenedorAnalytics: 'UA-146126625-2',
+    urlSendAnalytics: 'https://www.google-analytics.com/',
+    idContenedorAnalytics: 'UA-146126625-1',
 
     child: new MyApp(),
 

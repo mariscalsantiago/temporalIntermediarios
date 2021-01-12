@@ -373,6 +373,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
   }
 
   mostrarVistaPrevia(Cotizacion c) {
+    Utilidades.sendAnalytics(context, "Acciones", "Vista Previa" + " / " + Utilidades.tipoDeNegocio);
     this.setState(() {
       Navigator.push(context,
           MaterialPageRoute(
@@ -488,7 +489,6 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                 ), //all(16.0),
                  child: GestureDetector(
                    onTap: () {
-                     Utilidades.sendAnalytics(context, "Acciones", "Vista Previa");
                      mostrarVistaPrevia(cotizacion);
                      },
                    child: RenglonMisCotizaciones(

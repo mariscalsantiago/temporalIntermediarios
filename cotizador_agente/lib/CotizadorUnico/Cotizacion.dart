@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/CotizadorUnico/Analytics/CotizadorAnalyticsTags.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
@@ -5,12 +6,9 @@ import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'dart:core';
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cotizador_agente/utils/Mensajes.dart';
-//import 'package:cotizador_agente/cotizador_analitycs_tags.dart';
-//import 'package:firebase_performance/firebase_performance.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
 import 'package:firebase_performance/firebase_performance.dart';
@@ -307,24 +305,21 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     print(generaCot.name);
     bool success = false;
 
+    final result = await InternetAddress.lookup('google.com');
 
-    try{
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-      final result = await InternetAddress.lookup('google.com');
+      try{
 
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
 
-        try{
+        Response response = await post(AppConfig.of(context).urlBase + Constants.GENERA_COTIZACION, body: json.encode(widget.jsonMap), headers: headers);
+        Utilidades.LogPrint(json.encode(widget.jsonMap));
+        int statusCode = response.statusCode;
 
-          Map<String, String> headers = {"Content-Type": "application/json", "Authorization" : loginData.jwt};
-
-          Response response = await post(AppConfig.of(context).urlBase + Constants.GENERA_COTIZACION, body: json.encode(widget.jsonMap), headers: headers);
-          Utilidades.LogPrint(json.encode(widget.jsonMap));
-          int statusCode = response.statusCode;
-          if(response != null){
-            Utilidades.LogPrint("RESPONSE COT: " + response.body.toString());
-            if(response.body != null && response.body.isNotEmpty){
-              if (statusCode == 200) {
+        Utilidades.LogPrint("RESPONSE COT: " + response.body.toString());
+        if(response.body != null && response.body.isNotEmpty){
+          if (statusCode == 200) {
                 generaCot.stop();
 
                 this.setState(() {
@@ -355,91 +350,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   //ANALYTICS
 
                   try{
+                    Utilidades.sendAnalyticsBatch(context, CotizadorAnalitycsTags.generarSeccionCalculo(response));
+                    Utilidades.sendAnalyticsBatch(context, CotizadorAnalitycsTags.generarSeccionDatosCotizador());
+                    lista_secciones = CotizadorAnalitycsTags.getListaSeccionesGTM(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion());
 
-                    if (Platform.isIOS) {
-                      platform = "iOS";
-                    }else if (Platform.isAndroid){
-                      platform = "Android";
-                    }
-                    //lista_secciones = CotizadorAnalitycsTags.getListaSeccionesGTM(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion());
-
-                    //SECCIÓN: datos Cotizador Anaytics
-                    //lista_secciones.addAll(Utilidades.lista_seccionesC);
-
-                    //SECCIÓN: calculo Analytics
-                    numeroPagos = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["numeroPagos"].toString();
-                    primaBase = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["primaBase"].toStringAsFixed(2);
-                    iva = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["iva"].toStringAsFixed(2);
-                    primaTotal = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["primaTotal"].toStringAsFixed(2);
-                    recargoPagoFraccionado = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["recargoPagoFraccionado"].toStringAsFixed(2);
-                    primaComisionable = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["primaComisionable"].toStringAsFixed(2);
-                    porcentajeComision = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["porcentajeComision"].toStringAsFixed(2);
-                    comision = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["comision"].toStringAsFixed(2);
-                    parcialidad = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["parcialidad"].toStringAsFixed(2);
-                    derechoPoliza = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["derechoPoliza"].toStringAsFixed(2);
-
-                    parameters_Calculo["seccion"] = "calculo";
-                    parameters_Calculo["cotizacion-numeroPagos"] = numeroPagos.toString();
-                    parameters_Calculo["cotizacion-primaBase"] = primaBase.toString();
-                    parameters_Calculo["cotizacion-iva"] = iva.toString();
-                    parameters_Calculo["cotizacion-primaTotal"] = primaTotal.toString();
-                    parameters_Calculo["cotizacion-recargoPagoFraccionado"] = recargoPagoFraccionado.toString();
-                    parameters_Calculo["cotizacion-primaComisionable"] = primaComisionable.toString();
-                    parameters_Calculo["cotizacion-porcentajeComision"] = porcentajeComision.toString();
-                    parameters_Calculo["cotizacion-comision"] = comision.toString();
-                    parameters_Calculo["cotizacion-parcialidad"] = parcialidad.toString();
-                    parameters_Calculo["cotizacion-derechoPoliza"] = derechoPoliza.toString();
-
-                    seccionCalculo.addAll(parameters_Calculo);
-
-                    datosAsegurados = json.decode(response.body)["motorDinamicoResponse"]["formasPago"][0]["detalleFormaPago"]["asegurados"];
-                    if(datosAsegurados != null){
-                      if(datosAsegurados.length > 0){
-
-                        //Búsqueda de datos por asegurado
-                        for(int i = 0; i < datosAsegurados.length; i++){
-
-                          aseguradoPB= datosAsegurados[i]["primaBase"].toStringAsFixed(2);
-                          aseguradoRPF = datosAsegurados[i]["recargoPagoFraccionado"].toStringAsFixed(2);
-                          aseguradoDP = datosAsegurados[i]["derechoPoliza"].toStringAsFixed(2);
-                          aseguradoiva = datosAsegurados[i]["iva"].toStringAsFixed(2);
-                          aseguradoPT = datosAsegurados[i]["primaTotal"].toStringAsFixed(2);
-                          aseguradoPrimaC = datosAsegurados[i]["primaComisionable"].toStringAsFixed(2);
-                          aseguradoPorC = datosAsegurados[i]["porcentajeComision"].toStringAsFixed(2);
-                          aseguradoCom = datosAsegurados[i]["comision"].toStringAsFixed(2);
-
-                          idAseg = (datosAsegurados[i]["idAsegurado"]).toString();
-
-                          paramName = "cotizacion-primaBase-asegurado-"+ idAseg;
-                          parameters_Calculo2[paramName] = aseguradoPB;
-                          paramName = "cotizacion-recargoPagoFraccionado-asegurado-"+ idAseg;
-                          parameters_Calculo2[paramName] = aseguradoRPF;
-                          paramName = "cotizacion-derechoPoliza-asegurado-"+ idAseg;
-                          parameters_Calculo2[paramName] = aseguradoDP;
-                          paramName = "cotizacion-iva-asegurado-"+ idAseg;
-                          parameters_Calculo2[paramName] = aseguradoiva;
-                          paramName = "cotizacion-primaTotal-asegurado-"+ idAseg;
-                          parameters_Calculo2[paramName] = aseguradoPT;
-                          paramName = "cotizacion-primaComisionable-asegurado-"+ idAseg;
-                          parameters_Calculo2[paramName] = aseguradoPrimaC;
-                          paramName = "cotizacion-porcentajeComision-asegurado-"+ idAseg;
-                          parameters_Calculo2[paramName] = aseguradoPorC;
-                          paramName = "cotizacion-comision-asegurado-"+ idAseg;
-                          parameters_Calculo2[paramName] = aseguradoCom;
-
-                          aseguradosD.addAll(parameters_Calculo2);
-
-                        }
-
-                        seccionCalculo.addAll(aseguradosD);
-                        lista_secciones.add(seccionCalculo);
-
-                        Utilidades.LogPrint("LISTA_SECCIONES" + json.encode(lista_secciones).toString());
-
-                      }
-                    }
-
-
+                    Utilidades.sendAnalyticsBatch(context, lista_secciones);
                   }catch(e){
                     print("Error al generar analytics");
                   }
@@ -451,44 +366,31 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   //Utilidades.LogPrint("REQUEST COT: " + response.body.toString());
 
                 });
-              }else if(statusCode == 400){
-                generaCot.stop();
-                isLoading = false;
-                Navigator.pop(context);
-                Utilidades.mostrarAlertas("Error: " + statusCode.toString(), "Bad Request", context);
-
               }else if(statusCode != null) {
-                generaCot.stop();
-                isLoading = false;
-                //Navigator.pop(context);
-                String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
-
-                success =  true;
-                Utilidades.mostrarAlertas(Mensajes.titleLoSentimos , message, context);
-              }
-
-            }else{
-              generaCot.stop();
-              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                Navigator.pop(context);
-                generarCotizacion(context);
-              });
-            }
-          }else{
             generaCot.stop();
-            Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-              Navigator.pop(context);
-              generarCotizacion(context);
-            });
+            isLoading = false;
+            //Navigator.pop(context);
+            String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
+
+            success =  true;
+            Utilidades.mostrarAlertas(Mensajes.titleLoSentimos , message, context);
           }
 
-        }catch(e){
+        }else{
           generaCot.stop();
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
             Navigator.pop(context);
             generarCotizacion(context);
           });
         }
+
+      }catch(e){
+        generaCot.stop();
+        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+          Navigator.pop(context);
+          generarCotizacion(context);
+        });
+      }
 
       }else{
         generaCot.stop();
@@ -497,15 +399,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
           generarCotizacion(context);
         });
       }
-
-    }catch(e){
-      generaCot.stop();
-      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
-        generarCotizacion(context);
-      });
-    }
-
 
     return success;
 
@@ -588,10 +481,8 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
     }
 
-    if(idformato == Utilidades.FORMATO_COMPARATIVA){
-      Utilidades.sendAnalytics(context, "Acciones", "Comparativa");
-    }else{
-      Utilidades.sendAnalytics(context, "Acciones", "Vista Previa");
+    if(idformato != Utilidades.FORMATO_COMPARATIVA){
+      Utilidades.sendAnalytics(context, "Acciones", "Vista Previa" + " / " + Utilidades.tipoDeNegocio);
     }
 
     bool success = false;
@@ -737,62 +628,10 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     setState(() {
       esComparativa = true;
     });
-    Utilidades.sendAnalytics(context, "Acciones", "Comparativa");
+    Utilidades.sendAnalytics(context, "Acciones", "Comparativa" + " / " + Utilidades.tipoDeNegocio);
     guardaCotizacion(0, Utilidades.FORMATO_COMPARATIVA, false);
   }
 
-  Future _initialWebView() async {
-
-    /*if(esComparativa == false){
-      parameters = {"data" : lista_secciones};
-      _dataLayer = json.encode(parameters);
-    }else{
-      _dataLayer = json.encode(Utilidades.seccCot);
-    }
-
-    Utilidades.LogPrint("DATALAYER: " + _dataLayer);
-    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-    String encoded = stringToBase64.encode(_dataLayer);
-    Utilidades.LogPrint("ENCODE DATALAYER: " + encoded);
-
-    if(esComparativa == false){
-      setState(() {
-        _initialURL =  config.urlBaseAnalyticis + Constants.VISTA_PREVIA + encoded;
-        Utilidades.LogPrint("VISTAPREVIA:" + _initialURL);
-      });
-    }else{
-      setState(() {
-        _initialURL = config.urlBaseAnalyticis + Constants.COMPARATIVA + encoded;
-        Utilidades.LogPrint("COMPARATIVA:" + _initialURL);
-      });
-    }
-
-    Map<String, String> headers = {
-      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-    };
-    Map<String, dynamic> send = {
-      "redirect_url": _initialURL,
-    };
-
-    String key = Utilidades.keyGTM;
-    String gmm = stringToBase64.decode(key);
-
-    Response response = await post(gmm, body: send, headers: headers);
-    if(response.body != null && response.statusCode == 200){
-
-      Utilidades.LogPrint(json.encode(response.body));
-      if(json.decode(response.body)["short_url"] != null){
-        String url = json.decode(response.body)["short_url"];
-        _flutterWebViewPlugin.reloadUrl(url);
-        Utilidades.LogPrint("URL: " + url);
-        url = "";
-        _initialURL = "";
-      }
-
-
-    }*/
-
-  }
 
   // ignore: missing_return
   Widget showModalGuardar(int idFormato, int index, bool abrirPdf){

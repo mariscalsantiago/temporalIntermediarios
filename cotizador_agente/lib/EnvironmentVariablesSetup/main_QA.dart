@@ -20,14 +20,13 @@ void main() async {
     serviceConteoClientes: "https://api-qa.oscp.gnp.com.mx/crm-agentes/conteo-clientes",
     proyectId: 'gnp-accidentespersonales-qa',
     urlNotifierService:'https://api-qa.oscp.gnp.com.mx',
-    //urlProrrogadosService: 'https://api-dev.oscp.gnp.com.mx',
     pagoEnLinea:'https://api-dev.oscp.gnp.com.mx',
     privacyAdvertisement :'http://35.209.236.248/aviso',
 
     //COTIZADOR UNICO
     urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/',
     urlBase: 'https://gmm-cotizadores-qa.gnp.com.mx/',
-    urlSendAnalytics: 'https://www.google-analytics.com/collect?',
+    urlSendAnalytics: 'https://www.google-analytics.com/',
     idContenedorAnalytics: 'UA-146126625-2',
 
     child: new MyApp(),
