@@ -251,7 +251,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         }else{
           saveCot.stop();
           isLoading = false;
-          String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+          String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
           Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
         }
 

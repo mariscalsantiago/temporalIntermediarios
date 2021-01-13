@@ -256,7 +256,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
         mytrace.stop();
         isLoading = false;
         Navigator.pop(context);
-        String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+        Navigator.pop(context);
+        String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
 
         Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
       }

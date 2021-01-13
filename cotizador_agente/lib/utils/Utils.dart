@@ -364,7 +364,7 @@ class Utilidades {
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
-            height: 164,
+            height: mensaje.length >= 67 ? 192 : 164,
             padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
             decoration : new BoxDecoration(
                 color: Colors.white,
@@ -391,8 +391,8 @@ class Utilidades {
                          child: RaisedButton(
                             onPressed: () {
                                Navigator.pop(context);
-                               Navigator.pop(context);
-                               Navigator.pop(context);
+                               //Navigator.pop(context);
+                               //Navigator.pop(context);
                             },
                             child: Text(
                                "Aceptar",
