@@ -11,6 +11,7 @@ import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/CotizadorUnico/FormularioPaso2.dart';
 import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
@@ -401,12 +402,9 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
           Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
         }
 
-      }catch(e){
+      }catch(e,s){
         data.stop();
-        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
-          getData();
-        });
+        await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
       }
     }else{
         data.stop();

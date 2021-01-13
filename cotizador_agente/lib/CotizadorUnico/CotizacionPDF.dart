@@ -12,6 +12,7 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 
@@ -131,12 +132,9 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
             });
           }
 
-        }catch(e){
+        }catch(e,s){
           formato.stop();
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
-            getFormato(context);
-          });
+          await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
         }
 
     return success;
