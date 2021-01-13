@@ -634,16 +634,53 @@ class Utilidades {
   static void sendAnalytics(BuildContext context, String ea,String el) async {
 
     var config = AppConfig.of(context);
-    var idContenedor = config.idContenedorAnalytics;
+    var idContenedor;
+    idContenedor = config.idContenedorAnalytics;
 
-    String categoria = Platform.isIOS ? "iOS" : "Android" + "/" + Utilidades.idAplicacion.toString() + "/" + datosUsuario.idparticipante;
-    var parametros = "v=1&tid=$idContenedor&cid=555&t=event&ec=SoySocioGNP/$categoria&ea=$ea&el=$el";
-    Response response = await post(config.urlSendAnalytics + parametros, body: null,
+    String categoria = getCategoria();
+    var parametros = "v=1&tid=$idContenedor&cid=555&t=event&ec=$categoria&ea=$ea&el=$el";
+    Response response = await post(config.urlSendAnalytics + "collect?" + parametros, body: null,
         headers: { "Content-Type": "text/plain" });
 
     print(config.urlSendAnalytics + parametros);
     if(response.statusCode == 200){
       print(response.body.toString());
+    }else{
+      print("No se pudo enviar tag");
     }
+  }
+
+  static void sendAnalyticsBatch(BuildContext context, List<Map<String, dynamic>> listTags) async {
+
+    var config = AppConfig.of(context);
+
+    String body = "";
+    int i = 0;
+    while(i <listTags.length){
+      body = "";
+      for(int j=0; i<listTags.length && j<11; j++){
+
+        body = body + "v=" + listTags[i]["v"].toString() + "&tid=" + listTags[i]["tid"].toString() + "&cid=" + listTags[i]["cid"].toString()
+            + "&t=" + listTags[i]["t"].toString() + "&ec=" + listTags[i]["ec"].toString() + "&ea=" + listTags[i]["ea"].toString()
+            + "&el=" + listTags[i]["el"].toString() + "\n";
+        i++;
+
+      }
+      Response response = await post(config.urlSendAnalytics + "batch?", body: body,
+          headers: { "Content-Type": "text/plain" });
+
+      LogPrint(config.urlSendAnalytics + "batch?" + body.toString());
+      if(response.statusCode == 200){
+        print(response.body.toString());
+      }else {
+        print("No se pudo enviar tag");
+      }
+    }
+  }
+
+  static String getCategoria(){
+
+    var categoria = "SoySocioGNP/" + ((Platform.isIOS) ? "iOS" : "Android") + "/" + Utilidades.idAplicacion.toString() + "/" + datosUsuario.idparticipante;
+    return categoria;
   }
 }

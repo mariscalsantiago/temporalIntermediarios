@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/CotizadorUnico/Analytics/CotizadorAnalyticsTags.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
@@ -447,45 +448,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
       print("llegue al metodo del diccionario");
     });
   }
-
-  Future _initialWebView() async {
-
-   /* dataLayer = json.encode(Utilidades.seccCot);
-    Codec<String, String> stringToBase64 = utf8.fuse(base64);
-    String encoded = stringToBase64.encode(dataLayer);
-
-    setState(() {
-      _initialURL = AppConfig.of(context).urlBaseAnalytics + Constants.ENVIA_COTIZACION + encoded;
-      Utilidades.LogPrint("URLACCION: " + _initialURL);
-    });
-
-    Map<String, String> headers = {
-      "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-    };
-    Map<String, dynamic> send = {
-      "redirect_url": _initialURL,
-    };
-
-    String key = Utilidades.keyGTM;
-    String gmm = stringToBase64.decode(key);
-
-    Response response = await post(gmm, body: send, headers: headers);
-    if(response.body != null && response.statusCode == 200){
-
-      //  Utilidades.LogPrint(json.encode(response.body));
-      if(json.decode(response.body)["short_url"] != null){
-        String url = json.decode(response.body)["short_url"];
-        _flutterWebViewPlugin.reloadUrl(url);
-        Utilidades.LogPrint("URL: " + url);
-        url = "";
-        _initialURL = "";
-
-      }
-
-    }
-*/
-  }
-
 
   @override
   void initState(){
@@ -1110,14 +1072,10 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                                 if (Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.validarFormulario()) {
                                                   //Enviar a Analitycs
                                                   print("Cotizador Analitycs Tags");
-                                                  //CotizadorAnalitycsTags.sendTagsFormulario(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion());
-                                                  //CotizadorAnalitycsTags.sendTags('', Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa(1));
-                                                  //_sendDataToSecondScreen(context);
+                                                  CotizadorAnalitycsTags.sendTagsFormulario(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion(), context);
                                                   print('El formulario es valido');
-//                                              print(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.toJSON());
-//                                              Utilidades.LogPrint("Esto es para cotizar: " + json.encode(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().getJSONComparativa()));
-
-                                                  Utilidades.sendAnalytics(context, "Acciones", "Cotizar");
+//
+                                                  Utilidades.sendAnalytics(context, "Acciones", "Cotizar" + " / " + Utilidades.tipoDeNegocio);
 
                                                   Regla r = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().calcularReglas();
 

@@ -11,6 +11,7 @@ import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/CotizadorUnico/FormularioPaso2.dart';
 import 'package:cotizador_agente/CotizadorUnico/MisCotizaciones.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
@@ -401,12 +402,9 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
           Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
         }
 
-      }catch(e){
+      }catch(e,s){
         data.stop();
-        Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
-          getData();
-        });
+        await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
       }
     }else{
         data.stop();
@@ -1061,112 +1059,6 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                             if(index==0){
                               return Column(
                                 children: <Widget>[
-
-                                  /*Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.only(top: 32, left: 16, bottom: 24),
-                                    child: Text(
-                                      Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones[index].seccion,
-                                      textAlign: TextAlign.start,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: AppColors.color_titulo,
-                                          fontSize: 20),
-                                    ),
-                                  ),
-
-                                  Container(//Etiquetas
-                                    color: AppColors.color_sombra,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("Datos Personales", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
-                                        )),
-                                        Expanded(child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("Planes", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w500, fontSize: 15),),
-                                        ))
-                                      ],
-                                    ),
-                                  ),
-                                  Container(//Puntos
-                                    color: AppColors.color_sombra,
-
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: Container(
-                                            color: AppColors.color_sombra,
-                                            child: Column(
-                                              children: <Widget>[
-                                                Row(
-                                                  children: <Widget>[
-
-                                                    Spacer(),
-                                                    CircleButton(backgroundColor: AppColors.color_primario ,onTap: () => print("Cool")),
-                                                    Expanded(
-                                                      child: Container(
-                                                          child: Divider( //002e71
-                                                            thickness: 2,
-                                                            color: Colors.grey,
-                                                            height: 0,
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-
-                                        Expanded(
-                                          child: Container(
-                                            color: AppColors.color_sombra,
-                                            child: Column(
-                                              children: <Widget>[
-                                                Row(
-                                                  children: <Widget>[
-                                                    Expanded(
-                                                      child: Container(
-                                                          child: Divider( //002e71
-                                                            thickness: 2,
-                                                            color: Colors.grey,
-
-                                                            height: 0,
-                                                          )),
-                                                    ),
-                                                    CircleButton(backgroundColor: Colors.grey ,onTap: () => print("Cool")),
-
-                                                    Spacer(),
-
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                  ),
-                                  Container(//Etiquetas
-                                    color: AppColors.color_sombra,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Expanded(child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("Paso 1", textAlign: TextAlign.center, style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w500, fontSize: 15),),
-                                        )),
-                                        Expanded(child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Text("Paso 2", textAlign: TextAlign.center, style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500, fontSize: 15),),
-                                        ))
-                                      ],
-                                    ),
-                                  ),*/
-
 
                                   Padding(
                                     padding: const EdgeInsets.only(top: 16.0, bottom: 16),

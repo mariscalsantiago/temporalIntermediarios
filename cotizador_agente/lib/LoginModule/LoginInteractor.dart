@@ -60,7 +60,7 @@ class LoginInteractor implements LoginUseCase {
 
     currentCuaGNP = datosPerfilador.intermediarios[0];
     currentCuaLogros = datosPerfilador.intermediarios[0];
-    currentCuaDesignaciones = datosPerfilador.intermediarios[0];
+   // currentCuaDesignaciones = datosPerfilador.intermediarios[0];
 
     return datosUsuario;
   }
