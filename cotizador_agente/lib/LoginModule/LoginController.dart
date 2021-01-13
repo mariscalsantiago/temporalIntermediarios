@@ -189,7 +189,7 @@ class LoginControllerState extends State<LoginController> implements LoginView {
         Container(
           height: 24,
           width: 326,
-          margin: EdgeInsets.fromLTRB(17, 140, 17, 16),
+          margin: EdgeInsets.fromLTRB(17, 140, 17, 15),
           child: Text("Versión " + "1.0",
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.caption.copyWith(

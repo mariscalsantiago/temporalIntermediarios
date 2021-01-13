@@ -1,7 +1,5 @@
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
-import 'package:cotizador_agente/utils/Mensajes.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -16,12 +14,13 @@ class NavigationHandler {
         showCotizar(context);
         break;
       case "flutter_app/pagar":
+        showEmitir(context);
         break;
       case "flutter_app/emitir":
         showPagar(context);
         break;
       case "flutter_app/renovar":
-        showEmitir(context);
+        showRenovar(context);
         break;
       case "flutter_app/menu":
         showMenu(context);
@@ -41,11 +40,16 @@ class NavigationHandler {
   }
 
   static void showPagar(BuildContext context) {
-
+    Navigator.pop(context);
   }
   static void showEmitir(BuildContext context) {
-
+    Navigator.pop(context);
   }
+
+  static void showRenovar(BuildContext context) {
+    Navigator.pop(context);
+  }
+
   static void showMenu(BuildContext context) {
    showMaterialModalBottomSheet(
      barrierColor: AppColors.color_titleAlert.withOpacity(0.7),
@@ -85,9 +89,9 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
+                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
-                   });
+                   });*/
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -103,9 +107,9 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
+                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
-                   });
+                   });*/
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -121,9 +125,9 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
+                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
-                   });
+                   });*/
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -139,9 +143,9 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
+                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
-                   });
+                   });*/
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -156,9 +160,10 @@ class NavigationHandler {
                ),
                GestureDetector(
                  onTap: (){
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
+                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
                      Navigator.pop(context);
-                   });
+                   });*/
+                   Navigator.pop(context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
