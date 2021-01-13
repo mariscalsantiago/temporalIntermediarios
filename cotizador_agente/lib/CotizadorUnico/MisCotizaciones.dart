@@ -8,6 +8,7 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -89,9 +90,9 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   eliminarDelServer(int id, BuildContext context) async {
 
-    /*final Trace deleteCot = FirebasePerformance.instance.newTrace("CotizadorUnico_EliminarCotizacion");
+    final Trace deleteCot = FirebasePerformance.instance.newTrace("SoySocio_EliminarCotizacion");
     deleteCot.start();
-    print(deleteCot.name);*/
+    print(deleteCot.name);
     bool success = false;
 
     try{
@@ -100,7 +101,6 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
-        try{
 
           Map<String, dynamic> jsonMap = {"folioCotizacion": id};
 
@@ -111,23 +111,15 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
           Response response = await http.post(AppConfig.of(context).urlBase + Constants.BORRA_COTIZACION, body: json.encode(jsonMap), headers: headers);
 
-          if(response != null){
 
-            if(response.body != null && response.body.isNotEmpty){
-              if (json.decode(response.body) == true) {
-                success = true;
-                //deleteCot.stop();
-              }
-
-            }else{
-              //deleteCot.stop();
-              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-                Navigator.pop(context);
-                eliminarDelServer(id, context);
-              });
+          if(response.body != null && response.body.isNotEmpty){
+            if (json.decode(response.body) == true) {
+              success = true;
+              deleteCot.stop();
             }
+
           }else{
-            //deleteCot.stop();
+            deleteCot.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
               Navigator.pop(context);
               eliminarDelServer(id, context);
@@ -135,28 +127,17 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
           }
 
 
-        } catch (e) {
-          //deleteCot.stop();
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
-            eliminarDelServer(id, context);
-          });
-        }
-
       }else {
-        //deleteCot.stop();
+        deleteCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
           Navigator.pop(context);
           eliminarDelServer(id, context);
         });
       }
 
-    }catch (e) {
-      //deleteCot.stop();
-      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
-        eliminarDelServer(id, context);
-      });
+    }catch (e,s) {
+      deleteCot.stop();
+      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
 
@@ -306,12 +287,9 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
           llenarTabla(context);
         });
       }
-    }catch(e){
+    }catch(e,s){
       llenaTbl.stop();
-      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
-        llenarTabla(context);
-      });
+      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
     return success;
@@ -373,6 +351,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
   }
 
   mostrarVistaPrevia(Cotizacion c) {
+    Utilidades.sendAnalytics(context, "Acciones", "Vista Previa" + " / " + Utilidades.tipoDeNegocio);
     this.setState(() {
       Navigator.push(context,
           MaterialPageRoute(
@@ -488,7 +467,6 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                 ), //all(16.0),
                  child: GestureDetector(
                    onTap: () {
-                     Utilidades.sendAnalytics(context, "Acciones", "Vista Previa");
                      mostrarVistaPrevia(cotizacion);
                      },
                    child: RenglonMisCotizaciones(

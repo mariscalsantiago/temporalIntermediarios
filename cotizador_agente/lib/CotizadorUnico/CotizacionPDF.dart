@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:cotizador_agente/CotizadorUnico/Analytics/Analytics.dart';
+import 'package:cotizador_agente/CotizadorUnico/Analytics/CotizadorAnalyticsTags.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
@@ -10,6 +12,7 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 
@@ -129,12 +132,9 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
             });
           }
 
-        }catch(e){
+        }catch(e,s){
           formato.stop();
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
-            getFormato(context);
-          });
+          await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
         }
 
     return success;
@@ -167,44 +167,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   }
 
-  Future _initialWebView() async{
-    /*if(isDownload == true){
-
-      dataLayer = json.encode(Utilidades.seccCot);
-      Utilidades.LogPrint("DATA: " + dataLayer);
-      Codec<String, String> stringToBase64 = utf8.fuse(base64);
-      String encoded = stringToBase64.encode(dataLayer);
-
-      setState(() {
-        _initialURL = AppConfig.of(context).urlBaseAnalytics + Constants.DESCARGA + encoded; // "https://gmm-cotizadores-qa.gnp.com.mx/?esMobile=true&accion=descargarMovil&dataLayer="
-        Utilidades.LogPrint("URLACCION: " + _initialURL);
-      });
-
-      Map<String, String> headers = {
-        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-      };
-      Map<String, dynamic> send = {
-        "redirect_url": _initialURL,
-      };
-
-      String key = Utilidades.keyGTM;
-      String gmm = stringToBase64.decode(key);
-
-      http.Response response = await post(gmm, body: send, headers: headers);
-      if(response.body != null && response.statusCode == 200){
-
-        //  Utilidades.LogPrint(json.encode(response.body));
-        if(json.decode(response.body)["short_url"] != null){
-          String url = json.decode(response.body)["short_url"];
-          _flutterWebViewPlugin.reloadUrl(url);
-          Utilidades.LogPrint("URL: " + url);
-          url = "";
-          _initialURL = "";
-        }
-
-      }
-    }*/
-  }
 
   sendEmailService() async {
 
@@ -626,12 +588,10 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                 formKey.currentState.save();
 
                                 if(eMails.length>0 && eMails.length<21){
-                                  // _initialWebView();
+                                  Utilidades.sendAnalytics(context, "Acciones", "Enviar" + " / " + Utilidades.tipoDeNegocio);
                                   sendEmailService();
-                                  //final FirebaseAnalytics analytics = new FirebaseAnalytics();
-                                  //analytics.logEvent(name: CotizadorAnalitycsTags.envioMailGMM, parameters: <String, dynamic>{});
-                                  //sendTag(CotizadorAnalitycsTags.envioMailGMM);
-                                  //setCurrentScreen(CotizadorAnalitycsTags.envioMailGMM, "SendEmail");
+                                  AnalyticsServices().sendTag(CotizadorAnalitycsTags.envioMailGMM);
+                                  AnalyticsServices().setCurrentScreen(CotizadorAnalitycsTags.envioMailGMM, "SendEmail");
                                 }
                               }
                             },
@@ -752,14 +712,9 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                 } else{
                                   setState(() {
                                     isDownload = true;
-                                    Utilidades.sendAnalytics(context, "Acciones", "Descargar");
-                                    // _initialWebView();
-                                   /* final FirebaseAnalytics analytics = new FirebaseAnalytics();
-                                    analytics.logEvent(name: CotizadorAnalitycsTags.descargaGMM, parameters: <String, dynamic>{});
-
-                                    sendTag(CotizadorAnalitycsTags.descargaGMM);
-                                    setCurrentScreen(CotizadorAnalitycsTags.descargaGMM, "CotizacionPDF");
-*/
+                                    Utilidades.sendAnalytics(context, "Acciones", "Descargar" + " / " + Utilidades.tipoDeNegocio);
+                                    AnalyticsServices().sendTag(CotizadorAnalitycsTags.descargaGMM);
+                                    AnalyticsServices().setCurrentScreen(CotizadorAnalitycsTags.descargaGMM, "CotizacionPDF");
                                   });
                                   contador++;
                                   _saveFile();
