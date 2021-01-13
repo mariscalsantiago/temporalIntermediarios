@@ -396,7 +396,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
           data.stop();
           isLoading = false;
           Navigator.pop(context);
-          String message = response.response['message'] != null ? response.response['message'] :
+          String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] :
           response.response['errors'][0] != null ?
           response.response['errors'][0] : "Error del servidor";
           Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
@@ -1019,6 +1019,10 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                           for(int i=0; (i < campos.length) && formularioValido; i++){
 
                                             if(campos[i].isValid == false){
+                                              formularioValido = false;
+                                            }
+                                            //en paso1 no se valida la seccion 6 que corresponde a plan
+                                            if( (campos[i].obligatorio ? campos[i].valor == null && campos[i].id_seccion != 6 : false )  ){
                                               formularioValido = false;
                                             }
                                           }

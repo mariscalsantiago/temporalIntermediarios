@@ -414,7 +414,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
           }else{
             cargaPaso.stop();
             Navigator.pop(context);
-            String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+            String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
             Utilidades.mostrarAlerta(Mensajes.titleError,message, context);
 
             setState(() {
