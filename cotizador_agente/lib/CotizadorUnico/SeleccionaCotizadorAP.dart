@@ -120,10 +120,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     }else{
       negociosOp.stop();
       isLoading = false;
-      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
-        getNegociosOperables();
-      });
+      Navigator.pop(context);
+      Utilidades.mostrarAlerta(Mensajes.titleError, response.response, context);
     }
 
     return success;
@@ -183,12 +181,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           cotizadores.stop();
           isLoading = false;
           Navigator.pop(context);
-
-          //Utilidades.mostrarAlertas(Mensajes.titleError + statusCode.toString(), "Bad Request", context);
-          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleError, response.response, context,"Aceptar",(){
-            Navigator.pop(context);
-          });
-          return listCotizadores;
+          Utilidades.mostrarAlerta(Mensajes.titleError, response.response, context);
+          return null;
         }
       }else {
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){

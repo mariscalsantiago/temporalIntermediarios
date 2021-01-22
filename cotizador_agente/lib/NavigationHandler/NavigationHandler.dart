@@ -1,5 +1,7 @@
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
+import 'package:cotizador_agente/utils/Mensajes.dart';
+import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -89,9 +91,7 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });*/
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -107,9 +107,7 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });*/
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -125,9 +123,7 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });*/
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -143,9 +139,7 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });*/
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -160,10 +154,8 @@ class NavigationHandler {
                ),
                GestureDetector(
                  onTap: (){
-                   /*Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });*/
                    Navigator.pop(context);
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
