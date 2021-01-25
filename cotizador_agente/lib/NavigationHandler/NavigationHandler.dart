@@ -15,7 +15,7 @@ class NavigationHandler {
       case "flutter_app/cotizar":
         showCotizar(context);
         break;
-      case "flutter_app/pagar":
+     /* case "flutter_app/pagar":
         showEmitir(context);
         break;
       case "flutter_app/emitir":
@@ -23,7 +23,7 @@ class NavigationHandler {
         break;
       case "flutter_app/renovar":
         showRenovar(context);
-        break;
+        break;*/
       case "flutter_app/menu":
         showMenu(context);
         break;
@@ -41,7 +41,7 @@ class NavigationHandler {
         }));
   }
 
-  static void showPagar(BuildContext context) {
+  /*static void showPagar(BuildContext context) {
     Navigator.pop(context);
   }
   static void showEmitir(BuildContext context) {
@@ -50,7 +50,7 @@ class NavigationHandler {
 
   static void showRenovar(BuildContext context) {
     Navigator.pop(context);
-  }
+  }*/
 
   static void showMenu(BuildContext context) {
    showMaterialModalBottomSheet(
@@ -58,7 +58,7 @@ class NavigationHandler {
      backgroundColor: Colors.transparent,
      context: context,
      builder: (context, scrollController) => Container(
-       height: 326,
+       height: 90,//326,
        padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
        decoration : new BoxDecoration(
            color: Colors.white,
@@ -88,7 +88,7 @@ class NavigationHandler {
                    )
                    ],),
                ),
-               GestureDetector(
+              /* GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
                    Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
@@ -167,7 +167,7 @@ class NavigationHandler {
                      child: Text("Buscar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.color_appBar), textAlign: TextAlign.left,),
                    )
                  ],),
-               ),
+               ),*/
              ],
            ),
          ),

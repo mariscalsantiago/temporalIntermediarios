@@ -18,6 +18,9 @@ const String ENVIA_MAIL = "envioMovil&dataLayer=";
 const String COMPARATIVA = "comparativaMovil&dataLayer=";
 const String INGRESO = "ingresoMovil&dataLayer=";
 const String ALERTA_NO_CONEXION = "Verifica tu conexión a internet e inténtalo nuevamente.";
+const String Formato_Cotizacion = "Formato Cotización AP ";
+const String Formato_Comision = "Formato Comisión AP ";
+const String Formato_Comparativa = "Formato Comparativa ";
 
 //MENSAJES
 const String tlt_nocoinciden = "Correo electrónico o contraseña no \ncoinciden";

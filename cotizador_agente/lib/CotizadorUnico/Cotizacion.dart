@@ -78,6 +78,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   bool propuesta3 = false;
   bool comparativa = false;
   bool mostrarFcomparativa = false;
+  int cont = 0;
 
   //verificar que sean diferentes de null
   void guardarPropuestas(String texto1, String texto2, String texto3, String texto4, int idFormato, int index, bool abrirPdf){
@@ -938,470 +939,440 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                           physics: ScrollPhysics(),
                           itemBuilder: (BuildContext ctxt, int i) {
 
-                            switch(i){
-                              //Agregar cotización
-                              case 0:
-                                return Visibility(
-                                  visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() < 3 ? true : false,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 26, left: 16.0, right: 16.0, bottom: 11.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                                flex: 6,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(right: 56.0),
-                                                  child: Text(Mensajes.btn_addCotizacion,
-                                                    style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                  ),
-                                                )
-                                            ),
-                                            Spacer(),
-                                            Expanded(
-                                              flex: 0,
-                                              child: Container(
-                                                padding: const EdgeInsets.only(right: 8.0, bottom: 0.0),
-                                                height: 45,
-                                                width: 45,
-                                                child: FittedBox(
-                                                  child: FloatingActionButton(
-                                                    onPressed: _aumentar,
-                                                    elevation: 0.0,
-                                                    heroTag: "btn1",
-                                                    tooltip: "Agregar",
-                                                    child: Icon(Icons.add, color: AppColors.secondary900,),
-                                                    backgroundColor: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                                        child: Divider(
-                                          color: AppColors.color_divider,
-                                          height: 2,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                                break;
-                              //Cotizaciones
-                              case 1:
-
-                                int cont = 0;
-
-                                return ListView.builder(
-                                    itemCount: Utilidades.cotizacionesApp.getCurrentLengthLista(),
-                                    shrinkWrap: true,
-                                    physics: ScrollPhysics(),
-                                    itemBuilder: (BuildContext ctxt, int index) {
-
-                                      if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa == null){
-                                        return Container();
-                                      }else{
-                                        cont ++;
-                                      }
-
-
-                                      List<PopupMenuItem> getMenuItems() {
-
-                                        List<PopupMenuItem> listaitems = List<PopupMenuItem>();
-
-                                        for(int i = 0; i< Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago.length; i++){
-
-                                          FormadePago formapago = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[i];
-
-                                          listaitems.add(PopupMenuItem(
-                                            value: i,
-                                            child: Container(
-                                              width: double.infinity,
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    formapago.forma,
-                                                    style: TextStyle(
-                                                        color: AppColors.primary700, fontWeight: FontWeight.w400),
-                                                  ),
-                                                  SizedBox(width: 60.0,),
-                                                ],
-                                              ),
-                                            ),
-                                          ));
-                                        }
-                                        return listaitems;
-
-                                      }
-
-
-                                      List<Widget> getFormatos() {
-                                        List<FlatButton> listabuttonDoc = new List<FlatButton>();
-                                        for (int i = 0; i <Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion.length; i++) {
-
-                                          Documento doc = Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i];
-
-                                          if(doc.id != 2){
-                                            listabuttonDoc.add(new FlatButton(
-                                              color: Colors.white,
-                                              onPressed: (){
-                                                setState(() {
-                                                  if(i < 3){
-                                                    guardaCotizacion(index, Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i].id, true);
-                                                  }
-                                                });
-                                              },
-                                              child: Text("Ver " + doc.nombreDocumento.toLowerCase().replaceAll("ap", ""), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),),
-                                            ));
-                                          }
-                                        }
-                                        return listabuttonDoc;
-                                      }
-                                      /*List<PopupMenuItem> getMenuItemsDoc() {
-                                        List<PopupMenuItem> listaitemsDoc = List<PopupMenuItem>();
-
-                                        for (int i = 0; i <Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion.length; i++) {
-
-                                          Documento doc = Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i];
-
-                                          if(doc.id != 2){
-                                            listaitemsDoc.add(PopupMenuItem(value: i,
-                                              child: Text(doc.nombreDocumento, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w400),),
-                                            ));
-                                          }
-                                        }
-
-                                        listaitemsDoc.add(PopupMenuItem(value: 4,
-                                          child: Text(
-                                            "Editar",
-                                            style: TextStyle(
-                                                color: AppColors.color_titulo, fontWeight: FontWeight.w400),
-                                          ),));
-
-                                        listaitemsDoc.add(PopupMenuItem(value: 5,
-                                          child: Text(
-                                            "Borrar",
-                                            style: TextStyle(
-                                                color: AppColors.color_titulo, fontWeight: FontWeight.w400),
-                                          ),));
-                                        return listaitemsDoc;
-                                      }*/
-
-                                      String parcialidades = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].parcialidades;
-                                      String montoParcial = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].pparcial;
-
-
-
-                                      return Column(
+                          switch(i){
+                            //Agregar cotización
+                            case 0:
+                              return Visibility(
+                                visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() < 3 ? true : false,
+                                child: Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 26, left: 16.0, right: 16.0, bottom: 11.0),
+                                      child: Row(
                                         children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 16.0,left: 16.0),
-                                            child: Container(
-                                              margin: EdgeInsets.only(left: 0.0,right: 0.0, top: 8.0),
-                                              child: Stack(
-                                                children: <Widget>[
-                                                  Container(
-                                                    height: 332,
-                                                    width: 312,
-                                                    margin: EdgeInsets.only(top: 8.0,right: 8.0),
-                                                    decoration: new BoxDecoration(
-                                                        border: Border.all(color: AppColors.color_Bordes),
-                                                        color: Colors.white,
-                                                        borderRadius: new BorderRadius.only(
-                                                          topLeft: const Radius.circular(4.0),
-                                                          topRight: const Radius.circular(4.0),
-                                                          bottomLeft: const Radius.circular(4.0),
-                                                          bottomRight: const Radius.circular(4.0),
-                                                        )),
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(right:8.0, left: 8.0, top:16.0, bottom: 16.0),
-                                                          child: Container(
-                                                              child: Text( Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Cotización " + (index+1).toString(),
-                                                                style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    color: AppColors.color_appBar),)
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(right: 0.0, left: 0.0),
-                                                          child: Container(
-                                                            padding: EdgeInsets.only(left: 12.0),
-                                                            color: AppColors.color_background,
-                                                            height: 48,
-                                                            width: 296,
-                                                            child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              children: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago.length > 1 ? <Widget>[
-
-                                                                PopupMenuButton(
-                                                                  offset: Offset(135, 200),
-                                                                  itemBuilder: (context) => getMenuItems(),
-                                                                  //initialValue: 2,
-                                                                  onCanceled: () {
-                                                                    print("You have canceled the menu.");
-                                                                  },
-                                                                  onSelected: (value) {
-                                                                    setState(() {
-                                                                      Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada = value;
-                                                                    });
-
-                                                                  },
-                                                                  child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                                    children: <Widget>[
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(right: 8.0),
-                                                                        child: Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
-                                                                          style: TextStyle(color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,
-                                                                        ),
-                                                                      ),
-                                                                      Visibility(
-                                                                        visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma != "Anual",
-                                                                        child: Container(padding: const EdgeInsets.only(left: 165.0, right: 12.0),
-                                                                            child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
-                                                                      ),
-                                                                      Visibility(
-                                                                        visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma == "Anual",
-                                                                        child: Container(padding: const EdgeInsets.only(left: 195.0, right: 12.0),
-                                                                            child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ] : <Widget>[//
-                                                                Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
-                                                                  style: TextStyle(
-                                                                      color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(top: 16.0),
-                                                          child: Row(
-                                                            children: <Widget>[
-                                                              Container(
-                                                                padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                                                                width: 144,
-                                                                height: 16,
-                                                                child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
-                                                                  textAlign: TextAlign.center,),
-                                                              ),
-                                                              Container(
-                                                                padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                                                                width: 144,
-                                                                height: 16,
-                                                                child: Text(parcialidades,
-                                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
-                                                                  textAlign: TextAlign.center,),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Row(children: <Widget>[
-                                                          Container(
-                                                            padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                                                            width: 144,
-                                                            height: 40,
-                                                            child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
-                                                              style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                              textAlign: TextAlign.center,
-                                                              overflow: TextOverflow.ellipsis,
-                                                              maxLines: 2,),
-                                                          ),
-                                                          Container(
-                                                            padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                                                            width: 144,
-                                                            height: 40,
-                                                            child: Text(montoParcial,
-                                                              style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                              textAlign: TextAlign.center,),
-                                                          ),
-                                                        ],),
-                                                        Container(color: Colors.white,
-                                                          alignment: Alignment.center,
-                                                          child: Wrap(
-                                                            alignment: WrapAlignment.center,
-                                                            direction: Axis.vertical,
-                                                            children: getFormatos(),),
-                                                        ),
-
-                                                        Container(
-                                                          padding: const EdgeInsets.only(top: 8, left: 85.0, right: 85.0),
-                                                          alignment: Alignment.center,
-                                                          child: Row(
-                                                            children: <Widget>[
-                                                              IconButton(icon: Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),alignment: Alignment.centerRight, onPressed: null,),
-                                                              FlatButton(
-                                                                textColor: AppColors.secondary900,
-                                                                onPressed: (){
-                                                                  editarDatos(index);
-                                                                },
-                                                                child: Text(Mensajes.edicion,
-                                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                      right: 0.0,
-                                                      child: SizedBox(
-                                                        width: 36.0,
-                                                        height: 36.0,
-                                                        child: FloatingActionButton(
-                                                          heroTag: null, //Se establece en null para evitar que choque con el btn1 de Agregar
-                                                          backgroundColor: Colors.white,
-                                                          onPressed: ((){
-                                                            setState(() {
-                                                              if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
-                                                                Utilidades.cotizacionesApp.eliminarDeLaComparativa(index);
-                                                              }else{
-                                                                limpiarDatos();
-                                                              }
-                                                            });
-                                                          }),
-                                                          child: Image.asset("assets/icon/cotizador/delete.png", height: 21.6, width: 21.6,),
-                                                        ),
-                                                      )
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
+                                          Expanded(
+                                              flex: 6,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(right: 56.0),
+                                                child: Text(Mensajes.btn_addCotizacion,
+                                                  style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                                                ),
+                                              )
                                           ),
-                                          Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.documentos_configuracion[i].id == 2 ? Container(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: FlatButton(
-                                              disabledTextColor: AppColors.color_disable,
-                                              textColor: Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 ? AppColors.secondary900 : AppColors.color_disable,
-                                              onPressed: (){
-                                                setState(() {
-                                                 // var list = Utilidades.cotizacionesApp.getCotizacionElement(0).paso1.documentos_configuracion as List;
-                                                  mostrarFcomparativa = true;
-                                                });
-                                                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
-                                                  guardaCotizacion(index, Utilidades.FORMATO_COMPARATIVA, true);
-                                                }else{
-                                                  return null;
-                                                }
-                                              },
-                                              child: Text(Mensajes.btn_formatoComp,
-                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),
-                                                textAlign: TextAlign.center,),
-                                            ),
-                                          ): Container(padding: const EdgeInsets.all(16.0),),
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 20),
+                                          Spacer(),
+                                          Expanded(
+                                            flex: 0,
                                             child: Container(
-                                              decoration: new BoxDecoration(
-                                                  border: Border.all(color: AppColors.color_Bordes),
-                                                  color: Colors.white,
-                                                  borderRadius: new BorderRadius.only(
-                                                    topLeft: const Radius.circular(4.0),
-                                                    topRight: const Radius.circular(4.0),
-                                                    bottomLeft: const Radius.circular(4.0),
-                                                    bottomRight: const Radius.circular(4.0),
-                                                  )),
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Container(
-                                                    height: 40,
-                                                    width: 294,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
-                                                      child: Text(
-                                                        ("Prima total"), overflow: TextOverflow.ellipsis,
-                                                        textAlign: TextAlign.start,
-                                                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
-                                                    child: RenglonTablaDoscolumna(titulo: "Titular",
-                                                        valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, bottom: 12.0,),
-                                                    child: RenglonTablaDoscolumna(titulo: "Total",
-                                                        valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
-                                                    ),
-                                                  ),
-                                                  ListView.builder(
-                                                      itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones.length,
-                                                      shrinkWrap: true,
-                                                      physics: ScrollPhysics(),
-                                                      itemBuilder: (BuildContext ctxt, int j) {
-
-                                                        return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
-                                                          child: Visibility(
-                                                            visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
-                                                            child: Column(
-                                                              children: <Widget>[
-                                                                //Titulo de seccion
-                                                                Container(
-                                                                  height: 40,
-                                                                  width: 294,
-                                                                  child: Padding(
-                                                                    padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
-                                                                    child: Text(
-                                                                      (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
-                                                                      textAlign: TextAlign.start,
-                                                                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                ListView.builder(
-                                                                    itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
-                                                                    shrinkWrap: true,
-                                                                    physics: ScrollPhysics(),
-                                                                    itemBuilder: (BuildContext ctxt, int indexdos) {
-
-                                                                      return Padding(
-                                                                        padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
-                                                                        child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
-                                                                            valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
-                                                                      );
-
-                                                                    }
-
-                                                                ),
-
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        );
-
-                                                      }),
-                                                ],
+                                              padding: const EdgeInsets.only(right: 8.0, bottom: 0.0),
+                                              height: 45,
+                                              width: 45,
+                                              child: FittedBox(
+                                                child: FloatingActionButton(
+                                                  onPressed: _aumentar,
+                                                  elevation: 0.0,
+                                                  heroTag: "btn1",
+                                                  tooltip: "Agregar",
+                                                  child: Icon(Icons.add, color: AppColors.secondary900, size: 37.0,),
+                                                  backgroundColor: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),
 
                                         ],
-                                      );
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 16.0, left: 16.0),
+                                      child: Divider(
+                                        color: AppColors.color_divider,
+                                        height: 2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              break;
+                            //Cotizaciones
+                            case 1:
 
-                                    });
 
-                                break;
+                              return ListView.builder(
+                                  itemCount: Utilidades.cotizacionesApp.getCurrentLengthLista(),
+                                  shrinkWrap: true,
+                                  physics: ScrollPhysics(),
+                                  itemBuilder: (BuildContext ctxt, int index) {
 
-                              default:
-                                return Container();
-                                break;
-                            }
-                          }),
-                    ),
+                                    if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa == null){
+                                      return Container();
+                                    }else{
+                                      cont ++;
+                                    }
+
+
+                                    List<PopupMenuItem> getMenuItems() {
+
+                                      List<PopupMenuItem> listaitems = List<PopupMenuItem>();
+
+                                      for(int i = 0; i< Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago.length; i++){
+
+                                        FormadePago formapago = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[i];
+
+                                        listaitems.add(PopupMenuItem(
+                                          value: i,
+                                          child: Container(
+                                            width: double.infinity,
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  formapago.forma,
+                                                  style: TextStyle(
+                                                      color: AppColors.primary700, fontWeight: FontWeight.w400),
+                                                ),
+                                                SizedBox(width: 60.0,),
+                                              ],
+                                            ),
+                                          ),
+                                        ));
+                                      }
+                                      return listaitems;
+
+                                    }
+
+
+                                    List<Widget> getFormatos() {
+                                      List<FlatButton> listabuttonDoc = new List<FlatButton>();
+                                      for (int i = 0; i <Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion.length; i++) {
+
+                                        Documento doc = Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i];
+
+                                        if(doc.id != 2){
+                                          listabuttonDoc.add(new FlatButton(
+                                            color: Colors.white,
+                                            onPressed: (){
+                                              setState(() {
+                                                if(i < 3){
+                                                  guardaCotizacion(index, Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i].id, true);
+                                                }
+                                              });
+                                            },
+                                            child: Text("Ver " + doc.nombreDocumento.toLowerCase().replaceAll("ap", ""), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),),
+                                          ));
+                                        }
+                                      }
+                                      return listabuttonDoc;
+                                    }
+
+                                    String parcialidades = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].parcialidades;
+                                    String montoParcial = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].pparcial;
+
+
+
+                                    return Column(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 16.0,left: 16.0),
+                                          child: Container(
+                                            margin: EdgeInsets.only(left: 0.0,right: 0.0, top: 8.0),
+                                            child: Stack(
+                                              children: <Widget>[
+                                                Container(
+                                                  height: 332,
+                                                  width: 312,
+                                                  margin: EdgeInsets.only(top: 8.0,right: 8.0),
+                                                  decoration: new BoxDecoration(
+                                                      border: Border.all(color: AppColors.color_Bordes),
+                                                      color: Colors.white,
+                                                      borderRadius: new BorderRadius.only(
+                                                        topLeft: const Radius.circular(4.0),
+                                                        topRight: const Radius.circular(4.0),
+                                                        bottomLeft: const Radius.circular(4.0),
+                                                        bottomRight: const Radius.circular(4.0),
+                                                      )),
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(right:8.0, left: 8.0, top:16.0, bottom: 16.0),
+                                                        child: Container(
+                                                            child: Text( Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Cotización " + (index+1).toString(),
+                                                              style: TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: AppColors.color_appBar),)
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(right: 0.0, left: 0.0),
+                                                        child: Container(
+                                                          padding: EdgeInsets.only(left: 12.0),
+                                                          color: AppColors.color_background,
+                                                          height: 48,
+                                                          width: 296,
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            children: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago.length > 1 ? <Widget>[
+
+                                                              PopupMenuButton(
+                                                                offset: Offset(135, 200),
+                                                                itemBuilder: (context) => getMenuItems(),
+                                                                //initialValue: 2,
+                                                                onCanceled: () {
+                                                                  print("You have canceled the menu.");
+                                                                },
+                                                                onSelected: (value) {
+                                                                  setState(() {
+                                                                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada = value;
+                                                                  });
+
+                                                                },
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(right: 8.0),
+                                                                      child: Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
+                                                                        style: TextStyle(color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,
+                                                                      ),
+                                                                    ),
+                                                                    Visibility(
+                                                                      visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma != "Anual",
+                                                                      child: Container(padding: const EdgeInsets.only(left: 165.0, right: 12.0),
+                                                                          child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
+                                                                    ),
+                                                                    Visibility(
+                                                                      visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma == "Anual",
+                                                                      child: Container(padding: const EdgeInsets.only(left: 195.0, right: 12.0),
+                                                                          child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ] : <Widget>[//
+                                                              Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
+                                                                style: TextStyle(
+                                                                    color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 16.0),
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            Container(
+                                                              padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                                                              width: 144,
+                                                              height: 16,
+                                                              child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                textAlign: TextAlign.center,),
+                                                            ),
+                                                            Container(
+                                                              padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                                                              width: 144,
+                                                              height: 16,
+                                                              child: Text(parcialidades,
+                                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                textAlign: TextAlign.center,),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Row(children: <Widget>[
+                                                        Container(
+                                                          padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                                                          width: 144,
+                                                          height: 40,
+                                                          child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
+                                                            style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                                                            textAlign: TextAlign.center,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            maxLines: 2,),
+                                                        ),
+                                                        Container(
+                                                          padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                                                          width: 144,
+                                                          height: 40,
+                                                          child: Text(montoParcial,
+                                                            style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                                                            textAlign: TextAlign.center,),
+                                                        ),
+                                                      ],),
+                                                      Container(color: Colors.white,
+                                                        alignment: Alignment.center,
+                                                        child: Wrap(
+                                                          alignment: WrapAlignment.center,
+                                                          direction: Axis.vertical,
+                                                          children: getFormatos(),),
+                                                      ),
+
+                                                      Container(
+                                                        padding: const EdgeInsets.only(top: 8, left: 85.0, right: 85.0),
+                                                        alignment: Alignment.center,
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            IconButton(icon: Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),alignment: Alignment.centerRight, onPressed: null,),
+                                                            FlatButton(
+                                                              textColor: AppColors.secondary900,
+                                                              onPressed: (){
+                                                                editarDatos(index);
+                                                              },
+                                                              child: Text(Mensajes.edicion,
+                                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                    right: 0.0,
+                                                    child: SizedBox(
+                                                      width: 36.0,
+                                                      height: 36.0,
+                                                      child: FloatingActionButton(
+                                                        heroTag: null, //Se establece en null para evitar que choque con el btn1 de Agregar
+                                                        backgroundColor: Colors.white,
+                                                        onPressed: ((){
+                                                          setState(() {
+                                                              if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
+                                                              Utilidades.cotizacionesApp.eliminarDeLaComparativa(index);
+                                                            }else{
+                                                              limpiarDatos();
+                                                            }
+                                                          });
+                                                        }),
+                                                        child: Image.asset("assets/icon/cotizador/delete.png", height: 21.6, width: 21.6,),
+                                                      ),
+                                                    )
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.documentos_configuracion[i].id == 2 ? Container(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: FlatButton(
+                                            disabledTextColor: AppColors.color_disable,
+                                            textColor: Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 ? AppColors.secondary900 : AppColors.color_disable,
+                                            onPressed: (){
+                                              setState(() {
+                                               // var list = Utilidades.cotizacionesApp.getCotizacionElement(0).paso1.documentos_configuracion as List;
+                                                mostrarFcomparativa = true;
+                                              });
+                                              if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
+                                                guardaCotizacion(index, Utilidades.FORMATO_COMPARATIVA, true);
+                                              }else{
+                                                return null;
+                                              }
+                                            },
+                                            child: Text(Mensajes.btn_formatoComp,
+                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),
+                                              textAlign: TextAlign.center,),
+                                          ),
+                                        ): Container(padding: const EdgeInsets.all(16.0),),
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 20),
+                                          child: Container(
+                                            decoration: new BoxDecoration(
+                                                border: Border.all(color: AppColors.color_Bordes),
+                                                color: Colors.white,
+                                                borderRadius: new BorderRadius.only(
+                                                  topLeft: const Radius.circular(4.0),
+                                                  topRight: const Radius.circular(4.0),
+                                                  bottomLeft: const Radius.circular(4.0),
+                                                  bottomRight: const Radius.circular(4.0),
+                                                )),
+                                            child: Column(
+                                              children: <Widget>[
+                                                Container(
+                                                  height: 40,
+                                                  width: 294,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
+                                                    child: Text(
+                                                      ("Prima total"), overflow: TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.start,
+                                                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                  child: RenglonTablaDoscolumna(titulo: "Titular",
+                                                      valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left: 0, right:0, top:8, bottom: 12.0,),
+                                                  child: RenglonTablaDoscolumna(titulo: "Total",
+                                                      valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
+                                                  ),
+                                                ),
+                                                ListView.builder(
+                                                    itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones.length,
+                                                    shrinkWrap: true,
+                                                    physics: ScrollPhysics(),
+                                                    itemBuilder: (BuildContext ctxt, int j) {
+
+                                                      return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
+                                                        child: Visibility(
+                                                          visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
+                                                          child: Column(
+                                                            children: <Widget>[
+                                                              //Titulo de seccion
+                                                              Container(
+                                                                height: 40,
+                                                                width: 294,
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
+                                                                  child: Text(
+                                                                    (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
+                                                                    textAlign: TextAlign.start,
+                                                                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              ListView.builder(
+                                                                  itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
+                                                                  shrinkWrap: true,
+                                                                  physics: ScrollPhysics(),
+                                                                  itemBuilder: (BuildContext ctxt, int indexdos) {
+
+                                                                    return Padding(
+                                                                      padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                                      child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
+                                                                          valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
+                                                                    );
+
+                                                                  }
+
+                                                              ),
+
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+
+                                                    }),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
+                                    );
+
+                                  });
+
+                              break;
+
+                            default:
+                              return Container(height: 1,);
+                              break;
+                          }
+                        }),
+                    )
                   ],
                 )
             ),

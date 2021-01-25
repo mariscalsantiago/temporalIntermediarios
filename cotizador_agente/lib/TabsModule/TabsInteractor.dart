@@ -24,7 +24,7 @@ class TabsInteractor implements TabsUseCase {
       String footerString = remoteConfig.getString(Constants.CONFIG_FOOTER);
       var footerJson = jsonDecode(footerString);
       var footer = Footer.fromJson(footerJson);
-      return footer;
+      return defaultFooter();
     } catch(e){
       var footer = defaultFooter();
       return footer;
@@ -40,7 +40,7 @@ class TabsInteractor implements TabsUseCase {
           localIcon: "assets/cotizar.png",
           habilitado: true,
           accion: "flutter_app/cotizar"),
-      Secciones(
+      /*Secciones(
           posicion: 2,
           titulo: "Pagar",
           icono: "",
@@ -60,7 +60,7 @@ class TabsInteractor implements TabsUseCase {
           icono: "",
           localIcon: "assets/renovar.png",
           habilitado: false,
-          accion: "flutter_app/renovar"),
+          accion: "flutter_app/renovar"),*/
       Secciones(
           posicion: 5,
           titulo: "Menú",

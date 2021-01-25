@@ -667,10 +667,10 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                         Visibility(
                           visible: widget.id != null,
                           child: Text( (widget.idFormato == Utilidades.FORMATO_COTIZACION_AP) || (widget.idFormato == Utilidades.FORMATO_COTIZACION) ?
-                          "Formato Cotización: " + widget.folio.toString() :
+                          Constants.Formato_Cotizacion + widget.folio.toString() :
                           ((widget.idFormato == Utilidades.FORMATO_COMISION_AP) || (widget.idFormato == Utilidades.FORMATO_COMISION) ?
-                          "Formato Comisión: " + widget.folio.toString() :
-                          ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Formato Comparativa: " + widget.folio.toString() : ""  )),
+                          Constants.Formato_Comision + widget.folio.toString() :
+                          ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? Constants.Formato_Comparativa + widget.folio.toString() : ""  )),
                             style:
                             TextStyle(fontSize: 20.0, color: AppColors.primary700),
                             textAlign: TextAlign.left,
@@ -683,7 +683,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                         flex: 2,
                         child: FloatingActionButton(
                           onPressed: () {
-                           // Navigator.of(context).pop();
                             Navigator.pop(context);
                           },
                           heroTag: "btn1",
