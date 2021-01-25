@@ -631,6 +631,19 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
         context: context,
         helpText: selectedDate.year.toString(),
         locale: const Locale('es', 'MX'),
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              primaryColor: AppColors.secondary900,
+              accentColor: AppColors.secondary900,
+              colorScheme: ColorScheme.light(primary: AppColors.secondary900),
+              buttonTheme: ButtonThemeData(
+                  textTheme: ButtonTextTheme.primary
+              ),
+            ),
+            child: child,
+          );
+        },
         initialDate: selectedDate,
         firstDate: firstDate,
         lastDate: lastDate);
@@ -744,6 +757,19 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
     final DateTime picked = await showDatePicker(
         context: context,
         locale: const Locale('es', 'MX'),
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              primaryColor: AppColors.secondary900,
+              accentColor: AppColors.secondary900,
+              colorScheme: ColorScheme.light(primary: AppColors.secondary900),
+              buttonTheme: ButtonThemeData(
+                  textTheme: ButtonTextTheme.primary
+              ),
+            ),
+            child: child,
+          );
+        },
         initialDate: selectedDate,
         firstDate: firstDate,
         lastDate: lastDate);
@@ -762,6 +788,19 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
       //locale: Locale("es","MX"),
         context: context,
         locale: const Locale('es', 'MX'),
+        builder: (BuildContext context, Widget child) {
+          return Theme(
+            data: ThemeData.light().copyWith(
+              primaryColor: AppColors.secondary900,
+              accentColor: AppColors.secondary900,
+              colorScheme: ColorScheme.light(primary: AppColors.secondary900),
+              buttonTheme: ButtonThemeData(
+                  textTheme: ButtonTextTheme.primary
+              ),
+            ),
+            child: child,
+          );
+        },
         initialDate: selectedDate,
         firstDate: firstDate,
         lastDate: lastDate);
