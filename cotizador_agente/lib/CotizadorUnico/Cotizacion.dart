@@ -78,7 +78,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   bool propuesta3 = false;
   bool comparativa = false;
   bool mostrarFcomparativa = false;
-  int cont = 0;
 
   //verificar que sean diferentes de null
   void guardarPropuestas(String texto1, String texto2, String texto3, String texto4, int idFormato, int index, bool abrirPdf){
@@ -996,7 +995,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                             //Cotizaciones
                             case 1:
 
-
+                              int cont = 0;
                               return ListView.builder(
                                   itemCount: Utilidades.cotizacionesApp.getCurrentLengthLista(),
                                   shrinkWrap: true,
@@ -1056,7 +1055,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                 }
                                               });
                                             },
-                                            child: Text("Ver " + doc.nombreDocumento.toLowerCase().replaceAll("ap", ""), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),),
+                                            child: Text("Ver " + doc.nombreDocumento, style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),),
                                           ));
                                         }
                                       }
@@ -1250,7 +1249,8 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             ),
                                           ),
                                         ),
-                                        Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.documentos_configuracion[i].id == 2 ? Container(
+                                        //Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.documentos_configuracion[i].id == 2 Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i].id
+                                       /* Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.documentos_configuracion[index].id == 2 ? Container(
                                           padding: const EdgeInsets.all(16.0),
                                           child: FlatButton(
                                             disabledTextColor: AppColors.color_disable,
@@ -1270,7 +1270,8 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),
                                               textAlign: TextAlign.center,),
                                           ),
-                                        ): Container(padding: const EdgeInsets.all(16.0),),
+                                        ): */
+                                        Container(padding: const EdgeInsets.all(16.0)),
                                         Padding(
                                           padding: const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 20),
                                           child: Container(
