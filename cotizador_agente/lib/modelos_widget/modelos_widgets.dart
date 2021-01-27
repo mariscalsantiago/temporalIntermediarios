@@ -1514,7 +1514,7 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                         color: Colors.white,
                         padding: EdgeInsets.only(left: 8.0,bottom: 4.0, top: 4.0),
                         child: Text(
-                          widget.valor,
+                          widget.valor == "Novus" ? "N/A" : widget.valor,
                           style: TextStyle(
                               color: AppColors.color_appBar,
                               fontWeight: FontWeight.w400,
