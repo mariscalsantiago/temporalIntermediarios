@@ -1,7 +1,5 @@
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
-import 'package:cotizador_agente/utils/Mensajes.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -15,15 +13,15 @@ class NavigationHandler {
       case "flutter_app/cotizar":
         showCotizar(context);
         break;
-     /* case "flutter_app/pagar":
-        showEmitir(context);
+      case "flutter_app/pagar":
+       // showEmitir(context);
         break;
       case "flutter_app/emitir":
-        showPagar(context);
+       // showPagar(context);
         break;
       case "flutter_app/renovar":
-        showRenovar(context);
-        break;*/
+       // showRenovar(context);
+        break;
       case "flutter_app/menu":
         showMenu(context);
         break;
@@ -41,7 +39,7 @@ class NavigationHandler {
         }));
   }
 
-  /*static void showPagar(BuildContext context) {
+  static void showPagar(BuildContext context) {
     Navigator.pop(context);
   }
   static void showEmitir(BuildContext context) {
@@ -50,7 +48,7 @@ class NavigationHandler {
 
   static void showRenovar(BuildContext context) {
     Navigator.pop(context);
-  }*/
+  }
 
   static void showMenu(BuildContext context) {
    showMaterialModalBottomSheet(

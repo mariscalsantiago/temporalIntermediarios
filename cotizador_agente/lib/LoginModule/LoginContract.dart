@@ -1,4 +1,5 @@
 import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
+import 'package:flutter/material.dart';
 
 
 abstract class LoginView {
@@ -11,6 +12,7 @@ abstract class LoginPresentation {
   void showHome();
   void openOlvideContrasenia();
   void logInServices(String mail, String password, String user);
+  void getVersionApp(String idApp, String idOs, BuildContext context);
 }
 
 abstract class LoginUseCase {

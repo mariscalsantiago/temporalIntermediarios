@@ -7,6 +7,7 @@ import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
 import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
 import 'package:cotizador_agente/RequestHandler/RequestHandlerDio.dart';
+import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
@@ -63,11 +64,6 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     bool success = false;
     var config = AppConfig.of(context);
 
-    /*final FirebaseAnalytics analytics = new FirebaseAnalytics();
-    analytics.logEvent(name: CotizadorAnalitycsTags.cotizadorGMM, parameters: <String, dynamic>{});
-
-    sendTag(CotizadorAnalitycsTags.cotizadorGMM);
-    setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorAP");*/
     AnalyticsServices().sendTag(CotizadorAnalitycsTags.cotizadorGMM);
     AnalyticsServices().setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorAP");
     var headers = {
@@ -518,6 +514,14 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                     Utilidades.deboCargarPaso1 = false;
                   }
                 }),
+          ),
+        ),
+      ),
+      bottomNavigationBar: Visibility(
+        visible: false,
+        child: SafeArea(
+          child: TabsController(
+            isSecondLevel: false,
           ),
         ),
       ),

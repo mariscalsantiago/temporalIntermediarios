@@ -1,5 +1,11 @@
 library constants;
 
+const String appVersion = "1.0.0";
+const String titleNVersion = "Nueva versión";
+const String msgNVersion = "Existe una nueva versión de Agentes GNP.";
+const String descarga = "Descargar";
+const String despues = "Después";
+
 //COTIZADOR UNICO
 const String NEGOCIOS_OPERABLES = "COT_CF_ConsultaNegocioCanal";
 const String COTIZADORES= "cotizador/negocio";
