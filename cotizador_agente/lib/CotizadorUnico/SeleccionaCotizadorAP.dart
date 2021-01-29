@@ -35,6 +35,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   bool isLoading = true;
   NegocioOperable negocioSelected;
   Cotizadores cotizadorSelected;
+  bool sinResultados = false;
 
   @override
   void initState() {
@@ -45,14 +46,21 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    getNegociosOperables().then((success){
-      if(widget.negociosOperables[0].cotizadores != null){
-      setState(() {
-        negocioSelected = widget.negociosOperables[0];
-        cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
+      getNegociosOperables().then((success){
+        if(widget.negociosOperables.isNotEmpty){
+          if(widget.negociosOperables[0].cotizadores != null){
+            setState(() {
+              sinResultados = false;
+              negocioSelected = widget.negociosOperables[0];
+              cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
+            });
+          }else{
+            setState(() {
+              sinResultados = true;
+            });
+          }
+        }
       });
-      }
-    });
   }
 
   getNegociosOperables( ) async {
@@ -93,18 +101,39 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         var list = response.response['consultaPorParticipanteResponse']
         ["consultaNegocios"]["participante"]["listaNegocioOperable"] as List;
         list.removeWhere((element) => element["idNegocioOperable"].toString() != "NOP0002010");
-
+        //TODO: Quitar hardcore cuando se configure el negocio operable
+        NegocioOperable negocio = NegocioOperable(
+          ramo: "G",
+          negocioOperable: "AP Worksite",
+          idNegocioOperable: "NOP0002010",
+          idNegocioComercial:"NC000000AP",
+          idUnidadNegocio: "SEM",
+        );
         setState(() {
           widget.negociosOperables = list.map((i) => NegocioOperable.fromJson(i)).toList();
+          //QUITAR HARDCORE
+          widget.negociosOperables.add(negocio);
         });
 
-        widget.negociosOperables.forEach((negocio) async {
+        if(widget.negociosOperables.isNotEmpty){
+          widget.negociosOperables.forEach((negocio) async {
             negocio.cotizadores = await getCotizadores(negocio);
             if(widget.negociosOperables[0].cotizadores != null){
-            negocioSelected = widget.negociosOperables[0];
-            cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
+              sinResultados = false;
+              negocioSelected = widget.negociosOperables[0];
+              cotizadorSelected = widget.negociosOperables[0].cotizadores[0];
+            }else{
+              setState(() {
+                sinResultados = true;
+              });
             }
-        });
+          });
+        }else{
+          setState(() {
+            sinResultados = true;
+          });
+        }
+
         setState(() {
           isLoading = false;
         });
@@ -176,6 +205,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         }else{
           cotizadores.stop();
           isLoading = false;
+          sinResultados = true;
           Navigator.pop(context);
           Utilidades.mostrarAlerta(Mensajes.titleError, response.response, context);
           return null;
@@ -302,7 +332,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         backgroundColor: Colors.white,
         title: Text("Seguros Masivos", style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500),),
       ),
-      body:  Column(
+      body: sinResultados ? skeletonItem() : Column(
         children:  <Widget>[
 
           /*Visibility(
@@ -467,7 +497,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           ),
         ],
       ),
-      bottomSheet: Visibility(
+      bottomSheet: sinResultados ? skeletonButton() : Visibility(
         visible: widget.negociosOperables == null ? false : widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected) < 0 ? 0 : widget.negociosOperables.indexOf(negocioSelected)].cotizadores != null ? true : false,
         child: Container(
           color: Colors.white,

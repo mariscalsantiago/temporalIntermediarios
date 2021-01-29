@@ -13,7 +13,7 @@ void main() async {
     apikeyAppAgentes: 'l7xxfb568d77704046d0b5a80256fe00f829',
     service_perfilador: "https://api-qa.oscp.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
     proyectId: 'gnp-accidentespersonales-qa',
-    urlNotifierService:'https://api-qa.oscp.gnp.com.mx',
+    //urlNotifierService:'https://api-qa.oscp.gnp.com.mx',
 
     //COTIZADOR UNICO
     urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/',

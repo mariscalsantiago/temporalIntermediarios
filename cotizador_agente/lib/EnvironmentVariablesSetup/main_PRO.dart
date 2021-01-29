@@ -11,7 +11,7 @@ void main() {
     apikeyAppAgentes: 'l7xxed71b90a2ed941668463e3a01513d582',
     service_perfilador: "https://api.service.oscp.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
     proyectId: 'gnp-accidentespersonales-pro',
-    urlNotifierService:'https://api.service.gnp.com.mx',
+   // urlNotifierService:'https://api.service.gnp.com.mx',
 
     //COTIZADOR UNICO
     urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-pro.cloudfunctions.net/',
