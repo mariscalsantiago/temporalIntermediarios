@@ -101,18 +101,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         var list = response.response['consultaPorParticipanteResponse']
         ["consultaNegocios"]["participante"]["listaNegocioOperable"] as List;
         list.removeWhere((element) => element["idNegocioOperable"].toString() != "NOP0002010");
-        //TODO: Quitar hardcore cuando se configure el negocio operable
-        NegocioOperable negocio = NegocioOperable(
-          ramo: "G",
-          negocioOperable: "AP Worksite",
-          idNegocioOperable: "NOP0002010",
-          idNegocioComercial:"NC000000AP",
-          idUnidadNegocio: "SEM",
-        );
         setState(() {
           widget.negociosOperables = list.map((i) => NegocioOperable.fromJson(i)).toList();
-          //QUITAR HARDCORE
-          widget.negociosOperables.add(negocio);
         });
 
         if(widget.negociosOperables.isNotEmpty){
