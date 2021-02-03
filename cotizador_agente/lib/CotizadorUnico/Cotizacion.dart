@@ -87,17 +87,17 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         if(texto1.isNotEmpty){
           Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
           guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 0, false);
-          guardarFormato(Utilidades.FORMATO_COMISION_AP, 0, false);
+          //guardarFormato(Utilidades.FORMATO_COMISION_AP, 0, false);
         }
         if(texto2.isNotEmpty){
           Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = texto2;
           guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 1, false);
-          guardarFormato(Utilidades.FORMATO_COMISION_AP, 1, false);
+          //guardarFormato(Utilidades.FORMATO_COMISION_AP, 1, false);
         }
         if(texto3.isNotEmpty){
           Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = texto3;
           guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 2, false);
-          guardarFormato(Utilidades.FORMATO_COMISION_AP, 2, false);
+          //guardarFormato(Utilidades.FORMATO_COMISION_AP, 2, false);
         }
         if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 && mostrarFcomparativa){
           guardarFormatoComparativa();
@@ -215,14 +215,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
             int folio = response.response["folio"];
             switch(idformato){
-              case Utilidades.FORMATO_COMISION:
-                Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
-                break;
-
-              case Utilidades.FORMATO_COTIZACION:
-                Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
-                break;
-
               case Utilidades.FORMATO_COMISION_AP:
                 Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
                 break;
@@ -408,24 +400,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
     bool deboGuardarCotizacion = true;
     switch(idformato){
-      case Utilidades.FORMATO_COMISION:
-        if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION !=null){
-         // _initialWebView();
-          deboGuardarCotizacion = false;
-          Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => CotizacionPDF(
-                  id: index+1,
-                  folio: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION,
-                  idFormato: idformato,
-                  id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
-                ),
-              ));
-
-        }
-
-        break;
-
       case Utilidades.FORMATO_COMISION_AP:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION !=null){
          // _initialWebView();
@@ -442,22 +416,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
         }
 
-        break;
-
-      case Utilidades.FORMATO_COTIZACION:
-        if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION !=null){
-         // _initialWebView();
-          deboGuardarCotizacion = false;
-          Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => CotizacionPDF(
-                  id: index+1,
-                  folio: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION,
-                  idFormato: idformato,
-                  id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
-                ),
-              ));
-        }
         break;
 
       case Utilidades.FORMATO_COTIZACION_AP:

@@ -65,7 +65,7 @@ class LoginControllerState extends State<LoginController> implements LoginView {
           contentLogo(),
           Padding(
             padding: const EdgeInsets.only(top: 40.0),
-            child: ReusableWidgets.getTextCenterBienvenido('Soy Socio GNP\n¡Te damos la bienvenida!'),
+            child: ReusableWidgets.getTextCenterBienvenido('Intermediario GNP\n¡Te damos la bienvenida!'),
           ),
           centerBody(),
         ],

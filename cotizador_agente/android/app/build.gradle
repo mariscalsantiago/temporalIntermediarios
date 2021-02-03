@@ -82,15 +82,15 @@ android {
     productFlavors {
         qa {
             dimension "app"
-            resValue "string", "app_name", "QA-Soy Socio GNP"
+            resValue "string", "app_name", "QA-Intermediario GNP"
         }
         uat {
             dimension "app"
-            resValue "string", "app_name", "UAT-Soy Socio GNP"
+            resValue "string", "app_name", "UAT-Intermediario GNP"
         }
         pro {
             dimension "app"
-            resValue "string", "app_name", "Soy Socio GNP"
+            resValue "string", "app_name", "Intermediario GNP"
         }
     }
 }
