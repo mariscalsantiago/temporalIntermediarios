@@ -924,7 +924,8 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                             bottomRight: const Radius.circular(12.0)
                                         ),
                                       ),
-                                      child: Text("1", style: TextStyle(color: AppColors.secondary900,fontSize: 16, fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
+                                      child: Align( alignment: Alignment.center,
+                                          child: Text("1", style: TextStyle(color: AppColors.secondary900,fontSize: 16, fontWeight: FontWeight.w400),textAlign: TextAlign.center,)),
                                     ),
                                   ),
                                   Padding(
@@ -958,7 +959,8 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                             bottomRight: const Radius.circular(12.0)
                                         ),
                                       ),
-                                      child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),textAlign: TextAlign.center,),
+                                      child: Align( alignment: Alignment.center,
+                                          child: Text("2", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),textAlign: TextAlign.center,)),
                                     ),
                                   ),
                                   Padding(
