@@ -84,19 +84,20 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     print(texto1);
     setState(() {
       if(abrirPdf == false){
+        int i = Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa == null ? 1 : 0;
         if(texto1.isNotEmpty){
-          Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
-          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 0, false);
+          Utilidades.cotizacionesApp.listaCotizaciones[i].comparativa.nombre = texto1;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i, false);
           //guardarFormato(Utilidades.FORMATO_COMISION_AP, 0, false);
         }
         if(texto2.isNotEmpty){
-          Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = texto2;
-          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 1, false);
+          Utilidades.cotizacionesApp.listaCotizaciones[i +1].comparativa.nombre = texto2;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i + 1, false);
           //guardarFormato(Utilidades.FORMATO_COMISION_AP, 1, false);
         }
         if(texto3.isNotEmpty){
-          Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = texto3;
-          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 2, false);
+          Utilidades.cotizacionesApp.listaCotizaciones[i + 2].comparativa.nombre = texto3;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i + 2, false);
           //guardarFormato(Utilidades.FORMATO_COMISION_AP, 2, false);
         }
         if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 && mostrarFcomparativa){
@@ -844,7 +845,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                         onSelected: (value) {
                           switch (value) {
                             case 2:
-                              showModalGuardar(0, 0 , false, mostrarFcomparativa);
+                              showModalGuardar(5, 0 , false, mostrarFcomparativa);
                               break;
                             case 3:
                               limpiarDatos();
@@ -1701,19 +1702,20 @@ class _listaCheckState extends State<listaCheck> {
             buttonColor: AppColors.secondary900,
             child: RaisedButton(
               onPressed: ((){
+                int i = Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa == null ? 1 : 0;
                 if(texto1.isNotEmpty && texto1 != null){
                   if(widget.abrirPdf && widget.idFormato != Utilidades.FORMATO_COMPARATIVA){
                     Utilidades.cotizacionesApp.listaCotizaciones[widget.index].comparativa.nombre = widget.namePropuesta1Controller.text;
                   }
                   else{
-                    Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = widget.namePropuesta1Controller.text;
+                    Utilidades.cotizacionesApp.listaCotizaciones[i].comparativa.nombre = widget.namePropuesta1Controller.text;
                   }
                 }
                 if(texto2 != null && texto2.isNotEmpty){
-                  Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = widget.namePropuesta2Controller.text;
+                  Utilidades.cotizacionesApp.listaCotizaciones[i + 1].comparativa.nombre = widget.namePropuesta2Controller.text;
                 }
                 if(texto3.isNotEmpty && texto3 != null){
-                  Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.namePropuesta3Controller.text;
+                  Utilidades.cotizacionesApp.listaCotizaciones[i + 2].comparativa.nombre = widget.namePropuesta3Controller.text;
                 }
                 /*if(texto3.isNotEmpty && texto3 != null){
                   Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.nametablaCompController.text;
