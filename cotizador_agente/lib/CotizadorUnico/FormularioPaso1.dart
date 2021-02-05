@@ -500,6 +500,9 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
 
         if(widget.deboMostrarAlertaPrecarga){
+          if(Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa == null){
+            Utilidades.cotizacionesApp.eliminarDeLaComparativa(0);
+          }
           Utilidades.mostrarAlerta(Mensajes.titleCotRec, Mensajes.propRestablecida, context);
           widget.deboMostrarAlertaPrecarga = false;
 
