@@ -169,12 +169,13 @@ class _RenglonMisCotizacionesState extends State<RenglonMisCotizaciones> {
             ],
           ),
           Row(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 16.0,),
-                child: Text(widget.cotizacion.nombreCotizacion, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.color_appBar)),
+            children: [
+              Flexible(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 16.0,),
+                  child: Text(widget.cotizacion.nombreCotizacion, overflow: TextOverflow.ellipsis, textAlign: TextAlign.left, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.color_appBar)),
+                ),
               ),
-              Spacer(flex: 1,),
             ],
           ),
           Row(
