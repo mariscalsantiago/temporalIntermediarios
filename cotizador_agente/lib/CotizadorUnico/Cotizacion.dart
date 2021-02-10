@@ -823,8 +823,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                 body: Column(//isLoading ? showLoading():
 
                   children: <Widget>[
-
-                  //  TopBar(recargarFormulario: limpiarDatos, formatoComp: guardarFormatoComparativa,),
                     //Encabezado
                     Padding(
                       padding: const EdgeInsets.only(top: 0.0, right: 0.0, left: 0.0),
@@ -860,54 +858,42 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                           switch(i){
                             //Agregar cotización
                             case 0:
-                              return Visibility(
-                                visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() < 3 ? true : false,
-                                child: Column(
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 26, left: 16.0, right: 16.0, bottom: 11.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                              flex: 6,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(right: 56.0),
-                                                child: Text(Mensajes.btn_addCotizacion,
-                                                  style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                ),
-                                              )
-                                          ),
-                                          Spacer(),
-                                          Expanded(
-                                            flex: 0,
-                                            child: Container(
-                                              padding: const EdgeInsets.only(right: 8.0, bottom: 0.0),
-                                              height: 45,
-                                              width: 45,
-                                              child: FittedBox(
-                                                child: FloatingActionButton(
-                                                  onPressed: _aumentar,
-                                                  elevation: 0.0,
-                                                  heroTag: "btn1",
-                                                  tooltip: "Agregar",
-                                                  child: Icon(Icons.add, color: AppColors.secondary900, size: 37.0,),
-                                                  backgroundColor: Colors.white,
-                                                ),
-                                              ),
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 26, left: 16.0, right: 16.0, bottom: 11.0),
+                                child: Visibility(
+                                  visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() < 3 ? true : false,
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                          flex: 6,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(right: 56.0),
+                                            child: Text(Mensajes.btn_addCotizacion,
+                                              style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                                            ),
+                                          )
+                                      ),
+                                      Spacer(),
+                                      Expanded(
+                                        flex: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.only(right: 8.0, bottom: 0.0),
+                                          height: 45,
+                                          width: 45,
+                                          child: FittedBox(
+                                            child: FloatingActionButton(
+                                              onPressed: _aumentar,
+                                              elevation: 0.0,
+                                              heroTag: "btn1",
+                                              tooltip: "Agregar",
+                                              child: Icon(Icons.add, color: AppColors.secondary900, size: 37.0,),
+                                              backgroundColor: Colors.white,
                                             ),
                                           ),
-
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                                      child: Divider(
-                                        color: AppColors.color_divider,
-                                        height: 2,
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               );
                               break;
@@ -926,7 +912,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                     }else{
                                       cont ++;
                                     }
-
 
                                     List<PopupMenuItem> getMenuItems() {
 
@@ -957,7 +942,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
                                     }
 
-
                                     List<Widget> getFormatos() {
                                       List<FlatButton> listabuttonDoc = new List<FlatButton>();
                                       for (int i = 0; i <Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion.length; i++) {
@@ -984,10 +968,15 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                     String parcialidades = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].parcialidades;
                                     String montoParcial = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].pparcial;
 
-
-
                                     return Column(
                                       children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(top:8.0, bottom: 8.0, right: 16.0, left: 16.0),
+                                          child: Divider(
+                                          color: AppColors.color_divider,
+                                          height: 2,
+                                          ),
+                                        ),
                                         Padding(
                                           padding: const EdgeInsets.only(right: 16.0,left: 16.0),
                                           child: Container(
@@ -1266,7 +1255,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                               break;
 
                             default:
-                              return Container(height: 1,);
+                              return Container();
                               break;
                           }
                         }),
