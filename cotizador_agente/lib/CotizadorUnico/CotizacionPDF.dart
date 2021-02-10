@@ -52,10 +52,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
   String pathPdf;
   PDFDocument doc;
   Dio dio;
-  Future<Directory> downloadsDirectory;
   bool isDownload = false;
-  List<Object> parameters =  List<Object>();
-  String dataLayer="";
   bool correovalido = true;
   String email, eMail;
   TextEditingController controller = new TextEditingController();

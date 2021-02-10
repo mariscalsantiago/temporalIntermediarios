@@ -39,38 +39,9 @@ class CotizacionVista extends StatefulWidget {
 class _CotizacionVistaState extends State<CotizacionVista> {
 
   bool isLoading = true;
-  int cotiz=1;
-  Map<String, dynamic> resumenCot;
-  String nombreCot;
-  Map<String, dynamic> parameters =  Map<String, dynamic>();
+  bool guardada = false;
   List<Map<String, dynamic>> lista_secciones =  List<Map<String, dynamic>> ();
-  Map<String, dynamic> parameters_Calculo = Map<String, dynamic>();
-  Map<String, dynamic> parameters_Calculo2 = Map<String, dynamic>();
-  Map<String, dynamic> seccionCalculo =  Map<String, dynamic>();
-  List<dynamic> datosAsegurados = new List<dynamic>();
-  Map<String, dynamic> aseguradosD = new Map<String, dynamic>();
 
-  String numeroPagos = "";
-  String primaBase = "";
-  String iva = "";
-  String primaTotal = "";
-  String recargoPagoFraccionado = "";
-  String primaComisionable = "";
-  String porcentajeComision = "";
-  String comision = "";
-  String parcialidad = "";
-  String derechoPoliza = "";
-  String aseguradoPB = "";
-  String aseguradoiva = "";
-  String aseguradoPT = "";
-  String aseguradoRPF = "";
-  String aseguradoPrimaC = "";
-  String aseguradoPorC = "";
-  String aseguradoCom = "";
-  String aseguradoDP = "";
-  String paramName = "";
-  String idAseg = "";
-  String platform = "";
   bool esComparativa = false;
   final _formKey = GlobalKey<FormState>();
   bool propuesta1 = false;
@@ -80,7 +51,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   bool mostrarFcomparativa = false;
 
   //verificar que sean diferentes de null
-  void guardarPropuestas(String texto1, String texto2, String texto3, String texto4, int idFormato, int index, bool abrirPdf){
+  void guardarPropuestas(String texto1, String texto2, String texto3, int idFormato, int index, bool abrirPdf){
     print(texto1);
     setState(() {
       if(abrirPdf == false){
@@ -88,17 +59,14 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         if(texto1.isNotEmpty){
           Utilidades.cotizacionesApp.listaCotizaciones[i].comparativa.nombre = texto1;
           guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i, false);
-          //guardarFormato(Utilidades.FORMATO_COMISION_AP, 0, false);
         }
         if(texto2.isNotEmpty){
           Utilidades.cotizacionesApp.listaCotizaciones[i +1].comparativa.nombre = texto2;
           guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i + 1, false);
-          //guardarFormato(Utilidades.FORMATO_COMISION_AP, 1, false);
         }
         if(texto3.isNotEmpty){
           Utilidades.cotizacionesApp.listaCotizaciones[i + 2].comparativa.nombre = texto3;
           guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i + 2, false);
-          //guardarFormato(Utilidades.FORMATO_COMISION_AP, 2, false);
         }
         if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 && mostrarFcomparativa){
           guardarFormatoComparativa();
@@ -114,7 +82,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   }
 
   guardarFormato( int idformato, int index, bool abrirPdf) async {
-    //if(deboGuardarCotizacion){
 
       final Trace saveCot = FirebasePerformance.instance.newTrace("SoySocio_GuardarCotizacion");
       saveCot.start();
@@ -225,7 +192,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                 break;
 
             }
-            // _initialWebView();
 
             if(abrirPdf){
               Navigator.push(context,
@@ -263,7 +229,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   @override
   void dispose() {
-    // controller.dispose();
     super.dispose();
   }
 
@@ -360,7 +325,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   //Utilidades.LogPrint("REQUEST COT: " + response.body.toString());
 
                 });
-              }else if(statusCode != null) {
+          }else if(statusCode != null) {
             generaCot.stop();
             isLoading = false;
             //Navigator.pop(context);
@@ -403,7 +368,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     switch(idformato){
       case Utilidades.FORMATO_COMISION_AP:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION !=null){
-         // _initialWebView();
+
           deboGuardarCotizacion = false;
           Navigator.push(context,
               MaterialPageRoute(
@@ -421,7 +386,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
       case Utilidades.FORMATO_COTIZACION_AP:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION !=null){
-          //_initialWebView();
+
           deboGuardarCotizacion = false;
           Navigator.push(context,
               MaterialPageRoute(
@@ -523,8 +488,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   }
 
-
-
   List<Seccion> backPaso1(List<Seccion> secciones) {
     return backPaso1Child(secciones);
   }
@@ -590,7 +553,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   }
 
 
-  // ignore: missing_return
   Widget showModalGuardar(int idFormato, int index, bool abrirPdf, bool mostrarFormato){
     double altoModal = mostrarFormato ? (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 497 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 430 : 295) : (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 437 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 360 : 295);
      showModalBottomSheet(
@@ -641,7 +603,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                       child: Column(children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(right: 24.0, left: 24.0),
-                          child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, ispropuesta4: comparativa, guardarPropuestas: guardarPropuestas, idFormato: idFormato, index: index, abrirPdf: abrirPdf, mostrarFormato: mostrarFormato,),
+                          child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas, idFormato: idFormato, index: index, abrirPdf: abrirPdf, mostrarFormato: mostrarFormato,),
                         ),
                       ],),
                     ),
@@ -743,7 +705,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                       icon: Image.asset('assets/icon/cotizador/guardar_Enabled.png'),
                                       onPressed: () {
                                         Navigator.pop(context);
-                                        //TextEditingController nombrePropuesta1Controller = TextEditingController();
 
                                         showModalGuardar(0, 0 , false,mostrarFcomparativa);
                                       },),
@@ -845,7 +806,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                         onSelected: (value) {
                           switch (value) {
                             case 2:
-                              showModalGuardar(5, 0 , false, mostrarFcomparativa);
                               break;
                             case 3:
                               limpiarDatos();
@@ -1208,28 +1168,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             ),
                                           ),
                                         ),
-                                        //Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.documentos_configuracion[i].id == 2 Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i].id
-                                       /* Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.documentos_configuracion[index].id == 2 ? Container(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: FlatButton(
-                                            disabledTextColor: AppColors.color_disable,
-                                            textColor: Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 ? AppColors.secondary900 : AppColors.color_disable,
-                                            onPressed: (){
-                                              setState(() {
-                                               // var list = Utilidades.cotizacionesApp.getCotizacionElement(0).paso1.documentos_configuracion as List;
-                                                mostrarFcomparativa = true;
-                                              });
-                                              if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
-                                                guardaCotizacion(index, Utilidades.FORMATO_COMPARATIVA, true);
-                                              }else{
-                                                return null;
-                                              }
-                                            },
-                                            child: Text(Mensajes.btn_formatoComp,
-                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),
-                                              textAlign: TextAlign.center,),
-                                          ),
-                                        ): */
                                         Container(padding: const EdgeInsets.all(16.0)),
                                         Padding(
                                           padding: const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 20),
@@ -1350,18 +1288,17 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 }
 
 class listaCheck extends StatefulWidget {
-  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.ispropuesta4, this.guardarPropuestas, this.idFormato, this.index, this.abrirPdf, this.mostrarFormato}) : super(key: key);
+  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.guardarPropuestas, this.idFormato, this.index, this.abrirPdf, this.mostrarFormato}) : super(key: key);
 
   @override
   _listaCheckState createState() => _listaCheckState();
-  bool ispropuesta1 = false,ispropuesta2 = false, ispropuesta3 = false, ispropuesta4 = false;
+  bool ispropuesta1 = false,ispropuesta2 = false, ispropuesta3 = false;
   bool abrirPdf, mostrarFormato;
   int idFormato, index;
-  final void Function(String t1, String t2, String t3, String t4, int idFormato, int index, bool abrirPdf) guardarPropuestas;
+  final void Function(String t1, String t2, String t3, int idFormato, int index, bool abrirPdf) guardarPropuestas;
   final namePropuesta1Controller = new TextEditingController();
   final namePropuesta2Controller = new TextEditingController();
   final namePropuesta3Controller = new TextEditingController();
-  final nametablaCompController = new TextEditingController();
 
 }
 
@@ -1369,13 +1306,11 @@ class _listaCheckState extends State<listaCheck> {
   bool propuesta1;
   bool propuesta2;
   bool propuesta3;
-  bool comparativa;
   bool abrirPdf;
   int idFormato, index;
   String texto1 = "";
   String texto2 = "";
   String texto3 = "";
-  String texto4 = "";
   @override
   Widget build(BuildContext context) {
     if(propuesta1 != null){
@@ -1387,9 +1322,6 @@ class _listaCheckState extends State<listaCheck> {
     if(propuesta3 != null){
       widget.ispropuesta3 = propuesta3;
     }
-    if(comparativa != null){
-      widget.ispropuesta4 = comparativa;
-    }
     if(texto1 != null){
       widget.namePropuesta1Controller.text = texto1;
     }
@@ -1399,9 +1331,7 @@ class _listaCheckState extends State<listaCheck> {
     if(texto3 != null){
       widget.namePropuesta3Controller.text = texto3;
     }
-    if(texto4 != null){
-      widget.nametablaCompController.text = texto4;
-    }
+
     return Column(
       children: <Widget>[
         Row(children: <Widget>[
@@ -1615,80 +1545,6 @@ class _listaCheckState extends State<listaCheck> {
             ],),
           ),
         ),
-        Visibility(
-          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && widget.abrirPdf == false && widget.mostrarFormato == true,
-          child: Padding(
-            padding: const EdgeInsets.only(top:20.0),
-            child: Row(children: <Widget>[
-              Container(
-                width: 22,
-                height: 22,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: AppColors.secondary900,
-                    width:4,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(2)),
-                ),
-                child: Theme(
-                  data: ThemeData(
-                      unselectedWidgetColor: Colors.white
-                  ),
-                  child: Checkbox(
-                    value: widget.ispropuesta4,
-                    onChanged: (bool value){
-                      if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
-                        setState(() {
-                        widget.ispropuesta4 = value;
-                        comparativa = widget.ispropuesta4;
-                        print(widget.ispropuesta4.toString());
-                      });
-                      }else{
-                        null;
-                      }
-                    },
-                    activeColor: Colors.white,
-                    checkColor: AppColors.secondary900,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
-                  onChanged: (text) {
-                    setState(() {
-                      widget.nametablaCompController.text = text;
-                      texto4 = widget.nametablaCompController.text;
-                    });
-                  },
-                  keyboardType: TextInputType.text,
-                  inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 12.0),
-                    labelText: Mensajes.tabla_Comp,
-                    hintStyle: TextStyle(fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                      color: AppColors.gnpTextUser,
-                    ),
-                    focusColor: AppColors.color_primario,
-                    fillColor: AppColors.primary200,
-                    enabledBorder: new UnderlineInputBorder(
-                      borderSide: new BorderSide(
-                          color: AppColors.primary200
-                      ),
-                    ),
-                    border: new UnderlineInputBorder(
-                      borderSide: new BorderSide(
-                          color: AppColors.primary200
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],),
-          ),
-        ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 0, right: 0),
           child: Divider(thickness: 1,
@@ -1717,11 +1573,8 @@ class _listaCheckState extends State<listaCheck> {
                 if(texto3.isNotEmpty && texto3 != null){
                   Utilidades.cotizacionesApp.listaCotizaciones[i + 2].comparativa.nombre = widget.namePropuesta3Controller.text;
                 }
-                /*if(texto3.isNotEmpty && texto3 != null){
-                  Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.nametablaCompController.text;
-                }*/
                 Navigator.pop(context);
-                widget.guardarPropuestas(texto1,texto2,texto3, texto4, widget.idFormato, widget.index, widget.abrirPdf);
+                widget.guardarPropuestas(texto1,texto2,texto3, widget.idFormato, widget.index, widget.abrirPdf);
               }),
               child: Text(Mensajes.guarda,
                 style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600,letterSpacing: 1.25),

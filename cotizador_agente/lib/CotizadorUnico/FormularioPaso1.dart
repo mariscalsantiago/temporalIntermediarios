@@ -31,8 +31,6 @@ class FormularioPaso1 extends StatefulWidget {
   bool deboMostrarAlertaPrecarga = true;
   bool deboReemplazarGuardada = false;
 
-  //List<Seccion> _secciones = [];//Cotización guardada
-
   bool validarCodigoPostalFamiliares() {
     var titular = Utilidades.buscaCampoPorID(
         Utilidades.titularSeccion, Utilidades.titularCampo, false);
@@ -831,10 +829,6 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
 
-                  /*Visibility(
-                    visible: !isLoading,
-                    child: TopBar(recargarFormulario: recargar),
-                  ),*/
 
                   Row(
                     children: <Widget>[

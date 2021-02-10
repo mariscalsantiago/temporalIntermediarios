@@ -19,7 +19,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
-//import 'package:cotizador_agente/cotizador_analitycs_tags.dart';
 
 
 class FormularioPaso2 extends StatefulWidget {
@@ -47,7 +46,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
   bool isClose = false;
   bool isChangeicon1 = true;
   bool isChangeicon2 = true;
-  //final FirebaseAnalytics analytics = new FirebaseAnalytics();
 
   final formKey = GlobalKey<FormState>();
 
@@ -529,12 +527,6 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
 */
     return GestureDetector(
-      /*onTap: () {
-      FocusScopeNode currentFocus = FocusScope.of(context);
-      if (!currentFocus.hasPrimaryFocus) {
-        currentFocus.unfocus();
-      }
-    },*/
 
       child: LoadingOverlay(
         isLoading: isLoading,

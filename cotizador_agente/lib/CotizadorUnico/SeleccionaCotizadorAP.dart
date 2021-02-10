@@ -225,17 +225,6 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
       margin: EdgeInsets.only(left: 10, right: 10, top: 48, bottom: 0),
       child: Column(
         children: <Widget>[
-         /* Padding(
-            padding: EdgeInsets.fromLTRB(33, 72, 33, 0),
-            child: SizedBox(
-              width: 294,
-              height: 208,
-                child: Shimmer.fromColors(
-                    child: Container(color: Colors.grey.shade300),
-                    baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade100)
-            ),
-          ),*/
           Padding(
             padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
             child: SizedBox(
