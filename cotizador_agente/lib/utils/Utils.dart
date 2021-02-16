@@ -678,7 +678,7 @@ class Utilidades {
 
   static String getCategoria(){
 
-    var categoria = "SoySocioGNP/" + ((Platform.isIOS) ? "iOS" : "Android") + "/" + Utilidades.idAplicacion.toString() + "/" + datosUsuario.idparticipante;
+    var categoria = "IntermediarioGNP/" + ((Platform.isIOS) ? "iOS" : "Android") + "/" + Utilidades.idAplicacion.toString() + "/" + datosUsuario.idparticipante;
     return categoria;
   }
 }

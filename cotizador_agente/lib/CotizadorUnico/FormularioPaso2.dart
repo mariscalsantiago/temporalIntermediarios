@@ -207,7 +207,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
     setState(() {
       isLoading = true;
     });
-    final Trace cargaPaso = FirebasePerformance.instance.newTrace("SoySocio_PasoDos");
+    final Trace cargaPaso = FirebasePerformance.instance.newTrace("Intermediario_PasoDos");
     cargaPaso.start();
     print(cargaPaso.name);
     bool success = false;

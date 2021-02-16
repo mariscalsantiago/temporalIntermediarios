@@ -71,7 +71,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   getFormato(BuildContext context) async{
 
-    final Trace formato = FirebasePerformance.instance.newTrace("SoySocio_GetPDF");
+    final Trace formato = FirebasePerformance.instance.newTrace("Intermediario_GetPDF");
     formato.start();
     print(formato.name);
     bool success = false;
@@ -167,7 +167,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   sendEmailService() async {
 
-    final Trace mytrace = FirebasePerformance.instance.newTrace("SoySocio_EnviaEmail");
+    final Trace mytrace = FirebasePerformance.instance.newTrace("Intermediario_EnviaEmail");
     mytrace.start();
     print(mytrace.name);
     bool success = false;

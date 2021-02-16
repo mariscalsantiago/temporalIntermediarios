@@ -65,7 +65,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   getNegociosOperables( ) async {
 
-    final Trace negociosOp = FirebasePerformance.instance.newTrace("SoySocio_NegociosOperables");
+    final Trace negociosOp = FirebasePerformance.instance.newTrace("Intermediario_NegociosOperables");
     negociosOp.start();
     print(negociosOp.name);
 
@@ -146,7 +146,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   Future<List<Cotizadores>> getCotizadores(NegocioOperable negocioOperable) async {
 
-    final Trace cotizadores = FirebasePerformance.instance.newTrace("SoySocio_GetCotizadores");
+    final Trace cotizadores = FirebasePerformance.instance.newTrace("Intermediario_GetCotizadores");
     cotizadores.start();
     print(cotizadores.name);
 

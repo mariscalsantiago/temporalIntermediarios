@@ -83,7 +83,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   guardarFormato( int idformato, int index, bool abrirPdf) async {
 
-      final Trace saveCot = FirebasePerformance.instance.newTrace("SoySocio_GuardarCotizacion");
+      final Trace saveCot = FirebasePerformance.instance.newTrace("Intermediario_GuardarCotizacion");
       saveCot.start();
       print(saveCot.name);
 
@@ -259,7 +259,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   generarCotizacion(BuildContext context) async{
 
-    final Trace generaCot = FirebasePerformance.instance.newTrace("SoySocio_GenerarCotizacion");
+    final Trace generaCot = FirebasePerformance.instance.newTrace("Intermediario_GenerarCotizacion");
     generaCot.start();
     print(generaCot.name);
     bool success = false;

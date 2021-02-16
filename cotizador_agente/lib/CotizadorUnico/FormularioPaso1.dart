@@ -269,7 +269,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
   getData() async {
 
-    final Trace data = FirebasePerformance.instance.newTrace("SoySocio_GetPasoUno");
+    final Trace data = FirebasePerformance.instance.newTrace("Intermediario_GetPasoUno");
     data.start();
     print(data.name);
     bool success = false;
