@@ -82,7 +82,7 @@ class SplashControllerState extends State<SplashController>
                 color: Colors.white,
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
-                  width: 180.0,
+                  width: 170.0,
                   height: 24,
                   child: CachedNetworkImage(
                     imageUrl: splashData.imagen_pie,

@@ -24,7 +24,7 @@ class TabsInteractor implements TabsUseCase {
       String footerString = remoteConfig.getString(Constants.CONFIG_FOOTER);
       var footerJson = jsonDecode(footerString);
       var footer = Footer.fromJson(footerJson);
-      return footer;
+      return defaultFooter();
     } catch(e){
       var footer = defaultFooter();
       return footer;
