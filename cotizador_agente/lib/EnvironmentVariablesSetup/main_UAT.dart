@@ -11,7 +11,7 @@ void main() async {
     ambient: Ambient.uat,
     serviceLogin: 'https://cuentas-uat.gnp.com.mx/auth/login',
     apikeyAppAgentes: 'l7xx526ec2d1bd9140a39ad15f72e1964bca',
-    service_perfilador: "https://api-uat.oscp.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
+    service_perfilador: "https://api-uat.oscpuat.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
     proyectId: "gnp-accidentespersonales-uat",
    // urlNotifierService:'https://api-uat.oscpuat.gnp.com.mx',
     //COTIZADOR UNICO
