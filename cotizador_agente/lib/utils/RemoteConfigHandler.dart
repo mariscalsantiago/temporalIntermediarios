@@ -7,9 +7,9 @@ class RemoteConfigHandler {
     var config = AppConfig.of(context);
     RemoteConfig remoteConfig = await RemoteConfig.instance;
     if (config.ambient == Ambient.prod) {
-      remoteConfig.setConfigSettings(RemoteConfigSettings(debugMode: false));
+      remoteConfig.setConfigSettings(RemoteConfigSettings(minimumFetchIntervalMillis: 1));
     } else {
-      remoteConfig.setConfigSettings(RemoteConfigSettings(debugMode: true));
+      remoteConfig.setConfigSettings(RemoteConfigSettings(minimumFetchIntervalMillis: 1));
     }
     try {
       await remoteConfig.fetch(expiration: const Duration(seconds: 0));
