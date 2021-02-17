@@ -407,7 +407,7 @@ class Utilidades {
    static void mostrarAlertaCallback(String titulo, String mensaje,
        BuildContext context, Function negative, Function positive) {
       //manejar el largo de la alerta, predifinido height: 240,
-      double alturaHeight = mensaje.contains("Esta acción no se puede deshacer") ? 168 : 240;
+      double alturaHeight = mensaje.length < 94 ? 216 : mensaje.contains("Esta acción no se puede deshacer") ? 168 : 240;
       // flutter defined function
       showMaterialModalBottomSheet(
          barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
