@@ -480,49 +480,56 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         visible: widget.negociosOperables == null ? false : widget.negociosOperables[widget.negociosOperables.indexOf(negocioSelected) < 0 ? 0 : widget.negociosOperables.indexOf(negocioSelected)].cotizadores != null ? true : false,
         child: Container(
           color: Colors.white,
-          padding: const EdgeInsets.only(top: 31.0,bottom: 16.0, right: 16, left: 16),//
-          child: ButtonTheme(
-            minWidth: 400.0,
-            height: 45,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4.0),),
-            child: FlatButton(
-                color: AppColors.secondary900,
-                textColor: Colors.white,
-                child: Text("Cotizar",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, letterSpacing: 1.25),
-                ),
-                onPressed: () {
-                  CotizacionesApp nuevo = new CotizacionesApp();
+          child: Padding(
+            padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                ButtonTheme(
+                  minWidth: MediaQuery.of(context).size.width - 32, //- 32 corresponde al padding left y right
+                  height: 45,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),),
+                  child: FlatButton(
+                      color: AppColors.secondary900,
+                      textColor: Colors.white,
+                      child: Text("Cotizar",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, letterSpacing: 1.25),
+                      ),
+                      onPressed: () {
+                        CotizacionesApp nuevo = new CotizacionesApp();
 
-                  Utilidades.cotizacionesApp = nuevo;
+                        Utilidades.cotizacionesApp = nuevo;
 
-                  if(cotizadorSelected.mensaje != null) {
-                    Utilidades.mostrarAlertaCallback(
-                        Mensajes.titleContinuar, cotizadorSelected.mensaje, context, () {
-                      Navigator.pop(context);
-                    }, () {
-                      Navigator.pop(context);
-                      Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
-                      Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
-                      //Analytics
-                      Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
-                      Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);
-                      Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
-                      Utilidades.deboCargarPaso1 = false;
-                    });
-                  } else{
-                    Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
-                    Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
-                    //Analytics
-                    Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
-                    Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);
-                    //  seccionCotizador();
-                    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
-                    Utilidades.deboCargarPaso1 = false;
-                  }
-                }),
+                        if(cotizadorSelected.mensaje != null) {
+                          Utilidades.mostrarAlertaCallback(
+                              Mensajes.titleContinuar, cotizadorSelected.mensaje, context, () {
+                            Navigator.pop(context);
+                          }, () {
+                            Navigator.pop(context);
+                            Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
+                            Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+                            //Analytics
+                            Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
+                            Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);
+                            Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                            Utilidades.deboCargarPaso1 = false;
+                          });
+                        } else{
+                          Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
+                          Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+                          //Analytics
+                          Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
+                          Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);
+                          //  seccionCotizador();
+                          Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+                          Utilidades.deboCargarPaso1 = false;
+                        }
+                      }),
+                )
+              ],
+            ),
           ),
         ),
       ),
