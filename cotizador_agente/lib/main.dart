@@ -7,7 +7,7 @@ import 'package:cotizador_agente/CotizadorUnico/Cotizacion.dart';
 import 'package:cotizador_agente/CotizadorUnico/FormularioPaso1.dart';
 import 'package:cotizador_agente/CotizadorUnico/SeleccionaCotizadorAP.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+//import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +19,10 @@ int timerMinuts = 20;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode);
+  //await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode);
   Function originalOnError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails errorDetails) async{
-    await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+    //await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
     originalOnError(errorDetails);
   };
 
@@ -64,7 +64,7 @@ void main() async {
       runApp(configuredApp);
     }, (error, stackTrace){
       print('runZonedGuarded: Caught error in my root zone.');
-      FirebaseCrashlytics.instance.recordError(error, stackTrace);
+      //FirebaseCrashlytics.instance.recordError(error, stackTrace);
     });
 
   });
@@ -123,7 +123,7 @@ class _MyAppState extends State<MyApp> {
               '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
             },
             debugShowCheckedModeBanner: false,
-            title: 'GNP',
+            title: 'Intermediario GNP',
             theme: ThemeData(primaryColor: Colors.deepOrange,
                 textTheme: TextTheme(
                     body1: TextStyle(fontSize: 18.0),

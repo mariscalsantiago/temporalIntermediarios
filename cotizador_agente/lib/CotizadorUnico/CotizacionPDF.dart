@@ -12,7 +12,7 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+//import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 
@@ -71,7 +71,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   getFormato(BuildContext context) async{
 
-    final Trace formato = FirebasePerformance.instance.newTrace("Intermediario_GetPDF");
+    final Trace formato = FirebasePerformance.instance.newTrace("IntermediarioGNP_GetPDF");
     formato.start();
     print(formato.name);
     bool success = false;
@@ -131,7 +131,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
         }catch(e,s){
           formato.stop();
-          await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+          //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
         }
 
     return success;
@@ -167,7 +167,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   sendEmailService() async {
 
-    final Trace mytrace = FirebasePerformance.instance.newTrace("Intermediario_EnviaEmail");
+    final Trace mytrace = FirebasePerformance.instance.newTrace("IntermediarioGNP_EnviaEmail");
     mytrace.start();
     print(mytrace.name);
     bool success = false;

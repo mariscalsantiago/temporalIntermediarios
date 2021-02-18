@@ -17,7 +17,7 @@ import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 import 'package:shimmer/shimmer.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+//import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class SeleccionaCotizadorAP extends StatefulWidget {
   List<NegocioOperable> negociosOperables = new List<NegocioOperable>();
@@ -65,7 +65,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   getNegociosOperables( ) async {
 
-    final Trace negociosOp = FirebasePerformance.instance.newTrace("Intermediario_NegociosOperables");
+    final Trace negociosOp = FirebasePerformance.instance.newTrace("IntermediarioGNP_NegociosOperables");
     negociosOp.start();
     print(negociosOp.name);
 
@@ -129,7 +129,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         });
       }catch(e,s){
         negociosOp.stop();
-        await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+        //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
       }
 
     }else{
@@ -146,7 +146,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
   Future<List<Cotizadores>> getCotizadores(NegocioOperable negocioOperable) async {
 
-    final Trace cotizadores = FirebasePerformance.instance.newTrace("Intermediario_GetCotizadores");
+    final Trace cotizadores = FirebasePerformance.instance.newTrace("IntermediarioGNP_GetCotizadores");
     cotizadores.start();
     print(cotizadores.name);
 
@@ -209,7 +209,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
     }catch(e, s){
       cotizadores.stop();
-      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
     return listCotizadores;

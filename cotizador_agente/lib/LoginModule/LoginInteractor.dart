@@ -75,6 +75,19 @@ class LoginInteractor implements LoginUseCase {
     String _service = "Login";
     String _serviceID = "S1";
     print("Getting $_service");
+    bool inWhiteList = false;
+    var correos = new List<String>();
+    correos.add("mariomontalvo@segurosmontalvo.com");
+    correos.add("olivo.uat@uat.com");
+    if(correos.length > 0){
+      if(correos.contains(emailApp)){
+        print("existe");
+        inWhiteList = true;
+      }
+    }else{
+      print("sin elementos");
+      inWhiteList = true;
+    }
     if (!await ConnectionManager.isConnected()) {
       output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
     }
@@ -93,53 +106,59 @@ class LoginInteractor implements LoginUseCase {
     String _loginJSONData = json.encode(body);
 
     output?.showLoader();
-    http.Response response = await http.post(config.serviceLogin,
-        body: _loginJSONData,
-        headers: headers).timeout(const Duration(seconds: 10));
 
-    if(response != null){
-      if(response.body != null && response.body.isNotEmpty){
-        if (response.statusCode == 200) {
-          Map map2 = json.decode(response.body);
-          output?.hideLoader();
-          loginData = LoginModel.fromJson(map2);
-          List<String> jwt = loginData.jwt.split(".");
-          var response64 = base64Decode(base64.normalize(jwt[1], 0, jwt[1].length));
-          var responseLatin = latin1.decode(response64);
-          Map map3 = json.decode(responseLatin.toString());
-          LoginDatosModel _datosUsuario = LoginDatosModel.fromJson(map3["claims"]);
-          _datosUsuario.emaillogin = emailApp;
-          print("emaillogin: ${_datosUsuario.emaillogin} emailApp: $emailApp 4${_datosUsuario.mail}");
-          idParticipanteMoral = _datosUsuario.idparticipante;
-          String emailSesion;
-          emailSesion = _datosUsuario.emaillogin;
+    if(inWhiteList){
+      http.Response response = await http.post(config.serviceLogin,
+          body: _loginJSONData,
+          headers: headers).timeout(const Duration(seconds: 10));
 
-          if(emailSesion==_datosUsuario.emaillogin){
-            _datosUsuario.iscurrentUser = false;
-          }else{
-            _datosUsuario.iscurrentUser = true;
+      if(response != null){
+        if(response.body != null && response.body.isNotEmpty){
+          if (response.statusCode == 200) {
+            Map map2 = json.decode(response.body);
+            output?.hideLoader();
+            loginData = LoginModel.fromJson(map2);
+            List<String> jwt = loginData.jwt.split(".");
+            var response64 = base64Decode(base64.normalize(jwt[1], 0, jwt[1].length));
+            var responseLatin = latin1.decode(response64);
+            Map map3 = json.decode(responseLatin.toString());
+            LoginDatosModel _datosUsuario = LoginDatosModel.fromJson(map3["claims"]);
+            _datosUsuario.emaillogin = emailApp;
+            print("emaillogin: ${_datosUsuario.emaillogin} emailApp: $emailApp 4${_datosUsuario.mail}");
+            idParticipanteMoral = _datosUsuario.idparticipante;
+            String emailSesion;
+            emailSesion = _datosUsuario.emaillogin;
+
+            if(emailSesion==_datosUsuario.emaillogin){
+              _datosUsuario.iscurrentUser = false;
+            }else{
+              _datosUsuario.iscurrentUser = true;
+            }
+            print("emailSesion: $emailSesion datos: ${_datosUsuario.emaillogin} ");
+            print("emailSesion: ${_datosUsuario.iscurrentUser} ");
+            emailSesion = _datosUsuario.emaillogin;
+            output.showHome();
+            return _datosUsuario;
+          }else if (response.statusCode == 401) {
+            output?.hideLoader();
+            output.showAlert(Constants.tlt_nocoinciden, Constants.ms_nocoinciden, TipoDialogo.ADVERTENCIA, "CERRAR");
+            return null;
+          }else if (response.statusCode == 404) {
+            output?.hideLoader();
+            output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
+            return null;
+          } else{
+            output?.hideLoader();
+            throw Exception(ErrorLoginMessageModel().statusErrorTextException);
           }
-          print("emailSesion: $emailSesion datos: ${_datosUsuario.emaillogin} ");
-          print("emailSesion: ${_datosUsuario.iscurrentUser} ");
-          emailSesion = _datosUsuario.emaillogin;
-          output.showHome();
-          return _datosUsuario;
-        }else if (response.statusCode == 401) {
-          output?.hideLoader();
-          output.showAlert(Constants.tlt_nocoinciden, Constants.ms_nocoinciden, TipoDialogo.ADVERTENCIA, "CERRAR");
-          return null;
-        }else if (response.statusCode == 404) {
-          output?.hideLoader();
-          output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
-          return null;
-        } else{
+        }else{
           output?.hideLoader();
           throw Exception(ErrorLoginMessageModel().statusErrorTextException);
         }
-      }else{
-        output?.hideLoader();
-        throw Exception(ErrorLoginMessageModel().statusErrorTextException);
       }
+    }else{
+      output?.hideLoader();
+      output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
     }
   }
   Future<PerfiladorModel> getPerfiladorAcceso(String idParticipante) async {

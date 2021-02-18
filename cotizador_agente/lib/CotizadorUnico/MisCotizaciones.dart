@@ -8,7 +8,7 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+//import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -90,7 +90,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   eliminarDelServer(int id, BuildContext context) async {
 
-    final Trace deleteCot = FirebasePerformance.instance.newTrace("Intermediario_EliminarCotizacion");
+    final Trace deleteCot = FirebasePerformance.instance.newTrace("IntermediarioGNP_EliminarCotizacion");
     deleteCot.start();
     print(deleteCot.name);
     bool success = false;
@@ -137,7 +137,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
     }catch (e,s) {
       deleteCot.stop();
-      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
 
@@ -151,7 +151,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   llenarTabla(BuildContext context) async {
 
-    final Trace llenaTbl = FirebasePerformance.instance.newTrace("Intermediario_CotizacionesGuardadas");
+    final Trace llenaTbl = FirebasePerformance.instance.newTrace("IntermediarioGNP_CotizacionesGuardadas");
     llenaTbl.start();
     print(llenaTbl.name);
     bool success = false;
@@ -289,7 +289,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
       }
     }catch(e,s){
       llenaTbl.stop();
-      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
     return success;

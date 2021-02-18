@@ -19,7 +19,7 @@ class SplashInteractor implements SplashUseCase {
   Future<SplashData> getSplashData() async {
     try {
       RemoteConfig remoteConfig = await RemoteConfig.instance;
-      remoteConfig.setConfigSettings(RemoteConfigSettings(debugMode: true));
+      remoteConfig.setConfigSettings(RemoteConfigSettings());
       await remoteConfig.fetch(expiration: const Duration(seconds: 0));
       await remoteConfig.activateFetched();
       String splash = remoteConfig.getString(Constants.CONFIG_SPLASH);
