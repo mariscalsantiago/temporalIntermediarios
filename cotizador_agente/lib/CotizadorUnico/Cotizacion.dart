@@ -1003,16 +1003,24 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                         child: Container(
                                                             child: Text( Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Cotización " + (index+1).toString(),
                                                               style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontWeight: FontWeight.w600,
+                                                                  fontSize: 20,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  letterSpacing: 0.5,
                                                                   color: AppColors.color_appBar),)
                                                         ),
                                                       ),
                                                       Padding(
-                                                        padding: const EdgeInsets.only(right: 0.0, left: 0.0),
+                                                        padding: const EdgeInsets.only(right: 8.0, left: 8.0),
                                                         child: Container(
+                                                          decoration: BoxDecoration(
+                                                              border: Border.all(color: AppColors.color_Bordes, style: BorderStyle.solid, width: 1.0),
+                                                              borderRadius: new BorderRadius.only(
+                                                                  topLeft: const Radius.circular(4.0),
+                                                                  topRight: const Radius.circular(4.0),
+                                                                  bottomLeft: const Radius.circular(4.0),
+                                                                  bottomRight: const Radius.circular(4.0)
+                                                              ),),
                                                           padding: EdgeInsets.only(left: 12.0),
-                                                          color: AppColors.color_background,
                                                           height: 48,
                                                           width: 296,
                                                           child: Row(
@@ -1043,12 +1051,12 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                                     ),
                                                                     Visibility(
                                                                       visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma != "Anual",
-                                                                      child: Container(padding: const EdgeInsets.only(left: 165.0, right: 12.0),
+                                                                      child: Container(padding: const EdgeInsets.only(left: 150.0, right: 12.0),
                                                                           child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
                                                                     ),
                                                                     Visibility(
                                                                       visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma == "Anual",
-                                                                      child: Container(padding: const EdgeInsets.only(left: 195.0, right: 12.0),
+                                                                      child: Container(padding: const EdgeInsets.only(left: 188.0, right: 12.0),
                                                                           child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
                                                                     ),
                                                                   ],
@@ -1063,16 +1071,38 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                         ),
                                                       ),
                                                       Padding(
-                                                        padding: const EdgeInsets.only(top: 16.0),
+                                                        padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
                                                         child: Row(
                                                           children: <Widget>[
                                                             Container(
-                                                              padding: EdgeInsets.only(left: 8.0, right: 8.0),
                                                               width: 144,
-                                                              height: 16,
-                                                              child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
-                                                                textAlign: TextAlign.center,),
+                                                              height: 32,
+                                                              color: AppColors.color_background,
+                                                              child: Align(
+                                                                alignment: Alignment.center,
+                                                                child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                  textAlign: TextAlign.center,),
+                                                              ),
                                                             ),
+                                                            Container(
+                                                              width: 148,
+                                                              height: 32,
+                                                              color: AppColors.color_background,
+                                                              child: Align(
+                                                                alignment: Alignment.center,
+                                                                child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
+                                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                  textAlign: TextAlign.center,),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 16.0),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: <Widget>[
                                                             Container(
                                                               padding: const EdgeInsets.only(right: 8.0, left: 8.0),
                                                               width: 144,
@@ -1084,26 +1114,21 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                           ],
                                                         ),
                                                       ),
-                                                      Row(children: <Widget>[
-                                                        Container(
-                                                          padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                                                          width: 144,
-                                                          height: 40,
-                                                          child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
-                                                            style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                            textAlign: TextAlign.center,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            maxLines: 2,),
+                                                      Center(
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: <Widget>[
+                                                            Container(
+                                                              padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                                                              width: 144,
+                                                              height: 40,
+                                                              child: Text(montoParcial,
+                                                                style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                                                                textAlign: TextAlign.center,),
+                                                            ),
+                                                          ],
                                                         ),
-                                                        Container(
-                                                          padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                                                          width: 144,
-                                                          height: 40,
-                                                          child: Text(montoParcial,
-                                                            style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                            textAlign: TextAlign.center,),
-                                                        ),
-                                                      ],),
+                                                      ),
                                                       Container(color: Colors.white,
                                                         alignment: Alignment.center,
                                                         child: Wrap(
@@ -1159,91 +1184,95 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                         ),
                                         Container(padding: const EdgeInsets.all(16.0)),
                                         Padding(
-                                          padding: const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 20),
-                                          child: Container(
-                                            decoration: new BoxDecoration(
-                                                border: Border.all(color: AppColors.color_Bordes),
-                                                color: Colors.white,
-                                                borderRadius: new BorderRadius.only(
-                                                  topLeft: const Radius.circular(4.0),
-                                                  topRight: const Radius.circular(4.0),
-                                                  bottomLeft: const Radius.circular(4.0),
-                                                  bottomRight: const Radius.circular(4.0),
-                                                )),
-                                            child: Column(
-                                              children: <Widget>[
-                                                Container(
-                                                  height: 40,
-                                                  width: 294,
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
+                                          padding: const EdgeInsets.only(right: 16.0, left: 16.0,),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 12.0,),
+                                                  child: Align(
+                                                    alignment: AlignmentDirectional.centerStart,
                                                     child: Text(
-                                                      ("Prima total"), overflow: TextOverflow.ellipsis,
+                                                      ("Prima total").toUpperCase(), overflow: TextOverflow.ellipsis,
                                                       textAlign: TextAlign.start,
-                                                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
+                                                      style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.4),
                                                     ),
                                                   ),
                                                 ),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
-                                                  child: RenglonTablaDoscolumna(titulo: "Titular",
-                                                      valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets.only(left: 0, right:0, top:8, bottom: 12.0,),
-                                                  child: RenglonTablaDoscolumna(titulo: "Total",
-                                                      valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
-                                                  ),
-                                                ),
-                                                ListView.builder(
-                                                    itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones.length,
-                                                    shrinkWrap: true,
-                                                    physics: ScrollPhysics(),
-                                                    itemBuilder: (BuildContext ctxt, int j) {
 
-                                                      return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
-                                                        child: Visibility(
-                                                          visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
-                                                          child: Column(
-                                                            children: <Widget>[
-                                                              //Titulo de seccion
-                                                              Container(
-                                                                height: 40,
-                                                                width: 294,
-                                                                child: Padding(
-                                                                  padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
-                                                                  child: Text(
-                                                                    (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
-                                                                    textAlign: TextAlign.start,
-                                                                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
-                                                                  ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top:7.0,),
+                                                child: Divider(
+                                                  color: AppColors.naranjaGNP,
+                                                  height: 2,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                child: RenglonTablaDoscolumna(titulo: "Titular",
+                                                    valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 0, right:0, top:8, bottom: 12.0,),
+                                                child: RenglonTablaDoscolumna(titulo: "Total",
+                                                    valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
+                                                ),
+                                              ),
+                                              ListView.builder(
+                                                  itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones.length,
+                                                  shrinkWrap: true,
+                                                  physics: ScrollPhysics(),
+                                                  itemBuilder: (BuildContext ctxt, int j) {
+
+                                                    return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
+                                                      child: Visibility(
+                                                        visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
+                                                        child: Column(
+                                                          children: <Widget>[
+                                                            //Titulo de seccion
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top: 12.0,),
+                                                              child: Align(
+                                                                alignment: AlignmentDirectional.centerStart,
+                                                                child: Text(
+                                                                  (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion).toString().toUpperCase(), overflow: TextOverflow.ellipsis,
+                                                                  textAlign: TextAlign.start,
+                                                                  style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.4),
                                                                 ),
                                                               ),
-                                                              ListView.builder(
-                                                                  itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
-                                                                  shrinkWrap: true,
-                                                                  physics: ScrollPhysics(),
-                                                                  itemBuilder: (BuildContext ctxt, int indexdos) {
-
-                                                                    return Padding(
-                                                                      padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
-                                                                      child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
-                                                                          valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
-                                                                    );
-
-                                                                  }
-
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top:7.0,),
+                                                              child: Divider(
+                                                                color: AppColors.naranjaGNP,
+                                                                height: 2,
                                                               ),
+                                                            ),
+                                                            ListView.builder(
+                                                                itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
+                                                                shrinkWrap: true,
+                                                                physics: ScrollPhysics(),
+                                                                itemBuilder: (BuildContext ctxt, int indexdos) {
 
-                                                            ],
-                                                          ),
+                                                                  return Padding(
+                                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                                    child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
+                                                                        valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
+                                                                  );
+
+                                                                }
+
+                                                            ),
+
+                                                          ],
                                                         ),
-                                                      );
+                                                      ),
+                                                    );
 
-                                                    }),
-                                              ],
-                                            ),
+                                                  }),
+                                            ],
                                           ),
                                         ),
 

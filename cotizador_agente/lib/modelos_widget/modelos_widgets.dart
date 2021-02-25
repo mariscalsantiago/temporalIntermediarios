@@ -1488,17 +1488,19 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                   children: <Widget>[
                     Expanded(
                       child: Container(
-                        height: 24,
+                        height: 32,
                         color: AppColors.color_background,
                         padding: EdgeInsets.only(bottom: 4.0, left: 8.0, top:4.0),
-                        child: Text(
-                          widget.titulo,
-                          style: TextStyle(
-                              color: AppColors.color_Etiqueta,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              letterSpacing: 0.4),
-                          textAlign: TextAlign.left,
+                        child: Align( alignment: Alignment.centerLeft,
+                          child: Text(
+                            widget.titulo,
+                            style: TextStyle(
+                                color: AppColors.color_Etiqueta,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
+                                letterSpacing: 0.4),
+                            textAlign: TextAlign.left,
+                          ),
                         ),
                       ),
                     ),
@@ -1512,15 +1514,17 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                       child: Container(
                         height: 32,
                         color: Colors.white,
-                        padding: EdgeInsets.only(left: 8.0,bottom: 4.0, top: 4.0),
-                        child: Text(
-                          widget.valor == "Novus" ? "N/A" : widget.valor,
-                          style: TextStyle(
-                              color: AppColors.color_appBar,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              letterSpacing: 0.25),
-                          textAlign: TextAlign.left,
+                        padding: EdgeInsets.only(left: 16.0,bottom: 4.0, top: 4.0),
+                        child: Align( alignment: Alignment.centerLeft,
+                          child: Text(
+                            widget.valor == "Novus" ? "N/A" : widget.valor,
+                            style: TextStyle(
+                                color: AppColors.color_appBar,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                letterSpacing: 0.25),
+                            textAlign: TextAlign.left,
+                          ),
                         ),
                       ),
                     ),
