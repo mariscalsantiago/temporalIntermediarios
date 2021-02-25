@@ -278,7 +278,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
   Widget mostrarAlerta(){
     showModalBottomSheet(
       isScrollControlled: true,
-      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) => AnimatedPadding(
@@ -306,7 +306,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                             child: Text("Enviar cotización",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: AppColors.color_titleAlert,
+                                    color: AppColors.AzulGNP,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.15))),

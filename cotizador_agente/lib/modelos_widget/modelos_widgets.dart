@@ -214,9 +214,9 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
             //color: AppColors.color_sombra,
             child: Column(
               children: <Widget>[
-                Divider(
+               /* Divider(
                   color: AppColors.color_Bordes, height: 1
-                ),
+                ),*/
                 Container(
                   width: double.infinity,
                   margin: EdgeInsets.only( top: 8),

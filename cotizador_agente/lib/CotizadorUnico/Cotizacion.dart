@@ -557,7 +557,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
     double altoModal = mostrarFormato ? (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 497 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 430 : 295) : (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 437 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 360 : 295);
      showModalBottomSheet(
       isScrollControlled: true,
-      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) => AnimatedPadding(
@@ -581,7 +581,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                     child:Center(child: new Text(Mensajes.titleSave,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: AppColors.color_titleAlert,
+                            color: AppColors.AzulGNP,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.15))),
@@ -837,7 +837,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, left: 16.0),
-                              child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar, letterSpacing: 0.15),),
+                              child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.gnpTextSytemt1, letterSpacing: 0.15),),
                             ),
                             /*Spacer(),
                             Padding(
@@ -1180,7 +1180,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                     child: Text(
                                                       ("Prima total"), overflow: TextOverflow.ellipsis,
                                                       textAlign: TextAlign.start,
-                                                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
+                                                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.AzulGNP, letterSpacing: 0.15),
                                                     ),
                                                   ),
                                                 ),
@@ -1216,7 +1216,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                                   child: Text(
                                                                     (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
                                                                     textAlign: TextAlign.start,
-                                                                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
+                                                                    style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.AzulGNP, letterSpacing: 0.15),
                                                                   ),
                                                                 ),
                                                               ),
