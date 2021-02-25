@@ -151,7 +151,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         Map<String, dynamic> jsonMap = {
           "idUsuario": datosUsuario.idparticipante.toString(),
           "idAplicacion": Utilidades.idAplicacion,
-          "codIntermediario": datosPerfilador.intermediarios.toString().replaceAll("[", "").replaceAll("]", ""),
+          "codIntermediario": "",
           "idPlan": idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
           "idFormato": idformato,
           "titularCotizacion": titular, //NOMBRE DEL TITULAR sacarlo de formulario

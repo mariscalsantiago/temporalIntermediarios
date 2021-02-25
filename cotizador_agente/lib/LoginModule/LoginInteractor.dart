@@ -40,15 +40,6 @@ class LoginInteractor implements LoginUseCase {
     this.view = view;
   }
 
-  Future<bool> FunctionLoginPerfilador()async{
-
-    datosPerfilador = await getPerfiladorAcceso(datosUsuario.idparticipante);
-    if(datosPerfilador == null){
-      return false;
-    }
-
-    return true;
-  }
 
   Future<LoginDatosModel> logInServices(String mail, String password, String user) async {
     print("== Log In Interactor==");
@@ -68,7 +59,8 @@ class LoginInteractor implements LoginUseCase {
     var encodeData = json.encode(datos);
     _sharedPreferences.setString('datosHuella', encodeData);
 
-    if(!await FunctionLoginPerfilador()){
+    datosPerfilador = await getPerfiladorAcceso(datosUsuario.idparticipante);
+    if(datosPerfilador == null){
       return null;
     }
 
@@ -145,7 +137,7 @@ class LoginInteractor implements LoginUseCase {
             print("emailSesion: $emailSesion datos: ${_datosUsuario.emaillogin} ");
             print("emailSesion: ${_datosUsuario.iscurrentUser} ");
             emailSesion = _datosUsuario.emaillogin;
-
+            output.showHome();
             return _datosUsuario;
           }else if (response.statusCode == 401) {
             output?.hideLoader();
@@ -205,13 +197,7 @@ class LoginInteractor implements LoginUseCase {
             idParticipanteMoral = list.idAgente;
           }
         }
-        output?.hideLoader();
-        output.showHome();
         return _datosPerfilador;
-      }else{
-        output?.hideLoader();
-        output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
-        return null;
       }
     }else {
       throw Exception(ErrorLoginMessageModel().responseNullErrorTextException);
