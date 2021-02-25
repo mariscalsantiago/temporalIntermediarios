@@ -307,7 +307,7 @@ class LoginInteractor implements LoginUseCase {
     );*/
     showModalBottomSheet(
         isScrollControlled: true,
-        barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+        barrierColor: AppColors.AzulGNP.withOpacity(0.6),
         backgroundColor: Colors.transparent,
         context: context,
       builder: (context) => AnimatedPadding(
@@ -328,7 +328,7 @@ class LoginInteractor implements LoginUseCase {
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(top:0.0),
-                    child:Center(child: new Text(Constants.titleNVersion, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
+                    child:Center(child: new Text(Constants.titleNVersion, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
@@ -390,7 +390,7 @@ class LoginInteractor implements LoginUseCase {
     );*/
     showModalBottomSheet(
       isScrollControlled: true,
-      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) => AnimatedPadding(
@@ -414,7 +414,7 @@ class LoginInteractor implements LoginUseCase {
                     child:Center(child: new Text(Constants.titleNVersion,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: AppColors.color_titleAlert,
+                            color: AppColors.AzulGNP,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.15))),

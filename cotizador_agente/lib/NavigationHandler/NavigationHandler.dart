@@ -52,7 +52,7 @@ class NavigationHandler {
 
   static void showMenu(BuildContext context) {
    showMaterialModalBottomSheet(
-     barrierColor: AppColors.color_titleAlert.withOpacity(0.7),
+     barrierColor: AppColors.AzulGNP.withOpacity(0.7),
      backgroundColor: Colors.transparent,
      context: context,
      builder: (context, scrollController) => Container(
