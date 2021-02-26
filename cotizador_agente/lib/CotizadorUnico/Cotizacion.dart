@@ -806,6 +806,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                         onSelected: (value) {
                           switch (value) {
                             case 2:
+                              showModalGuardar(0, 0 , false,mostrarFcomparativa);
                               break;
                             case 3:
                               limpiarDatos();
