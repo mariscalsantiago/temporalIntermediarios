@@ -8,7 +8,7 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
-//import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -137,7 +137,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
     }catch (e,s) {
       deleteCot.stop();
-      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
 
@@ -289,7 +289,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
       }
     }catch(e,s){
       llenaTbl.stop();
-      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
     return success;

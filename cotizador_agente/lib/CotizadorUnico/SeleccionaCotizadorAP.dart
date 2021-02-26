@@ -209,7 +209,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
     }catch(e, s){
       cotizadores.stop();
-      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
     return listCotizadores;
