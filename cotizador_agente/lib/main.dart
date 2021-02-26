@@ -15,47 +15,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 int timerMinuts = 20;
-int timerSec = 1200;
-DateTime sessionStartDate;
-var inWebView = false;
-var isLogActive = true;
-
-void printLog(String where, String what) {
-  if (isLogActive) {
-    print("_" + where + ": " + what);
-  } else {}
-}
-
-enum editType {
-  salud,
-  estudios,
-  familiar,
-  texto,
-  correo,
-  telefono,
-  direccion,
-  poliza,
-  contatoEmergencia,
-  nickname,
-  visa,
-  pasaporte,
-  playera,
-  condiciones,
-  deportes,
-  acompaniante
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode);
-  Function origininalOnError = FlutterError.onError;
+  Function originalOnError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails errorDetails) async{
     await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
-    origininalOnError(errorDetails);
+    originalOnError(errorDetails);
   };
 
-  var configuredApp = new AppConfig(
+  /*var configuredApp = new AppConfig(
     ambient: Ambient.prod,
     serviceLogin: 'https://cuentas.gnp.com.mx/auth/login',
     apikeyAppAgentes: 'l7xxed71b90a2ed941668463e3a01513d582',
@@ -70,6 +41,38 @@ void main() async {
     idContenedorAnalytics: 'UA-29272127-16',
 
     child: new MyApp(),
+  );*/
+  /*var configuredApp = new AppConfig(
+    ambient: Ambient.qa,
+    serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
+    apikeyAppAgentes: 'l7xxfb568d77704046d0b5a80256fe00f829',
+    service_perfilador: "https://api-qa.oscp.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
+    proyectId: 'gnp-accidentespersonales-qa',
+    urlNotifierService:'https://api-qa.oscp.gnp.com.mx',
+
+    //COTIZADOR UNICO
+    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/',
+    urlBase: 'https://gmm-cotizadores-qa.gnp.com.mx/',
+    urlSendAnalytics: 'https://www.google-analytics.com/',
+    idContenedorAnalytics: 'UA-146126625-2',
+
+    child: new MyApp(),
+  );*/
+  var configuredApp = new AppConfig(
+    ambient: Ambient.uat,
+    serviceLogin: 'https://cuentas-uat.gnp.com.mx/auth/login',
+    apikeyAppAgentes: 'l7xx526ec2d1bd9140a39ad15f72e1964bca',
+    service_perfilador: "https://api-uat.oscpuat.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
+    proyectId: "gnp-accidentespersonales-uat",
+    // urlNotifierService:'https://api-uat.oscpuat.gnp.com.mx',
+    //COTIZADOR UNICO
+    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-uat.cloudfunctions.net/',
+    urlBase: 'https://gmm-cotizadores-uat.gnp.com.mx/',
+    urlSendAnalytics: 'https://www.google-analytics.com/',
+    idContenedorAnalytics: 'UA-146126625-1',
+
+    child: new MyApp(),
+
   );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
@@ -136,7 +139,7 @@ class _MyAppState extends State<MyApp> {
               '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
             },
             debugShowCheckedModeBanner: false,
-            title: 'GNP',
+            title: 'Intermediario GNP',
             theme: ThemeData(primaryColor: Colors.deepOrange,
                 textTheme: TextTheme(
                     body1: TextStyle(fontSize: 18.0),

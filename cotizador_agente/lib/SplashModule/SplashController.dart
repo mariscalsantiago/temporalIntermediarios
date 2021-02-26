@@ -32,7 +32,7 @@ class SplashControllerState extends State<SplashController>
 
   Widget getSplash() {
     var dSplash = SplashData(
-        imagen: "assets/images/logoGNP.png", duracion: 1500);
+        imagen: "assets/images/logoGNP.png", duracion: 1000);
     return FutureBuilder<SplashData>(
       future: presenter?.getSplashData(),
       builder: (context, snapshot) {
@@ -82,7 +82,7 @@ class SplashControllerState extends State<SplashController>
                 color: Colors.white,
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
-                  width: 180.0,
+                  width: 170.0,
                   height: 24,
                   child: CachedNetworkImage(
                     imageUrl: splashData.imagen_pie,

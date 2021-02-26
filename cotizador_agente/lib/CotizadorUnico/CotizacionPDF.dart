@@ -52,10 +52,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
   String pathPdf;
   PDFDocument doc;
   Dio dio;
-  Future<Directory> downloadsDirectory;
   bool isDownload = false;
-  List<Object> parameters =  List<Object>();
-  String dataLayer="";
   bool correovalido = true;
   String email, eMail;
   TextEditingController controller = new TextEditingController();
@@ -74,7 +71,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   getFormato(BuildContext context) async{
 
-    final Trace formato = FirebasePerformance.instance.newTrace("SoySocio_GetPDF");
+    final Trace formato = FirebasePerformance.instance.newTrace("IntermediarioGNP_GetPDF");
     formato.start();
     print(formato.name);
     bool success = false;
@@ -170,7 +167,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   sendEmailService() async {
 
-    final Trace mytrace = FirebasePerformance.instance.newTrace("SoySocio_EnviaEmail");
+    final Trace mytrace = FirebasePerformance.instance.newTrace("IntermediarioGNP_EnviaEmail");
     mytrace.start();
     print(mytrace.name);
     bool success = false;
@@ -218,7 +215,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
         mytrace.stop();
         isLoading = false;
         Navigator.pop(context);
-        String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+        Navigator.pop(context);
+        String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
 
         Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
       }
@@ -280,7 +278,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
   Widget mostrarAlerta(){
     showModalBottomSheet(
       isScrollControlled: true,
-      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) => AnimatedPadding(
@@ -308,7 +306,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                             child: Text("Enviar cotización",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: AppColors.color_titleAlert,
+                                    color: AppColors.AzulGNP,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.15))),
@@ -666,10 +664,10 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                         Visibility(
                           visible: widget.id != null,
                           child: Text( (widget.idFormato == Utilidades.FORMATO_COTIZACION_AP) || (widget.idFormato == Utilidades.FORMATO_COTIZACION) ?
-                          "Formato Cotización: " + widget.folio.toString() :
+                          Constants.Formato_Cotizacion + widget.folio.toString() :
                           ((widget.idFormato == Utilidades.FORMATO_COMISION_AP) || (widget.idFormato == Utilidades.FORMATO_COMISION) ?
-                          "Formato Comisión: " + widget.folio.toString() :
-                          ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? "Formato Comparativa: " + widget.folio.toString() : ""  )),
+                          Constants.Formato_Comision + widget.folio.toString() :
+                          ( widget.idFormato == Utilidades.FORMATO_COMPARATIVA ? Constants.Formato_Comparativa + widget.folio.toString() : ""  )),
                             style:
                             TextStyle(fontSize: 20.0, color: AppColors.primary700),
                             textAlign: TextAlign.left,
@@ -682,7 +680,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                         flex: 2,
                         child: FloatingActionButton(
                           onPressed: () {
-                           // Navigator.of(context).pop();
                             Navigator.pop(context);
                           },
                           heroTag: "btn1",

@@ -5,7 +5,7 @@ class Mensajes{
   static final String titleConexion = "Error de conexión.";
   static final String titleLimpia = "Borrar datos";
   static final String titleExito = "Éxito";
-  static final String titleError = "Error: ";
+  static final String titleError = "Error";
   static final String titleErrorEnvioCorreo = "Error al enviar correo";
   static final String titleCargaD = "Carga de datos";
   static final String titleCotRec = "Cotización recuperada";

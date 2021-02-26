@@ -4,6 +4,7 @@ import 'package:cotizador_agente/LoginModule/LoginController.dart';
 import 'package:cotizador_agente/LoginModule/LoginInteractor.dart';
 import 'package:cotizador_agente/LoginModule/LoginRouter.dart';
 import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
+import 'package:flutter/cupertino.dart';
 
 class LoginPresenter implements LoginPresentation, LoginInteractorOutput {
 
@@ -54,6 +55,11 @@ class LoginPresenter implements LoginPresentation, LoginInteractorOutput {
   @override
   void logInServices(String mail, String password, String user){
     interactor.logInServices(mail, password, user);
+  }
+
+  @override
+  void getVersionApp(String idApp, String idOs, BuildContext context){
+    interactor.getVersionApp(idApp, idOs, context);
   }
 
   @override

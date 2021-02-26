@@ -39,38 +39,9 @@ class CotizacionVista extends StatefulWidget {
 class _CotizacionVistaState extends State<CotizacionVista> {
 
   bool isLoading = true;
-  int cotiz=1;
-  Map<String, dynamic> resumenCot;
-  String nombreCot;
-  Map<String, dynamic> parameters =  Map<String, dynamic>();
+  bool guardada = false;
   List<Map<String, dynamic>> lista_secciones =  List<Map<String, dynamic>> ();
-  Map<String, dynamic> parameters_Calculo = Map<String, dynamic>();
-  Map<String, dynamic> parameters_Calculo2 = Map<String, dynamic>();
-  Map<String, dynamic> seccionCalculo =  Map<String, dynamic>();
-  List<dynamic> datosAsegurados = new List<dynamic>();
-  Map<String, dynamic> aseguradosD = new Map<String, dynamic>();
 
-  String numeroPagos = "";
-  String primaBase = "";
-  String iva = "";
-  String primaTotal = "";
-  String recargoPagoFraccionado = "";
-  String primaComisionable = "";
-  String porcentajeComision = "";
-  String comision = "";
-  String parcialidad = "";
-  String derechoPoliza = "";
-  String aseguradoPB = "";
-  String aseguradoiva = "";
-  String aseguradoPT = "";
-  String aseguradoRPF = "";
-  String aseguradoPrimaC = "";
-  String aseguradoPorC = "";
-  String aseguradoCom = "";
-  String aseguradoDP = "";
-  String paramName = "";
-  String idAseg = "";
-  String platform = "";
   bool esComparativa = false;
   final _formKey = GlobalKey<FormState>();
   bool propuesta1 = false;
@@ -80,24 +51,22 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   bool mostrarFcomparativa = false;
 
   //verificar que sean diferentes de null
-  void guardarPropuestas(String texto1, String texto2, String texto3, String texto4, int idFormato, int index, bool abrirPdf){
+  void guardarPropuestas(String texto1, String texto2, String texto3, int idFormato, int index, bool abrirPdf){
     print(texto1);
     setState(() {
       if(abrirPdf == false){
+        int i = Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa == null ? 1 : 0;
         if(texto1.isNotEmpty){
-          Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = texto1;
-          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 0, false);
-          guardarFormato(Utilidades.FORMATO_COMISION_AP, 0, false);
+          Utilidades.cotizacionesApp.listaCotizaciones[i].comparativa.nombre = texto1;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i, false);
         }
         if(texto2.isNotEmpty){
-          Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = texto2;
-          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 1, false);
-          guardarFormato(Utilidades.FORMATO_COMISION_AP, 1, false);
+          Utilidades.cotizacionesApp.listaCotizaciones[i +1].comparativa.nombre = texto2;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i + 1, false);
         }
         if(texto3.isNotEmpty){
-          Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = texto3;
-          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, 2, false);
-          guardarFormato(Utilidades.FORMATO_COMISION_AP, 2, false);
+          Utilidades.cotizacionesApp.listaCotizaciones[i + 2].comparativa.nombre = texto3;
+          guardarFormato(Utilidades.FORMATO_COTIZACION_AP, i + 2, false);
         }
         if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 && mostrarFcomparativa){
           guardarFormatoComparativa();
@@ -113,9 +82,8 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   }
 
   guardarFormato( int idformato, int index, bool abrirPdf) async {
-    //if(deboGuardarCotizacion){
 
-      final Trace saveCot = FirebasePerformance.instance.newTrace("SoySocio_GuardarCotizacion");
+      final Trace saveCot = FirebasePerformance.instance.newTrace("IntermediarioGNP_GuardarCotizacion");
       saveCot.start();
       print(saveCot.name);
 
@@ -183,7 +151,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         Map<String, dynamic> jsonMap = {
           "idUsuario": datosUsuario.idparticipante.toString(),
           "idAplicacion": Utilidades.idAplicacion,
-          "codIntermediario": datosPerfilador.intermediarios.toString().replaceAll("[", "").replaceAll("]", ""),
+          "codIntermediario": "",
           "idPlan": idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
           "idFormato": idformato,
           "titularCotizacion": titular, //NOMBRE DEL TITULAR sacarlo de formulario
@@ -215,14 +183,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
             int folio = response.response["folio"];
             switch(idformato){
-              case Utilidades.FORMATO_COMISION:
-                Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
-                break;
-
-              case Utilidades.FORMATO_COTIZACION:
-                Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION = folio;
-                break;
-
               case Utilidades.FORMATO_COMISION_AP:
                 Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION = folio;
                 break;
@@ -232,7 +192,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                 break;
 
             }
-            // _initialWebView();
 
             if(abrirPdf){
               Navigator.push(context,
@@ -251,7 +210,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         }else{
           saveCot.stop();
           isLoading = false;
-          String message = response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
+          String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
           Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
         }
 
@@ -270,7 +229,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   @override
   void dispose() {
-    // controller.dispose();
     super.dispose();
   }
 
@@ -301,7 +259,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   generarCotizacion(BuildContext context) async{
 
-    final Trace generaCot = FirebasePerformance.instance.newTrace("SoySocio_GenerarCotizacion");
+    final Trace generaCot = FirebasePerformance.instance.newTrace("IntermediarioGNP_GenerarCotizacion");
     generaCot.start();
     print(generaCot.name);
     bool success = false;
@@ -367,7 +325,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   //Utilidades.LogPrint("REQUEST COT: " + response.body.toString());
 
                 });
-              }else if(statusCode != null) {
+          }else if(statusCode != null) {
             generaCot.stop();
             isLoading = false;
             //Navigator.pop(context);
@@ -408,27 +366,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
     bool deboGuardarCotizacion = true;
     switch(idformato){
-      case Utilidades.FORMATO_COMISION:
-        if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION !=null){
-         // _initialWebView();
-          deboGuardarCotizacion = false;
-          Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => CotizacionPDF(
-                  id: index+1,
-                  folio: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION,
-                  idFormato: idformato,
-                  id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
-                ),
-              ));
-
-        }
-
-        break;
-
       case Utilidades.FORMATO_COMISION_AP:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COMISION !=null){
-         // _initialWebView();
+
           deboGuardarCotizacion = false;
           Navigator.push(context,
               MaterialPageRoute(
@@ -442,27 +382,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
         }
 
-        break;
-
-      case Utilidades.FORMATO_COTIZACION:
-        if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION !=null){
-         // _initialWebView();
-          deboGuardarCotizacion = false;
-          Navigator.push(context,
-              MaterialPageRoute(
-                builder: (context) => CotizacionPDF(
-                  id: index+1,
-                  folio: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION,
-                  idFormato: idformato,
-                  id_Plan: idformato == Utilidades.FORMATO_COMPARATIVA ? "99" : Utilidades.buscaCampoPorFormularioID(index, 6, 23, false)[0].valor,
-                ),
-              ));
-        }
         break;
 
       case Utilidades.FORMATO_COTIZACION_AP:
         if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.FOLIO_FORMATO_COTIZACION !=null){
-          //_initialWebView();
+
           deboGuardarCotizacion = false;
           Navigator.push(context,
               MaterialPageRoute(
@@ -564,8 +488,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
   }
 
-
-
   List<Seccion> backPaso1(List<Seccion> secciones) {
     return backPaso1Child(secciones);
   }
@@ -631,12 +553,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   }
 
 
-  // ignore: missing_return
   Widget showModalGuardar(int idFormato, int index, bool abrirPdf, bool mostrarFormato){
     double altoModal = mostrarFormato ? (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 497 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 430 : 295) : (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 437 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 360 : 295);
      showModalBottomSheet(
       isScrollControlled: true,
-      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) => AnimatedPadding(
@@ -660,7 +581,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                     child:Center(child: new Text(Mensajes.titleSave,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: AppColors.color_titleAlert,
+                            color: AppColors.AzulGNP,
                             fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.15))),
@@ -682,7 +603,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                       child: Column(children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(right: 24.0, left: 24.0),
-                          child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, ispropuesta4: comparativa, guardarPropuestas: guardarPropuestas, idFormato: idFormato, index: index, abrirPdf: abrirPdf, mostrarFormato: mostrarFormato,),
+                          child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas, idFormato: idFormato, index: index, abrirPdf: abrirPdf, mostrarFormato: mostrarFormato,),
                         ),
                       ],),
                     ),
@@ -784,7 +705,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                       icon: Image.asset('assets/icon/cotizador/guardar_Enabled.png'),
                                       onPressed: () {
                                         Navigator.pop(context);
-                                        //TextEditingController nombrePropuesta1Controller = TextEditingController();
 
                                         showModalGuardar(0, 0 , false,mostrarFcomparativa);
                                       },),
@@ -886,7 +806,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                         onSelected: (value) {
                           switch (value) {
                             case 2:
-                              showModalGuardar(0, 0 , false, mostrarFcomparativa);
+                              showModalGuardar(0, 0 , false,mostrarFcomparativa);
                               break;
                             case 3:
                               limpiarDatos();
@@ -904,8 +824,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                 body: Column(//isLoading ? showLoading():
 
                   children: <Widget>[
-
-                  //  TopBar(recargarFormulario: limpiarDatos, formatoComp: guardarFormatoComparativa,),
                     //Encabezado
                     Padding(
                       padding: const EdgeInsets.only(top: 0.0, right: 0.0, left: 0.0),
@@ -920,13 +838,13 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, left: 16.0),
-                              child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.color_appBar, letterSpacing: 0.15),),
+                              child: Text("Solicitantes", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.gnpTextSytemt1, letterSpacing: 0.15),),
                             ),
-                            Spacer(),
+                            /*Spacer(),
                             Padding(
                               padding: const EdgeInsets.only(right: 25.0, top: 10.0, bottom: 10.0),
                               child: Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
-                            ),
+                            ),*/
                           ],
                         ),
                       ),
@@ -938,470 +856,440 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                           physics: ScrollPhysics(),
                           itemBuilder: (BuildContext ctxt, int i) {
 
-                            switch(i){
-                              //Agregar cotización
-                              case 0:
-                                return Visibility(
+                          switch(i){
+                            //Agregar cotización
+                            case 0:
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 26, left: 16.0, right: 16.0, bottom: 11.0),
+                                child: Visibility(
                                   visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() < 3 ? true : false,
-                                  child: Column(
+                                  child: Row(
                                     children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 26, left: 16.0, right: 16.0, bottom: 11.0),
-                                        child: Row(
-                                          children: <Widget>[
-                                            Expanded(
-                                                flex: 6,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(right: 56.0),
-                                                  child: Text(Mensajes.btn_addCotizacion,
-                                                    style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                  ),
-                                                )
+                                      Expanded(
+                                          flex: 6,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(right: 56.0),
+                                            child: Text(Mensajes.btn_addCotizacion,
+                                              style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 0.15),
                                             ),
-                                            Spacer(),
-                                            Expanded(
-                                              flex: 0,
-                                              child: Container(
-                                                padding: const EdgeInsets.only(right: 8.0, bottom: 0.0),
-                                                height: 45,
-                                                width: 45,
-                                                child: FittedBox(
-                                                  child: FloatingActionButton(
-                                                    onPressed: _aumentar,
-                                                    elevation: 0.0,
-                                                    heroTag: "btn1",
-                                                    tooltip: "Agregar",
-                                                    child: Icon(Icons.add, color: AppColors.secondary900,),
-                                                    backgroundColor: Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-
-                                          ],
-                                        ),
+                                          )
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                                        child: Divider(
-                                          color: AppColors.color_divider,
-                                          height: 2,
+                                      Spacer(),
+                                      Expanded(
+                                        flex: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.only(right: 8.0, bottom: 0.0),
+                                          height: 45,
+                                          width: 45,
+                                          child: FittedBox(
+                                            child: FloatingActionButton(
+                                              onPressed: _aumentar,
+                                              elevation: 0.0,
+                                              heroTag: "btn1",
+                                              tooltip: "Agregar",
+                                              child: Icon(Icons.add, color: AppColors.secondary900, size: 37.0,),
+                                              backgroundColor: Colors.white,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                );
-                                break;
-                              //Cotizaciones
-                              case 1:
+                                ),
+                              );
+                              break;
+                            //Cotizaciones
+                            case 1:
 
-                                int cont = 0;
+                              int cont = 0;
+                              return ListView.builder(
+                                  itemCount: Utilidades.cotizacionesApp.getCurrentLengthLista(),
+                                  shrinkWrap: true,
+                                  physics: ScrollPhysics(),
+                                  itemBuilder: (BuildContext ctxt, int index) {
 
-                                return ListView.builder(
-                                    itemCount: Utilidades.cotizacionesApp.getCurrentLengthLista(),
-                                    shrinkWrap: true,
-                                    physics: ScrollPhysics(),
-                                    itemBuilder: (BuildContext ctxt, int index) {
+                                    if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa == null){
+                                      return Container();
+                                    }else{
+                                      cont ++;
+                                    }
 
-                                      if(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa == null){
-                                        return Container();
-                                      }else{
-                                        cont ++;
-                                      }
+                                    List<PopupMenuItem> getMenuItems() {
 
+                                      List<PopupMenuItem> listaitems = List<PopupMenuItem>();
 
-                                      List<PopupMenuItem> getMenuItems() {
+                                      for(int i = 0; i< Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago.length; i++){
 
-                                        List<PopupMenuItem> listaitems = List<PopupMenuItem>();
+                                        FormadePago formapago = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[i];
 
-                                        for(int i = 0; i< Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago.length; i++){
-
-                                          FormadePago formapago = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[i];
-
-                                          listaitems.add(PopupMenuItem(
-                                            value: i,
-                                            child: Container(
-                                              width: double.infinity,
-                                              child: Row(
-                                                children: <Widget>[
-                                                  Text(
-                                                    formapago.forma,
-                                                    style: TextStyle(
-                                                        color: AppColors.primary700, fontWeight: FontWeight.w400),
-                                                  ),
-                                                  SizedBox(width: 60.0,),
-                                                ],
-                                              ),
+                                        listaitems.add(PopupMenuItem(
+                                          value: i,
+                                          child: Container(
+                                            width: double.infinity,
+                                            child: Row(
+                                              children: <Widget>[
+                                                Text(
+                                                  formapago.forma,
+                                                  style: TextStyle(
+                                                      color: AppColors.primary700, fontWeight: FontWeight.w400),
+                                                ),
+                                                SizedBox(width: 60.0,),
+                                              ],
                                             ),
+                                          ),
+                                        ));
+                                      }
+                                      return listaitems;
+
+                                    }
+
+                                    List<Widget> getFormatos() {
+                                      List<FlatButton> listabuttonDoc = new List<FlatButton>();
+                                      for (int i = 0; i <Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion.length; i++) {
+
+                                        Documento doc = Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i];
+
+                                        if(doc.id != 2){
+                                          listabuttonDoc.add(new FlatButton(
+                                            color: Colors.white,
+                                            onPressed: (){
+                                              setState(() {
+                                                if(i < 3){
+                                                  guardaCotizacion(index, Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i].id, true);
+                                                }
+                                              });
+                                            },
+                                            child: Text("Ver " + doc.nombreDocumento, style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),),
                                           ));
                                         }
-                                        return listaitems;
-
                                       }
+                                      return listabuttonDoc;
+                                    }
 
+                                    String parcialidades = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].parcialidades;
+                                    String montoParcial = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].pparcial;
 
-                                      List<Widget> getFormatos() {
-                                        List<FlatButton> listabuttonDoc = new List<FlatButton>();
-                                        for (int i = 0; i <Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion.length; i++) {
-
-                                          Documento doc = Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i];
-
-                                          if(doc.id != 2){
-                                            listabuttonDoc.add(new FlatButton(
-                                              color: Colors.white,
-                                              onPressed: (){
-                                                setState(() {
-                                                  if(i < 3){
-                                                    guardaCotizacion(index, Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i].id, true);
-                                                  }
-                                                });
-                                              },
-                                              child: Text("Ver " + doc.nombreDocumento.toLowerCase().replaceAll("ap", ""), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),),
-                                            ));
-                                          }
-                                        }
-                                        return listabuttonDoc;
-                                      }
-                                      /*List<PopupMenuItem> getMenuItemsDoc() {
-                                        List<PopupMenuItem> listaitemsDoc = List<PopupMenuItem>();
-
-                                        for (int i = 0; i <Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion.length; i++) {
-
-                                          Documento doc = Utilidades.cotizacionesApp.getCotizacionElement(index).paso1.documentos_configuracion[i];
-
-                                          if(doc.id != 2){
-                                            listaitemsDoc.add(PopupMenuItem(value: i,
-                                              child: Text(doc.nombreDocumento, style: TextStyle(color: AppColors.color_titulo, fontWeight: FontWeight.w400),),
-                                            ));
-                                          }
-                                        }
-
-                                        listaitemsDoc.add(PopupMenuItem(value: 4,
-                                          child: Text(
-                                            "Editar",
-                                            style: TextStyle(
-                                                color: AppColors.color_titulo, fontWeight: FontWeight.w400),
-                                          ),));
-
-                                        listaitemsDoc.add(PopupMenuItem(value: 5,
-                                          child: Text(
-                                            "Borrar",
-                                            style: TextStyle(
-                                                color: AppColors.color_titulo, fontWeight: FontWeight.w400),
-                                          ),));
-                                        return listaitemsDoc;
-                                      }*/
-
-                                      String parcialidades = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].parcialidades;
-                                      String montoParcial = Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].pparcial;
-
-
-
-                                      return Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 16.0,left: 16.0),
-                                            child: Container(
-                                              margin: EdgeInsets.only(left: 0.0,right: 0.0, top: 8.0),
-                                              child: Stack(
-                                                children: <Widget>[
-                                                  Container(
-                                                    height: 332,
-                                                    width: 312,
-                                                    margin: EdgeInsets.only(top: 8.0,right: 8.0),
-                                                    decoration: new BoxDecoration(
-                                                        border: Border.all(color: AppColors.color_Bordes),
-                                                        color: Colors.white,
-                                                        borderRadius: new BorderRadius.only(
-                                                          topLeft: const Radius.circular(4.0),
-                                                          topRight: const Radius.circular(4.0),
-                                                          bottomLeft: const Radius.circular(4.0),
-                                                          bottomRight: const Radius.circular(4.0),
-                                                        )),
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(right:8.0, left: 8.0, top:16.0, bottom: 16.0),
-                                                          child: Container(
-                                                              child: Text( Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Cotización " + (index+1).toString(),
-                                                                style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    color: AppColors.color_appBar),)
-                                                          ),
+                                    return Column(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(top:8.0, bottom: 8.0, right: 16.0, left: 16.0),
+                                          child: Divider(
+                                          color: AppColors.color_divider,
+                                          height: 2,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 16.0,left: 16.0),
+                                          child: Container(
+                                            margin: EdgeInsets.only(left: 0.0,right: 0.0, top: 8.0),
+                                            child: Stack(
+                                              children: <Widget>[
+                                                Container(
+                                                  height: 332,
+                                                  width: 312,
+                                                  margin: EdgeInsets.only(top: 8.0,right: 8.0),
+                                                  decoration: new BoxDecoration(
+                                                      border: Border.all(color: AppColors.color_Bordes),
+                                                      color: Colors.white,
+                                                      borderRadius: new BorderRadius.only(
+                                                        topLeft: const Radius.circular(4.0),
+                                                        topRight: const Radius.circular(4.0),
+                                                        bottomLeft: const Radius.circular(4.0),
+                                                        bottomRight: const Radius.circular(4.0),
+                                                      )),
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(right:8.0, left: 8.0, top:16.0, bottom: 16.0),
+                                                        child: Container(
+                                                            child: Text( Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre != null ?  Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.nombre : "Cotización " + (index+1).toString(),
+                                                              style: TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  letterSpacing: 0.5,
+                                                                  color: AppColors.color_appBar),)
                                                         ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(right: 0.0, left: 0.0),
-                                                          child: Container(
-                                                            padding: EdgeInsets.only(left: 12.0),
-                                                            color: AppColors.color_background,
-                                                            height: 48,
-                                                            width: 296,
-                                                            child: Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              children: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago.length > 1 ? <Widget>[
-
-                                                                PopupMenuButton(
-                                                                  offset: Offset(135, 200),
-                                                                  itemBuilder: (context) => getMenuItems(),
-                                                                  //initialValue: 2,
-                                                                  onCanceled: () {
-                                                                    print("You have canceled the menu.");
-                                                                  },
-                                                                  onSelected: (value) {
-                                                                    setState(() {
-                                                                      Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada = value;
-                                                                    });
-
-                                                                  },
-                                                                  child: Row(
-                                                                    mainAxisAlignment: MainAxisAlignment.start,
-                                                                    children: <Widget>[
-                                                                      Padding(
-                                                                        padding: const EdgeInsets.only(right: 8.0),
-                                                                        child: Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
-                                                                          style: TextStyle(color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,
-                                                                        ),
-                                                                      ),
-                                                                      Visibility(
-                                                                        visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma != "Anual",
-                                                                        child: Container(padding: const EdgeInsets.only(left: 165.0, right: 12.0),
-                                                                            child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
-                                                                      ),
-                                                                      Visibility(
-                                                                        visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma == "Anual",
-                                                                        child: Container(padding: const EdgeInsets.only(left: 195.0, right: 12.0),
-                                                                            child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ] : <Widget>[//
-                                                                Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
-                                                                  style: TextStyle(
-                                                                      color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(top: 16.0),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                                                        child: Container(
+                                                          decoration: BoxDecoration(
+                                                              border: Border.all(color: AppColors.color_Bordes, style: BorderStyle.solid, width: 1.0),
+                                                              borderRadius: new BorderRadius.only(
+                                                                  topLeft: const Radius.circular(4.0),
+                                                                  topRight: const Radius.circular(4.0),
+                                                                  bottomLeft: const Radius.circular(4.0),
+                                                                  bottomRight: const Radius.circular(4.0)
+                                                              ),),
+                                                          padding: EdgeInsets.only(left: 12.0),
+                                                          height: 48,
+                                                          width: 296,
                                                           child: Row(
-                                                            children: <Widget>[
-                                                              Container(
-                                                                padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                                                                width: 144,
-                                                                height: 16,
+                                                            mainAxisAlignment: MainAxisAlignment.start,
+                                                            children: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago.length > 1 ? <Widget>[
+
+                                                              PopupMenuButton(
+                                                                offset: Offset(135, 200),
+                                                                itemBuilder: (context) => getMenuItems(),
+                                                                //initialValue: 2,
+                                                                onCanceled: () {
+                                                                  print("You have canceled the menu.");
+                                                                },
+                                                                onSelected: (value) {
+                                                                  setState(() {
+                                                                    Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada = value;
+                                                                  });
+
+                                                                },
+                                                                child: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                  children: <Widget>[
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(right: 8.0),
+                                                                      child: Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
+                                                                        style: TextStyle(color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,
+                                                                      ),
+                                                                    ),
+                                                                    Visibility(
+                                                                      visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma != "Anual",
+                                                                      child: Container(padding: const EdgeInsets.only(left: 150.0, right: 12.0),
+                                                                          child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
+                                                                    ),
+                                                                    Visibility(
+                                                                      visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma == "Anual",
+                                                                      child: Container(padding: const EdgeInsets.only(left: 188.0, right: 12.0),
+                                                                          child: Image.asset("assets/icon/cotizador/arrow_drop_down.png", width: 24, height: 24,)),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ] : <Widget>[//
+                                                              Text(Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].forma,
+                                                                style: TextStyle(
+                                                                    color: AppColors.color_appBar,fontSize: 16, fontWeight: FontWeight.w400, letterSpacing: 0.5), textAlign: TextAlign.left,),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            Container(
+                                                              width: 144,
+                                                              height: 32,
+                                                              color: AppColors.color_background,
+                                                              child: Align(
+                                                                alignment: Alignment.center,
                                                                 child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
                                                                   textAlign: TextAlign.center,),
                                                               ),
-                                                              Container(
-                                                                padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                                                                width: 144,
-                                                                height: 16,
-                                                                child: Text(parcialidades,
+                                                            ),
+                                                            Container(
+                                                              width: 148,
+                                                              height: 32,
+                                                              color: AppColors.color_background,
+                                                              child: Align(
+                                                                alignment: Alignment.center,
+                                                                child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
                                                                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
                                                                   textAlign: TextAlign.center,),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Row(children: <Widget>[
-                                                          Container(
-                                                            padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                                                            width: 144,
-                                                            height: 40,
-                                                            child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
-                                                              style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                              textAlign: TextAlign.center,
-                                                              overflow: TextOverflow.ellipsis,
-                                                              maxLines: 2,),
-                                                          ),
-                                                          Container(
-                                                            padding: const EdgeInsets.only(right: 8.0, left: 8.0),
-                                                            width: 144,
-                                                            height: 40,
-                                                            child: Text(montoParcial,
-                                                              style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
-                                                              textAlign: TextAlign.center,),
-                                                          ),
-                                                        ],),
-                                                        Container(color: Colors.white,
-                                                          alignment: Alignment.center,
-                                                          child: Wrap(
-                                                            alignment: WrapAlignment.center,
-                                                            direction: Axis.vertical,
-                                                            children: getFormatos(),),
-                                                        ),
-
-                                                        Container(
-                                                          padding: const EdgeInsets.only(top: 8, left: 85.0, right: 85.0),
-                                                          alignment: Alignment.center,
-                                                          child: Row(
-                                                            children: <Widget>[
-                                                              IconButton(icon: Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),alignment: Alignment.centerRight, onPressed: null,),
-                                                              FlatButton(
-                                                                textColor: AppColors.secondary900,
-                                                                onPressed: (){
-                                                                  editarDatos(index);
-                                                                },
-                                                                child: Text(Mensajes.edicion,
-                                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
                                                               ),
-                                                            ],
-                                                          ),
+                                                            )
+                                                          ],
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Positioned(
-                                                      right: 0.0,
-                                                      child: SizedBox(
-                                                        width: 36.0,
-                                                        height: 36.0,
-                                                        child: FloatingActionButton(
-                                                          heroTag: null, //Se establece en null para evitar que choque con el btn1 de Agregar
-                                                          backgroundColor: Colors.white,
-                                                          onPressed: ((){
-                                                            setState(() {
-                                                              if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
-                                                                Utilidades.cotizacionesApp.eliminarDeLaComparativa(index);
-                                                              }else{
-                                                                limpiarDatos();
-                                                              }
-                                                            });
-                                                          }),
-                                                          child: Image.asset("assets/icon/cotizador/delete.png", height: 21.6, width: 21.6,),
-                                                        ),
-                                                      )
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.documentos_configuracion[i].id == 2 ? Container(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: FlatButton(
-                                              disabledTextColor: AppColors.color_disable,
-                                              textColor: Utilidades.cotizacionesApp.getCotizacionesCompletas() >1 ? AppColors.secondary900 : AppColors.color_disable,
-                                              onPressed: (){
-                                                setState(() {
-                                                 // var list = Utilidades.cotizacionesApp.getCotizacionElement(0).paso1.documentos_configuracion as List;
-                                                  mostrarFcomparativa = true;
-                                                });
-                                                if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
-                                                  guardaCotizacion(index, Utilidades.FORMATO_COMPARATIVA, true);
-                                                }else{
-                                                  return null;
-                                                }
-                                              },
-                                              child: Text(Mensajes.btn_formatoComp,
-                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25),
-                                                textAlign: TextAlign.center,),
-                                            ),
-                                          ): Container(padding: const EdgeInsets.all(16.0),),
-                                          Padding(
-                                            padding: const EdgeInsets.only(right: 16.0, left: 16.0, bottom: 20),
-                                            child: Container(
-                                              decoration: new BoxDecoration(
-                                                  border: Border.all(color: AppColors.color_Bordes),
-                                                  color: Colors.white,
-                                                  borderRadius: new BorderRadius.only(
-                                                    topLeft: const Radius.circular(4.0),
-                                                    topRight: const Radius.circular(4.0),
-                                                    bottomLeft: const Radius.circular(4.0),
-                                                    bottomRight: const Radius.circular(4.0),
-                                                  )),
-                                              child: Column(
-                                                children: <Widget>[
-                                                  Container(
-                                                    height: 40,
-                                                    width: 294,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
-                                                      child: Text(
-                                                        ("Prima total"), overflow: TextOverflow.ellipsis,
-                                                        textAlign: TextAlign.start,
-                                                        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
                                                       ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
-                                                    child: RenglonTablaDoscolumna(titulo: "Titular",
-                                                        valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, bottom: 12.0,),
-                                                    child: RenglonTablaDoscolumna(titulo: "Total",
-                                                        valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
-                                                    ),
-                                                  ),
-                                                  ListView.builder(
-                                                      itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones.length,
-                                                      shrinkWrap: true,
-                                                      physics: ScrollPhysics(),
-                                                      itemBuilder: (BuildContext ctxt, int j) {
-
-                                                        return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
-                                                          child: Visibility(
-                                                            visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
-                                                            child: Column(
-                                                              children: <Widget>[
-                                                                //Titulo de seccion
-                                                                Container(
-                                                                  height: 40,
-                                                                  width: 294,
-                                                                  child: Padding(
-                                                                    padding: const EdgeInsets.only(top: 12.0, bottom: 12.0,),
-                                                                    child: Text(
-                                                                      (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion), overflow: TextOverflow.ellipsis,
-                                                                      textAlign: TextAlign.start,
-                                                                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w600, color: AppColors.color_titleAlert, letterSpacing: 0.15),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                ListView.builder(
-                                                                    itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
-                                                                    shrinkWrap: true,
-                                                                    physics: ScrollPhysics(),
-                                                                    itemBuilder: (BuildContext ctxt, int indexdos) {
-
-                                                                      return Padding(
-                                                                        padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
-                                                                        child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
-                                                                            valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
-                                                                      );
-
-                                                                    }
-
-                                                                ),
-
-                                                              ],
+                                                      Padding(
+                                                        padding: const EdgeInsets.only(top: 16.0),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: <Widget>[
+                                                            Container(
+                                                              padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                                                              width: 144,
+                                                              height: 16,
+                                                              child: Text(parcialidades,
+                                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                textAlign: TextAlign.center,),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Center(
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: <Widget>[
+                                                            Container(
+                                                              padding: const EdgeInsets.only(right: 8.0, left: 8.0),
+                                                              width: 144,
+                                                              height: 40,
+                                                              child: Text(montoParcial,
+                                                                style: TextStyle(color: AppColors.color_appBar, fontSize: 20,fontWeight: FontWeight.w600, letterSpacing: 0.15),
+                                                                textAlign: TextAlign.center,),
                                                             ),
-                                                          ),
-                                                        );
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Container(color: Colors.white,
+                                                        alignment: Alignment.center,
+                                                        child: Wrap(
+                                                          alignment: WrapAlignment.center,
+                                                          direction: Axis.vertical,
+                                                          children: getFormatos(),),
+                                                      ),
 
-                                                      }),
-                                                ],
-                                              ),
+                                                      Container(
+                                                        padding: const EdgeInsets.only(top: 8, left: 85.0, right: 85.0),
+                                                        alignment: Alignment.center,
+                                                        child: Row(
+                                                          children: <Widget>[
+                                                            IconButton(icon: Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),alignment: Alignment.centerRight, onPressed: null,),
+                                                            FlatButton(
+                                                              textColor: AppColors.secondary900,
+                                                              onPressed: (){
+                                                                editarDatos(index);
+                                                              },
+                                                              child: Text(Mensajes.edicion,
+                                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                    right: 0.0,
+                                                    child: SizedBox(
+                                                      width: 36.0,
+                                                      height: 36.0,
+                                                      child: FloatingActionButton(
+                                                        heroTag: null, //Se establece en null para evitar que choque con el btn1 de Agregar
+                                                        backgroundColor: Colors.white,
+                                                        onPressed: ((){
+                                                          setState(() {
+                                                              if(Utilidades.cotizacionesApp.getCotizacionesCompletas() >1){
+                                                              Utilidades.cotizacionesApp.eliminarDeLaComparativa(index);
+                                                            }else{
+                                                              limpiarDatos();
+                                                            }
+                                                          });
+                                                        }),
+                                                        child: Image.asset("assets/icon/cotizador/delete.png", height: 21.6, width: 21.6,),
+                                                      ),
+                                                    )
+                                                ),
+                                              ],
                                             ),
                                           ),
+                                        ),
+                                        Container(padding: const EdgeInsets.all(16.0)),
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 16.0, left: 16.0,),
+                                          child: Column(
+                                            children: <Widget>[
+                                              Container(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(top: 12.0,),
+                                                  child: Align(
+                                                    alignment: AlignmentDirectional.centerStart,
+                                                    child: Text(
+                                                      ("Prima total").toUpperCase(), overflow: TextOverflow.ellipsis,
+                                                      textAlign: TextAlign.start,
+                                                      style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600, color: AppColors.AzulGNP, letterSpacing: 0.4),
+                                                    ),
+                                                  ),
+                                                ),
 
-                                        ],
-                                      );
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(top:7.0,),
+                                                child: Divider(
+                                                  color: AppColors.naranjaGNP,
+                                                  height: 2,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                child: RenglonTablaDoscolumna(titulo: "Titular",
+                                                    valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(left: 0, right:0, top:8, bottom: 12.0,),
+                                                child: RenglonTablaDoscolumna(titulo: "Total",
+                                                    valor:"\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString()
+                                                ),
+                                              ),
+                                              ListView.builder(
+                                                  itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones.length,
+                                                  shrinkWrap: true,
+                                                  physics: ScrollPhysics(),
+                                                  itemBuilder: (BuildContext ctxt, int j) {
 
-                                    });
+                                                    return Padding(padding: EdgeInsets.only(bottom: 20, right: 0.0, left: 0.0),
+                                                      child: Visibility(
+                                                        visible: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length > 0,
+                                                        child: Column(
+                                                          children: <Widget>[
+                                                            //Titulo de seccion
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top: 12.0,),
+                                                              child: Align(
+                                                                alignment: AlignmentDirectional.centerStart,
+                                                                child: Text(
+                                                                  (Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].seccion).toString().toUpperCase(), overflow: TextOverflow.ellipsis,
+                                                                  textAlign: TextAlign.start,
+                                                                  style: TextStyle(fontSize: 12.0, fontWeight: FontWeight.w600, color: AppColors.AzulGNP, letterSpacing: 0.4),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding: const EdgeInsets.only(top:7.0,),
+                                                              child: Divider(
+                                                                color: AppColors.naranjaGNP,
+                                                                height: 2,
+                                                              ),
+                                                            ),
+                                                            ListView.builder(
+                                                                itemCount: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla.length,
+                                                                shrinkWrap: true,
+                                                                physics: ScrollPhysics(),
+                                                                itemBuilder: (BuildContext ctxt, int indexdos) {
 
-                                break;
+                                                                  return Padding(
+                                                                    padding: const EdgeInsets.only(left: 0, right:0, top:8, ),
+                                                                    child: RenglonTablaDoscolumna(titulo: Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].etiquetaElemento,
+                                                                        valor:Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.secciones[j].tabla[indexdos].descElemento),
+                                                                  );
 
-                              default:
-                                return Container();
-                                break;
-                            }
-                          }),
-                    ),
+                                                                }
+
+                                                            ),
+
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+
+                                                  }),
+                                            ],
+                                          ),
+                                        ),
+
+                                      ],
+                                    );
+
+                                  });
+
+                              break;
+
+                            default:
+                              return Container();
+                              break;
+                          }
+                        }),
+                    )
                   ],
                 )
             ),
@@ -1419,18 +1307,17 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 }
 
 class listaCheck extends StatefulWidget {
-  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.ispropuesta4, this.guardarPropuestas, this.idFormato, this.index, this.abrirPdf, this.mostrarFormato}) : super(key: key);
+  listaCheck({Key key, this.ispropuesta1, this.ispropuesta2, this.ispropuesta3, this.guardarPropuestas, this.idFormato, this.index, this.abrirPdf, this.mostrarFormato}) : super(key: key);
 
   @override
   _listaCheckState createState() => _listaCheckState();
-  bool ispropuesta1 = false,ispropuesta2 = false, ispropuesta3 = false, ispropuesta4 = false;
+  bool ispropuesta1 = false,ispropuesta2 = false, ispropuesta3 = false;
   bool abrirPdf, mostrarFormato;
   int idFormato, index;
-  final void Function(String t1, String t2, String t3, String t4, int idFormato, int index, bool abrirPdf) guardarPropuestas;
+  final void Function(String t1, String t2, String t3, int idFormato, int index, bool abrirPdf) guardarPropuestas;
   final namePropuesta1Controller = new TextEditingController();
   final namePropuesta2Controller = new TextEditingController();
   final namePropuesta3Controller = new TextEditingController();
-  final nametablaCompController = new TextEditingController();
 
 }
 
@@ -1438,13 +1325,11 @@ class _listaCheckState extends State<listaCheck> {
   bool propuesta1;
   bool propuesta2;
   bool propuesta3;
-  bool comparativa;
   bool abrirPdf;
   int idFormato, index;
   String texto1 = "";
   String texto2 = "";
   String texto3 = "";
-  String texto4 = "";
   @override
   Widget build(BuildContext context) {
     if(propuesta1 != null){
@@ -1456,9 +1341,6 @@ class _listaCheckState extends State<listaCheck> {
     if(propuesta3 != null){
       widget.ispropuesta3 = propuesta3;
     }
-    if(comparativa != null){
-      widget.ispropuesta4 = comparativa;
-    }
     if(texto1 != null){
       widget.namePropuesta1Controller.text = texto1;
     }
@@ -1468,9 +1350,7 @@ class _listaCheckState extends State<listaCheck> {
     if(texto3 != null){
       widget.namePropuesta3Controller.text = texto3;
     }
-    if(texto4 != null){
-      widget.nametablaCompController.text = texto4;
-    }
+
     return Column(
       children: <Widget>[
         Row(children: <Widget>[
@@ -1684,80 +1564,6 @@ class _listaCheckState extends State<listaCheck> {
             ],),
           ),
         ),
-        Visibility(
-          visible: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && widget.abrirPdf == false && widget.mostrarFormato == true,
-          child: Padding(
-            padding: const EdgeInsets.only(top:20.0),
-            child: Row(children: <Widget>[
-              Container(
-                width: 22,
-                height: 22,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: AppColors.secondary900,
-                    width:4,
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(2)),
-                ),
-                child: Theme(
-                  data: ThemeData(
-                      unselectedWidgetColor: Colors.white
-                  ),
-                  child: Checkbox(
-                    value: widget.ispropuesta4,
-                    onChanged: (bool value){
-                      if(Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1) {
-                        setState(() {
-                        widget.ispropuesta4 = value;
-                        comparativa = widget.ispropuesta4;
-                        print(widget.ispropuesta4.toString());
-                      });
-                      }else{
-                        null;
-                      }
-                    },
-                    activeColor: Colors.white,
-                    checkColor: AppColors.secondary900,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 1,
-                child: TextFormField(
-                  enabled: Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1,
-                  onChanged: (text) {
-                    setState(() {
-                      widget.nametablaCompController.text = text;
-                      texto4 = widget.nametablaCompController.text;
-                    });
-                  },
-                  keyboardType: TextInputType.text,
-                  inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 12.0),
-                    labelText: Mensajes.tabla_Comp,
-                    hintStyle: TextStyle(fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                      color: AppColors.gnpTextUser,
-                    ),
-                    focusColor: AppColors.color_primario,
-                    fillColor: AppColors.primary200,
-                    enabledBorder: new UnderlineInputBorder(
-                      borderSide: new BorderSide(
-                          color: AppColors.primary200
-                      ),
-                    ),
-                    border: new UnderlineInputBorder(
-                      borderSide: new BorderSide(
-                          color: AppColors.primary200
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],),
-          ),
-        ),
         Padding(
           padding: const EdgeInsets.only(top: 20.0, left: 0, right: 0),
           child: Divider(thickness: 1,
@@ -1771,25 +1577,23 @@ class _listaCheckState extends State<listaCheck> {
             buttonColor: AppColors.secondary900,
             child: RaisedButton(
               onPressed: ((){
+                int i = Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa == null ? 1 : 0;
                 if(texto1.isNotEmpty && texto1 != null){
                   if(widget.abrirPdf && widget.idFormato != Utilidades.FORMATO_COMPARATIVA){
                     Utilidades.cotizacionesApp.listaCotizaciones[widget.index].comparativa.nombre = widget.namePropuesta1Controller.text;
                   }
                   else{
-                    Utilidades.cotizacionesApp.listaCotizaciones[0].comparativa.nombre = widget.namePropuesta1Controller.text;
+                    Utilidades.cotizacionesApp.listaCotizaciones[i].comparativa.nombre = widget.namePropuesta1Controller.text;
                   }
                 }
                 if(texto2 != null && texto2.isNotEmpty){
-                  Utilidades.cotizacionesApp.listaCotizaciones[1].comparativa.nombre = widget.namePropuesta2Controller.text;
+                  Utilidades.cotizacionesApp.listaCotizaciones[i + 1].comparativa.nombre = widget.namePropuesta2Controller.text;
                 }
                 if(texto3.isNotEmpty && texto3 != null){
-                  Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.namePropuesta3Controller.text;
+                  Utilidades.cotizacionesApp.listaCotizaciones[i + 2].comparativa.nombre = widget.namePropuesta3Controller.text;
                 }
-                /*if(texto3.isNotEmpty && texto3 != null){
-                  Utilidades.cotizacionesApp.listaCotizaciones[2].comparativa.nombre = widget.nametablaCompController.text;
-                }*/
                 Navigator.pop(context);
-                widget.guardarPropuestas(texto1,texto2,texto3, texto4, widget.idFormato, widget.index, widget.abrirPdf);
+                widget.guardarPropuestas(texto1,texto2,texto3, widget.idFormato, widget.index, widget.abrirPdf);
               }),
               child: Text(Mensajes.guarda,
                 style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600,letterSpacing: 1.25),

@@ -1,7 +1,5 @@
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
-import 'package:cotizador_agente/utils/Mensajes.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
@@ -16,12 +14,13 @@ class NavigationHandler {
         showCotizar(context);
         break;
       case "flutter_app/pagar":
+       // showEmitir(context);
         break;
       case "flutter_app/emitir":
-        showPagar(context);
+       // showPagar(context);
         break;
       case "flutter_app/renovar":
-        showEmitir(context);
+       // showRenovar(context);
         break;
       case "flutter_app/menu":
         showMenu(context);
@@ -41,18 +40,23 @@ class NavigationHandler {
   }
 
   static void showPagar(BuildContext context) {
-
+    Navigator.pop(context);
   }
   static void showEmitir(BuildContext context) {
-
+    Navigator.pop(context);
   }
+
+  static void showRenovar(BuildContext context) {
+    Navigator.pop(context);
+  }
+
   static void showMenu(BuildContext context) {
    showMaterialModalBottomSheet(
-     barrierColor: AppColors.color_titleAlert.withOpacity(0.7),
+     barrierColor: AppColors.AzulGNP.withOpacity(0.7),
      backgroundColor: Colors.transparent,
      context: context,
      builder: (context, scrollController) => Container(
-       height: 326,
+       height: 90,//326,
        padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
        decoration : new BoxDecoration(
            color: Colors.white,
@@ -82,12 +86,10 @@ class NavigationHandler {
                    )
                    ],),
                ),
-               GestureDetector(
+              /* GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -103,9 +105,7 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -121,9 +121,7 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -139,9 +137,7 @@ class NavigationHandler {
                GestureDetector(
                  onTap: (){
                    Navigator.pop(context);
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -156,9 +152,8 @@ class NavigationHandler {
                ),
                GestureDetector(
                  onTap: (){
-                   Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleLoSentimos, Mensajes.errorConexion, context,"Aceptar",(){
-                     Navigator.pop(context);
-                   });
+                   Navigator.pop(context);
+                   Utilidades.mostrarAlerta(Mensajes.servicioNoDisp, Mensajes.errorServicio, context);
                  },
                  child: Row(children: <Widget>[
                    Padding(
@@ -170,7 +165,7 @@ class NavigationHandler {
                      child: Text("Buscar", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.color_appBar), textAlign: TextAlign.left,),
                    )
                  ],),
-               ),
+               ),*/
              ],
            ),
          ),

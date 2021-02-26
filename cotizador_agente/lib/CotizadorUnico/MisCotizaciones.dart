@@ -90,7 +90,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   eliminarDelServer(int id, BuildContext context) async {
 
-    final Trace deleteCot = FirebasePerformance.instance.newTrace("SoySocio_EliminarCotizacion");
+    final Trace deleteCot = FirebasePerformance.instance.newTrace("IntermediarioGNP_EliminarCotizacion");
     deleteCot.start();
     print(deleteCot.name);
     bool success = false;
@@ -151,7 +151,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   llenarTabla(BuildContext context) async {
 
-    final Trace llenaTbl = FirebasePerformance.instance.newTrace("SoySocio_CotizacionesGuardadas");
+    final Trace llenaTbl = FirebasePerformance.instance.newTrace("IntermediarioGNP_CotizacionesGuardadas");
     llenaTbl.start();
     print(llenaTbl.name);
     bool success = false;

@@ -1,5 +1,11 @@
 library constants;
 
+const String appVersion = "1.0.0";
+const String titleNVersion = "Nueva versión";
+const String msgNVersion = "Existe una nueva versión de Agentes GNP.";
+const String descarga = "Descargar";
+const String despues = "Después";
+
 //COTIZADOR UNICO
 const String NEGOCIOS_OPERABLES = "COT_CF_ConsultaNegocioCanal";
 const String COTIZADORES= "cotizador/negocio";
@@ -18,6 +24,9 @@ const String ENVIA_MAIL = "envioMovil&dataLayer=";
 const String COMPARATIVA = "comparativaMovil&dataLayer=";
 const String INGRESO = "ingresoMovil&dataLayer=";
 const String ALERTA_NO_CONEXION = "Verifica tu conexión a internet e inténtalo nuevamente.";
+const String Formato_Cotizacion = "Formato Cotización AP ";
+const String Formato_Comision = "Formato Comisión AP ";
+const String Formato_Comparativa = "Formato Comparativa ";
 
 //MENSAJES
 const String tlt_nocoinciden = "Correo electrónico o contraseña no \ncoinciden";

@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 import 'package:cotizador_agente/LoginModule/Entity/MaskedUser.dart';
 import 'package:cotizador_agente/LoginModule/LoginContract.dart';
 import 'package:cotizador_agente/LoginModule/LoginPresenter.dart';
@@ -64,7 +65,7 @@ class LoginControllerState extends State<LoginController> implements LoginView {
           contentLogo(),
           Padding(
             padding: const EdgeInsets.only(top: 40.0),
-            child: ReusableWidgets.getTextCenterBienvenido('Soy Socio GNP\n¡Te damos la bienvenida!'),
+            child: ReusableWidgets.getTextCenterBienvenido('Intermediario GNP\n¡Te damos la bienvenida!'),
           ),
           centerBody(),
         ],
@@ -189,8 +190,8 @@ class LoginControllerState extends State<LoginController> implements LoginView {
         Container(
           height: 24,
           width: 326,
-          margin: EdgeInsets.fromLTRB(17, 140, 17, 16),
-          child: Text("Versión " + "1.0",
+          margin: EdgeInsets.fromLTRB(17, 140, 17, 15),
+          child: Text("Versión " + Constants.appVersion,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.caption.copyWith(
                   fontFamily: "Roboto",
@@ -233,7 +234,7 @@ class LoginControllerState extends State<LoginController> implements LoginView {
     setState(() {
       FocusScope.of(context).unfocus();
       presenter.logInServices(emailController.text, passwordController.text, emailController.text);
-
+     // Platform.isIOS? presenter.getVersionApp("20", "1", context) : presenter.getVersionApp("20", "2", context);
     });
   }
 
