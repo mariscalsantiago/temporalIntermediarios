@@ -17,7 +17,7 @@ import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 import 'package:shimmer/shimmer.dart';
-//import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 class SeleccionaCotizadorAP extends StatefulWidget {
   List<NegocioOperable> negociosOperables = new List<NegocioOperable>();
@@ -129,7 +129,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
         });
       }catch(e,s){
         negociosOp.stop();
-        //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+        await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
       }
 
     }else{

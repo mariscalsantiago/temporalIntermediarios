@@ -7,7 +7,7 @@ import 'package:cotizador_agente/CotizadorUnico/Cotizacion.dart';
 import 'package:cotizador_agente/CotizadorUnico/FormularioPaso1.dart';
 import 'package:cotizador_agente/CotizadorUnico/SeleccionaCotizadorAP.dart';
 import 'package:firebase_core/firebase_core.dart';
-//import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +19,10 @@ int timerMinuts = 20;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  //await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode);
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode);
   Function originalOnError = FlutterError.onError;
   FlutterError.onError = (FlutterErrorDetails errorDetails) async{
-    //await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
+    await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
     originalOnError(errorDetails);
   };
 
@@ -42,7 +42,7 @@ void main() async {
 
     child: new MyApp(),
   );*/
-  var configuredApp = new AppConfig(
+  /*var configuredApp = new AppConfig(
     ambient: Ambient.qa,
     serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
     apikeyAppAgentes: 'l7xxfb568d77704046d0b5a80256fe00f829',
@@ -57,6 +57,22 @@ void main() async {
     idContenedorAnalytics: 'UA-146126625-2',
 
     child: new MyApp(),
+  );*/
+  var configuredApp = new AppConfig(
+    ambient: Ambient.uat,
+    serviceLogin: 'https://cuentas-uat.gnp.com.mx/auth/login',
+    apikeyAppAgentes: 'l7xx526ec2d1bd9140a39ad15f72e1964bca',
+    service_perfilador: "https://api-uat.oscpuat.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
+    proyectId: "gnp-accidentespersonales-uat",
+    // urlNotifierService:'https://api-uat.oscpuat.gnp.com.mx',
+    //COTIZADOR UNICO
+    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-uat.cloudfunctions.net/',
+    urlBase: 'https://gmm-cotizadores-uat.gnp.com.mx/',
+    urlSendAnalytics: 'https://www.google-analytics.com/',
+    idContenedorAnalytics: 'UA-146126625-1',
+
+    child: new MyApp(),
+
   );
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
@@ -64,7 +80,7 @@ void main() async {
       runApp(configuredApp);
     }, (error, stackTrace){
       print('runZonedGuarded: Caught error in my root zone.');
-      //FirebaseCrashlytics.instance.recordError(error, stackTrace);
+      FirebaseCrashlytics.instance.recordError(error, stackTrace);
     });
 
   });
