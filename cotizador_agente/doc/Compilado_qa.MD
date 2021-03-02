@@ -12,7 +12,6 @@ Compilación del proyecto [](url)
 
 1.  Abrir Android Studio, abrir el proyecto.
 2.  Desde la terminal de Android Studio ejecutar el comando para el ambiente:
-    -  flutter build apk --debug --flavor uat --target lib/EnvironmentVariablesSetup/main_UAT.dart
     -  flutter build apk --debug --flavor qa --target lib/EnvironmentVariablesSetup/main_QA.dart
 3. Al finalizar la ejecución del comando, en la terminal el mensaje de que termino y nos da la ruta de donde esta el archivo generado:
  ✓ Built build/app/outputs/flutter-apk/
