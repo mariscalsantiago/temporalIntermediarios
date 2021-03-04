@@ -114,7 +114,7 @@ class LoginInteractor implements LoginUseCase {
               _isWhiteListFirebaseCotizador = validateNotEmptyBool(event.snapshot.value["show"]);
               if(_isWhiteListFirebaseCotizador){
                 List _whiteList = event.snapshot.value["whitelist"];
-                bool _whiteListMember = _whiteList.contains(emailSession !=null ? datosUsuario.emaillogin.toLowerCase() : datosUsuario.emaillogin.toLowerCase());
+                bool _whiteListMember = _whiteList.contains(emailSession !=null ? emailSession.toLowerCase() : emailSession.toLowerCase());
                 if(_whiteListMember){
                   _isWhiteListFirebaseCotizador = true;
                 }
