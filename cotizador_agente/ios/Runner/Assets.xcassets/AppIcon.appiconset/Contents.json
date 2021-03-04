@@ -1,122 +1,122 @@
 {
   "images" : [
     {
-      "size" : "20x20",
+      "filename" : "ic_launcher-20@2x copia.png",
       "idiom" : "iphone",
-      "filename" : "40.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "20x20"
     },
     {
-      "size" : "20x20",
+      "filename" : "ic_launcher-20@3x copia.png",
       "idiom" : "iphone",
-      "filename" : "60.png",
-      "scale" : "3x"
+      "scale" : "3x",
+      "size" : "20x20"
     },
     {
-      "size" : "29x29",
+      "filename" : "ic_launcher-29 copia-3.png",
       "idiom" : "iphone",
-      "filename" : "29.png",
-      "scale" : "1x"
+      "scale" : "1x",
+      "size" : "29x29"
     },
     {
-      "size" : "29x29",
+      "filename" : "ic_launcher-29@2x copia-1.png",
       "idiom" : "iphone",
-      "filename" : "58.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "29x29"
     },
     {
-      "size" : "29x29",
+      "filename" : "ic_launcher-29@3x copia-2.png",
       "idiom" : "iphone",
-      "filename" : "87.png",
-      "scale" : "3x"
+      "scale" : "3x",
+      "size" : "29x29"
     },
     {
-      "size" : "40x40",
+      "filename" : "ic_launcher-40@2x copia-12.png",
       "idiom" : "iphone",
-      "filename" : "80.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "40x40"
     },
     {
-      "size" : "40x40",
+      "filename" : "ic_launcher-40@3x copia-4.png",
       "idiom" : "iphone",
-      "filename" : "120.png",
-      "scale" : "3x"
+      "scale" : "3x",
+      "size" : "40x40"
     },
     {
-      "size" : "60x60",
+      "filename" : "ic_launcher-60@2x copia-2.png",
       "idiom" : "iphone",
-      "filename" : "120-1.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "60x60"
     },
     {
-      "size" : "60x60",
+      "filename" : "ic_launcher-60@3x copia-2.png",
       "idiom" : "iphone",
-      "filename" : "180.png",
-      "scale" : "3x"
+      "scale" : "3x",
+      "size" : "60x60"
     },
     {
-      "size" : "20x20",
+      "filename" : "ic_launcher-20 copia-1.png",
       "idiom" : "ipad",
-      "filename" : "20.png",
-      "scale" : "1x"
+      "scale" : "1x",
+      "size" : "20x20"
     },
     {
-      "size" : "20x20",
+      "filename" : "ic_launcher-20@2x copia-1.png",
       "idiom" : "ipad",
-      "filename" : "40-1.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "20x20"
     },
     {
-      "size" : "29x29",
+      "filename" : "ic_launcher-29 copia-5.png",
       "idiom" : "ipad",
-      "filename" : "29-1.png",
-      "scale" : "1x"
+      "scale" : "1x",
+      "size" : "29x29"
     },
     {
-      "size" : "29x29",
+      "filename" : "ic_launcher-29@2x copia-4.png",
       "idiom" : "ipad",
-      "filename" : "58-1.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "29x29"
     },
     {
-      "size" : "40x40",
+      "filename" : "ic_launcher-20@2x copia-3.png",
       "idiom" : "ipad",
-      "filename" : "40-2.png",
-      "scale" : "1x"
+      "scale" : "1x",
+      "size" : "40x40"
     },
     {
-      "size" : "40x40",
+      "filename" : "ic_launcher-40@2x copia-5.png",
       "idiom" : "ipad",
-      "filename" : "80-1.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "40x40"
     },
     {
-      "size" : "76x76",
+      "filename" : "ic_launcher-76 copia-5.png",
       "idiom" : "ipad",
-      "filename" : "76.png",
-      "scale" : "1x"
+      "scale" : "1x",
+      "size" : "76x76"
     },
     {
-      "size" : "76x76",
+      "filename" : "ic_launcher-76@2x copia-13.png",
       "idiom" : "ipad",
-      "filename" : "152.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "76x76"
     },
     {
-      "size" : "83.5x83.5",
+      "filename" : "ic_launcher-83.5@2x copia.png",
       "idiom" : "ipad",
-      "filename" : "167.png",
-      "scale" : "2x"
+      "scale" : "2x",
+      "size" : "83.5x83.5"
     },
     {
-      "size" : "1024x1024",
+      "filename" : "ic_launcher-1024 copia.png",
       "idiom" : "ios-marketing",
-      "filename" : "1024.png",
-      "scale" : "1x"
+      "scale" : "1x",
+      "size" : "1024x1024"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }

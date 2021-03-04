@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Database.dart';
+import 'package:cotizador_agente/Functions/Validate.dart';
 import 'package:cotizador_agente/LoginModule/LoginContract.dart';
 import 'package:cotizador_agente/LoginModule/LoginController.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
@@ -12,6 +13,7 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/ConnectionManager.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 //import 'package:local_auth/local_auth.dart';
@@ -75,8 +77,8 @@ class LoginInteractor implements LoginUseCase {
     String _service = "Login";
     String _serviceID = "S1";
     print("Getting $_service");
-    bool inWhiteList = false;
-    var correos = new List<String>();
+    bool _isWhiteListFirebaseCotizador = false;
+    /*var correos = new List<String>();
     correos.add("mariomontalvo@segurosmontalvo.com");
     correos.add("ap.uat@uat.com");
     if(correos.length > 0){
@@ -87,7 +89,7 @@ class LoginInteractor implements LoginUseCase {
     }else{
       print("sin elementos");
       inWhiteList = true;
-    }
+    }*/
     if (!await ConnectionManager.isConnected()) {
       output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
     }
@@ -104,10 +106,31 @@ class LoginInteractor implements LoginUseCase {
       "Content-Type": "application/json"
     };
     String _loginJSONData = json.encode(body);
-
     output?.showLoader();
 
-    if(inWhiteList){
+    DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+    _databaseReference.child("Secciones/CotizadorAP").onValue.listen((Event event) async {
+
+              _isWhiteListFirebaseCotizador = validateNotEmptyBool(event.snapshot.value["show"]);
+              if(_isWhiteListFirebaseCotizador){
+                List _whiteList = event.snapshot.value["whitelist"];
+                bool _whiteListMember = _whiteList.contains(emailSession !=null ? datosUsuario.emaillogin.toLowerCase() : datosUsuario.emaillogin.toLowerCase());
+                if(_whiteListMember){
+                  _isWhiteListFirebaseCotizador = true;
+                }
+              }else{
+                _isWhiteListFirebaseCotizador = true;
+              }
+
+            }, onError: (Object o) {
+      final DatabaseError error = o;
+      print('Error: ${error.code} ${error.message}');
+      output?.hideLoader();
+      output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
+    });
+
+
+    if(_isWhiteListFirebaseCotizador){
       http.Response response = await http.post(config.serviceLogin,
           body: _loginJSONData,
           headers: headers).timeout(const Duration(seconds: 10));
