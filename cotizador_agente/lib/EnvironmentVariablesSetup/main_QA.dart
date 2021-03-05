@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
 
 import 'app_config.dart';
 import '../main.dart';
@@ -24,8 +25,8 @@ void main() async {
     child: new MyApp(),
   );
 
- // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
     runApp(configuredApp);
- // });
+ });
   // runApp(configuredApp);
 }
