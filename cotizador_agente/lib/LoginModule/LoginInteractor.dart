@@ -242,7 +242,7 @@ class LoginInteractor implements LoginUseCase {
       String version = mapVersion["version"];
       version = version.replaceAll("_", ".");
       bool validacion = validateExpiration(mapVersion["fecha_publicacion"]);
-      if(compareVersion(version,Theme.StringsMX.appVersion)&& validacion && _appEnvironmentConfig.ambient==Ambient.prod){
+      if(compareVersion(version,Constants.appVersion)&& validacion && _appEnvironmentConfig.ambient==Ambient.prod){
         if(!mapVersion['requerida']) {
           _showDialogoUpdateApplication(context);
         }else{

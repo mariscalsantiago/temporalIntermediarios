@@ -22,7 +22,7 @@ class TabsInteractor implements TabsUseCase {
     try{
       RemoteConfig remoteConfig = await RemoteConfigHandler.setupConfiguration(view.context);
       String footerString = remoteConfig.getString(Constants.CONFIG_FOOTER);
-      var footerJson = jsonDecode(footerString);
+      var footerJson = jsonDecode(footerString.replaceAll(" ", ""));
       var footer = Footer.fromJson(footerJson);
       return footer;
     } catch(e){
