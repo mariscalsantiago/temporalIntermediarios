@@ -8,6 +8,11 @@ https://flutter.dev/docs/development/tools/sdk/releases?tab=windows (para Window
 
 Compilación del proyecto [](url)
 
+# VERIFICAR QUE EL ARCHIVO main.dart QUE SE ENCUENTRA DENTRO DE LA CARPETA lib ESTE APUNTANDO AL AMBIENTE CORRECTO
+# lib/main.dart
+1. Validar que dentro de la variable configuredApp este apuntando al ambiente: Ambient.qa
+
+
 # PASOS A SEGUIR PARA GENERAR APK
 
 1.  Abrir Android Studio, abrir el proyecto.
@@ -18,6 +23,8 @@ Compilación del proyecto [](url)
 
 
 # PASOS A SEGUIR PARA GENERAR IPA PARA iOS (solo Mac)
+
+# VALIDAR QUE SE TENGA INSTALADO XCODE VERSIÓN 11.4 A 11.7
 
 #Ejecutar los siguientes comandos:
 flutter clean
@@ -71,22 +78,25 @@ post_install do |installer|
 end
 
 #Verificar que el archivo main.dart que se encuentra en la carpeta de lib, esté apuntando al ambiente correspondiente.
+# VALIDAR QUE AL ABRIR EL PROYECTO EN LOS ESQUEMAS SE ENCUENTRE APUNTANDO AL ESQUEMA CORRECTO: uat
 
-1.  En la herramienta Xcode, abrir **Runner.xcworkspace** que se encuentra en la carpeta iOs de tu aplicación.
+1.  En la herramienta Xcode, abrir **Runner.xcworkspace** que se encuentra en la carpeta iOS de tu aplicación.
+
+2. Selecciona Product > Scheme > qa.
     
-2.  Seleccionar **Product > Destination > Generic iOS Device**
+3.  Seleccionar **Product > Destination > Generic iOS Device**
     
-3.  Seleccionar **Runner** en el navegador de proyectos de **Xcode**, seleccionar el target **Runner** en la barra lateral de la vista de configuración.
+4.  Seleccionar **Runner** en el navegador de proyectos de **Xcode**, seleccionar el target **Runner** en la barra lateral de la vista de configuración.
     
-4.  Seleccionar **Product > Archive** para generar un archivo compilado.
+5.  Seleccionar **Product > Archive** para generar un archivo compilado.
     
-5.  En la barra lateral de la ventana de **Xcode Organizer**, seleccionar la aplicación **iOS**, luego seleccionar el archivo compilado que se acaba de generar.
+6.  En la barra lateral de la ventana de **Xcode Organizer**, seleccionar la aplicación **iOS**, luego seleccionar el archivo compilado que se acaba de generar.
     
-6.  Seleccionar el botón **Distribuir App > Development**.
+7.  Seleccionar el botón **Distribuir App > Development**.
     
-7.  En la ventana de opciones de distribución de desarrollo **seleccionar > All compatible device variants**.
+8.  En la ventana de opciones de distribución de desarrollo **seleccionar > All compatible device variants**.
     
-8.  Seleccionar la opción que se requiere para firmar la app **(Automatically manage signing)**.
+9.  Seleccionar la opción que se requiere para firmar la app **(Automatically manage signing)**.
     
-9.  Finalmente, seleccionar la carpeta en donde se almacenará el IPA generado.
+10.  Finalmente, seleccionar la carpeta en donde se almacenará el IPA generado.
 
