@@ -125,6 +125,7 @@ class LoginInteractor implements LoginUseCase {
       });
     }catch(e){
       print(e);
+      _isWhiteListFirebaseCotizador = true;
     }
 
 
