@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 import 'package:cotizador_agente/LoginModule/Entity/MaskedUser.dart';
 import 'package:cotizador_agente/LoginModule/LoginContract.dart';
@@ -234,7 +236,7 @@ class LoginControllerState extends State<LoginController> implements LoginView {
     setState(() {
       FocusScope.of(context).unfocus();
       presenter.logInServices(emailController.text, passwordController.text, emailController.text);
-     // Platform.isIOS? presenter.getVersionApp("20", "1", context) : presenter.getVersionApp("20", "2", context);
+      Platform.isIOS? presenter.getVersionApp("24", "1", context) : presenter.getVersionApp("24", "2", context);
     });
   }
 

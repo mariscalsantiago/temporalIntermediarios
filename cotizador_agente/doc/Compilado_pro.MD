@@ -10,14 +10,14 @@ Compilación del proyecto [](url)
 
 # VERIFICAR QUE EL ARCHIVO main.dart QUE SE ENCUENTRA DENTRO DE LA CARPETA lib ESTE APUNTANDO AL AMBIENTE CORRECTO
 # lib/main.dart
-1. Validar que dentro de la variable configuredApp este apuntando al ambiente: Ambient.uat
+1. Validar que dentro de la variable configuredApp este apuntando al ambiente: Ambient.pro
 
 
 # PASOS A SEGUIR PARA GENERAR APK
 
 1.  Abrir Android Studio, abrir el proyecto.
 2.  Desde la terminal de Android Studio ejecutar el comando para el ambiente:
-    -  flutter build apk --debug --flavor uat --target lib/EnvironmentVariablesSetup/main_UAT.dart
+    -  flutter build apk --release -t lib/EnvironmentVariablesSetup/main_PRO.dart --flavor pro
 3. Al finalizar la ejecución del comando, en la terminal el mensaje de que termino y nos da la ruta de donde esta el archivo generado:
  ✓ Built build/app/outputs/flutter-apk/
 
@@ -78,25 +78,25 @@ post_install do |installer|
 end
 
 #Verificar que el archivo main.dart que se encuentra en la carpeta de lib, esté apuntando al ambiente correspondiente.
-# VALIDAR QUE AL ABRIR EL PROYECTO EN LOS ESQUEMAS SE ENCUENTRE APUNTANDO AL ESQUEMA CORRECTO: uat
+# VALIDAR QUE AL ABRIR EL PROYECTO EN LOS ESQUEMAS SE ENCUENTRE APUNTANDO AL ESQUEMA CORRECTO: pro
 
 1.  En la herramienta Xcode, abrir **Runner.xcworkspace** que se encuentra en la carpeta iOS de tu aplicación.
-    
-2. Selecciona Product > Scheme > uat.
+
+2. Selecciona Product > Scheme > pro.
 
 3.  Seleccionar **Product > Destination > Generic iOS Device**
-    
+
 4.  Seleccionar **Runner** en el navegador de proyectos de **Xcode**, seleccionar el target **Runner** en la barra lateral de la vista de configuración.
-    
+
 5.  Seleccionar **Product > Archive** para generar un archivo compilado.
-    
+
 6.  En la barra lateral de la ventana de **Xcode Organizer**, seleccionar la aplicación **iOS**, luego seleccionar el archivo compilado que se acaba de generar.
-    
+
 7.  Seleccionar el botón **Distribuir App > Development**.
-    
+
 8.  En la ventana de opciones de distribución de desarrollo **seleccionar > All compatible device variants**.
-    
+
 9.  Seleccionar la opción que se requiere para firmar la app **(Automatically manage signing)**.
-    
+
 10.  Finalmente, seleccionar la carpeta en donde se almacenará el IPA generado.
 

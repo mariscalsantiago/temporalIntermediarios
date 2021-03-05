@@ -9,14 +9,12 @@ enum Ambient {
 
 class AppConfig extends InheritedWidget {
   AppConfig({
-    @required this.serviceEndPoint,
     @required this.serviceLogin,
     @required this.apikeyAppAgentes,
     @required this.service_perfilador,
     @required this.proyectId,
     @required this.ambient,
     @required Widget child,
-    @required this.urlNotifierService,
     @required this.urlNegociosOperables,
     @required this.urlBase,
     @required this.urlSendAnalytics,
@@ -24,13 +22,11 @@ class AppConfig extends InheritedWidget {
 
   }) : super(child: child);
 
-  final String serviceEndPoint;
   final String serviceLogin;
   final String service_perfilador;
   final String proyectId;
   final Ambient ambient;
   final String apikeyAppAgentes;
-  final String urlNotifierService;
   final String urlNegociosOperables;
   final String urlBase;
   final String urlSendAnalytics;

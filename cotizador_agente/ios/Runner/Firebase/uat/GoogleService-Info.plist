@@ -31,6 +31,6 @@
 	<key>GOOGLE_APP_ID</key>
 	<string>1:993193296112:ios:589c77df0af67d5a350235</string>
 	<key>DATABASE_URL</key>
-    	<string>https://gnp-accidentespersonales-uat.firebaseio.com</string>
+	<string>https://gnp-accidentespersonales-uat-default-rtdb.firebaseio.com</string>
 </dict>
 </plist>

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Database.dart';
+import 'package:cotizador_agente/Functions/Validate.dart';
 import 'package:cotizador_agente/LoginModule/LoginContract.dart';
 import 'package:cotizador_agente/LoginModule/LoginController.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
@@ -12,6 +13,7 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/ConnectionManager.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 //import 'package:local_auth/local_auth.dart';
@@ -75,8 +77,8 @@ class LoginInteractor implements LoginUseCase {
     String _service = "Login";
     String _serviceID = "S1";
     print("Getting $_service");
-    bool inWhiteList = false;
-    var correos = new List<String>();
+    bool _isWhiteListFirebaseCotizador = false;
+    /*var correos = new List<String>();
     correos.add("mariomontalvo@segurosmontalvo.com");
     correos.add("ap.uat@uat.com");
     if(correos.length > 0){
@@ -87,7 +89,7 @@ class LoginInteractor implements LoginUseCase {
     }else{
       print("sin elementos");
       inWhiteList = true;
-    }
+    }*/
     if (!await ConnectionManager.isConnected()) {
       output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
     }
@@ -104,10 +106,29 @@ class LoginInteractor implements LoginUseCase {
       "Content-Type": "application/json"
     };
     String _loginJSONData = json.encode(body);
-
     output?.showLoader();
 
-    if(inWhiteList){
+    try{
+      DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+      await _databaseReference.child('Secciones/CotizadorAP').once().then((DataSnapshot snapshot) {
+        print(snapshot.value);
+        _isWhiteListFirebaseCotizador = snapshot.value['show'] ?? false;
+        if(!_isWhiteListFirebaseCotizador){
+          List _whiteList = snapshot.value['whitelist'];
+          bool _whiteListMember = _whiteList.contains(emailSession !=null ? emailSession.toLowerCase() : emailSession.toLowerCase());
+          if(_whiteListMember){
+            _isWhiteListFirebaseCotizador = true;
+          }
+        }else{
+          _isWhiteListFirebaseCotizador = true;
+        }
+      });
+    }catch(e){
+      print(e);
+    }
+
+
+    if(_isWhiteListFirebaseCotizador){
       http.Response response = await http.post(config.serviceLogin,
           body: _loginJSONData,
           headers: headers).timeout(const Duration(seconds: 10));
@@ -221,7 +242,7 @@ class LoginInteractor implements LoginUseCase {
       String version = mapVersion["version"];
       version = version.replaceAll("_", ".");
       bool validacion = validateExpiration(mapVersion["fecha_publicacion"]);
-      if(compareVersion(version,Theme.StringsMX.appVersion)&& validacion && _appEnvironmentConfig.ambient==Ambient.prod){
+      if(compareVersion(version,Constants.appVersion)&& validacion && _appEnvironmentConfig.ambient==Ambient.prod){
         if(!mapVersion['requerida']) {
           _showDialogoUpdateApplication(context);
         }else{
@@ -266,31 +287,6 @@ class LoginInteractor implements LoginUseCase {
 
   void _showDialogoUpdateApplicationRequried(BuildContext context) {
     print("forzada");
-    /*showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return WillPopScope(
-            onWillPop: () => Future.value(false),
-            child:AlertDialog(
-              title: new Text("Nueva versión", style: TextStyle(
-                  color: Theme.Colors.Blue,
-                  fontSize: 16.0,
-                  fontFamily: "Roboto")),
-              content: new Text("Existe una nueva versión de Agentes GNP.",  style: TextStyle(
-                  color: Theme.Colors.Blue,
-                  fontSize: 16.0,
-                  fontFamily: "Roboto")),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("Descargar"),
-                  onPressed: _launchURL,
-                ),
-              ],
-            )
-        );
-      },
-    );*/
     showModalBottomSheet(
         isScrollControlled: true,
         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
@@ -342,38 +338,6 @@ class LoginInteractor implements LoginUseCase {
 
   void _showDialogoUpdateApplication(BuildContext context) {
     print("update");
-    /*showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return WillPopScope(
-            onWillPop: () => Future.value(false),
-            child:AlertDialog(
-              title: new Text("Nueva versión", style: TextStyle(
-                  color: Theme.Colors.Blue,
-                  fontSize: 16.0,
-                  fontFamily: "Roboto")),
-              content: new Text("Existe una nueva versión de Agentes GNP.",  style: TextStyle(
-                  color: Theme.Colors.Blue,
-                  fontSize: 16.0,
-                  fontFamily: "Roboto")),
-              actions: <Widget>[
-
-                new FlatButton(
-                    child: new Text("Después"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    }),
-
-                new FlatButton(
-                  child: new Text("Descargar"),
-                  onPressed: _launchURL,
-                ),
-
-              ],
-            ));
-      },
-    );*/
     showModalBottomSheet(
       isScrollControlled: true,
       barrierColor: AppColors.AzulGNP.withOpacity(0.6),
