@@ -287,31 +287,6 @@ class LoginInteractor implements LoginUseCase {
 
   void _showDialogoUpdateApplicationRequried(BuildContext context) {
     print("forzada");
-    /*showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return WillPopScope(
-            onWillPop: () => Future.value(false),
-            child:AlertDialog(
-              title: new Text("Nueva versión", style: TextStyle(
-                  color: Theme.Colors.Blue,
-                  fontSize: 16.0,
-                  fontFamily: "Roboto")),
-              content: new Text("Existe una nueva versión de Agentes GNP.",  style: TextStyle(
-                  color: Theme.Colors.Blue,
-                  fontSize: 16.0,
-                  fontFamily: "Roboto")),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("Descargar"),
-                  onPressed: _launchURL,
-                ),
-              ],
-            )
-        );
-      },
-    );*/
     showModalBottomSheet(
         isScrollControlled: true,
         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
@@ -363,38 +338,6 @@ class LoginInteractor implements LoginUseCase {
 
   void _showDialogoUpdateApplication(BuildContext context) {
     print("update");
-    /*showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return WillPopScope(
-            onWillPop: () => Future.value(false),
-            child:AlertDialog(
-              title: new Text("Nueva versión", style: TextStyle(
-                  color: Theme.Colors.Blue,
-                  fontSize: 16.0,
-                  fontFamily: "Roboto")),
-              content: new Text("Existe una nueva versión de Agentes GNP.",  style: TextStyle(
-                  color: Theme.Colors.Blue,
-                  fontSize: 16.0,
-                  fontFamily: "Roboto")),
-              actions: <Widget>[
-
-                new FlatButton(
-                    child: new Text("Después"),
-                    onPressed: (){
-                      Navigator.of(context).pop();
-                    }),
-
-                new FlatButton(
-                  child: new Text("Descargar"),
-                  onPressed: _launchURL,
-                ),
-
-              ],
-            ));
-      },
-    );*/
     showModalBottomSheet(
       isScrollControlled: true,
       barrierColor: AppColors.AzulGNP.withOpacity(0.6),
