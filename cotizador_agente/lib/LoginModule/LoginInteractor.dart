@@ -108,26 +108,24 @@ class LoginInteractor implements LoginUseCase {
     String _loginJSONData = json.encode(body);
     output?.showLoader();
 
-    DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
-    _databaseReference.child("Secciones/CotizadorAP").onValue.listen((Event event) async {
-
-              _isWhiteListFirebaseCotizador = validateNotEmptyBool(event.snapshot.value["show"]);
-              if(_isWhiteListFirebaseCotizador){
-                List _whiteList = event.snapshot.value["whitelist"];
-                bool _whiteListMember = _whiteList.contains(emailSession !=null ? emailSession.toLowerCase() : emailSession.toLowerCase());
-                if(_whiteListMember){
-                  _isWhiteListFirebaseCotizador = true;
-                }
-              }else{
-                _isWhiteListFirebaseCotizador = true;
-              }
-
-            }, onError: (Object o) {
-      final DatabaseError error = o;
-      print('Error: ${error.code} ${error.message}');
-      output?.hideLoader();
-      output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
-    });
+    try{
+      DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+      await _databaseReference.child('Secciones/CotizadorAP').once().then((DataSnapshot snapshot) {
+        print(snapshot.value);
+        _isWhiteListFirebaseCotizador = snapshot.value['show'] ?? false;
+        if(!_isWhiteListFirebaseCotizador){
+          List _whiteList = snapshot.value['whitelist'];
+          bool _whiteListMember = _whiteList.contains(emailSession !=null ? emailSession.toLowerCase() : emailSession.toLowerCase());
+          if(_whiteListMember){
+            _isWhiteListFirebaseCotizador = true;
+          }
+        }else{
+          _isWhiteListFirebaseCotizador = true;
+        }
+      });
+    }catch(e){
+      print(e);
+    }
 
 
     if(_isWhiteListFirebaseCotizador){
