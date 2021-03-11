@@ -119,6 +119,16 @@ lib/main.dart
 
 ![](cotizador_agente/doc/imagenes/mainpro.png)
 
+2. Verificar que los archivos de pro se encuentren en la carpeta
+   correcta.
+
+![](cotizador_agente/doc/imagenes/google-services.png)
+
+![](cotizador_agente/doc/imagenes/GoogleService-Info.png)
+
+3. Validar que los archivos Google-Services.plist y google-services.json
+   se encuentren apuntando al proyecto de producción.
+
 # PASOS A SEGUIR PARA GENERAR APK
 
 1.  Abrir Android Studio, abrir el proyecto.
