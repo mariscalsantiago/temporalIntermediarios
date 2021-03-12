@@ -6,6 +6,8 @@ GIT:
 Solicitamos el apoyo para la configuración de la consola de firebase:
 **GNP-AccidentesPersonales-PRO** del desarrollo de **Intermediario GNP**
 
+Solicitamos el apoyoa para obtener permisos de lectura en la consola para poder supervisar crashlytics, performance y remote config.
+ 
 1. Almacenamiento de imágenes
 
 - Abrir consola Firebase e ir a la sección Storage
@@ -79,4 +81,6 @@ se indica en las imagenes anteriores.**
 
 **NOTA: Se anexa el JSON base, para cada parámetro, se encuentran en la
 carpeta parametrosJSON.**
+
+**Favor que generarnos permisos para validar que se encuentren correctamente los parámetros**
 
