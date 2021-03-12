@@ -14,6 +14,8 @@ Solicitamos el apoyo para la configuración de la consola de firebase:
 
 - [remote_config_icons](remote_config_icons/footer)
 
+http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/feature_APfirebase/cotizador_agente/doc/remote_config_icons/footer
+
 - Agregar las imágenes que se encuentran en la carpeta de este proyecto,
   en la carpeta footer:
 
