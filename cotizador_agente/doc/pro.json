@@ -1,0 +1,8 @@
+{
+   "Secciones":{
+      "CotizadorAP":{
+         "show":false,
+         "whitelist":[]
+      }
+   }
+}
