@@ -1,0 +1,40 @@
+{
+  "visibleEnSegundoNivel": false,
+  "secciones": [
+    {
+      "posicion": 1,
+      "titulo": "Cotizar",
+      "icono": "",
+      "habilitado": true,
+      "accion": "flutter_app/cotizar"
+    },
+    {
+      "posicion": 2,
+      "titulo": "Emitir",
+      "icono": "",
+      "habilitado": false,
+      "accion": "flutter_app/emitir"
+    },
+    {
+      "posicion": 3,
+      "titulo": "Pagar",
+      "icono": "",
+      "habilitado": false,
+      "accion": "flutter_app/pagar"
+    },
+    {
+      "posicion": 4,
+      "titulo": "Renovar",
+      "icono": "",
+      "habilitado": false,
+      "accion": "flutter_app/renovar"
+    },
+    {
+      "posicion": 5,
+      "titulo": "Menu",
+      "icono": "",
+      "habilitado": true,
+      "accion": "flutter_app/menu"
+    }
+  ]
+}
