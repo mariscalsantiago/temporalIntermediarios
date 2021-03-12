@@ -1,3 +1,6 @@
+GIT:
+[http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App](http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App)
+
 # **CONFIGURACIÓN DE FIREBASE**
 
 Solicitamos el apoyo para la configuración de la consola de firebase:
@@ -8,7 +11,10 @@ Solicitamos el apoyo para la configuración de la consola de firebase:
 - Abrir consola Firebase e ir a la sección Storage
 - Modificar la carpeta con el nombre **remote_config_icons**
 - Dentro de la carpeta **remote_config_icons**, en la carpeta **footer**
-  Agregar las imágenes que se encuentran en la carpeta de este proyecto,
+
+- [remote_config_icons](remote_config_icons/footer)
+
+- Agregar las imágenes que se encuentran en la carpeta de este proyecto,
   en la carpeta footer:
 
 
@@ -17,7 +23,7 @@ Solicitamos el apoyo para la configuración de la consola de firebase:
         emitir.png  
         pagar.png  
         renovar.png
-
+- [remote_config_icons](remote_config_icons/splash)
 - Dentro de la carpeta **remote_config_icons** crear una carpeta con el
   nombre **splash** e integrar las imágenes que se encuentran en la
   carpeta de este proyecto splash:
