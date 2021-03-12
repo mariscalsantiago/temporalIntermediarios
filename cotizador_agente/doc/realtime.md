@@ -27,4 +27,4 @@ Teniendo en cuenta que la estructura final es la siguiente para pro:
 
 ![](imagenes/realtime.png)
 
-
+NOTA: Volver a enviar a Ismael Alvarado (ismael.alvarado@gnp.com.mx) los archivos de Google-Services-Info.plist y google-service.json
