@@ -14,8 +14,7 @@ Solicitamos el apoyo para obtener permisos de lectura en la consola para poder s
 - Modificar la carpeta con el nombre **remote_config_icons**
 - Dentro de la carpeta **remote_config_icons**, en la carpeta **footer**
 
-
-http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/feature_APfirebase/cotizador_agente/doc/remote_config_icons/footer
+http://git.gnp.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/v0.0.4/cotizador_agente/doc/remote_config_icons/footer
 
 - Agregar las imágenes que se encuentran en la carpeta de este proyecto,
   en la carpeta footer:
@@ -26,7 +25,7 @@ http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/feature_APfi
         emitir.png  
         pagar.png  
         renovar.png
-http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/feature_APfirebase/cotizador_agente/doc/remote_config_icons/splash
+http://git.gnp.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/v0.0.4/cotizador_agente/doc/remote_config_icons/splash
 
 - Dentro de la carpeta **remote_config_icons** crear una carpeta con el
   nombre **splash** e integrar las imágenes que se encuentran en la
@@ -68,11 +67,11 @@ http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/feature_APfi
 
 **PARÁMETROS REMOTE CONFIG PRO**
 
-http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/blob/feature_APfirebase/cotizador_agente/doc/parametrosJSON/footer.json
+http://git.gnp.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/v0.0.4/cotizador_agente/doc/parametrosJSON/footer.json
 
 ![](imagenes/parametrosfooter.png)
 
-http://git.gnp.com.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/blob/feature_APfirebase/cotizador_agente/doc/parametrosJSON/splash_screen.json
+http://git.gnp.mx/EOT/COT/COT_CotizadorUnico_Flutter_App/-/tree/v0.0.4/cotizador_agente/doc/parametrosJSON/splash_screen.json
 
 ![](imagenes/parametrosplash.png)
 
