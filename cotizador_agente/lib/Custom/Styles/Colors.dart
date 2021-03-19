@@ -5,7 +5,110 @@ class Colors {
 
   const Colors();
 
+  static const Color White = Color(0xffffffff);
+  static const Color None = Color(0x00ffffff);
+  static const Color Orange = Color(0xff0254C0);
+  static const Color primary = Color(0xff41BBC9);
+  static const Color grisVal = Color(0xff797F97);
 
+  static const Color textoCardBlanco = Color(0xffFBF7F4);
+  static const Color background_MPSeleccionado = Color(0xffFAF8F9);
+  static const Color texto_MPSeleccionado = Color(0xffA6718E);
+  static const Color texto_MPSinSeleccionar = Color(0xff202A52);
+  static const Color backgorund_MSFoto = Color(0xff41BBC9);
+  static const Color textoGrisMS = Color(0xffA6AABA);
+  static const Color textofechaMS = Color(0xff333333);
+  static const Color lineaMS = Color(0xffEDE3E8);
+  static const Color cardbackground = Color(0xffBA6124);
+  static const Color shadowCard = Color(0xffE5E5E5);
+  static const Color backgroud = Color(0xffffffff);
+  static const Color cardCuenta = Color(0xffFEFEFE);
+  static const Color BotonSinSeleccionar = Color(0xffF5FBFC);
+  static const Color TextoSinSeleccionarBoton = Color(0xffB3E4E9);
+  static const Color TextoSeguridad = Color(0xff4D5575);
+
+  //Prestamos
+  static const Color fondoAhorroBtn = Color(0xffBA6124);
+  static const Color cajaAhorroBtn = Color(0xffA6718E);
+  static const Color continuarBtn = Color(0xffF5FBFC);
+  static const Color tituloTextoDrop = Color(0xffDE757A);
+  static const Color tituloTextoBtnConNotEna = Color(0xffB3E4E9);
+
+  //Solicutud
+  static const Color tituloTextoListSolisitud = Color(0xff4D5575);
+
+  //AppBar
+  static const Color appBarIconPurple = Color(0xffA6718E);
+  static const Color appBarTextBlueDark = Color(0xff202A52);
+
+  //Maqueta
+  static const Color VLMX_SKY = Color(0xff41BBC9);
+  //static const Color VLMX_SKY_05 = Color(0xffD9F1F4);
+  static const Color VLMX_SKY_20 = Color(0xffD9F1F4);
+  //static const Color VLMX_SKY_40 = Color(0xff8DD6DF);
+  static const Color VLMX_SKY_60 = Color(0xff8DD6DF);
+  static const Color VLMX_SKY_80 = Color(0xff67C9D4);
+
+  static const Color VLMX_Navy = Color(0xff202A52);
+  static const Color VLMX_Navy_05 = Color(0xffF4F4F6);
+  //static const Color VLMX_Navy_20 = Color(0xffF4F4F6);
+  static const Color VLMX_Navy_40 = Color(0xffA6AABA);
+  static const Color VLMX_Navy_60 = Color(0xff797F97);
+  static const Color VLMX_Navy_80 = Color(0xff4D5575);
+
+  static const Color VLMX_Camel = Color(0xffBA6124);
+
+  static const Color VLMX_Camel_05 = Color(0xffFBF7F4);
+  static const Color VLMX_Camel_20 = Color(0xffF1DFD3);
+  static const Color VLMX_Camel_40 = Color(0xffE3C0A7);
+  static const Color VLMX_Camel_60 = Color(0xffD6A07C);
+  // static const Color VLMX_Camel_80 = Color(0xffBA6124);
+
+  static const Color VLMX_Lily = Color(0xffA6718E);
+  static const Color VLMX_Lily_05 = Color(0xffFAF8F9);
+  static const Color VLMX_Lily_20 = Color(0xffEDE3E8);
+  static const Color VLMX_Lily_40 = Color(0xffDBC6D2);
+  static const Color VLMX_Lily_60 = Color(0xffCAAABB);
+  // static const Color VLMX_Lily_80 = Color(0xffBA6124);
+
+
+  static const Color SurfaceCard = Color(0xffFEFEFE);
+
+  //Login
+  static const Color inputColorFocus = Color(0xff2C6C73);
+  static const Color inputColorContrasena = Color(0xffDE757A);
+  static const Color ActivarHuella = Color(0xffAAD5DA);
+  static const Color togglegris = Color(0xff647085);
+  static const Color letragris = Color(0xff33445F);
+  static const Color Verificarcorreo = Color(0xffD2D4DC);
+  static const Color fotobackgroud = Color(0xffEEF7F8);
+  static const Color VLMX_Mint_05 = Color(0xffFAFDFD);
+  static const Color Negro = Color(0xff000000);
+  static const Color VLMX_Negativo = Color(0xffC60729);
+
+
+  //Perfil
+  static const Color Azul_gnp = Color(0xff002E71);
+  static const Color Error_Dark = Color(0xffCD5A59);
+  static const Color Encabezados = Color(0xff002E71);
+  static const Color Funcional_Textos_Body = Color(0xff0C2040);
+  static const Color GNP = Color(0xffFF6B0B);
+  static const Color Azul_2 = Color(0xff33486c);
+  static const Color profile_logo = Color(0xffEAF0FB);
+  static const Color fecha_1 = Color(0xff567099);
+  static const Color divider_color  = Color(0xffCED8E8);
+  static const Color inputcorreo = Color(0xff567099);
+  static const Color inputlinea = Color(0xffAAC3EE);
+  static const Color botonlogin = Color(0xffF6F9FD);
+  static const Color botonletra = Color(0xffACB4C0);
+  static const Color biometrico = Color(0xffFFEBB3);
+  static const Color validarCampo = Color(0xff9A4443);
+  static const Color dialogoExpiro = Color(0xffFBF5C6);
+  static const Color textoExpiro = Color(0xffB18931);
+  static const Color borderInput = Color(0xff9DAEC8);
+  static const Color rellenodialogo = Color(0xffE7F2FC);
+
+  //Cotizador
   static const Color blueCongreso = Color(0xff0254C0);
   static const Color lineaGeneralesTorneo = Color(0xffC5D9FF);
   static const Color Black = Color(0xff000000);
@@ -24,7 +127,6 @@ class Colors {
   static const Color gnpOrange = Color(0xffff570a);
   static const Color gnpBlue = Color(0xff1f3f79);
   static const Color BluePoliza = Color(0xff00337f);
-  static const Color Orange = const Color(0xffff6e20);
   static const Color Dark = const Color(0xff3a3a3a);
   static const Color Dark85 = const Color(0xDA3a3a3a);
   static const Color DarkBlue = const Color(0xff1c2341);
@@ -41,7 +143,6 @@ class Colors {
   static const Color Back = const Color(0xff3a3a3a);
   static const Color Background = const Color(0xfff8f8f8);
   static const Color Background2 = const Color(0xfff7f9fc);
-  static const Color White = const Color(0xffffffff);
   static const Color Blue = const Color(0xff183e7b);
   static const Color Blue2 = const Color(0xff183d7b);
   static const Color Blue3 = const Color(0xff00337f);
@@ -102,11 +203,4 @@ class Colors {
 
 
   static const Color azulMesaggeCongresos = const Color(0xFF343F61);
-
-  static const primaryGradient = const LinearGradient(
-    colors: const [White, Orange],
-    stops: const [0.0, 1.0],
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-  );
 }

@@ -5,19 +5,20 @@ import 'package:http/http.dart' as http;
 Future<bool> internetStatus() async {
   bool isInternet;
 
-    var connectivityResult = await (Connectivity().checkConnectivity());
+  var connectivityResult = await (Connectivity().checkConnectivity());
 
-    if (connectivityResult == ConnectivityResult.mobile) {
-      // I am connected to a mobile network.
-      isInternet = true;
-    } else if (connectivityResult == ConnectivityResult.wifi) {
-      // I am connected to a wifi network.
-      isInternet = true;
-    } else if (connectivityResult == ConnectivityResult.none) {
-      isInternet = false;
-    }
+  if (connectivityResult == ConnectivityResult.mobile) {
+    // I am connected to a mobile network.
+    isInternet = true;
+  } else if (connectivityResult == ConnectivityResult.wifi) {
+    // I am connected to a wifi network.
+    isInternet = true;
+  } else if (connectivityResult == ConnectivityResult.none) {
+    isInternet = false;
+  }
   return isInternet;
 }
+
 
 class ConnectivityServices{
 
@@ -81,4 +82,5 @@ enum ConnectionType{
   wifi,
   none,
 }
+
 

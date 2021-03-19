@@ -1,14 +1,12 @@
 import 'dart:async';
-
 import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/main_PRO.dart';
+
 import 'package:flutter/cupertino.dart';
-import 'package:cotizador_agente/Custom/Widgets/CustomAlerts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 
 Timer _timer;
-SharedPreferences prefs;
 BuildContext contextGlobal;
 bool showWebView = false;
 DateTime date3;
@@ -28,7 +26,7 @@ void logOutUser(BuildContext context) {
     print("*Cerrando sesión timer activo: "+_timer.isActive.toString());
     _timer.cancel();
     print("*Cancelando timer es activo: "+_timer.isActive.toString());
-    prefs.setBool("conexion", true);
+    //prefs.setBool("conexion", true);
     Navigator.popUntil(context, ModalRoute.withName(('/login')));
   }else{
     print("Timer no esta activo");
@@ -48,7 +46,7 @@ void internetStatus(BuildContext context) async {
     showWebView = true;
   } else if (connectivityResult == ConnectivityResult.none) {
     showWebView = false;
-    customAlert(AlertDialogType.errorConexion, context, "", "");
+    //customAlert(AlertDialogType.errorConexion, context, "", "");
   } else {
     showWebView = false;
   }

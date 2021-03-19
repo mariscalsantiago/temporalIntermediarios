@@ -1,13 +1,12 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 
 import 'app_config.dart';
 import '../main.dart';
 import 'package:flutter/material.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
   var configuredApp = new AppConfig(
     ambient: Ambient.qa,
     serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
@@ -25,8 +24,6 @@ void main() async {
     child: new MyApp(),
   );
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-    runApp(configuredApp);
- });
-  // runApp(configuredApp);
+  runApp(configuredApp);
+
 }

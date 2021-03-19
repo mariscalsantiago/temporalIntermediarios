@@ -12,9 +12,7 @@ class Footer {
     if (json['secciones'] != null) {
       secciones = new List<Secciones>();
       json['secciones'].forEach((v) {
-        if(v["habilitado"]){
-          secciones.add(new Secciones.fromJson(v));
-        }
+        secciones.add(new Secciones.fromJson(v));
       });
     }
   }

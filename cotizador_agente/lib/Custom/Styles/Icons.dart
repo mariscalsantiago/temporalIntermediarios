@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+
 class Icons {
   Icons._();
 
@@ -27,12 +28,12 @@ class Icons {
   static const IconData location = const IconData(0xE811, fontFamily: _kFontFam);
   static const IconData domicilio_fiscal = const IconData(0xe813, fontFamily: _kFontFam);
   static const IconData domicilio_particular = const IconData(0xe814, fontFamily: _kFontFam);
-  static const IconData edit = const IconData(0xe815, fontFamily: _kFontFam);
+  //static const IconData edit = const IconData(0xe815, fontFamily: _kFontFam);
   static const IconData enfermedades = const IconData(0xe816, fontFamily: _kFontFam);
   static const IconData equipo = const IconData(0xe817, fontFamily: _kFontFam);
   static const IconData especiales = const IconData(0xe818, fontFamily: _kFontFam);
   static const IconData estrella = const IconData(0xe819, fontFamily: _kFontFam);
-  static const IconData facial = const IconData(0xe81a, fontFamily: _kFontFam);
+  //static const IconData facial = const IconData(0xe81a, fontFamily: _kFontFam);
   static const IconData fumar = const IconData(0xe81b, fontFamily: _kFontFam);
   static const IconData funcionario = const IconData(0xe81c, fontFamily: _kFontFam);
   static const IconData home_on = const IconData(0xe81d, fontFamily: _kFontFam);
@@ -102,5 +103,19 @@ class Icons {
   static const IconData cua_1 = IconData(0xe805, fontFamily: _kFontFamN);
   static const IconData experienceStar = IconData(0xe806, fontFamily: _kFontFamN);
   static const IconData helpDesk = IconData(0xe807, fontFamily: _kFontFamN);
+
+  ////////////////////////////////////////////////////////////////////
+  // iconos contratacion
+
+  static const _kFontFamC = 'Contratacion_icons';
+
+  static const IconData delete_24px = IconData(0xe800, fontFamily: _kFontFamC);
+  static const IconData renovar = IconData(0xe801, fontFamily: _kFontFamC);
+  static const IconData cotiza = IconData(0xe802, fontFamily: _kFontFamC);
+  static const IconData emite = IconData(0xe803, fontFamily: _kFontFamC);
+  static const IconData paga = IconData(0xe804, fontFamily: _kFontFamC);
+  static const IconData camera_alt_24px = IconData(0xe805, fontFamily: _kFontFamC);
+  static const IconData edit = IconData(0xe806, fontFamily: _kFontFamC);
+  static const IconData facial = IconData(0xe807, fontFamily: _kFontFamC);
 
 }

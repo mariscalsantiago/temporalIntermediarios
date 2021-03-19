@@ -1,0 +1,107 @@
+import 'dart:io';
+import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:flutter/material.dart';
+import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
+import 'package:simple_image_crop/simple_image_crop.dart';
+import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
+
+import '../../main.dart';
+
+
+class SimpleCropRoute extends StatefulWidget {
+  final File image;
+  const SimpleCropRoute({Key key, this.image}) : super(key: key);
+  @override
+  _SimpleCropRouteState createState() => _SimpleCropRouteState();
+}
+
+class _SimpleCropRouteState extends State<SimpleCropRoute> {
+  final cropKey = GlobalKey<ImgCropState>();
+
+  Future<Null> showImage(BuildContext context, File file) async {
+    new FileImage(file)
+        .resolve(new ImageConfiguration())
+        .addListener(ImageStreamListener((ImageInfo info, bool _) {
+      print('-------------------------------------------$info');
+    }));
+    return showDialog<Null>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: Text(
+                'Current screenshot：',
+                style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontWeight: FontWeight.w300,
+                    color: Theme.Colors.Azul_gnp,
+                    letterSpacing: 1.1),
+              ),
+              content: Image.file(file));
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Responsive responsive = Responsive.of(context);
+    final Map args = ModalRoute.of(context).settings.arguments;
+    return Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          title: Text(
+            'editar',
+            style: TextStyle(color: Colors.black),
+          ),
+          backgroundColor: Colors.white,
+          leading: new IconButton(
+            icon:
+            new Icon(Icons.navigate_before, color: Colors.black, size: 40),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ),
+        body: Center(
+          child: ImgCrop(
+            key: cropKey,
+            chipRadius: 150,
+            chipShape: 'circle',
+            maximumScale: 3,
+            image: FileImage(widget.image),
+            // handleSize: 0.0,
+          ),
+        ),
+        floatingActionButton:GestureDetector(
+          onTap: () async {
+            final crop = cropKey.currentState;
+            fotoPerfil =  await crop.cropCompleted(widget.image, pictureQuality: 900);
+            setState(() {
+              fotoPerfil;
+            });
+            Navigator.of(context).pop();
+          },
+            child: Container(
+              color: Theme.Colors.White,
+              height: responsive.hp(10),
+              width: responsive.width,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                Icon(Icons.save_outlined, color: Theme.Colors.GNP,),
+                Text("GUARDAR AJUSTES", style: TextStyle(color: Theme.Colors.GNP, fontSize: responsive.ip(2)),)
+              ],
+              ),
+            ))
+    );
+
+        /*
+        FloatingActionButton(
+          onPressed: () async {
+            final crop = cropKey.currentState;
+            final croppedFile =
+            await crop.cropCompleted(widget.image);
+            showImage(context, croppedFile);
+          },
+          tooltip: 'Increment',
+          child: Text('Crop'),
+        ));*/
+  }
+}

@@ -12,10 +12,8 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:dio/dio.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
-
 import 'package:flutter/widgets.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -71,7 +69,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   getFormato(BuildContext context) async{
 
-    final Trace formato = FirebasePerformance.instance.newTrace("IntermediarioGNP_GetPDF");
+    final Trace formato = FirebasePerformance.instance.newTrace("SoySocio_GetPDF");
     formato.start();
     print(formato.name);
     bool success = false;
@@ -131,7 +129,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
         }catch(e,s){
           formato.stop();
-          await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+          //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
         }
 
     return success;
@@ -167,7 +165,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   sendEmailService() async {
 
-    final Trace mytrace = FirebasePerformance.instance.newTrace("IntermediarioGNP_EnviaEmail");
+    final Trace mytrace = FirebasePerformance.instance.newTrace("SoySocio_EnviaEmail");
     mytrace.start();
     print(mytrace.name);
     bool success = false;
@@ -278,7 +276,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
   Widget mostrarAlerta(){
     showModalBottomSheet(
       isScrollControlled: true,
-      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) => AnimatedPadding(
@@ -306,7 +304,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                             child: Text("Enviar cotización",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: AppColors.AzulGNP,
+                                    color: AppColors.color_titleAlert,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.15))),

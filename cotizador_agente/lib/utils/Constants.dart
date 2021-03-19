@@ -1,6 +1,6 @@
 library constants;
 
-const String appVersion = "1.0.0";
+const String appVersion = "2.0.0";
 const String titleNVersion = "Nueva versión";
 const String msgNVersion = "Existe una nueva versión de Agentes GNP.";
 const String descarga = "Descargar";

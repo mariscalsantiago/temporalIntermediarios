@@ -364,11 +364,11 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
         return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-             /* Padding(
+              Padding(
                 padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
                 child: Divider(height: 1,
                   color: AppColors.color_divider,),
-              ),*/
+              ),
               Row(children: <Widget>[
                 Expanded(
                   flex: 3,

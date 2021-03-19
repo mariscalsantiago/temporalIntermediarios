@@ -314,7 +314,7 @@ class Utilidades {
        String titulo, String mensaje, BuildContext context) {
       // flutter defined function
       showMaterialModalBottomSheet(
-         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
@@ -332,7 +332,7 @@ class Utilidades {
                    children: <Widget>[
                       Padding(
                          padding: EdgeInsets.only(top:0.0),
-                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
                       ),
                       Padding(
                          padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
@@ -360,7 +360,7 @@ class Utilidades {
        String titulo, String mensaje, BuildContext context) {
       // flutter defined function
       showMaterialModalBottomSheet(
-         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
@@ -378,7 +378,7 @@ class Utilidades {
                    children: <Widget>[
                       Padding(
                          padding: EdgeInsets.only(top:0.0),
-                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
                       ),
                       Padding(
                          padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
@@ -407,10 +407,10 @@ class Utilidades {
    static void mostrarAlertaCallback(String titulo, String mensaje,
        BuildContext context, Function negative, Function positive) {
       //manejar el largo de la alerta, predifinido height: 240,
-      double alturaHeight = mensaje.length < 94 ? 216 : mensaje.contains("Esta acción no se puede deshacer") ? 168 : 240;
+      double alturaHeight = mensaje.contains("Esta acción no se puede deshacer") ? 168 : 240;
       // flutter defined function
       showMaterialModalBottomSheet(
-         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
@@ -428,7 +428,7 @@ class Utilidades {
                    children: <Widget>[
                       Padding(
                          padding: EdgeInsets.only(top:0.0),
-                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
                       ),
                       Padding(
                          padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
@@ -456,7 +456,7 @@ class Utilidades {
        BuildContext context, Function negative, Function positive) {
       // flutter defined function
       showMaterialModalBottomSheet(
-         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
@@ -474,7 +474,7 @@ class Utilidades {
                    children: <Widget>[
                       Padding(
                          padding: EdgeInsets.only(top:0.0),
-                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
                       ),
                       Padding(
                          padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
@@ -502,7 +502,7 @@ class Utilidades {
        BuildContext context, Function negative, Function positive) {
       // flutter defined function
       showMaterialModalBottomSheet(
-         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
@@ -520,7 +520,7 @@ class Utilidades {
                    children: <Widget>[
                       Padding(
                          padding: EdgeInsets.only(top:0.0),
-                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
                       ),
                       Padding(
                          padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
@@ -562,7 +562,7 @@ class Utilidades {
    static void mostrarAlertaCallBackCustom(String titulo, String mensaje, BuildContext context,String buttonText,Function positive) {
       // flutter defined function
       showMaterialModalBottomSheet(
-         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+         barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
          backgroundColor: Colors.transparent,
          context: context,
          builder: (context, scrollController) => Container(
@@ -580,7 +580,7 @@ class Utilidades {
                    children: <Widget>[
                       Padding(
                          padding: EdgeInsets.only(top:0.0),
-                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_titleAlert),)),
                       ),
                       Padding(
                          padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
@@ -678,7 +678,7 @@ class Utilidades {
 
   static String getCategoria(){
 
-    var categoria = "IntermediarioGNP/" + ((Platform.isIOS) ? "iOS" : "Android") + "/" + Utilidades.idAplicacion.toString() + "/" + datosUsuario.idparticipante;
+    var categoria = "SoySocioGNP/" + ((Platform.isIOS) ? "iOS" : "Android") + "/" + Utilidades.idAplicacion.toString() + "/" + datosUsuario.idparticipante;
     return categoria;
   }
 }
