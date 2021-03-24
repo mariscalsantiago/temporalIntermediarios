@@ -4,6 +4,7 @@ import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:webview_flutter/webview_flutter.dart';
@@ -181,8 +182,16 @@ class _HomePageState extends State<HomePage> {
   AppBar getAppBar(BuildContext context, Responsive responsive) {
     return AppBar(
       elevation: 0.0,
-      title: Image.asset("assets/icon/splash/logoGNP.png",
-          height: 40, width: 105.7, fit: BoxFit.contain),
+      leading: Container(
+        margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
+        child: Image.asset("assets/icon/splash/logoGNP.png",
+            height: responsive.hp(25), width: responsive.wp(25)),
+      ),
+      title: Container(
+        //margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
+        child: Image.asset("assets/icon/splash/logoGNP.png",
+            height: responsive.hp(25), width: responsive.wp(25)),
+      ),
       //centerTitle: true,
       backgroundColor: Colors.white,
       bottom: new PreferredSize(

@@ -1,9 +1,9 @@
-import 'dart:io';
 
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 
 FlutterWebviewPlugin _flutterWebViewPlugin;
@@ -16,8 +16,27 @@ class AutosPage extends StatefulWidget {
 }
 
 class _AutosPageState extends State<AutosPage> {
-  String retrunToApp = "returnApp";
+  String returnToApp = "/returnApp";
+  final GlobalKey webViewKey = GlobalKey();
 
+ /* InAppWebViewController webViewController;
+  InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
+      crossPlatform: InAppWebViewOptions(
+        useShouldOverrideUrlLoading: true,
+        mediaPlaybackRequiresUserGesture: false,
+      ),
+      android: AndroidInAppWebViewOptions(
+          allowContentAccess: true,),
+      ios: IOSInAppWebViewOptions(
+        allowsInlineMediaPlayback: true,
+      ));
+
+  PullToRefreshController pullToRefreshController;
+  ContextMenu contextMenu;
+  String url = "";
+  double progress = 0;
+  final urlController = TextEditingController();
+  */
   @override
   void initState() {
     // TODO: implement initState
@@ -29,22 +48,13 @@ class _AutosPageState extends State<AutosPage> {
 
       print("mUrl: "+mUrl);
       // print("Eventos type: "+onData.type.toString());
-      if(Platform.isIOS) {
-        if (onData.type.toString() == "WebViewState.shouldStart") {
-          if (mUrl.contains(retrunToApp)) {
+
+          if (mUrl.contains(returnToApp)) {
             _flutterWebViewPlugin.close();
             _flutterWebViewPlugin.dispose();
+            Navigator.pop(context);
           }
-        }
-      }
-      if(Platform.isAndroid) {
-        if (onData.type.toString() == "WebViewState.finishLoad") {
-          if (mUrl.contains(retrunToApp)) {
-            _flutterWebViewPlugin.close();
-            _flutterWebViewPlugin.dispose();
-          }
-        }
-      }
+          
     });
     print(datosUsuario.idparticipante);
     print(datosPerfilador.intermediarios[0]);
@@ -55,19 +65,40 @@ class _AutosPageState extends State<AutosPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: WebviewScaffold(
-        appBar: AppBar(
-          elevation: 0.0,
-          leading: IconButton(
-            icon:Icon(Icons.arrow_back_outlined, color: Theme.Colors.GNP,),
-            onPressed: (){
-              Navigator.pop(context);
-            },
-          ),
-          backgroundColor: Theme.Colors.White,
-        ),
+      child: /*InAppWebView(
+        key: webViewKey,
+        // contextMenu: contextMenu,
+        initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}", // initialFile: "assets/index.html",
+        initialOptions: options,
+        onWebViewCreated: (controller) {
+          webViewController = controller;
+        },
+        onLoadStart: (controller, url) {
+          setState(() {
+           // this.url = url.toString();
+            //urlController.text = this.url;
+          });
+        },
+        androidOnPermissionRequest: (controller, origin, resources) async {
+          return PermissionRequestResponse(
+              resources: resources,
+              action: PermissionRequestResponseAction.GRANT);
+        },
+        shouldOverrideUrlLoading: (controller, navigationAction) async {
+          var uri = navigationAction.url;
+
+          print(navigationAction);
+          if (uri.contains(returnToApp)) {
+            Navigator.pop(context);
+            }
+          },
+        onConsoleMessage: (controller, consoleMessage) {
+          print(consoleMessage);
+        },
+    ),
+    */WebviewScaffold(
           url:'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",
-      ),
+      )
     );
 
     _flutterWebViewPlugin.onDestroy.listen((Null n) {

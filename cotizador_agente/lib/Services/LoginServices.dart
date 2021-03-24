@@ -1,6 +1,8 @@
 
 import 'dart:convert';
 
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
@@ -9,6 +11,7 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/ConnectionManager.dart';
+import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -17,6 +20,8 @@ import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 
+import '../main.dart';
+
   SharedPreferences _sharedPreferences;
   String uPhone;
   int errorTimes = 0;
@@ -24,9 +29,11 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
   String uMail;
   String uPass;
   AppConfig _appEnvironmentConfig;
+  Responsive _responsive;
 
 
-  Future<LoginDatosModel> logInServices(BuildContext context, String mail, String password, String user) async {
+  Future<LoginDatosModel> logInServices(BuildContext context, String mail, String password, String user, Responsive responsive) async {
+    _responsive = responsive;
     print("== Log In Interactor==");
     prefs=await SharedPreferences.getInstance();
     datosUsuario = await logInPost(context,mail, password, user);
@@ -62,6 +69,12 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
     print("Getting $_service");
     if (!await ConnectionManager.isConnected()) {
       //output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
+      if (deviceType == ScreenType.phone) {
+        customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive);
+      }
+      else{
+        customAlertTablet(AlertDialogTypeTablet.errorConexion, context, "",  "", _responsive);
+      }
     }
     emailSession = emailApp;
     var config = AppConfig.of(context);
@@ -111,9 +124,26 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
           return _datosUsuario;
         }else if (response.statusCode == 401) {
           //output?.hideLoader();
+          if (deviceType == ScreenType.phone) {
+            customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive);
+          }
+          else{
+            customAlertTablet(AlertDialogTypeTablet.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive);
+          }
+
+
+
           //output.showAlert(Constants.tlt_nocoinciden, Constants.ms_nocoinciden, TipoDialogo.ADVERTENCIA, "CERRAR");
           return null;
         }else if (response.statusCode == 404) {
+          if (deviceType == ScreenType.phone) {
+            customAlert(AlertDialogType.Correo_no_registrado, context, "",  "", _responsive);
+          }
+          else{
+            customAlertTablet(AlertDialogTypeTablet.Correo_no_registrado, context, "",  "", _responsive);
+          }
+
+
           //output?.hideLoader();
           //output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
           return null;

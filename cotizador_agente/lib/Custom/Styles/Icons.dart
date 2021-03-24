@@ -37,7 +37,7 @@ class Icons {
   static const IconData fumar = const IconData(0xe81b, fontFamily: _kFontFam);
   static const IconData funcionario = const IconData(0xe81c, fontFamily: _kFontFam);
   static const IconData home_on = const IconData(0xe81d, fontFamily: _kFontFam);
-  static const IconData huella = const IconData(0xe81e, fontFamily: _kFontFam);
+  //static const IconData huella = const IconData(0xe81e, fontFamily: _kFontFam);
   static const IconData lealtad = const IconData(0xe81f, fontFamily: _kFontFam);
   static const IconData lock = const IconData(0xe820, fontFamily: _kFontFam);
   static const IconData man = const IconData(0xe821, fontFamily: _kFontFam);

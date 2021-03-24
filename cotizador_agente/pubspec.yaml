@@ -59,6 +59,9 @@ dependencies:
   webview_flutter: ^1.0.7
   flutter_webview_plugin: 0.3.11
   introduction_screen: 1.0.7
+  flutter_inappwebview: ^4.0.0
+  custom_switch: ^0.0.1
+
 
 
 

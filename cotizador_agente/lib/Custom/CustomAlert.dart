@@ -2178,6 +2178,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               margin: EdgeInsets.only(
                                   top: responsive.height * 0.04,
                                   left: responsive.width * 0.04,
+                                  right: responsive.width * 0.04,
                                   bottom: responsive.height * 0.03),
                               child: Container(
                                 margin: EdgeInsets.only(

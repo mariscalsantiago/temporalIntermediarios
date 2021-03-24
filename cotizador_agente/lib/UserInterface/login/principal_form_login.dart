@@ -13,11 +13,12 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import '../../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'logoEncabezadoLogin.dart';
-
+import 'package:custom_switch/custom_switch.dart';
 
 
 
@@ -140,7 +141,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   }
 
   Widget subtitulo(Responsive responsive){
-    return Text("Soy Socio GNP\n !Te damos la bienvenida!", style: TextStyle(
+    return Text("Intermediario GNP\n ¡Te damos la bienvenida!", style: TextStyle(
         color: Tema.Colors.Azul_gnp,
         fontWeight: FontWeight.normal,
         fontSize: responsive.ip(3.4)
@@ -149,6 +150,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
 
   Widget inputTextCorreo(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+      ],
       controller: controllerCorreo,
       focusNode: focusCorreo,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusContrasena);},
@@ -188,7 +192,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         } else if (regExp.hasMatch(value)) {
           return null;
         } else {
-          return 'Introduzca un correo válido';
+          return 'Este campo es inválido';
         }
         return null;
       },
@@ -233,7 +237,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               color: Tema.Colors.inputcorreo
           ),
           suffixIcon: IconButton(
-            icon: contrasena == false || controllerContrasena.text == "" ? Image.asset("assets/login/novercontrasena.png") : Image.asset("assets/login/vercontrasena.png"),
+            icon: contrasena == false || controllerContrasena.text == "" ? Image.asset("assets/login/vercontrasena.png") : Image.asset("assets/login/novercontrasena.png"),
             color: Tema.Colors.VLMX_Navy_40,
             onPressed: (){
               setState(() {
@@ -297,7 +301,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             });
 
             print(_saving);
-            datosUsuario = await logInServices(context,controllerCorreo.text, controllerContrasena.text,controllerCorreo.text);
+            datosUsuario = await logInServices(context,controllerCorreo.text, controllerContrasena.text,controllerCorreo.text,responsive);
             print("datosUsuario ${datosUsuario.roles}");
             if(datosUsuario != null){
               redirect(responsive);
@@ -361,7 +365,29 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            FlutterSwitch(
+            Switch(
+              onChanged:(val) {
+                setState(() {
+                  _huella = val;
+                });
+                if(_huella){
+                  //TODO cambiar clasa home por prueba de biometricos
+                  //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BiometricosPage(responsive: widget.responsive,)));
+                  if (deviceType == ScreenType.phone) {
+                    customAlert(AlertDialogType. opciones_de_inicio_de_sesion,context,"","", responsive);
+                  }
+                  else{
+                    customAlertTablet(AlertDialogTypeTablet. opciones_de_inicio_de_sesion,context,"","", responsive);
+                  }
+                }
+              },
+              value: _huella,
+              activeColor: Tema.Colors.GNP,
+              activeTrackColor: Tema.Colors.biometrico,
+              inactiveThumbColor: Tema.Colors.Azul_gnp,
+              inactiveTrackColor:Tema.Colors.botonletra,
+            ),
+            /*FlutterSwitch(
               activeColor: Tema.Colors.biometrico,
               inactiveToggleColor: Tema.Colors.Azul_gnp,
               activeToggleColor: Tema.Colors.GNP,
@@ -371,7 +397,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               valueFontSize: 0.0,
               toggleSize: 18.0,
               value: _huella,
-              borderRadius: 30.0,
               padding: 2.0,
               showOnOff: false,
               onToggle: (val) {
@@ -380,7 +405,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                 });
                 if(_huella){
                   //TODO cambiar clasa home por prueba de biometricos
-                  //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BiometricosPage(responsive: widget.responsive,)));
+                 //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BiometricosPage(responsive: widget.responsive,)));
                  if (deviceType == ScreenType.phone) {
                    customAlert(AlertDialogType. opciones_de_inicio_de_sesion,context,"","", responsive);
                  }
@@ -389,7 +414,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                  }
                 }
               },
-            ),
+            ),*/
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(left: responsive.wp(2)),
@@ -409,7 +434,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
 
   Widget version(Responsive responsive){
     return Container(
-      margin: EdgeInsets.only(left: responsive.wp(35)),
+      margin: EdgeInsets.only(left: responsive.wp(35), top: responsive.hp(9)),
       child: Text("Versión 2.0",
         style: TextStyle(
           color: Tema.Colors.Azul_2,
