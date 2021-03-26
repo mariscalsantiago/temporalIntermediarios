@@ -40,139 +40,142 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
 
     Responsive responsive = Responsive.of(context);
-    return SafeArea(
-      child: Scaffold(
-        appBar: getAppBar(context, responsive),
-        body: SingleChildScrollView(
-          child: Center(
-            child: Column(
-              children: [
-                Container(
-                  margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3), top: responsive.hp(2)),
-                  child: Card(
-                    elevation: 2,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.Colors.backgroud,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      margin: EdgeInsets.only(left: 20.0, right: 10),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 8.0),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: dropdownValue,
-                          isExpanded: true,
-                          icon: Icon(Icons.arrow_drop_down),
-                          iconSize: 24,
-                          elevation: 20,
-                          style: TextStyle(
-                            color: Theme.Colors.Azul_2,
-                            fontSize: responsive.ip(1.8),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: SafeArea(
+        child: Scaffold(
+          appBar: getAppBar(context, responsive),
+          body: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3), top: responsive.hp(2)),
+                    child: Card(
+                      elevation: 2,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.Colors.backgroud,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        margin: EdgeInsets.only(left: 20.0, right: 10),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 8.0),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: dropdownValue,
+                            isExpanded: true,
+                            icon: Icon(Icons.arrow_drop_down),
+                            iconSize: 24,
+                            elevation: 20,
+                            style: TextStyle(
+                              color: Theme.Colors.Azul_2,
+                              fontSize: responsive.ip(1.8),
+                            ),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                dropdownValue = newValue;
+                              });
+                            },
+                            items: <String>['AP', "Autos"]
+                                .map<DropdownMenuItem<String>>(
+                                    (String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                           ),
-                          onChanged: (String newValue) {
-                            setState(() {
-                              dropdownValue = newValue;
-                            });
-                          },
-                          items: <String>['AP', "Autos"]
-                              .map<DropdownMenuItem<String>>(
-                                  (String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
                         ),
                       ),
                     ),
                   ),
-                ),
-                dropdownValue == "Autos" ? Container(
-                  height: responsive.hp(35),
-                  width: responsive.width,
-                  margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
-                    },
-                    child: Card(
-                      elevation: 4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset('assets/images/Group_542.png'),
-                          Container(
-                            margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Autos y motos", style: TextStyle(
-                                    letterSpacing: 0.15,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: responsive.ip(2),
-                                    color: Theme.Colors.Azul_gnp
-                                ),
-                                  textAlign: TextAlign.right,
-                                ),
-                                Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
-                              ],
+                  dropdownValue == "Autos" ? Container(
+                    height: responsive.hp(35),
+                    width: responsive.width,
+                    margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
+                      },
+                      child: Card(
+                        elevation: 4,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/images/Group_542.png'),
+                            Container(
+                              margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("Autos y motos", style: TextStyle(
+                                      letterSpacing: 0.15,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: responsive.ip(2),
+                                      color: Theme.Colors.Azul_gnp
+                                  ),
+                                    textAlign: TextAlign.right,
+                                  ),
+                                  Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
+                                ],
+                              ),
                             ),
-                          ),
 
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ) : Container(),
-                dropdownValue == "AP" ?  Container(
-                  height: responsive.hp(35),
-                  width: responsive.width,
-                  margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.pushNamed(context, "/cotizadorUnicoAP");
-                    },
-                    child: Card(
-                      elevation: 4,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset('assets/images/Group_435.png'),
-                          Container(
-                            margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("AP", style: TextStyle(
-                                    letterSpacing: 0.15,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: responsive.ip(2),
-                                    color: Theme.Colors.Azul_gnp
-                                ), textAlign: TextAlign.right,),
-                                Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
-                              ],
+                  ) : Container(),
+                  dropdownValue == "AP" ?  Container(
+                    height: responsive.hp(35),
+                    width: responsive.width,
+                    margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.pushNamed(context, "/cotizadorUnicoAP");
+                      },
+                      child: Card(
+                        elevation: 4,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset('assets/images/Group_435.png'),
+                            Container(
+                              margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text("AP", style: TextStyle(
+                                      letterSpacing: 0.15,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: responsive.ip(2),
+                                      color: Theme.Colors.Azul_gnp
+                                  ), textAlign: TextAlign.right,),
+                                  Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
+                                ],
+                              ),
                             ),
-                          ),
 
-                      ],),
+                        ],),
+                      ),
                     ),
-                  ),
-                ): Container(),
+                  ): Container(),
 
-              ],
-            )
-            /*Container(
-              child: WebView(
-                javascriptMode: JavascriptMode.unrestricted,
-                gestureNavigationEnabled:true,
-                initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?idParticipante=TSUAUT',
-              ),
-            )*/
+                ],
+              )
+              /*Container(
+                child: WebView(
+                  javascriptMode: JavascriptMode.unrestricted,
+                  gestureNavigationEnabled:true,
+                  initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?idParticipante=TSUAUT',
+                ),
+              )*/
+            ),
           ),
-        ),
-        bottomNavigationBar: TabsController(
-          isSecondLevel: false,
+          bottomNavigationBar: TabsController(
+            isSecondLevel: false,
+          ),
         ),
       ),
     );

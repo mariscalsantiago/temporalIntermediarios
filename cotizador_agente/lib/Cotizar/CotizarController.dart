@@ -82,7 +82,7 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
             margin: EdgeInsets.fromLTRB(16, 16, 0, 0),
             child: ListTile(
               onTap: () {
-                presenter.showSegurosMasivos();
+                //presenter.showSegurosMasivos();
                 setState(() {
                   Utilidades.tabCotizarSelect = true;
                 });

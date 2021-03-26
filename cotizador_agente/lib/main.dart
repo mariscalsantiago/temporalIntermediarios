@@ -22,6 +22,10 @@ File fotoPerfil;
 
 enum Vistas { login, home, perfil }
 enum ScreenType {phone,tabletLan, tabletPor}
+bool is_available_face=false;
+bool is_available_finger=false;
+
+
 ScreenType deviceType = ScreenType.phone;
 
 void main() async {

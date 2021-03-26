@@ -439,6 +439,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       color: Theme.Colors.divider_color,
                       thickness: responsive.hp(0.15),
                     ),
+                    is_available_finger != false || is_available_face != false ?
                     Row(
                       children: [
                         Container(
@@ -485,7 +486,7 @@ class _PerfilPageState extends State<PerfilPage> {
                               )),
                         ),
                       ],
-                    ),
+                    ) : Container(),
                     Divider(
                       color: Theme.Colors.divider_color,
                       thickness: responsive.hp(0.15),

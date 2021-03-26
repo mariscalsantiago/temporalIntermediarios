@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Models/Splash/splashModel.dart';
 import 'package:cotizador_agente/utils/MobileContainerPage.dart';
@@ -6,6 +7,8 @@ import 'package:cotizador_agente/utils/TabletContainerPage.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
 
 import '../../../main.dart';
 
@@ -17,6 +20,74 @@ class SplashMain extends StatefulWidget {
 }
 
 class _SplashMainState extends State<SplashMain> {
+  final LocalAuthentication auth = LocalAuthentication();
+  bool _canCheckBiometrics;
+  List<BiometricType> _availableBiometrics;
+  String _authorized = 'Not Authorized';
+  bool _isAuthenticating = false;
+
+  @override
+  void initState() {
+    _checkBiometrics();
+    super.initState();
+  }
+  Future<void> _checkBiometrics() async {
+    bool canCheckBiometrics;
+    try {
+      canCheckBiometrics = await auth.canCheckBiometrics;
+    } on PlatformException catch (e) {
+      print(e);
+    }
+    if (!mounted) return;
+    setState(() {
+      _canCheckBiometrics = canCheckBiometrics;
+    });
+    _getAvailableBiometrics();
+  }
+  Future<void> _getAvailableBiometrics() async {
+    List<BiometricType> availableBiometrics;
+    try {
+      availableBiometrics = await auth.getAvailableBiometrics();
+
+    } on PlatformException catch (e) {
+      print(e);
+    }
+    if(availableBiometrics.contains(BiometricType.fingerprint)&& availableBiometrics.contains(BiometricType.face)){
+      is_available_face = true;
+      is_available_finger = true;
+    }
+    else if (Platform.isIOS) {
+      if (availableBiometrics.contains(BiometricType.face)) {
+        is_available_face = true;
+        // Face ID.
+      } else if (availableBiometrics.contains(BiometricType.fingerprint)) {
+        is_available_finger = true;
+      }else{
+        is_available_face = false;
+        is_available_finger = false;
+      }
+    }else{
+      if(availableBiometrics.contains(BiometricType.fingerprint)&& availableBiometrics.contains(BiometricType.face)){
+        is_available_face = true;
+        is_available_finger = true;
+      }
+      else if (availableBiometrics.contains(BiometricType.fingerprint)) {
+        is_available_finger = true;
+      }else if (availableBiometrics.contains(BiometricType.face)) {
+        is_available_face = true;
+        // Face ID.
+      }else{
+        is_available_face = false;
+        is_available_finger = false;
+      }
+    }
+    if (!mounted) return;
+
+    setState(() {
+      _availableBiometrics = availableBiometrics;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -2,6 +2,7 @@ import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
+import 'package:flutter/services.dart';
 
 class LoginActualizarContrasena extends StatefulWidget {
   final Responsive responsive;
@@ -139,11 +140,15 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
 
   Widget inputTextActualContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+      ],
       controller: controllerActualContrasena,
       focusNode: focusActualContrasena,
       obscureText: actualContrasena,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusNuevaContrasena);},
       decoration: new InputDecoration(
+        focusColor: Tema.Colors.gnpOrange,
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
           ),
@@ -217,11 +222,15 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
 
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+      ],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
       decoration: new InputDecoration(
+        focusColor: Tema.Colors.gnpOrange,
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
           ),
@@ -323,6 +332,9 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           )
       ),
       validator: (value) {
+
+        if (value!= controllerNuevaContrasena.text)
+          return 'La contraseña no coincide';
 
         if (value.isEmpty) {
           return 'Este campo es requerido';

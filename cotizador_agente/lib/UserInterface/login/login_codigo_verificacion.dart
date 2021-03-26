@@ -5,6 +5,9 @@ import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
+import 'package:flutter/services.dart';
+
+import 'loginRestablecerContrasena.dart';
 
 class LoginCodigoVerificaion extends StatefulWidget {
   final Responsive responsive;
@@ -155,6 +158,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       focusNode: focusCodigo,
       obscureText: false,
       keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
+      ],
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -281,10 +287,12 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
         ),
         onPressed: (){
           if(_formKey.currentState.validate()){
-            customAlert(AlertDialogType.Numero_de_celular_verificado, context, "",  "", responsive);
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+            //customAlert(AlertDialogType.Numero_de_celular_verificado, context, "",  "", responsive);
+
           }
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: responsive,)));
         }
+
     );
   }
 

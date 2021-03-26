@@ -6,6 +6,8 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import '../main.dart';
+
 var isShowAlert = false;
 
 enum AlertDialogTypeTablet {
@@ -390,7 +392,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                       color: Theme.Colors.Funcional_Textos_Body,
                                       fontSize: responsive.ip(1.2)),
                                 )),
-                            Container(
+            is_available_finger != false ? Container(
                               margin: EdgeInsets.only(
                                 left: responsive.wp(1),
                                 right: responsive.wp(1),
@@ -423,8 +425,8 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                   ],
                                 ),
                               ),
-                            ),
-                            Container(
+                            ) : Container(),
+                                is_available_face != false ? Container(
                               margin: EdgeInsets.only(
                                 bottom: responsive.height * 0.01,
                                 left: responsive.wp(1),
@@ -459,7 +461,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                           )),
                                     ],
                                   )),
-                            ),
+                            ): Container(),
                             Center(
                               child: Container(
                                 height: responsive.hp(3),

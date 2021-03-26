@@ -2,6 +2,7 @@ import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
+import 'package:flutter/services.dart';
 
 class LoginCambiarContrasena extends StatefulWidget {
   final Responsive responsive;
@@ -138,11 +139,16 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
 
   Widget inputTextActualContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+      ],
+      enableInteractiveSelection: false,
       controller: controllerActualContrasena,
       focusNode: focusActualContrasena,
       obscureText: actualContrasena,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusNuevaContrasena);},
       decoration: new InputDecoration(
+        focusColor: Tema.Colors.gnpOrange,
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
           ),
@@ -216,11 +222,16 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
 
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+      ],
+      enableInteractiveSelection: false,
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
       decoration: new InputDecoration(
+        focusColor: Tema.Colors.gnpOrange,
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
           ),
@@ -294,6 +305,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
 
   Widget inputTextConfirmarContrasena(Responsive responsive){
     return TextFormField(
+      enableInteractiveSelection: false,
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,
       obscureText: confirmarnuevaContrasena,

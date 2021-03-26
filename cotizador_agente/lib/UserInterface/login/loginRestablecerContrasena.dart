@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
             ),),
             centerTitle: true,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back,
+              icon: Icon(Icons.close,
                 color: Tema.Colors.GNP,),
               onPressed: () {
                 Navigator.pop(context);
@@ -250,6 +251,9 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
       ),
       validator: (value) {
 
+        if (value!= controllerNuevaContrasena.text)
+          return 'La contraseña no coincide';
+
         if (value.isEmpty) {
           return 'Este campo es requerido';
         }
@@ -259,6 +263,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
         setState(() {
           focusConfirmarContrasena.hasFocus;
           controllerConfirmarContrasena.text;
+          controllerNuevaContrasena.text;
         });
       },
     );
@@ -282,8 +287,9 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
         ),
         onPressed: (){
           if(_formKey.currentState.validate()){
-
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
           }
+
         }
     );
   }

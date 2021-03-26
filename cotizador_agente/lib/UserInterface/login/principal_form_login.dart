@@ -17,6 +17,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import '../../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'login_codigo_verificacion.dart';
 import 'logoEncabezadoLogin.dart';
 import 'package:custom_switch/custom_switch.dart';
 
@@ -99,7 +100,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                             separacion(responsive, 2),
                             botonInicioSesion(responsive),
                             separacion(responsive, 1),
-                            activarHuella(responsive),
+                            is_available_finger != false || is_available_face != false ? activarHuella(responsive) : Container(),
                             separacion(responsive, 1),
                             version(responsive)
                           ]
@@ -270,7 +271,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           fontSize: responsive.ip(2.3),
         )),
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive,)));
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: widget.responsive,)));
         }
     );
   }
@@ -302,6 +303,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
 
             print(_saving);
             datosUsuario = await logInServices(context,controllerCorreo.text, controllerContrasena.text,controllerCorreo.text,responsive);
+           setState(() {
+             _saving = false;
+           });
             print("datosUsuario ${datosUsuario.roles}");
             if(datosUsuario != null){
               redirect(responsive);

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
 import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
+import 'package:cotizador_agente/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
@@ -390,7 +391,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.2)),
                               )),
-                          Container(
+                          is_available_finger != false ? Container(
                             margin: EdgeInsets.only(
                               bottom: responsive.height * 0.05,
                               left: responsive.wp(4),
@@ -420,8 +421,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 ],
                               ),
                             ),
-                          ),
-                          Container(
+                          ) : Container(),
+                          is_available_face != false ? Container(
                             margin: EdgeInsets.only(
                               bottom: responsive.height * 0.05,
                               left: responsive.wp(4),
@@ -454,7 +455,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         )),
                                   ],
                                 )),
-                          ),
+                          ) : Container(),
                           Center(
                             child: Container(
                               height: responsive.hp(6.25),
