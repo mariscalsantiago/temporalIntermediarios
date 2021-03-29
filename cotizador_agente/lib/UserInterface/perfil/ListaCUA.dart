@@ -43,7 +43,7 @@ class _listaCUAState extends State<listaCUA> {
           icon: Icon(Icons.clear,
             color: Tema.Colors.GNP,),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context,true);
           },
         ),
       ),
@@ -163,7 +163,7 @@ class _listaCUAState extends State<listaCUA> {
         ),
         onPressed: () async {
           if(_character != 99999){
-            Navigator.pop(context);
+            Navigator.pop(context,true);
           }
 
           //  Navigator.push(context, MaterialPageRoute(builder: (context) => SeleccionarPreguntas(responsive: responsive,)),);

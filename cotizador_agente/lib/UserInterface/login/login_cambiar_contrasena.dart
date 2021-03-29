@@ -69,7 +69,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
               icon: Icon(Icons.arrow_back,
                 color: Tema.Colors.GNP,),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               },
             ),
           ),
@@ -100,7 +100,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
                   focusNuevaContrasena.hasFocus ? validacionesContrasena(responsive):Container(),
                   separacion(responsive, 3),
                   inputTextConfirmarContrasena(responsive),
-                  separacion(responsive, 25),
+                  focusNuevaContrasena.hasFocus == true || focusConfirmarContrasena.hasFocus ? Container() : separacion(responsive, 25),
                   validarCodigo(responsive)
                 ],
               ),

@@ -2,26 +2,18 @@ import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
-import 'package:cotizador_agente/UserInterface/login/SeleccionarPreguntas.dart';
-import 'package:cotizador_agente/UserInterface/login/loginPreguntasSecretas.dart';
-import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
-import 'package:cotizador_agente/UserInterface/login/subsecuente_biometricos.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 import '../../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_codigo_verificacion.dart';
 import 'logoEncabezadoLogin.dart';
-import 'package:custom_switch/custom_switch.dart';
-
-
 
 class PrincipalFormLogin extends StatefulWidget {
   final Responsive responsive;
@@ -40,19 +32,38 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   FocusNode focusContrasena;
   bool contrasena;
   bool _huella;
-  bool _validarCampo;
+  bool existeUsuario;
+  String correoUsuario;
+  String contrasenaUsuario;
+  bool aceptoTerminos;
 
   @override
   void initState() {
+    correoUsuario = "";
+    contrasenaUsuario = "";
     _saving = false;
-    _huella = false;
-    _validarCampo = false;
     contrasena = true;
     focusCorreo = new FocusNode();
     focusContrasena = new FocusNode();
     controllerContrasena = new TextEditingController();
     controllerCorreo = new TextEditingController();
-    showOnboarding();
+    //showOnboarding();
+    if(prefs != null && prefs.getBool("userRegister") != null){
+      if(prefs.getBool("userRegister") == true){
+        existeUsuario = true;
+        _huella =  prefs.getBool("activarBiometricos");
+      } else{
+        _huella = false;
+        existeUsuario = false;
+        prefs.setBool("activarBiometricos", _huella);
+      }
+    } else {
+      _huella = false;
+      aceptoTerminos = false;
+      prefs.setBool("activarBiometricos", _huella);
+      prefs.setBool("aceptoTerminos", aceptoTerminos);
+      existeUsuario = false;
+    }
     super.initState();
   }
 
@@ -92,15 +103,15 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             separacion(responsive, 6),
-                            inputTextCorreo(responsive),
+                            existeUsuario ? Container() : inputTextCorreo(responsive),
                             separacion(responsive, 2),
                             inputTextContrasena(responsive),
                             separacion(responsive, 2),
                             olvidasteContrasena(responsive),
-                            separacion(responsive, 2),
+                            existeUsuario ? separacion(responsive, 6) : separacion(responsive, 2),
                             botonInicioSesion(responsive),
                             separacion(responsive, 1),
-                            is_available_finger != false || is_available_face != false ? activarHuella(responsive) : Container(),
+                            is_available_finger != false || is_available_face != false ? activarHuella(responsive) : Container(height: 10,width: 10,),
                             separacion(responsive, 1),
                             version(responsive)
                           ]
@@ -142,11 +153,19 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   }
 
   Widget subtitulo(Responsive responsive){
-    return Text("Intermediario GNP\n ¡Te damos la bienvenida!", style: TextStyle(
-        color: Tema.Colors.Azul_gnp,
-        fontWeight: FontWeight.normal,
-        fontSize: responsive.ip(3.4)
-    ), textAlign: TextAlign.center,);
+    return existeUsuario ?
+      Text( datosPerfilador != null && datosPerfilador.agenteInteresadoList != null ?  "¡Hola ${datosPerfilador.agenteInteresadoList.elementAt(0).nombres}!"
+          : "¡Hola !", style: TextStyle(
+          color: Tema.Colors.Azul_gnp,
+          fontWeight: FontWeight.normal,
+          fontSize: responsive.ip(3.4)
+      ), textAlign: TextAlign.center,):
+      Text( "Intermediario GNP\n ¡Te damos la bienvenida!", style: TextStyle(
+          color: Tema.Colors.Azul_gnp,
+          fontWeight: FontWeight.normal,
+          fontSize: responsive.ip(3.4)
+      ), textAlign: TextAlign.center,)
+    ;
   }
 
   Widget inputTextCorreo(Responsive responsive){
@@ -165,18 +184,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
           ),
-          /*hintText: "Correo electrónico--",
-          hintStyle: focusCorreo.hasFocus ? TextStyle(
-              fontFamily: "Roboto",
-              fontWeight: FontWeight.w300,
-              fontSize: responsive.ip(2),
-              color: Tema.Colors.backgroud
-          ):  TextStyle(
-              fontFamily: "Roboto",
-              fontWeight: FontWeight.w300,
-              fontSize: responsive.ip(2),
-              color: Tema.Colors.Azul_2
-          ),*/
           labelText: "Correo electrónico",
           labelStyle: TextStyle(
               fontFamily: "Roboto",
@@ -218,18 +225,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
           ),
-          /*hintText: "Contraseña",
-          hintStyle: focusContrasena.hasFocus ? TextStyle(
-              fontFamily: "Roboto",
-              fontWeight: FontWeight.w300,
-              fontSize: responsive.ip(2),
-              color: Tema.Colors.backgroud
-          ):  TextStyle(
-              fontFamily: "Roboto",
-              fontWeight: FontWeight.w300,
-              fontSize: responsive.ip(2),
-              color: Tema.Colors.Azul_2
-          ),*/
           labelText: "Contraseña",
           labelStyle: TextStyle(
               fontFamily: "Roboto",
@@ -271,7 +266,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           fontSize: responsive.ip(2.3),
         )),
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: widget.responsive,)));
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
         }
     );
   }
@@ -282,13 +277,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3),
-            color: (controllerContrasena.text != "" && controllerCorreo.text != "") ?
+            color: (controllerContrasena.text != "" && controllerCorreo.text != "") || (existeUsuario && controllerContrasena.text != "") ?
             Tema.Colors.GNP : Tema.Colors.botonlogin ,
           ),
           padding: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
           width: responsive.width,
           child: Text("INICIAR SESIÓN", style: TextStyle(
-            color:  (controllerContrasena.text != "" && controllerCorreo.text != "") ?
+            color:  (controllerContrasena.text != "" && controllerCorreo.text != "")  || (existeUsuario && controllerContrasena.text != "")?
                 Tema.Colors.backgroud : Tema.Colors.botonletra,
           ),
           textAlign: TextAlign.center),
@@ -301,19 +296,30 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               _saving = true;
             });
 
-            print(_saving);
-            datosUsuario = await logInServices(context,controllerCorreo.text, controllerContrasena.text,controllerCorreo.text,responsive);
-           setState(() {
-             _saving = false;
-           });
-            print("datosUsuario ${datosUsuario.roles}");
+            if(prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != ""){
+               correoUsuario = prefs.getString("correoUsuario");
+               contrasenaUsuario = prefs.getString("contrasenaUsuario");
+               print("if correoUsuario ${correoUsuario}");
+
+            } else {
+              prefs.setString("correoUsuario", controllerCorreo.text);
+              correoUsuario = controllerCorreo.text;
+              prefs.setString("contrasenaUsuario", controllerContrasena.text);
+              contrasenaUsuario = controllerContrasena.text;
+
+              print("else correoUsuario ${correoUsuario}");
+            }
+            datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
+             setState(() {
+               _saving = false;
+             });
             if(datosUsuario != null){
+              ultimaSesion = fechaPrototipo(DateTime.now().toString());
               redirect(responsive);
             } else {
-
+              prefs.setString("correoUsuario", "");
+              prefs.setString("contrasenaUsuario", "");
             }
-            //customAlert(AlertDialogType.verificaTuNumeroCelular, context, "", "", responsive);
-
             setState(() {
               _saving = false;
             });
@@ -326,24 +332,30 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   }
 
   redirect( Responsive responsive) async {
-    prefs = await SharedPreferences.getInstance();
     if (prefs != null) {
-      if (prefs.getBool("userRegister") != null) {
-        if (prefs.getBool("userRegister") == true) {
+      if (existeUsuario) {
           controllerContrasena.clear();
           controllerCorreo.clear();
-          Navigator.push(
-            context,
-            new MaterialPageRoute(builder: (_) => new HomePage()));
-        } else{
-        }
+
+          Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage()));
+
       } else {
         prefs.setBool("userRegister", true);
-        if (deviceType == ScreenType.phone) {
-          customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive);
-        }
-        else{
-          customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
+        if(_huella){
+
+          if (deviceType == ScreenType.phone) {
+            customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive);
+          }
+          else{
+            customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
+          }
+        } else{
+          if (deviceType == ScreenType.phone) {
+            customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive);
+          }
+          else{
+            customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
+          }
         }
       }
     }
@@ -373,8 +385,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               onChanged:(val) {
                 setState(() {
                   _huella = val;
+                  prefs.setBool("activarBiometricos", _huella);
                 });
-                if(_huella){
+                /*if(_huella){
                   //TODO cambiar clasa home por prueba de biometricos
                   //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BiometricosPage(responsive: widget.responsive,)));
                   if (deviceType == ScreenType.phone) {
@@ -383,7 +396,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                   else{
                     customAlertTablet(AlertDialogTypeTablet. opciones_de_inicio_de_sesion,context,"","", responsive);
                   }
-                }
+                }*/
               },
               value: _huella,
               activeColor: Tema.Colors.GNP,
@@ -391,34 +404,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               inactiveThumbColor: Tema.Colors.Azul_gnp,
               inactiveTrackColor:Tema.Colors.botonletra,
             ),
-            /*FlutterSwitch(
-              activeColor: Tema.Colors.biometrico,
-              inactiveToggleColor: Tema.Colors.Azul_gnp,
-              activeToggleColor: Tema.Colors.GNP,
-              inactiveColor: Tema.Colors.botonletra,
-              width: responsive.width * 0.12,
-              height: responsive.height * 0.027,
-              valueFontSize: 0.0,
-              toggleSize: 18.0,
-              value: _huella,
-              padding: 2.0,
-              showOnOff: false,
-              onToggle: (val) {
-                setState(() {
-                  _huella = val;
-                });
-                if(_huella){
-                  //TODO cambiar clasa home por prueba de biometricos
-                 //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BiometricosPage(responsive: widget.responsive,)));
-                 if (deviceType == ScreenType.phone) {
-                   customAlert(AlertDialogType. opciones_de_inicio_de_sesion,context,"","", responsive);
-                 }
-                 else{
-                  customAlertTablet(AlertDialogTypeTablet. opciones_de_inicio_de_sesion,context,"","", responsive);
-                 }
-                }
-              },
-            ),*/
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(left: responsive.wp(2)),
@@ -455,4 +440,107 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       height: responsive.hp(tamano),
     );
   }
+}
+
+
+
+String fechaPrototipo(String fecha){
+  String ano = fecha.substring(0, 4);
+  String mes = fecha.substring(5,7);
+  String dia = fecha.substring(8,10);
+  String hora = fecha.substring(11,13);
+  String minutos = fecha.substring(14,16);
+  String anoDosDigitos = ano.substring(2,4);
+  print("fecha: ${fecha}");
+  print("ano: ${ano}");
+  print("mes: ${mes}");
+  print("dia: ${dia}");
+  print("hora: ${hora}");
+  print("minutos: ${minutos}");
+  print("anoDosDigitos: ${anoDosDigitos}");
+
+  String valorMes = "";
+  String valorHora = "";
+  switch(mes) {
+    case "01":
+      valorMes = "Ene";
+      break;
+    case "02":
+      valorMes = "Feb";
+      break;
+    case "03":
+      valorMes = "Mar";
+      break;
+    case "04":
+      valorMes = "Abr";
+      break;
+    case "05":
+      valorMes = "May";
+      break;
+    case "06":
+      valorMes = "Jun";
+      break;
+    case "07":
+      valorMes = "Jul";
+      break;
+    case "08":
+      valorMes = "Ago";
+      break;
+    case "09":
+      valorMes = "Sep";
+      break;
+    case "10":
+      valorMes = "Oct";
+      break;
+    case "11":
+      valorMes = "Nov";
+      break;
+    case "12":
+      valorMes = "Dic";
+      break;
+  }
+  switch(hora) {
+    case "01": case "02": case "03": case "04": case "05": case "06":case "07": case "08": case "09": case "10": case "11": case "12":
+    valorHora = "${hora}:${minutos}am";
+    break;
+
+    case "13":
+      valorHora = "01:${minutos}pm";
+      break;
+    case "14":
+      valorHora = "02:${minutos}pm";
+      break;
+    case "15":
+      valorHora = "03:${minutos}pm";
+      break;
+    case "16":
+      valorHora = "04:${minutos}pm";
+      break;
+    case "17":
+      valorHora = "05:${minutos}pm";
+      break;
+    case "18":
+      valorHora = "06:${minutos}pm";
+      break;
+    case "19":
+      valorHora = "07:${minutos}pm";
+      break;
+    case "20":
+      valorHora = "08:${minutos}pm";
+      break;
+    case "21":
+      valorHora = "09:${minutos}pm";
+      break;
+    case "22":
+      valorHora = "10:${minutos}pm";
+      break;
+    case "23":
+      valorHora = "11:${minutos}pm";
+      break;
+    default :
+      valorHora = "${hora}:${minutos}";
+  }
+
+
+  return "${dia}/${valorMes}/${ano} ${valorHora}";
 }

@@ -1,7 +1,6 @@
 import 'package:cotizador_agente/Functions/Validate.dart';
 
 var config;
-var prefs;
 LoginModel loginData;
 LoginDatosModel datosUsuario;
 Map mapPerfilador;

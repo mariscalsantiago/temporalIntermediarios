@@ -52,7 +52,7 @@ class _AutosPageState extends State<AutosPage> {
           if (mUrl.contains(returnToApp)) {
             _flutterWebViewPlugin.close();
             _flutterWebViewPlugin.dispose();
-            Navigator.pop(context);
+            Navigator.pop(context,true);
           }
           
     });
@@ -89,7 +89,7 @@ class _AutosPageState extends State<AutosPage> {
 
           print(navigationAction);
           if (uri.contains(returnToApp)) {
-            Navigator.pop(context);
+            Navigator.pop(context,true);
             }
           },
         onConsoleMessage: (controller, consoleMessage) {

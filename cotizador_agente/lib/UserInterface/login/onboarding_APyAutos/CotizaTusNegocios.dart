@@ -52,7 +52,7 @@ class _CotizaTusNegocios_Onboarding extends State<CotizaTusNegocios_Onboarding> 
                   ),
                   color: Theme.Colors.GNP,
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context,true);
 
                   },
                   child: Text(

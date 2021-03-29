@@ -1,8 +1,8 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
-import 'package:cotizador_agente/Models/LoginModel.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +11,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../main.dart';
 
+String iniciales="EJ";
 class HomePage extends StatefulWidget {
   bool verificacionCodigo;
   HomePage({Key key, this.verificacionCodigo}) : super(key: key);
@@ -26,10 +27,20 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     dropdownValue = "Autos";
+
     super.initState();
   }
   int _selectedIndex = 0;
-
+void getInicialesName(){
+  if(datosPerfilador != null){
+    if(datosPerfilador.agenteInteresadoList.isNotEmpty){
+      try{
+        iniciales = "${(datosPerfilador.agenteInteresadoList.elementAt(posicionCUA).nombres[0])} ${datosPerfilador.agenteInteresadoList.elementAt(posicionCUA).apellidoPaterno[0]}";
+      }catch(e){
+        print(e);
+      }}
+  }
+}
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -38,7 +49,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-
+    getInicialesName();
     Responsive responsive = Responsive.of(context);
     return WillPopScope(
       onWillPop: () async => false,
@@ -57,8 +68,9 @@ class _HomePageState extends State<HomePage> {
                         decoration: BoxDecoration(
                           color: Theme.Colors.backgroud,
                           borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Theme.Colors.Azul_gnp)
                         ),
-                        margin: EdgeInsets.only(left: 20.0, right: 10),
+                        //margin: EdgeInsets.only(left: 20.0, right: 10),
                         padding: EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 8.0),
                         child: DropdownButtonHideUnderline(
@@ -91,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   dropdownValue == "Autos" ? Container(
-                    height: responsive.hp(35),
+                    height: responsive.hp(36),
                     width: responsive.width,
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
@@ -103,7 +115,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset('assets/images/Group_542.png'),
+                            Image.asset('assets/images/autosymotos.png'),
                             Container(
                               margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
                               child: Row(
@@ -187,13 +199,16 @@ class _HomePageState extends State<HomePage> {
       elevation: 0.0,
       leading: Container(
         margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
-        child: Image.asset("assets/icon/splash/logoGNP.png",
-            height: responsive.hp(25), width: responsive.wp(25)),
+        //child: Image.asset("assets/icon/splash/logoGNP.png",
+            //height: responsive.hp(25), width: responsive.wp(25)),
       ),
-      title: Container(
-        //margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
-        child: Image.asset("assets/icon/splash/logoGNP.png",
-            height: responsive.hp(25), width: responsive.wp(25)),
+      title: Center(
+        child: Container(
+          //margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
+         child: Image.asset("assets/icon/splash/logoGNP.png",
+            height: responsive.hp(25), width: responsive.wp(25),
+          )
+        ),
       ),
       //centerTitle: true,
       backgroundColor: Colors.white,
@@ -208,10 +223,33 @@ class _HomePageState extends State<HomePage> {
           onTap: (){
             Navigator.push(context, MaterialPageRoute(builder: (context) => PerfilPage()),);
           },
-          child: fotoPerfil != null
-          ? CircleAvatar(backgroundImage: new FileImage(fotoPerfil), radius:  105.7,)
-              : Image.asset('assets/images/examplePerfil.png')
-        )
+          child:Container(
+              width: responsive.wp(13),
+              height: responsive.hp(13),
+              decoration: BoxDecoration(
+                  color: Theme.Colors.profile_logo,
+                  shape: BoxShape.circle,
+                  //borderRadius: BorderRadius.circular(100),
+                  border: Border.all(
+                      width: 2,
+                      color: Theme.Colors.Azul_2)),
+              child: Center(
+                child: fotoPerfil != null
+                    ? CircleAvatar(
+                  backgroundImage:
+                  new FileImage(fotoPerfil),
+                  radius: 200.0,
+                )
+                    : Text(iniciales,
+                  style: TextStyle(
+                      fontSize:
+                      responsive.hp(1.7),
+                      color:
+                      Theme.Colors.Azul_gnp,
+                      fontWeight:
+                      FontWeight.w400),
+                ),
+              ))     )
       ],
     );
   }

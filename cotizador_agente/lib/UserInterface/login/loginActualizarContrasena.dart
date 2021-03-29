@@ -28,7 +28,9 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   FocusNode focusConfirmarContrasena;
   TextEditingController controllerActualContrasena;
   FocusNode focusActualContrasena;
-  RegExp reConsecutive = RegExp('^(?!.*([A-Za-z0-9])\1{2})(?=.*[az])(?=.*\d)[A-Za-z0-9]+\$');
+  //RegExp reConsecutive = RegExp('^(?!.*([A-Za-z0-9])\1{2})(?=.*[az])(?=.*\d)[A-Za-z0-9]+\$');
+  RegExp reConsecutive = RegExp('(.)\\1'); // 111 aaa
+  RegExp reConsecutive2 = RegExp('^(?!.*(.)\\1)');// 123 abcd
   final _formKey = GlobalKey<FormState>();
   bool _saving;
   bool actualContrasena;
@@ -69,7 +71,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
               icon: Icon(Icons.arrow_back,
                 color: Tema.Colors.GNP,),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               },
             ),
           ),
@@ -101,7 +103,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                   focusNuevaContrasena.hasFocus ? validacionesContrasena(responsive):Container(),
                   separacion(responsive, 3),
                   inputTextConfirmarContrasena(responsive),
-                  separacion(responsive, 25),
+                  focusNuevaContrasena.hasFocus == true || focusConfirmarContrasena.hasFocus ? Container(): separacion(responsive, 25),
                   enviar(responsive)
                 ],
               ),
@@ -181,8 +183,10 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
       },
       onChanged: (value){
         setState(() {
-          print("value");
+          print("value Giiii");
           print(value);
+          print("reConsecutive : ");
+          print("reConsecutive : " + reConsecutive.hasMatch(value).toString());
           controllerActualContrasena.text;
           if(value.length<8){
             lentPass = false;
@@ -209,12 +213,20 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           }else{
             hasEspacePass=false;
           }
-          if(reConsecutive.hasMatch(value)){
+          /*
+          // aaaa 1111
+
+          if(reConsecutive.hasMatch(value) ){
             hasConsecutiveIgualesPass = false;
           } else {
-            hasConsecutiveIgualesPass = true;
+            hasConsecutiveIgualesPass =true;
+          }//123 abc
+          if(reConsecutive2.hasMatch(value)){
+            hasConsecutivosPass = false;
+          } else {
+            hasConsecutivosPass =true;
           }
-
+*/
         });
       },
     );
@@ -291,10 +303,16 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           }else{
             hasEspacePass=false;
           }
-          if(reConsecutive.hasMatch(value)){
-            hasConsecutiveIgualesPass = false;
-          } else {
+          // aaaa 1111
+          if(reConsecutive.hasMatch(value) ){
             hasConsecutiveIgualesPass = true;
+          } else {
+            hasConsecutiveIgualesPass =false;
+          }//123 abc
+          if(reConsecutive2.hasMatch(value)){
+            hasConsecutivosPass = true;
+          } else {
+            hasConsecutivosPass =false;
           }
 
         });
@@ -482,21 +500,20 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                 children: <Widget>[
                   Container(
                       margin: EdgeInsets.only(right: responsive.width * 0.02),
-                      child: Image.asset("assets/login/radioContrasena.png", color: Tema.Colors.togglegris, width: 22, height: 22)
-                  ),
-                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos iguales (p.e. 222, eee).", style: TextStyle(fontSize: responsive.ip(1.8), color:Tema.Colors.letragris),))
+                      child: Image.asset(!hasConsecutiveIgualesPass ? "assets/login/checkcircle.svg": "assets/login/checkfail.svg",color: !hasConsecutiveIgualesPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
+                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos iguales (p.e. 222, eee).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutiveIgualesPass?Colors.green:Colors.red,),))
                 ],
               ),
             ),
             controllerNuevaContrasena.text != ""  || controllerConfirmarContrasena.text != "" ? Container(
               margin: EdgeInsets.only(bottom: responsive.hp(1)),
-              child: Row(
+              child:  Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
                       margin: EdgeInsets.only(right: responsive.width * 0.02),
-                      child: Image.asset(!hasConsecutiveIgualesPass ? "assets/login/checkcircle.png": "assets/login/checkfail.png" ,color: !hasConsecutiveIgualesPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
-                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos (p.e. 123, abc).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutiveIgualesPass?Colors.green:Colors.red,),))
+                      child: Image.asset(!hasConsecutivosPass ? "assets/login/checkcircle.svg": "assets/login/checkfail.svg" ,color: !hasConsecutivosPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
+                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos (p.e. 123, abc).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutivosPass?Colors.green:Colors.red,),))
                 ],
               ),
             ) : Container(
@@ -536,7 +553,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
         ),
         onPressed: (){
           if(_formKey.currentState.validate()){
-            Navigator.pop(context);
+            Navigator.pop(context,true);
           }
         }
     );

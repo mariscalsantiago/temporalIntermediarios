@@ -114,7 +114,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
             }else{
               formato.stop();
               Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleError, response.body, context,"Reintentar",(){
-                Navigator.pop(context);
+                Navigator.pop(context,true);
                 getFormato(context);
               });
             }
@@ -122,7 +122,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
           }else {
             formato.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-              Navigator.pop(context);
+              Navigator.pop(context,true);
               getFormato(context);
             });
           }
@@ -200,9 +200,9 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
         this.setState(() {
           isLoading = false;
           success = true;
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleExito, Mensajes.cotizacionEnviada, context, "Aceptar", (){
-            Navigator.pop(context);
+            Navigator.pop(context,true);
             Navigator.pushReplacement(context,  MaterialPageRoute(
               builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
             ));
@@ -212,8 +212,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
       }else{
         mytrace.stop();
         isLoading = false;
-        Navigator.pop(context);
-        Navigator.pop(context);
+        Navigator.pop(context,true);
+        Navigator.pop(context,true);
         String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
 
         Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
@@ -221,7 +221,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
     }else {
       mytrace.stop();
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
+        Navigator.pop(context,true);
         sendEmailService();
       });
     }
@@ -678,7 +678,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                         flex: 2,
                         child: FloatingActionButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            Navigator.pop(context,true);
                           },
                           heroTag: "btn1",
                           tooltip: "Cerrar",

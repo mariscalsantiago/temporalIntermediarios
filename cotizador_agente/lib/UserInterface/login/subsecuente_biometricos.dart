@@ -1,13 +1,20 @@
 
 import 'dart:ui';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
+import '../../main.dart';
 import 'logoEncabezadoLogin.dart';
 
+String _authorized = 'Not Authorized';
+bool _isAuthenticating = false;
 
 class BiometricosPage extends StatefulWidget {
   BiometricosPage({Key key, this.responsive}) : super(key: key);
@@ -19,6 +26,31 @@ class BiometricosPage extends StatefulWidget {
 
 class _BiometricosPage extends State<BiometricosPage> {
   bool face = false;
+  bool showBio = true;
+  var localAuth = new LocalAuthentication();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(is_available_finger != false  ){
+      face = false;
+      if(is_available_face != false){
+        showBio = true;
+      }
+      else{
+        showBio = false;
+      }
+    }else if(is_available_face != false){
+      face = true;
+      if(is_available_finger != false){
+        showBio = true;
+      }
+      else{
+        showBio = false;
+      }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,21 +68,27 @@ class _BiometricosPage extends State<BiometricosPage> {
               style: TextStyle(color: Tema.Colors.Encabezados, fontSize: widget.responsive.ip(3)),
             )),
             separacion(widget.responsive, 8),
+
             Container(
                 margin: EdgeInsets.only(
                     left: widget.responsive.wp(2),
                     right: widget.responsive.wp(2)),
-                child: Icon(face != false ? Tema.Icons.facial : Icons.fingerprint, size: widget.responsive.ip(9), color: Tema.Colors.GNP,)),
+                child: GestureDetector(
+                  onTap: (){
+                    if(face){}else{
+                      _authenticateHuella();
+                    }
+                  },
+                    child: Icon(face != false ? Tema.Icons.facial : Icons.fingerprint, size: widget.responsive.ip(9), color: Tema.Colors.GNP,))),
             Container(
               margin: EdgeInsets.only(top: widget.responsive.hp(3), bottom: widget.responsive.hp(4), left: widget.responsive.wp(30), right: widget.responsive.wp(30)),
               child:
                   Text(face != false ?"Mira fijamente a la cámara de tu dispositivo": "Coloca tu huella en el lector de tu dispositivo",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Tema.Colors.Funcional_Textos_Body, fontSize: widget.responsive.ip(1.5)),
-
                   ),
             ),
-        CupertinoButton(
+            showBio != false ? CupertinoButton(
           padding: EdgeInsets.zero,
           child: Container(
             margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
@@ -75,9 +113,7 @@ class _BiometricosPage extends State<BiometricosPage> {
             });
 
           }
-      ),
-
-
+      ):Container(),
             CupertinoButton(
                 padding: EdgeInsets.zero,
                 child: Container(
@@ -93,10 +129,9 @@ class _BiometricosPage extends State<BiometricosPage> {
                       textAlign: TextAlign.center),
                 ),
                 onPressed: () async {
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
                 }
             ),
-
-
             CupertinoButton(
                 padding: EdgeInsets.zero,
                 child: Container(
@@ -112,6 +147,8 @@ class _BiometricosPage extends State<BiometricosPage> {
                       textAlign: TextAlign.center),
                 ),
                 onPressed: () async {
+                  prefs.setBool("userRegister", false);
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
                 }
             ),
         Container(
@@ -126,11 +163,6 @@ class _BiometricosPage extends State<BiometricosPage> {
             textAlign: TextAlign.center,
           ),
         ),
-
-
-
-
-
           ],
         ),
       ),
@@ -141,6 +173,36 @@ class _BiometricosPage extends State<BiometricosPage> {
     return SizedBox(
       height: responsive.hp(tamano),
     );
+  }
+
+  Future<void> _authenticateHuella() async {
+    bool authenticated = false;
+    try {
+      setState(() {
+        _isAuthenticating = true;
+        _authorized = 'Authenticating';
+      });
+      authenticated = await localAuth.authenticateWithBiometrics(
+          localizedReason: 'Ingresa tu huella para Autenticarte',
+          useErrorDialogs: false,
+          stickyAuth: false);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Authenticating';
+      });
+      print("Authetificación Usuario");
+      if(authenticated){
+       //TODO enviar login
+      }
+    } on PlatformException catch (e) {
+      print(e);
+    }
+    if (!mounted) return;
+
+    final String message = authenticated ? 'Authorized' : 'Not Authorized';
+    setState(() {
+      _authorized = message;
+    });
   }
 
 }

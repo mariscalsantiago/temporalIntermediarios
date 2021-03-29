@@ -45,7 +45,7 @@ class _APyAutosOnboarding extends State<APyAutosOnboarding> {
                   left: responsive.wp(64)),
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+                        Navigator.pop(context,true);
                         },
                       child: Text(
                         "Omitir",

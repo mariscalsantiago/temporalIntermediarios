@@ -41,6 +41,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           )
       ),
       showSkipButton: true,
+      showNextButton : false,
       skip: const Text("Omitir"),
       done: CupertinoButton(
           padding: EdgeInsets.zero,
@@ -59,7 +60,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 textAlign: TextAlign.center),
           ),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pop(context,true);
           }),
     );
   }

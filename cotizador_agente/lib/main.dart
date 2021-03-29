@@ -20,10 +20,11 @@ import 'UserInterface/login/principal_form_login.dart';
 
 File fotoPerfil;
 
-enum Vistas { login, home, perfil }
+enum Vistas { login, home, perfil, biometricos }
 enum ScreenType {phone,tabletLan, tabletPor}
 bool is_available_face=false;
 bool is_available_finger=false;
+String ultimaSesion="";
 
 
 ScreenType deviceType = ScreenType.phone;
@@ -88,6 +89,7 @@ class MyApp extends StatelessWidget {
                 '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
                 '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
                 '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
+                '/login': (context) => PrincipalFormLogin(),
               },
               title: 'App Contratacion',
               debugShowCheckedModeBanner: false,

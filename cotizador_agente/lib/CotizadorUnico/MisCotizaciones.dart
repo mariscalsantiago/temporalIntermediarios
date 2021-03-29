@@ -120,7 +120,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
           }else{
             deleteCot.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-              Navigator.pop(context);
+              Navigator.pop(context,true);
               eliminarDelServer(id, context);
             });
           }
@@ -129,7 +129,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
       }else {
         deleteCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           eliminarDelServer(id, context);
         });
       }
@@ -254,7 +254,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
               } else if (statusCode != null) {
                 llenaTbl.stop();
                 isLoading = false;
-                Navigator.pop(context);
+                Navigator.pop(context,true);
                 String message = json.decode(response.body)['message'] != null
                     ? json.decode(response.body)['message']
                     : json.decode(response.body)['errors'][0] != null
@@ -282,7 +282,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
       } else {
         llenaTbl.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           llenarTabla(context);
         });
       }
@@ -369,7 +369,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
     Utilidades.cargarNuevoPaso = true;
 
-    Navigator.pop(context);
+    Navigator.pop(context,true);
 
     Navigator.push(context,
         MaterialPageRoute(
@@ -524,7 +524,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
           leading: IconButton(
             icon: Icon(Icons.chevron_left, size: 35,),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context,true);
             },
           ),
           actions: <Widget>[
@@ -564,7 +564,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              Navigator.pop(context);
+                              Navigator.pop(context,true);
                               Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                             },
                             child: Padding(
@@ -582,7 +582,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                           IconButton(
                             icon: Icon(Icons.add, color: AppColors.color_primario,),
                             onPressed: () {
-                              Navigator.pop(context);
+                              Navigator.pop(context,true);
                               Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                             },),
                         ],

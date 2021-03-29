@@ -120,11 +120,11 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
   void recargar(){
     Utilidades.mostrarAlertaBorrarCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
-      Navigator.pop(context);
+      Navigator.pop(context,true);
     }, (){
       print("RECARGA");
       setState(() {
-        Navigator.pop(context);
+        Navigator.pop(context,true);
         setState(() {
           isLoading = true;
         });
@@ -201,7 +201,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                 isLoading = true;
 
               });
-              Navigator.pop(context);
+              Navigator.pop(context,true);
 
               widget.deboReemplazarGuardada  = true;
 
@@ -231,7 +231,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
 
               //Son diferentes, paso 2 normal. SIN RESTABLECER.
-              Navigator.pop(context);
+              Navigator.pop(context,true);
 
 
               secciones = new List<Seccion>();
@@ -391,7 +391,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
         }else{
           data.stop();
           isLoading = false;
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] :
           response.response['errors'][0] != null ?
           response.response['errors'][0] : "Error del servidor";
@@ -405,7 +405,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
     }else{
         data.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           getData();
         });
       }
@@ -448,7 +448,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
           });
 
           if(!encontrePlanes){
-            Navigator.pop(context);
+            Navigator.pop(context,true);
 
             Utilidades.mostrarAlerta("Error", Mensajes.errorConfig, context);
 
@@ -470,7 +470,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
     }else {
       isLoading = false;
-      Navigator.pop(context);
+      Navigator.pop(context,true);
     }
   }
 
@@ -630,7 +630,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
 
           }else{
             Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoAP'));
-          //  Navigator.pop(context);
+          //  Navigator.pop(context,true);
           }
 
           return true;
@@ -740,7 +740,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                 IconButton(
                                   icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     recargar();
                                   },),
                               ],
@@ -1031,7 +1031,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                           if(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.toJSON() != null){
                                             print(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.toJSON());
                                           }else{
-                                            Navigator.pop(context);
+                                            Navigator.pop(context,true);
                                           }
                                         } else {
                                           Utilidades.mostrarAlerta("Error", "Faltan datos obligatorios por capturar", context);

@@ -8,7 +8,7 @@ class Colors {
   static const Color White = Color(0xffffffff);
   static const Color None = Color(0x00ffffff);
   static const Color Orange = Color(0xff0254C0);
-  static const Color primary = Color(0xff41BBC9);
+  static const Color primary = Color(0xff002E71);
   static const Color grisVal = Color(0xff797F97);
 
   static const Color textoCardBlanco = Color(0xffFBF7F4);

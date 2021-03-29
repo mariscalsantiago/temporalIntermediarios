@@ -100,10 +100,10 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
   void recargarPaso2(String p){
     //actualizarVistaConNuevoPlan(p);
-    //Navigator.pop(context);
-    Navigator.pop(context);
-    Navigator.pop(context);
-    Navigator.pop(context);
+    //Navigator.pop(context,true);
+    Navigator.pop(context,true);
+    Navigator.pop(context,true);
+    Navigator.pop(context,true);
     Utilidades.cotizacionesApp.eliminarDeLaComparativa(Utilidades.cotizacionesApp.getCurrentLengthLista()-1);
 
     Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
@@ -115,9 +115,9 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
   void limpiarDatos(){
 
     Utilidades.mostrarAlertaBorrarCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
-      Navigator.pop(context);
+      Navigator.pop(context,true);
     }, (){
-      Navigator.pop(context);
+      Navigator.pop(context,true);
       actualizarVistaConNuevoPlan(plan);
     });
 
@@ -177,20 +177,20 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
         }catch(e){
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
+            Navigator.pop(context,true);
             actualizarVistaConNuevoPlan(p);
           });
         }
 
       }else{
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           actualizarVistaConNuevoPlan(p);
         });
       }
     }catch(e){
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context);
+        Navigator.pop(context,true);
         actualizarVistaConNuevoPlan(p);
       });
     }
@@ -411,7 +411,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
           }else{
             cargaPaso.stop();
-            Navigator.pop(context);
+            Navigator.pop(context,true);
             String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
             Utilidades.mostrarAlerta(Mensajes.titleError,message, context);
 
@@ -426,7 +426,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
       }else {
         cargaPaso.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           cargarSiguientePaso(map_plan);
         });
       }
@@ -521,7 +521,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
       if(Utilidades.cotizacionesApp.listaCotizaciones.length == 0){
         Utilidades.deboCargarPaso1 = true;
-        //Navigator.pop(context);
+        //Navigator.pop(context,true);
       }
     }
 
@@ -619,7 +619,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                         children: <Widget>[
                           GestureDetector(
                             onTap: (){
-                              Navigator.pop(context);
+                              Navigator.pop(context,true);
                               limpiarDatos();
                             },
                             child: Row(
@@ -637,7 +637,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                 IconButton(
                                   icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     limpiarDatos();
 
                                   },),
@@ -1080,11 +1080,11 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
                                                       Utilidades.mostrarAlertaCallback("¿Desea Continuar?", r.mensaje, context, (){ //CANCELAR
 
-                                                        Navigator.pop(context);
+                                                        Navigator.pop(context,true);
 
                                                       }, (){ //ACEPTAR
 
-                                                        Navigator.pop(context);
+                                                        Navigator.pop(context,true);
                                                         Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
 
                                                       });

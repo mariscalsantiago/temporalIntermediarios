@@ -42,7 +42,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Theme.Colors.GNP),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context,true);
             },
           ),
         ),

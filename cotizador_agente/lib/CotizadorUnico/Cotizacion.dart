@@ -216,7 +216,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       }else {
         saveCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           guardaCotizacion(index, idformato, abrirPdf);
         });
       }
@@ -245,7 +245,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
           isLoading = true;
         });
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           generarCotizacion(context);
         });
       }else{
@@ -285,8 +285,8 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                   if(json.decode(response.body)["resumenCotizacion"]["banComparativa"] == 0){
 
                     Utilidades.mostrarAlertaCallback("Problema al agregar la cotización", Mensajes.agregarCot, context, (){
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+                      Navigator.pop(context,true);
+                      Navigator.pop(context,true);
                     }, (){
                       setState(() {
                         FormularioCotizacion temporal = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion();
@@ -295,7 +295,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                         Utilidades.cotizacionesApp.limpiarComparativa();
                         Utilidades.cotizacionesApp.agregarCotizacion(temporal);
 
-                        Navigator.pop(context);
+                        Navigator.pop(context,true);
 
                       });
                     });
@@ -327,7 +327,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
           }else if(statusCode != null) {
             generaCot.stop();
             isLoading = false;
-            //Navigator.pop(context);
+            //Navigator.pop(context,true);
             String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
 
             success =  true;
@@ -337,7 +337,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         }else{
           generaCot.stop();
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-            Navigator.pop(context);
+            Navigator.pop(context,true);
             generarCotizacion(context);
           });
         }
@@ -350,7 +350,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
       }else{
         generaCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           generarCotizacion(context);
         });
       }
@@ -424,7 +424,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
   void limpiarDatos(){
 
     Utilidades.mostrarAlertaBorrarCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
-      Navigator.pop(context);
+      Navigator.pop(context,true);
     }, (){
       Utilidades.cotizacionesApp.limpiarComparativa();
 
@@ -703,7 +703,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                     IconButton(
                                       icon: Image.asset('assets/icon/cotizador/guardar_Enabled.png'),
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        Navigator.pop(context,true);
 
                                         showModalGuardar(0, 0 , false,mostrarFcomparativa);
                                       },),
@@ -736,7 +736,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                     IconButton(
                                       icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        Navigator.pop(context,true);
                                         limpiarDatos();
                                       },),
                                   ],
@@ -783,7 +783,7 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                     IconButton(
                                       icon: Image.asset('assets/icon/cotizador/miscotizaciones.png'),
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        Navigator.pop(context,true);
                                         Navigator.push(context,  MaterialPageRoute(
                                           builder: (context) => MisCotizaciones(),
                                         ));
@@ -1561,7 +1561,7 @@ class _listaCheckState extends State<listaCheck> {
                 if(texto3.isNotEmpty && texto3 != null){
                   Utilidades.cotizacionesApp.listaCotizaciones[i + 2].comparativa.nombre = widget.namePropuesta3Controller.text;
                 }
-                Navigator.pop(context);
+                Navigator.pop(context,true);
                 widget.guardarPropuestas(texto1,texto2,texto3, widget.idFormato, widget.index, widget.abrirPdf);
               }),
               child: Text(Mensajes.guarda,

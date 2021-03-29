@@ -35,12 +35,16 @@ import '../main.dart';
   Future<LoginDatosModel> logInServices(BuildContext context, String mail, String password, String user, Responsive responsive) async {
     _responsive = responsive;
     print("== Log In Interactor==");
-    prefs=await SharedPreferences.getInstance();
+    //prefs=await SharedPreferences.getInstance();
+    try{
     datosUsuario = await logInPost(context,mail, password, user);
     if(datosUsuario == null){
       return null;
     }
-
+    }catch(e){
+      print(e);
+      throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+    }
     Map<String, dynamic> datos = {
       'nombre': datosUsuario.givenname,
       'email': datosUsuario.mail,
@@ -177,7 +181,7 @@ import '../main.dart';
       headers: {"apikey": config.apikeyAppAgentes},
     );
 
-    MyResponse response = await RequestHandler.httpRequest(request);
+    MyResponse response = await RequestHandler.httpRequest(request); //.timeout(const Duration (seconds:6),onTimeout :  _onTimeout(context, _responsive));
     try{
       if (response.success) {
         mapPerfilador = response.response;
@@ -457,4 +461,10 @@ import '../main.dart';
     } else {
       throw 'Could not launch $url';
     }
+  }
+
+
+ _onTimeout(BuildContext context, Responsive responsive){
+    customAlert(AlertDialogType.timeOut, context, "",  "", responsive);
+    return null;
   }

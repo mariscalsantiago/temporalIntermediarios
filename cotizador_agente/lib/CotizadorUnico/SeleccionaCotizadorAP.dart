@@ -134,7 +134,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     }else{
       negociosOp.stop();
       isLoading = false;
-      Navigator.pop(context);
+      Navigator.pop(context,true);
       Utilidades.mostrarAlerta(Mensajes.titleError, response.response, context);
     }
 
@@ -195,13 +195,13 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
           cotizadores.stop();
           isLoading = false;
           sinResultados = true;
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           Utilidades.mostrarAlerta(Mensajes.titleError, response.response, context);
           return null;
         }
       }else {
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context);
+          Navigator.pop(context,true);
           getCotizadores(negocioOperable);
         });
       }
@@ -500,9 +500,9 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                   if(cotizadorSelected.mensaje != null) {
                     Utilidades.mostrarAlertaCallback(
                         Mensajes.titleContinuar, cotizadorSelected.mensaje, context, () {
-                      Navigator.pop(context);
+                      Navigator.pop(context,true);
                     }, () {
-                      Navigator.pop(context);
+                      Navigator.pop(context,true);
                       Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
                       Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
                       //Analytics

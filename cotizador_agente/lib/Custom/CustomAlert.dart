@@ -1,18 +1,22 @@
 import 'dart:ui';
 
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
 import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
+import 'package:cotizador_agente/UserInterface/perfil/Terminos_y_condiciones.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
 
 var isShowAlert = false;
 
 enum AlertDialogType {
   errorConexion,
+  timeOut,
   inactividad,
   testUno,
   archivoInvalido,
@@ -97,6 +101,43 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
         );
       } else {}
       break;
+      case AlertDialogType.timeOut:
+      if (!isShowAlert) {
+        isShowAlert = true;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: new Text("Error de conexión.",
+                  style: TextStyle(
+                      color: Theme.Colors.appBarTextBlueDark,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              content: new Text(
+                  "Se produjo un error en la red por el tiempo de espera, verifica tu conexión e intenta nuevamente.",
+                  style: TextStyle(
+                      color: Theme.Colors.appBarTextBlueDark,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("ACEPTAR",
+                      style: TextStyle(
+                          color: Theme.Colors.primary,
+                          fontSize: 16.0,
+                          fontFamily: "Roboto")),
+                  onPressed: () {
+                    isShowAlert = false;
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {}
+      break;
     case AlertDialogType.inactividad:
       showDialog(
           context: context,
@@ -156,7 +197,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   RaisedButton(
                                     child: Text("cerrar"),
                                     onPressed: () {
-                                      Navigator.pop(context);
+                                      Navigator.pop(context,true);
                                     },
                                   ), // replace with your buttons
                                 ],
@@ -211,14 +252,14 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     color: Colors.white, fontSize: 20),
                               ),
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pop(context,true);
                               },
                             ),
 
                             RaisedButton(
                               child: Text("cerrar"),
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pop(context,true);
                               },
                             ), // replace with your buttons
                           ],
@@ -271,16 +312,14 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     color: Colors.white, fontSize: 20),
                               ),
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pop(context,true);
                               },
                             ),
                             RaisedButton(
                               child: Text("En otro momento"),
                               onPressed: () {
-                                Navigator.pop(context);
-                                Row(
-                                  children: [],
-                                );
+                                prefs.setBool("activarBiometricos", false);
+                                Navigator.pop(context,true);
                               },
                             ), // replace with your buttons
                           ],
@@ -327,7 +366,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                             RaisedButton(
                               child: Text("Descartar"),
                               onPressed: () {
-                                Navigator.pop(context);
+                                Navigator.pop(context,true);
                               },
                             ), // replace with your buttons
                           ],
@@ -398,7 +437,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                             ),
                             child: GestureDetector(
                               onTap: () {
-                                Navigator.pop(context);
+                                Navigator.pop(context,true);
                                 customAlert(AlertDialogType.huella, context, "",
                                     "", responsive);
                               },
@@ -418,6 +457,13 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 .Colors.Funcional_Textos_Body,
                                             fontSize: responsive.ip(2.3)),
                                       )),
+                                  Container(
+                                    margin: EdgeInsets.only(left: responsive.wp(43), right: responsive.wp(4)),
+                                    child: Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: Theme.Colors.gnpOrange,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -429,7 +475,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                             ),
                             child: GestureDetector(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
                                   customAlert(
                                       AlertDialogType.Reconocimiento_facial,
                                       context,
@@ -453,7 +499,15 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                   .Colors.Funcional_Textos_Body,
                                               fontSize: responsive.ip(2.3)),
                                         )),
+                                    Container(
+                                      margin: EdgeInsets.only(left: responsive.wp(43), right: responsive.wp(4)),
+                                      child: Icon(
+                                        Icons.arrow_forward_ios,
+                                        color: Theme.Colors.gnpOrange,
+                                      ),
+                                    ),
                                   ],
+
                                 )),
                           ) : Container(),
                           Center(
@@ -470,7 +524,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 ),
                                 color: Theme.Colors.GNP,
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
+                                  isSwitchedPerfill = true;
                                   },
                                 child: Text(
                                   "EN OTRO MOMENTO",
@@ -569,13 +624,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               ),
                               color: Theme.Colors.GNP,
                               onPressed: () {
-                                Navigator.pop(context);
-                                customAlert(
-                                    AlertDialogType.terminosYcondiciones_reconocimiento_facial,
-                                    context,
-                                    "",
-                                    "",
-                                    responsive);
+                                Navigator.pop(context,true);
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => TerminosYCondicionesPage()));
                               },
                               child: Text(
                                 "ACEPTAR",
@@ -594,7 +644,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                             child: Center(
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
                                   customAlert(
                                       AlertDialogType.EnOtroMomento_Huella,
                                       context,
@@ -647,7 +697,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                         child: Center(
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.pop(context);
+                              Navigator.pop(context,true);
                               customAlert(
                                   AlertDialogType.activacionExitosa_Huella,
                                   context,
@@ -742,7 +792,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -829,7 +879,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(AlertDialogType.Desactivar_huella_digital, context,
                                         "", "", responsive);
                                   },
@@ -850,7 +900,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
 
                                     customAlert(AlertDialogType.huella, context,
                                         "", "", responsive);
@@ -1072,14 +1122,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               ),
                               color: Theme.Colors.GNP,
                               onPressed: () {
-                                Navigator.pop(context);
-                                customAlert(
-                                    AlertDialogType
-                                        .terminosYcondiciones_reconocimiento_facial,
-                                    context,
-                                    "",
-                                    "",
-                                    responsive);
+                                Navigator.pop(context,true);
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => TerminosYCondicionesPage()));
                               },
                               child: Text(
                                 "ACEPTAR",
@@ -1098,7 +1142,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                             child: Center(
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
                                   customAlert(
                                       AlertDialogType
                                           .EnOtroMomento_reconocimiento_facial,
@@ -1192,7 +1236,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "SÍ",
@@ -1211,7 +1255,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "NO",
@@ -1302,7 +1346,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -1335,9 +1379,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
               appBar: AppBar(
                 elevation: 0.0,
                 leading: IconButton(
-                  icon:Icon(Icons.cancel, color: Theme.Colors.GNP,),
+                  icon:Icon(Icons.close, color: Theme.Colors.GNP,),
                   onPressed: (){
-                    Navigator.pop(context);
+                    Navigator.pop(context,true);
                   },
                 ),
                 backgroundColor: Theme.Colors.White,
@@ -1351,32 +1395,6 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                         child: Column(
                           //mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            /*
-                            Container(
-                              width: responsive.width,
-                              child: Center(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                    customAlert(
-                                        AlertDialogType
-                                            .activacionExitosa_Reconocimiento_facial,
-                                        context,
-                                        "",
-                                        "",
-                                        responsive);
-                                  },
-                                  child: Text(
-                                    "Terminos y\n condiciones",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Theme.Colors.White,
-                                        fontSize: responsive.ip(2.5)),
-                                  ),
-                                ),
-                              ),
-                            )
-                            */
                             Container(
                               margin: EdgeInsets.only(left: responsive.wp(2.5), right: responsive.wp(2.5), top: responsive.hp(2)),
                               child: Text("Terminos y condiciones de uso",
@@ -1466,11 +1484,12 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                             CheckboxListTile(
                               title: Text("Acepto los términos y condiciones de uso"),
                               value: checkedValue,
-                              onChanged: (newValue) {
-                                checkedValue = newValue;
-                                },
+                              onChanged: (bool value) {
+                                checkedValue = value;
+                                prefs.setBool("aceptoTerminos", checkedValue);
+                              },
                               controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
-                                ),
+                            ),
                             CupertinoButton(
                                 padding: EdgeInsets.zero,
                                 child: Container(
@@ -1481,14 +1500,14 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   padding: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
                                   width: responsive.width,
-                                  child: Text("SELECCIONAR", style: TextStyle(
+                                  child: Text("Continuar", style: TextStyle(
                                     color:  (checkedValue) ?
                                     Theme.Colors.backgroud : Theme.Colors.botonletra,
                                   ),
                                       textAlign: TextAlign.center),
                                 ),
                                 onPressed: () async {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
                                   customAlert(
                                       AlertDialogType
                                           .activacionExitosa_Reconocimiento_facial,
@@ -1575,7 +1594,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(
                                         AlertDialogType.Desactivar_recoFacial,
                                         context,
@@ -1600,7 +1619,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(
                                         AlertDialogType.Reconocimiento_facial,
                                         context,
@@ -1700,7 +1719,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -1795,7 +1814,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -1900,7 +1919,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2005,7 +2024,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2104,7 +2123,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2210,7 +2229,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2316,7 +2335,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2437,7 +2456,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2559,7 +2578,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2680,7 +2699,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2786,7 +2805,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2891,7 +2910,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -2998,7 +3017,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -3104,7 +3123,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -3210,8 +3229,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    Navigator.pop(context);
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -3290,7 +3309,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 ),
                                 color: Theme.Colors.GNP,
                                 onPressed: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
                                   },
                                 child: Text(
                                   "DESCARTAR",
@@ -3309,7 +3328,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                             child: Center(
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
                                   },
                                 child: Text(
                                   "SEGUIR MODIFICANDO",
@@ -3395,7 +3414,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               ),
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  Navigator.pop(context,true);
                                   customAlert(
                                       AlertDialogType.Tienes_una_sesion_activa,
                                       context,
@@ -3490,7 +3509,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(
                                         AlertDialogType.DatosMoviles_Activados,
                                         context,
@@ -3515,7 +3534,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "NO",
@@ -3593,7 +3612,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    isSwitchedPerfill = true;
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "SÍ",
@@ -3612,7 +3632,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(AlertDialogType.EnOtroMomento_Huella, context,
                                         "", "", responsive);
                                   },
@@ -3692,7 +3712,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "SÍ",
@@ -3711,7 +3731,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(AlertDialogType.EnOtroMomento_reconocimiento_facial, context,
                                         "", "", responsive);
                                   },
@@ -3804,7 +3824,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(
                                         AlertDialogType.DatosMoviles_Activados_comprueba,
                                         context,
@@ -3901,7 +3921,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(
                                         AlertDialogType.CerrarSesion,
                                         context,
@@ -3985,13 +4005,10 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context);
-                                    customAlert(
-                                        AlertDialogType.En_mantenimiento_cel,
-                                        context,
-                                        "",
-                                        "",
-                                        responsive);
+                                    Navigator.pop(context,true);
+                                    Navigator.pop(context,true);
+                                    Navigator.pop(context,true);
+
                                   },
                                   child: Text(
                                     "CERRAR SESIÓN",
@@ -4010,7 +4027,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CONTINUAR TRABAJANDO",
@@ -4101,7 +4118,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                     customAlert(
                                         AlertDialogType.En_mantenimiento_llave,
                                         context,
@@ -4198,7 +4215,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -4287,7 +4304,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",

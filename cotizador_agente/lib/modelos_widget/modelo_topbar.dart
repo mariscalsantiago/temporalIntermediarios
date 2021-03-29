@@ -122,7 +122,7 @@ class _TopBarState extends State<TopBar> {
 
                         Utilidades.mostrarAlertaCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
 
-                          Navigator.pop(context);
+                          Navigator.pop(context,true);
 
                         }, (){
 
@@ -136,7 +136,7 @@ class _TopBarState extends State<TopBar> {
                               widget.recargarFormularioConPlan(widget.plan);
                             }
 
-                            //Navigator.pop(context);
+                            //Navigator.pop(context,true);
                           }else {
 
                             if(widget.recargarFormulario!=null){
@@ -145,7 +145,7 @@ class _TopBarState extends State<TopBar> {
 
                             }
 
-                            //Navigator.pop(context);
+                            //Navigator.pop(context,true);
                           }
 
                         });

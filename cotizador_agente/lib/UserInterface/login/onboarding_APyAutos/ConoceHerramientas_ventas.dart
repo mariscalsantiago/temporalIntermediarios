@@ -45,7 +45,7 @@ class _HerramientasVentas extends State<HerramientasVentas> {
                     left: responsive.wp(67)),
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.pop(context,true);
                   },
                   child: Text(
                     "Omitir",

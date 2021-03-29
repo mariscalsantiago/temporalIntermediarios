@@ -40,14 +40,14 @@ class NavigationHandler {
   }
 
   static void showPagar(BuildContext context) {
-    Navigator.pop(context);
+    Navigator.pop(context,true);
   }
   static void showEmitir(BuildContext context) {
-    Navigator.pop(context);
+    Navigator.pop(context,true);
   }
 
   static void showRenovar(BuildContext context) {
-    Navigator.pop(context);
+    Navigator.pop(context,true);
   }
 
   /*static void showMenu(BuildContext context) {
@@ -72,7 +72,7 @@ class NavigationHandler {
                 children: <Widget>[
                   GestureDetector(
                     onTap: (){
-                      Navigator.pop(context);
+                      Navigator.pop(context,true);
                       //Navigator.pushNamed(context, "/cotizadorUnicoAP",);
                     },
                     child: Row(children: <Widget>[

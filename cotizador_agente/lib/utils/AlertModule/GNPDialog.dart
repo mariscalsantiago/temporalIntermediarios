@@ -28,7 +28,7 @@ class GNPDialog extends StatelessWidget {
               title: textButtonOk != null ? textButtonOk :"CANCELAR",
               margin: EdgeInsets.fromLTRB(16, 24, 16, 24),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               })
         ];
       }else{
@@ -37,7 +37,7 @@ class GNPDialog extends StatelessWidget {
               title: textButtonOk != null ? textButtonOk :"Aceptar",
               margin: EdgeInsets.fromLTRB(16, 24, 16, 24),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               })
         ];
       }

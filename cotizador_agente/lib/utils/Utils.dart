@@ -344,7 +344,7 @@ class Utilidades {
                          buttonColor: AppColors.secondary900,
                          child: RaisedButton(
                             onPressed: () {
-                               Navigator.pop(context);
+                               Navigator.pop(context,true);
                             },
                             child: Text(
                                "Aceptar",
@@ -390,7 +390,7 @@ class Utilidades {
                          buttonColor: AppColors.secondary900,
                          child: RaisedButton(
                             onPressed: () {
-                               Navigator.pop(context);
+                               Navigator.pop(context,true);
                             },
                             child: Text(
                                "Aceptar",

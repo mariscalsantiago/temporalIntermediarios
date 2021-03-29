@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
@@ -21,11 +22,13 @@ import 'editarImagenPage.dart';
 
 String dropdownValue;
 String dropdownValue2;
+bool showDea = false;
+bool showCua = true;
 String valorCUA;
 String valorDA;
 int posicionCUA;
 var _image;
-bool isSwitched = false;
+bool isSwitchedPerfill;
 
 class PerfilPage extends StatefulWidget {
   @override
@@ -33,19 +36,29 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends State<PerfilPage> {
-  var today;
 
   @override
   void initState() {
     super.initState();
 
-    dropdownValue = "89798789";
+    isSwitchedPerfill = prefs.getBool("activarBiometricos");
+    dropdownValue = "123456";
+    /*if(datosPerfilador.intermediarios.isNotEmpty && datosPerfilador.intermediarios.length>1){
+      showDea = true;
+    }else{
+      showDea =  false;
+    }*/
+    if(datosPerfilador.intermediarios.length>1){
+      showCua = true;
+    }else{
+      showCua =  false;
+    }
     dropdownValue2 = datosPerfilador.intermediarios[0];
     valorCUA = datosPerfilador.intermediarios[0];
-    valorDA = "89798789";
+    valorDA = "123456";
     posicionCUA = 0;
 
-    today = new DateTime.now();
+    print(DateTime.now());
   }
 
   @override
@@ -65,7 +78,7 @@ class _PerfilPageState extends State<PerfilPage> {
             leading: IconButton(
               icon: Icon(Icons.arrow_back, color: Theme.Colors.GNP),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               },
             ),
           ),
@@ -249,7 +262,7 @@ class _PerfilPageState extends State<PerfilPage> {
                               margin: EdgeInsets.only(left: 20.0, right: 10),
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20.0, vertical: 8.0),
-                              child: DropdownButtonHideUnderline(
+                              child: showDea ? DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   value: dropdownValue,
                                   isExpanded: true,
@@ -274,6 +287,11 @@ class _PerfilPageState extends State<PerfilPage> {
                                     );
                                   }).toList(),
                                 ),
+                              ): Center(
+                                child: Text(dropdownValue,style: TextStyle(
+                                  color: Theme.Colors.Azul_2,
+                                  fontSize: responsive.ip(1.8),
+                                ),),
                               ),
                             ),
                           ),
@@ -290,7 +308,7 @@ class _PerfilPageState extends State<PerfilPage> {
                               margin: EdgeInsets.only(right: 20.0, left: 10.0),
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20.0, vertical: 8.0),
-                              child: DropdownButtonHideUnderline(
+                              child: showCua ? DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   onTap: () {
                                     Navigator.push(
@@ -323,6 +341,11 @@ class _PerfilPageState extends State<PerfilPage> {
                                     );
                                   }).toList(),
                                 ),
+                              ) : Center(
+                                child: Text(dropdownValue2, style: TextStyle(
+                                  color: Theme.Colors.Azul_2,
+                                  fontSize: responsive.ip(1.8),
+                                ),),
                               ),
                             ),
                           ),
@@ -445,9 +468,11 @@ class _PerfilPageState extends State<PerfilPage> {
                         Container(
                           margin: EdgeInsets.only(left: responsive.wp(2)),
                           child: Switch(
-                            value: isSwitched,
+                            value: isSwitchedPerfill,
                             onChanged: (on) {
-                              if (deviceType == ScreenType.phone) {
+                              setState(() {
+                              });
+                              if (deviceType == ScreenType.phone && isSwitchedPerfill == false ) {
                                 customAlert(
                                     AlertDialogType
                                         .opciones_de_inicio_de_sesion,
@@ -456,17 +481,19 @@ class _PerfilPageState extends State<PerfilPage> {
                                     "",
                                     responsive);
                               } else {
+                                if( isSwitchedPerfill == false){
                                 customAlertTablet(
                                     AlertDialogTypeTablet
                                         .opciones_de_inicio_de_sesion,
                                     context,
                                     "",
                                     "",
-                                    responsive);
+                                    responsive);}
                               }
                               setState(() {
-                                isSwitched = on;
-                                print(isSwitched);
+                                isSwitchedPerfill = on;
+                                print("isSwitched ${isSwitchedPerfill} ");
+                                prefs.setBool("activarBiometricos", isSwitchedPerfill);
                               });
                             },
                             inactiveThumbColor: Theme.Colors.Encabezados,
@@ -493,8 +520,12 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
+                        customAlert(
+                            AlertDialogType.CerrarSesion,
+                            context,
+                            "",
+                            "",
+                            responsive);
                       },
                       child: Text(
                         "CERRAR SESIÓN",
@@ -513,7 +544,7 @@ class _PerfilPageState extends State<PerfilPage> {
                           child: Text(
                         ""
                                 "Última sesión: " +
-                            today.toString(),
+                           ultimaSesion,
                         style: TextStyle(
                             fontSize: responsive.ip(1.8),
                             color: Theme.Colors.fecha_1),

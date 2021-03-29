@@ -9,10 +9,12 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../main.dart';
 
 bool useMobileLayout;
+SharedPreferences prefs;
 
 class SplashMain extends StatefulWidget {
   @override
@@ -217,13 +219,26 @@ class _SplashMainState extends State<SplashMain> {
   }
 
   void finishSplash(SplashData splashData) async {
+    prefs = await SharedPreferences.getInstance();
+    Vistas tipoVista;
+    if(prefs != null && prefs.getBool("activarBiometricos") != null){
+
+      if(prefs.getBool("activarBiometricos") == true){
+          tipoVista = Vistas.biometricos;
+      } else {
+          tipoVista = Vistas.login;
+      }
+
+    } else {
+      tipoVista = Vistas.login;
+    }
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     useMobileLayout = shortestSide < 600;
     await Future.delayed(
         Duration(milliseconds: splashData.duracion),
             () =>  Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => useMobileLayout ?
-            MobileContainerPage(ParentView: Responsive.of(context), vista: Vistas.login,)
+            MobileContainerPage(ParentView: Responsive.of(context), vista: tipoVista)
                 :  TabletContainerPage(ParentView: Responsive.of(context), vista: Vistas.login,)))
     );
   }

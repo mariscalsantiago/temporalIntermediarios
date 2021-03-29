@@ -48,7 +48,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
             icon: Icon(Icons.arrow_back_outlined,
               color: Tema.Colors.GNP,),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context,true);
             },
           ),
         ),
