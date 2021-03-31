@@ -39,10 +39,12 @@ class _AutosPageState extends State<AutosPage> {
   */
   @override
   void initState() {
+    
     // TODO: implement initState
 
     _flutterWebViewPlugin = FlutterWebviewPlugin();
     _flutterWebViewPlugin.onStateChanged.listen((onData) async {
+
 
       String mUrl = onData.url.toString();
 
@@ -56,6 +58,7 @@ class _AutosPageState extends State<AutosPage> {
           }
           
     });
+
     print(datosUsuario.idparticipante);
     print(datosPerfilador.intermediarios[0]);
     print('https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",);
@@ -98,7 +101,9 @@ class _AutosPageState extends State<AutosPage> {
     ),
     */WebviewScaffold(
         withZoom: false,
+          withJavascript: true,
           url:'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",
+
       )
     );
 

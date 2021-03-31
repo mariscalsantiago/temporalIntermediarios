@@ -386,11 +386,11 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                     right: responsive.wp(2),
                                     left: responsive.wp(2)),
                                 child: Text(
-                                  "Al activar la funcionalidad permites iniciar sesión en Soy Socio GNP usando los datos biométricos que tienes activados en este dispositivo.",
+                                  "Al activar la funcionalidad permites iniciar sesión en Intermediario GNP usando los datos biométricos que tienes activados en este dispositivo.",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color: Theme.Colors.Funcional_Textos_Body,
-                                      fontSize: responsive.ip(1.2)),
+                                      fontSize: responsive.ip(1)),
                                 )),
                             is_available_finger != false ? Container(
                               margin: EdgeInsets.only(
@@ -549,7 +549,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                   right: responsive.wp(2.5),
                                   left: responsive.wp(2.5)),
                               child: Text(
-                                "Al activar esta funcionalidad podrás iniciar sesión en tu App Soy Socio GNP más rápido con cualquier huella registrada en este dispositivo.",
+                                "Al activar esta funcionalidad podrás iniciar sesión en tu App Intermediario GNP más rápido con cualquier huella registrada en este dispositivo.",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
@@ -1067,7 +1067,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                   right: responsive.wp(2.5),
                                   left: responsive.wp(2.5)),
                               child: Text(
-                                "Al activar esta funcionalidad podrás iniciar sesión en tu App Soy Socio GNP más rápido con cualquier rostro registrado en este dispositivo.",
+                                "Al activar esta funcionalidad podrás iniciar sesión en tu App Intermediario GNP más rápido con cualquier rostro registrado en este dispositivo.",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
@@ -3981,7 +3981,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                             ),
                             Container(
                               margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.03),
-                              child: Text("¿Estás seguro de que deseas salir de Soy Socio\n GNP?",
+                              child: Text("¿Estás seguro de que deseas salir de Intermediario\n GNP?",
                                 style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
                                   fontSize: responsive.ip(2),
@@ -4101,7 +4101,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                 left: responsive.width * 0.03,
                               ),
                               child: Text(
-                                "Estamos mejorando tu App Soy Socio GNP.",
+                                "Estamos mejorando tu App Intermediario GNP.",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
@@ -4198,7 +4198,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                 left: responsive.width * 0.03,
                               ),
                               child: Text(
-                                "Estamos mejorando tu App Soy Socio GNP.",
+                                "Estamos mejorando tu App Intermediario GNP.",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),

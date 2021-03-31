@@ -290,6 +290,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             //customAlert(AlertDialogType.Numero_de_celular_verificado, context, "",  "", responsive);
 
           }
+          Navigator.pop(context,true);
           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: responsive,)));
         }
 

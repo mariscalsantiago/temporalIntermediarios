@@ -431,11 +431,11 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   right: responsive.wp(1),
                                   left: responsive.wp(5)),
                               child: Text(
-                                "Al activar la funcionalidad permites iniciar sesión en Soy Socio GNP usando los datos biométricos que tienes activados en este dispositivo.",
+                                "Al activar la funcionalidad permites iniciar sesión en Intermediario GNP usando los datos biométricos que tienes activados en este dispositivo.",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
-                                    fontSize: responsive.ip(2.2)),
+                                    fontSize: responsive.ip(2)),
                               )),
                           is_available_finger != false ? Container(
                             margin: EdgeInsets.only(
@@ -601,7 +601,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 right: responsive.wp(1),
                                 left: responsive.wp(5)),
                             child: Text(
-                              "Al activar esta funcionalidad podrás iniciar sesión en tu App Soy Socio GNP más rápido con cualquier huella registrada en este dispositivo.",
+                              "Al activar esta funcionalidad podrás iniciar sesión en tu App Soy Intermediario GNP más rápido con cualquier huella registrada en este dispositivo.",
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
@@ -1017,6 +1017,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                           textAlign: TextAlign.center,
                                         ))),
                                 onPressed: () {
+                                  Navigator.pop(context,true);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -1035,6 +1036,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                             TextStyle(color: Theme.Colors.GNP),
                                         textAlign: TextAlign.center)),
                                 onPressed: () {
+                                  Navigator.pop(context,true);
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -1042,6 +1044,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                               LoginActualizarNumero(
                                                   responsive: responsive)));
                                 })
+
                           ],
                         ),
                       ),
@@ -1099,7 +1102,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 right: responsive.wp(1),
                                 left: responsive.wp(5)),
                             child: Text(
-                              "Al activar esta funcionalidad podrás iniciar sesión en tu App Soy Socio GNP más rápido con cualquier rostro registrado en este dispositivo.",
+                              "Al activar esta funcionalidad podrás iniciar sesión en tu App Intermediario GNP más rápido con cualquier rostro registrado en este dispositivo.",
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
@@ -4129,7 +4132,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 left: responsive.width * 0.03,
                               ),
                               child: Text(
-                                "Estamos mejorando tu App Soy Socio GNP.",
+                                "Estamos mejorando tu App Intemediario GNP.",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
@@ -4226,7 +4229,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 left: responsive.width * 0.03,
                               ),
                               child: Text(
-                                "Estamos mejorando tu App Soy Socio GNP.",
+                                "Estamos mejorando tu App Intermediario GNP.",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
