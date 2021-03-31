@@ -21,6 +21,8 @@ class AppConfig extends InheritedWidget {
     @required this.urlBase,
     @required this.urlSendAnalytics,
     @required this.idContenedorAnalytics,
+    @required this.serviceBCA,
+    @required this.apikeyBCA,
 
   }) : super(child: child);
 
@@ -35,6 +37,8 @@ class AppConfig extends InheritedWidget {
   final String urlBase;
   final String urlSendAnalytics;
   final String idContenedorAnalytics;
+  final String serviceBCA;
+  final String apikeyBCA;
 
   static AppConfig of(BuildContext context) {
     return context.inheritFromWidgetOfExactType(AppConfig);

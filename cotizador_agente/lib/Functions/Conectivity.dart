@@ -1,9 +1,9 @@
 import 'package:connectivity/connectivity.dart';
 import 'package:http/http.dart' as http;
+bool isInternet;
 
+void internetStatus()  async {
 
-Future<bool> internetStatus() async {
-  bool isInternet;
 
   var connectivityResult = await (Connectivity().checkConnectivity());
 
@@ -16,7 +16,6 @@ Future<bool> internetStatus() async {
   } else if (connectivityResult == ConnectivityResult.none) {
     isInternet = false;
   }
-  return isInternet;
 }
 
 

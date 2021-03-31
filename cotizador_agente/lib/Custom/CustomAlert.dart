@@ -1,8 +1,14 @@
 import 'dart:ui';
 
+import 'package:cotizador_agente/Cotizar/CotizarController.dart';
+import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
+import 'package:cotizador_agente/UserInterface/home/autos.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
 import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
+import 'package:cotizador_agente/UserInterface/login/subsecuente_biometricos.dart';
 import 'package:cotizador_agente/UserInterface/perfil/Terminos_y_condiciones.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:flutter/cupertino.dart';
@@ -58,6 +64,7 @@ enum AlertDialogType {
   En_mantenimiento_cel,
   En_mantenimiento_llave,
   Sin_acceso_herramientas_cotizacion,
+  menu_home,
 }
 
 void customAlert(AlertDialogType type, BuildContext context, String title,
@@ -442,6 +449,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     "", responsive);
                               },
                               child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Icon(
                                     Icons.fingerprint,
@@ -458,7 +466,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                             fontSize: responsive.ip(2.3)),
                                       )),
                                   Container(
-                                    margin: EdgeInsets.only(left: responsive.wp(43), right: responsive.wp(4)),
+                                    margin: EdgeInsets.only( right: responsive.wp(4)),
                                     child: Icon(
                                       Icons.arrow_forward_ios,
                                       color: Theme.Colors.gnpOrange,
@@ -1346,7 +1354,21 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context,true);
+                                    if(prefs.getBool("primeraVez") == true){
+                                      if (deviceType == ScreenType.phone) {
+                                        customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive);
+                                      }
+                                      else{
+                                        customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
+                                      }
+                                    } else {
+                                      Navigator.pop(context,true);
+                                      Navigator.push(context,
+                                          MaterialPageRoute(
+                                            builder: (context) => HomePage()
+                                          ));
+                                    }
+
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -3987,8 +4009,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.03),
-                              child: Text("¿Estás seguro de que deseas salir de Soy Socio\n GNP?",
+                              margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.05),
+                              child: Text("¿Estás seguro de que deseas salir de Intermediario GNP?",
                                 style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
                                   fontSize: responsive.ip(2),
@@ -4005,9 +4027,11 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context,true);
-                                    Navigator.pop(context,true);
-                                    Navigator.pop(context,true);
+                                    if(prefs.getBool("activarBiometricos")){
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => BiometricosPage(responsive: responsive)));
+                                    } else{
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: responsive)));
+                                    }
 
                                   },
                                   child: Text(
@@ -4324,6 +4348,79 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
               ],
             );
           });
+      break;
+
+
+    case AlertDialogType.menu_home:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        switch(opcionElegida){
+                          case HomeSelection.Atuos:
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
+                            break;
+
+                          case HomeSelection.AP:
+                            Navigator.of(context).push(PageRouteBuilder(
+                                opaque: false,
+                                pageBuilder: (BuildContext context, _, __) {
+                                  return CotizarController();
+                                }));
+                            break;
+
+                        }
+                      },
+                      child: Container(
+                        width: responsive.width,
+                        child: Card(
+                          color: Theme.Colors.White,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(top: responsive.hp(3.5), right: responsive.wp(1), left: responsive.wp(8)),
+                                child: Image.asset("assets/cotizar.png", fit:BoxFit.contain,height:responsive.hp(5), width: responsive.wp(5),),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(top: responsive.hp(5), left: responsive.wp(8), right: responsive.wp(1), bottom: responsive.hp(16)),
+                                child: Text("Cotizar",
+                                  style: TextStyle(
+                                    color: Theme.Colors.Encabezados,
+                                    fontSize: responsive.ip(2.5),
+                                  ),),
+                                  ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });
+      break;
+
+
+
       break;
   }
 }

@@ -20,6 +20,9 @@ void main() {
     urlSendAnalytics: 'https://www.google-analytics.com/',
     idContenedorAnalytics: 'UA-146126625-1',
 
+    serviceBCA: 'https://bca-ws-qa.gnp.com.mx',
+    apikeyBCA: 'd41d8cd98f00b204e9800998ecf8427e',
+
     child: new MyApp(),
 
   );

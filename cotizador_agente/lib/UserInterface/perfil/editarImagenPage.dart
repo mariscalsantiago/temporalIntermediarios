@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:cotizador_agente/Services/LoginServices.dart';
+import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
@@ -69,14 +72,17 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
           ),
         ),
         floatingActionButton:GestureDetector(
-          onTap: () async {
-            final crop = cropKey.currentState;
-            fotoPerfil =  await crop.cropCompleted(widget.image, pictureQuality: 900);
-            setState(() {
-              fotoPerfil;
-            });
-            Navigator.of(context).pop();
-          },
+            onTap: () async {
+              final crop = cropKey.currentState;
+              File fotoPerfil;
+              fotoPerfil =  await crop.cropCompleted(widget.image, pictureQuality: 900);
+              fetchFoto(context, fotoPerfil);
+              Navigator.of(context).pop();
+              setState(() {
+                urlImagen = datosFisicos.personales.foto;
+                image = fotoPerfil;
+              });
+            },
             child: Container(
               color: Theme.Colors.White,
               height: responsive.hp(10),
@@ -89,7 +95,8 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
                 Text("GUARDAR AJUSTES", style: TextStyle(color: Theme.Colors.GNP, fontSize: responsive.ip(2)),)
               ],
               ),
-            ))
+           )
+        )
     );
 
         /*

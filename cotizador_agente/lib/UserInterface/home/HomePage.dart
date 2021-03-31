@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
@@ -10,6 +11,9 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../main.dart';
+enum HomeSelection {Atuos,AP}
+
+HomeSelection opcionElegida =  HomeSelection.Atuos;
 
 String iniciales="EJ";
 class HomePage extends StatefulWidget {
@@ -108,15 +112,26 @@ void getInicialesName(){
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
+                        //Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
+                        setState(() {
+
+                        });
+                        opcionElegida = HomeSelection.Atuos;
                       },
                       child: Card(
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color:  opcionElegida == HomeSelection.Atuos ? (Colors.orange): (Colors.white),
+                            ),
+                            borderRadius: BorderRadius.circular(5)
+                        ),
                         elevation: 4,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Image.asset('assets/images/autosymotos.png'),
                             Container(
+                              color: Theme.Colors.White,
                               margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -145,31 +160,46 @@ void getInicialesName(){
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
                       onTap: (){
-                        Navigator.pushNamed(context, "/cotizadorUnicoAP");
+                        //Navigator.pushNamed(context, "/cotizadorUnicoAP");
+                        setState(() {
+                        });
+                        opcionElegida = HomeSelection.AP;
                       },
-                      child: Card(
-                        elevation: 4,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset('assets/images/Group_435.png'),
-                            Container(
-                              margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("AP", style: TextStyle(
-                                      letterSpacing: 0.15,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: responsive.ip(2),
-                                      color: Theme.Colors.Azul_gnp
-                                  ), textAlign: TextAlign.right,),
-                                  Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
-                                ],
-                              ),
+                      child: Container(
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              color: opcionElegida == HomeSelection.AP ? (Colors.orange): (Colors.white),
                             ),
+                            borderRadius: BorderRadius.circular(5)
+                          ),
+                          /*decoration: BoxDecoration(
+                              border: selectAP ?Border.all(color: Colors.orange): Border.all(color: Colors.white)
+                          ),*/
 
-                        ],),
+                          elevation: 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset('assets/images/Group_435.png'),
+                              Container(
+                                margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("AP", style: TextStyle(
+                                        letterSpacing: 0.15,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: responsive.ip(2),
+                                        color: Theme.Colors.Azul_gnp
+                                    ), textAlign: TextAlign.right,),
+                                    Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
+                                  ],
+                                ),
+                              ),
+
+                          ],),
+                        ),
                       ),
                     ),
                   ): Container(),
@@ -221,7 +251,7 @@ void getInicialesName(){
       actions: [
         GestureDetector(
           onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PerfilPage()),);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => PerfilPage(responsive:responsive)),);
           },
           child:Container(
               width: responsive.wp(13),
@@ -234,21 +264,23 @@ void getInicialesName(){
                       width: 2,
                       color: Theme.Colors.Azul_2)),
               child: Center(
-                child: fotoPerfil != null
+                child: datosFisicos != null && datosFisicos.personales.foto != null &&
+                    datosFisicos.personales.foto != ""
                     ? CircleAvatar(
-                  backgroundImage:
-                  new FileImage(fotoPerfil),
-                  radius: 200.0,
-                )
-                    : Text(iniciales,
-                  style: TextStyle(
-                      fontSize:
-                      responsive.hp(1.7),
-                      color:
-                      Theme.Colors.Azul_gnp,
-                      fontWeight:
-                      FontWeight.w400),
-                ),
+                        backgroundImage: NetworkImage(datosFisicos.personales.foto),
+                        backgroundColor: Colors.transparent,
+                        radius: 200.0,
+                    )
+                    : Text(datosPerfilador != null && datosPerfilador.agenteInteresadoList != null && datosPerfilador.agenteInteresadoList.elementAt(0)!= null?
+                      "${(datosPerfilador.agenteInteresadoList.elementAt(0).nombres.isNotEmpty? datosPerfilador.agenteInteresadoList.elementAt(0).nombres[0]: "")} ${datosPerfilador.agenteInteresadoList.elementAt(0).apellidoPaterno.isNotEmpty ? datosPerfilador.agenteInteresadoList.elementAt(0).apellidoPaterno[0]: ""}": "",
+                      style: TextStyle(
+                          fontSize:
+                          responsive.hp(2.2),
+                          color:
+                          Theme.Colors.Azul_gnp,
+                          fontWeight:
+                          FontWeight.w400),
+                    ),
               ))     )
       ],
     );

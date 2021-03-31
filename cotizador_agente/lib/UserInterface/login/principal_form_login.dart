@@ -52,10 +52,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       if(prefs.getBool("userRegister") == true){
         existeUsuario = true;
         _huella =  prefs.getBool("activarBiometricos");
+        prefs.setBool("primeraVez", false);
       } else{
         _huella = false;
         existeUsuario = false;
         prefs.setBool("activarBiometricos", _huella);
+        prefs.setString("contrasenaUsuario","");
+        prefs.setString("correoUsuario", controllerCorreo.text);
       }
     } else {
       _huella = false;
@@ -63,6 +66,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       prefs.setBool("activarBiometricos", _huella);
       prefs.setBool("aceptoTerminos", aceptoTerminos);
       existeUsuario = false;
+      prefs.setBool("primeraVez", true);
     }
     super.initState();
   }
@@ -154,7 +158,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
 
   Widget subtitulo(Responsive responsive){
     return existeUsuario ?
-      Text( datosPerfilador != null && datosPerfilador.agenteInteresadoList != null ?  "¡Hola ${datosPerfilador.agenteInteresadoList.elementAt(0).nombres}!"
+      Text( prefs.getString("nombreUsuario") != null &&  prefs.getString("nombreUsuario")  != "" ?
+      "¡ Hola ${prefs.getString("nombreUsuario")}!"
           : "¡Hola !", style: TextStyle(
           color: Tema.Colors.Azul_gnp,
           fontWeight: FontWeight.normal,
@@ -171,7 +176,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   Widget inputTextCorreo(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+          FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
       ],
       controller: controllerCorreo,
       focusNode: focusCorreo,
@@ -298,27 +303,39 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
 
             if(prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != ""){
                correoUsuario = prefs.getString("correoUsuario");
-               contrasenaUsuario = prefs.getString("contrasenaUsuario");
-               print("if correoUsuario ${correoUsuario}");
+               if(controllerContrasena.text != prefs.getString("contrasenaUsuario")){
+                 contrasenaUsuario = controllerContrasena.text;
+                 prefs.setString("contrasenaUsuario", contrasenaUsuario);
+               } else{
+                 contrasenaUsuario = prefs.getString("contrasenaUsuario");
+               }
 
             } else {
               prefs.setString("correoUsuario", controllerCorreo.text);
               correoUsuario = controllerCorreo.text;
               prefs.setString("contrasenaUsuario", controllerContrasena.text);
               contrasenaUsuario = controllerContrasena.text;
-
-              print("else correoUsuario ${correoUsuario}");
             }
             datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
              setState(() {
                _saving = false;
              });
             if(datosUsuario != null){
+              print("servicios null");
+              prefs.setBool("regitroDatosLoginExito", true);
+              prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
               ultimaSesion = fechaPrototipo(DateTime.now().toString());
               redirect(responsive);
             } else {
-              prefs.setString("correoUsuario", "");
-              prefs.setString("contrasenaUsuario", "");
+              if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito") == true) {
+
+              } else{
+                prefs.setBool("regitroDatosLoginExito", false);
+                prefs.setString("nombreUsuario", "");
+                prefs.setString("correoUsuario", "");
+                prefs.setString("contrasenaUsuario", "");
+              }
+
             }
             setState(() {
               _saving = false;
@@ -336,8 +353,18 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       if (existeUsuario) {
           controllerContrasena.clear();
           controllerCorreo.clear();
+          if(_huella){
 
-          Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage()));
+            if (deviceType == ScreenType.phone) {
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive);
+            }
+            else{
+              customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
+            }
+          } else{
+            Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage()));
+          }
+
 
       } else {
         prefs.setBool("userRegister", true);

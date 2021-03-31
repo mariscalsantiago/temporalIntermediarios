@@ -1,11 +1,14 @@
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
+import 'package:cotizador_agente/UserInterface/home/autos.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
+import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class NavigationHandler {
   BuildContext mContext;
-
   NavigationHandler();
 
   static Future<bool> navigateToRoute({BuildContext context, String route}) async {
@@ -24,6 +27,8 @@ class NavigationHandler {
         break;
       case "flutter_app/menu":
         //showMenu(context);
+        Responsive responsive = Responsive.of(context);
+        customAlert(AlertDialogType.menu_home,context,"","", responsive);
         break;
       default:
         break;
@@ -32,11 +37,20 @@ class NavigationHandler {
   }
 
   static void showCotizar(BuildContext context) {
-    Navigator.of(context).push(PageRouteBuilder(
-        opaque: false,
-        pageBuilder: (BuildContext context, _, __) {
-          return CotizarController();
-        }));
+    switch(opcionElegida){
+      case HomeSelection.Atuos:
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
+        break;
+
+      case HomeSelection.AP:
+        Navigator.of(context).push(PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (BuildContext context, _, __) {
+              return CotizarController();
+            }));
+        break;
+
+    }
   }
 
   static void showPagar(BuildContext context) {

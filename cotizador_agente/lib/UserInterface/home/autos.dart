@@ -97,6 +97,7 @@ class _AutosPageState extends State<AutosPage> {
         },
     ),
     */WebviewScaffold(
+        withZoom: false,
           url:'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",
       )
     );

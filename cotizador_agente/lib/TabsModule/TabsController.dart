@@ -52,7 +52,7 @@ class TabsControllerState extends State<TabsController> implements TabsView {
   }
 
   void _selectedTab(String accion) {
-    //presenter?.navigateToRoute(accion);
+    presenter?.navigateToRoute(accion);
   }
 
   Widget remoteFooter(Footer remoteFooter) {

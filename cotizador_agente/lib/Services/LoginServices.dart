@@ -1,9 +1,11 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
 import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
@@ -62,7 +64,22 @@ import '../main.dart';
 
     currentCuaGNP = datosPerfilador.intermediarios[0];
     currentCuaLogros = datosPerfilador.intermediarios[0];
-    // currentCuaDesignaciones = datosPerfilador.intermediarios[0];
+
+    print("Datos fisicos");
+    datosFisicos = await getPersonaFisica(context, datosUsuario.idparticipante, false);
+    print("Datos fisicos ${datosFisicos}");
+
+    if (datosFisicos == null) {
+      bool responseImporta = await getImporta(datosUsuario.idparticipante);
+      if (responseImporta) {
+        datosFisicos = await getPersonaFisica(context, datosUsuario.idparticipante, true);
+        if (datosFisicos == null) {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    }
 
     return datosUsuario;
   }
@@ -126,7 +143,8 @@ import '../main.dart';
           emailSesion = _datosUsuario.emaillogin;
           //output.showHome();
           return _datosUsuario;
-        }else if (response.statusCode == 401) {
+        }
+        else if (response.statusCode == 401) {
           //output?.hideLoader();
           if (deviceType == ScreenType.phone) {
             customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive);
@@ -139,19 +157,17 @@ import '../main.dart';
 
           //output.showAlert(Constants.tlt_nocoinciden, Constants.ms_nocoinciden, TipoDialogo.ADVERTENCIA, "CERRAR");
           return null;
-        }else if (response.statusCode == 404) {
+        }
+        else if (response.statusCode == 404) {
           if (deviceType == ScreenType.phone) {
             customAlert(AlertDialogType.Correo_no_registrado, context, "",  "", _responsive);
           }
           else{
             customAlertTablet(AlertDialogTypeTablet.Correo_no_registrado, context, "",  "", _responsive);
           }
-
-
-          //output?.hideLoader();
-          //output.showAlert(Constants.tlt_noregistrado, Constants.ms_noregistrado, TipoDialogo.ADVERTENCIA, "CERRAR");
           return null;
-        } else{
+        }
+        else{
           //output?.hideLoader();
           throw Exception(ErrorLoginMessageModel().statusErrorTextException);
         }
@@ -468,3 +484,199 @@ import '../main.dart';
     customAlert(AlertDialogType.timeOut, context, "",  "", responsive);
     return null;
   }
+
+  Future<String> fetchFoto(BuildContext context, File url) async {
+    print("fetchFoto");
+    _appEnvironmentConfig = AppConfig.of(context);
+
+    try {
+      var postUri = Uri.parse(_appEnvironmentConfig.serviceBCA +
+          "/app/foto/${datosUsuario.idparticipante}");
+      var responsePost = new http.MultipartRequest("POST", postUri);
+      responsePost.headers['x-api-key'] = _appEnvironmentConfig.apikeyBCA;
+      responsePost.files.add(await http.MultipartFile.fromPath('file', url.path));
+
+      responsePost.send().then((responseDataPost) {
+        if (responseDataPost != null && responseDataPost.statusCode == 200) {
+          responseDataPost.stream.transform(utf8.decoder).listen((value) {
+
+            Map postMap = json.decode(value);
+            //  print("response : $postMap");
+            if (postMap["success"] == true) {
+              var mensaje = {
+                'mensaje':
+                "¡Gracias! Tus datos fueron actualizados exitosamente.",
+                'titulo': "Edición de fotografía",
+                'success': false
+              };
+              // print("${postMap["url"]}");
+              mensajeStatus = ErrorLoginMessageModel.fromJson(mensaje);
+              datosFisicos.personales.foto = postMap["url"];
+              return postMap["url"];
+            } else {
+              throw Exception('Failed to load post response');
+            }
+          }, onError: (error) {
+            throw Exception('Failed to load post response');
+          });
+        } else {
+          throw Exception('Failed to load post response');
+        }
+      }).catchError((error) => throw Exception('Failed to load post response'));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<bool> fetchFotoDelete(BuildContext context) async {
+    print("fetchFotoDelete");
+
+    _appEnvironmentConfig = AppConfig.of(context);
+    Navigator.of(context).pop();
+
+    try {
+      final responsePost = await http.delete(
+          _appEnvironmentConfig.serviceBCA +
+              "/app/foto/${datosUsuario.idparticipante}",
+          headers: {
+            "x-api-key": _appEnvironmentConfig.apikeyBCA,
+            "Content-Type": "application/json"
+          });
+
+      //  print("response : ${config.serviceBCA}+/app/foto/${datosUsuario.idparticipante}");
+      if (responsePost != null) {
+        //   print("response : ${responsePost.body}");
+        if (responsePost.statusCode == 200) {
+          Map postMap = json.decode(responsePost.body);
+          //   print("response : ${postMap}");
+          if (postMap['success'] == true) {
+            var mensaje = {
+              'mensaje': "¡Gracias! Tus datos fueron actualizados exitosamente.",
+              'titulo': "Edición de fotografía",
+              'success': false
+            };
+            mensajeStatus = ErrorLoginMessageModel.fromJson(mensaje);
+            datosFisicos.personales.foto = null;
+            return true;
+          } else {
+            throw Exception('Failed to load post response');
+          }
+        } else {
+          throw Exception('Failed to load post response');
+        }
+      } else {
+        throw Exception('Failed to load post response');
+      }
+    } catch (e) {
+      var mensaje;
+      /*bool status = await internetStatus();
+      if (status) {
+        mensaje = {
+          'mensaje':
+          "Se produjo un error al intentar eliminar tu fotografía, intenta más tarde.",
+          'titulo': "",
+          'success': false
+        };
+      } else {
+        mensaje = {
+          'mensaje':
+          "Se produjo un error en la red, verifica tu conexión e intenta nuevamente.",
+          'titulo': "Error de conexión.",
+          'success': false
+        };
+      }
+      mensajeStatus = ErrorLoginMessageModel.fromJson(mensaje);*/
+      return false;
+    }
+  }
+
+  Future<DatosFisicosModel> getPersonaFisica(BuildContext context, String idParticipante, bool isImport) async {
+
+    var config = AppConfig.of(context);
+    String _service = isImport ? "Persona fisica import" : "Persona fisica";
+    String _serviceID = isImport ? "S5" : "S3";
+    print("Getting $_service");
+      http.Response _response;
+      try {
+        print(config.serviceBCA + '/app/datos-perfil/' + idParticipante);
+        _response = await http.get(config.serviceBCA + '/app/datos-perfil/' + idParticipante,
+            headers: {"x-api-key": config.apikeyBCA});
+
+        if (_response != null) {
+          if (_response.statusCode == 200) {
+            if (_response.body != null && _response.body.isNotEmpty) {
+              Map mapAgentes = json.decode(_response.body);
+              if (mapAgentes != null && mapAgentes.isNotEmpty) {
+                if (mapAgentes["success"] == false) {
+                  //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
+                } else {
+                  datosFisicos = DatosFisicosModel.fromJson(mapAgentes);
+                  return datosFisicos;
+                }
+              } else {
+                //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
+              }
+            } else {
+              //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
+            }
+          } else {
+            throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+          }
+        } else {
+          throw Exception(
+              ErrorLoginMessageModel().responseNullErrorTextException);
+        }
+      } catch (e) {
+        ErrorLoginMessageModel().serviceErrorAlert(
+            "$_serviceID - ${_response != null ? _response.statusCode : "null"}");
+        print(
+            "==$e==\n$_serviceID - ${_response != null ? _response.statusCode : "null"}\n=>$e<=");
+        return null;
+      }
+
+}
+
+  Future<bool> getImporta(String idParticipante) async {
+  String _service = "Importar Persona Fisica";
+  String _serviceID = "S4";
+  print("Getting $_service");
+  ConnectivityStatus _connectivityStatus =
+  await ConnectivityServices().getConnectivityStatus(false);
+  if (_connectivityStatus.available) {
+    http.Response _response;
+    try {
+      print(
+          "${config.serviceBCA}/app/importa-persona-bup-bca/$idParticipante");
+      final response = await http.post(
+          config.serviceBCA +
+              '/app/importa-persona-bup-bca/' +
+              idParticipante,
+          headers: {"x-api-key": config.apikeyBCA});
+      if (response != null) {
+        Map mapAgentes = json.decode(response.body.toString());
+        if (mapAgentes != null && mapAgentes.isNotEmpty) {
+          if (mapAgentes.containsKey("success") &&
+              mapAgentes["success"] == true) {
+            return true;
+          } else {
+            //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
+          }
+        } else {
+          //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
+        }
+      } else {
+        throw Exception(
+            ErrorLoginMessageModel().responseNullErrorTextException);
+      }
+    } catch (e) {
+      ErrorLoginMessageModel().serviceErrorAlert(
+          "$_serviceID - ${_response != null ? _response.statusCode : "null"}");
+      print(
+          "==$e==\n$_serviceID - ${_response != null ? _response.statusCode : "null"}\n=>$e<=");
+      return false;
+    }
+  } else {
+    ErrorLoginMessageModel().connectionErrorAlert();
+    return false;
+  }
+}

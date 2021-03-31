@@ -75,6 +75,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child:
                 Image.asset("assets/images/ilustracion_es.png", height: 175.0)),
         decoration: const PageDecoration(
+          titleTextStyle: TextStyle(color: Theme.Colors.Azul_gnp,  fontWeight: FontWeight.bold, fontSize: 20),
+          bodyTextStyle: TextStyle( color: Theme.Colors.Azul_gnp,  fontSize: 15),
           pageColor: Colors.white,
         ),
       ),
@@ -85,6 +87,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
         body:"Genera cotizaciones, guárdalas y\n recupéralas desde el portal o la App\n ¡y mucho más!",
         image: Center(child: Image.asset("assets/images/señorde_traje.png", height: 175.0)),
         decoration: const PageDecoration(
+          titleTextStyle: TextStyle(color: Theme.Colors.Azul_gnp,  fontWeight: FontWeight.bold, fontSize: 20),
+          bodyTextStyle: TextStyle( color: Theme.Colors.Azul_gnp,  fontSize: 15),
           pageColor: Colors.white,
         ),
       ),
@@ -95,6 +99,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
         body:"Descarga las cotizaciones y/o envíalas\n directamente a tu\n Cliente desde tu dispositivo.",
         image: Center(child: Image.asset("assets/images/señorade_traje.png", height: 175.0)),
         decoration: const PageDecoration(
+          titleTextStyle: TextStyle(color: Theme.Colors.Azul_gnp,  fontWeight: FontWeight.bold, fontSize: 20),
+          bodyTextStyle: TextStyle( color: Theme.Colors.Azul_gnp,  fontSize: 15),
           pageColor: Colors.white,
         ),
       ),
@@ -105,6 +111,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
         body:"Agrega una foto y mantén siempre\n actualizados tus datos de contacto.",
         image: Center(child: Image.asset("assets/images/señora_telefono.png", height: 175.0)),
         decoration: const PageDecoration(
+          titleTextStyle: TextStyle(color: Theme.Colors.Azul_gnp,  fontWeight: FontWeight.bold, fontSize: 20),
+          bodyTextStyle: TextStyle( color: Theme.Colors.Azul_gnp,  fontSize: 15),
           pageColor: Colors.white,
         ),
       ),
@@ -113,6 +121,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
         body:"Cotiza de acuerdo al tipo de negocio de\n manera ágil desde tu celular o tablet.",
         image: Center(child: Image.asset("assets/images/señores_telefono.png", height: 175.0)),
         decoration: const PageDecoration(
+          titleTextStyle: TextStyle(color: Theme.Colors.Azul_gnp,  fontWeight: FontWeight.bold, fontSize: 20),
+          bodyTextStyle: TextStyle( color: Theme.Colors.Azul_gnp,  fontSize: 15),
           pageColor: Colors.white,
         ),
       ),

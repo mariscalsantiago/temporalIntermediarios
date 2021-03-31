@@ -30,7 +30,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   FocusNode focusActualContrasena;
   //RegExp reConsecutive = RegExp('^(?!.*([A-Za-z0-9])\1{2})(?=.*[az])(?=.*\d)[A-Za-z0-9]+\$');
   RegExp reConsecutive = RegExp('(.)\\1'); // 111 aaa
-  RegExp reConsecutive2 = RegExp('^(?!.*(.)\\1)');// 123 abcd
+  RegExp reConsecutive2 = RegExp('(12|23|34|45|56|67|78|89|98|87|76|54|43|32|21)');// 123 abcd
   final _formKey = GlobalKey<FormState>();
   bool _saving;
   bool actualContrasena;
@@ -143,7 +143,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   Widget inputTextActualContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
       ],
       controller: controllerActualContrasena,
       focusNode: focusActualContrasena,
@@ -235,7 +235,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
       ],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
@@ -267,7 +267,24 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           )
       ),
       validator: (value) {
-
+        if(!lentPass){
+          return 'La contraseña no tiene el tamaño correcto';
+        }
+        if(!hasMayusPass){
+          return 'La contraseña no contiene mayusculas';
+        }
+        if(!hasNumPass){
+          return 'La contraseña no contiene numeros';
+        }
+        if(hasGNPPass){
+          return 'La contraseña contiene GNP';
+        }
+        if(hasConsecutiveIgualesPass){
+          return 'La contraseña contiene numeros consecutivos iguales';
+        }
+        if(hasConsecutivosPass){
+          return 'La contraseña contiene numeros consecutivos';
+        }
         if (value.isEmpty) {
           return 'Este campo es requerido';
         }
@@ -350,7 +367,24 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           )
       ),
       validator: (value) {
-
+        if(!lentPass){
+          return 'La contraseña no tiene el tamaño correcto';
+        }
+        if(!hasMayusPass){
+          return 'La contraseña no contiene mayusculas';
+        }
+        if(!hasNumPass){
+          return 'La contraseña no contiene numeros';
+        }
+        if(hasGNPPass){
+          return 'La contraseña contiene GNP';
+        }
+        if(hasConsecutiveIgualesPass){
+          return 'La contraseña contiene numeros consecutivos iguales';
+        }
+        if(hasConsecutivosPass){
+          return 'La contraseña contiene numeros consecutivos';
+        }
         if (value!= controllerNuevaContrasena.text)
           return 'La contraseña no coincide';
 
@@ -552,6 +586,8 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           ),
         ),
         onPressed: (){
+
+
           if(_formKey.currentState.validate()){
             Navigator.pop(context,true);
           }

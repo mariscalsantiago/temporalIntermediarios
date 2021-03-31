@@ -28,7 +28,8 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
   FocusNode focusConfirmarContrasena;
   TextEditingController controllerActualContrasena;
   FocusNode focusActualContrasena;
-  RegExp reConsecutive = RegExp('^(?!.*([A-Za-z0-9])\1{2})(?=.*[az])(?=.*\d)[A-Za-z0-9]+\$');
+  RegExp reConsecutive = RegExp('(.)\\1'); // 111 aaa
+  RegExp reConsecutive2 = RegExp('(12|23|34|45|56|67|78|89|98|87|76|54|43|32|21)');// 123 abcd
   final _formKey = GlobalKey<FormState>();
   bool _saving;
   bool actualContrasena;
@@ -140,7 +141,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
   Widget inputTextActualContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
       ],
       enableInteractiveSelection: false,
       controller: controllerActualContrasena,
@@ -173,7 +174,6 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
           )
       ),
       validator: (value) {
-
         if (value.isEmpty) {
           return 'Este campo es requerido';
         }
@@ -210,9 +210,14 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
             hasEspacePass=false;
           }
           if(reConsecutive.hasMatch(value)){
-            hasConsecutiveIgualesPass = false;
-          } else {
             hasConsecutiveIgualesPass = true;
+          } else {
+            hasConsecutiveIgualesPass = false;
+          }
+          if(reConsecutive2.hasMatch(value)){
+            hasConsecutivosPass = true;
+          } else {
+            hasConsecutivosPass =false;
           }
 
         });
@@ -223,7 +228,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.]")),
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
       ],
       enableInteractiveSelection: false,
       controller: controllerNuevaContrasena,
@@ -256,7 +261,24 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
           )
       ),
       validator: (value) {
-
+        if(!lentPass){
+          return 'La contraseña no tiene el tamaño correcto';
+        }
+        if(!hasMayusPass){
+          return 'La contraseña no contiene mayusculas';
+        }
+        if(!hasNumPass){
+          return 'La contraseña no contiene numeros';
+        }
+        if(hasGNPPass){
+          return 'La contraseña contiene GNP';
+        }
+        if(hasConsecutiveIgualesPass){
+          return 'La contraseña contiene numeros consecutivos iguales';
+        }
+        if(hasConsecutivosPass){
+          return 'La contraseña contiene numeros consecutivos';
+        }
         if (value.isEmpty) {
           return 'Este campo es requerido';
         }
@@ -334,7 +356,24 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
           )
       ),
       validator: (value) {
-
+        if(!lentPass){
+          return 'La contraseña no tiene el tamaño correcto';
+        }
+        if(!hasMayusPass){
+          return 'La contraseña no contiene mayusculas';
+        }
+        if(!hasNumPass){
+          return 'La contraseña no contiene numeros';
+        }
+        if(hasGNPPass){
+          return 'La contraseña contiene GNP';
+        }
+        if(hasConsecutiveIgualesPass){
+          return 'La contraseña contiene numeros consecutivos iguales';
+        }
+        if(hasConsecutivosPass){
+          return 'La contraseña contiene numeros consecutivos';
+        }
         if (value.isEmpty) {
           return 'Este campo es requerido';
         }
@@ -493,8 +532,8 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
                 children: <Widget>[
                   Container(
                       margin: EdgeInsets.only(right: responsive.width * 0.02),
-                      child: Image.asset(!hasConsecutiveIgualesPass ? "assets/login/checkcircle.png": "assets/login/checkfail.png" ,color: !hasConsecutiveIgualesPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
-                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos (p.e. 123, abc).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutiveIgualesPass?Colors.green:Colors.red,),))
+                      child: Image.asset(!hasConsecutivosPass ? "assets/login/checkcircle.png": "assets/login/checkfail.png" ,color: !hasConsecutivosPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
+                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos (p.e. 123, abc).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutivosPass?Colors.green:Colors.red,),))
                 ],
               ),
             ) : Container(

@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/Functions/Conectivity.dart';
+import 'package:cotizador_agente/Models/DeasModel.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
@@ -17,54 +21,93 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:image_picker/image_picker.dart';
-
+import 'package:http/http.dart' as http;
 import 'editarImagenPage.dart';
+
+List<String> listadoDA= [];
+List<String> listadoCUA= [];
 
 String dropdownValue;
 String dropdownValue2;
+ServiceGetDeasModel dasData;
 bool showDea = false;
-bool showCua = true;
-String valorCUA;
-String valorDA;
+bool showCua = false;
+String valorCUA ;
+String valorDA ;
 int posicionCUA;
+int posicionDA;
+bool internet;
 var _image;
 bool isSwitchedPerfill;
-
 class PerfilPage extends StatefulWidget {
+  Responsive responsive;
+  PerfilPage({Key key, this.responsive}) : super(key: key);
   @override
   _PerfilPageState createState() => _PerfilPageState();
 }
 
 class _PerfilPageState extends State<PerfilPage> {
+  File fotoPerfil;
 
   @override
   void initState() {
     super.initState();
-
+    listadoDA= [];
+    listadoCUA= [];
     isSwitchedPerfill = prefs.getBool("activarBiometricos");
-    dropdownValue = "123456";
-    /*if(datosPerfilador.intermediarios.isNotEmpty && datosPerfilador.intermediarios.length>1){
-      showDea = true;
-    }else{
-      showDea =  false;
-    }*/
-    if(datosPerfilador.intermediarios.length>1){
-      showCua = true;
-    }else{
-      showCua =  false;
-    }
-    dropdownValue2 = datosPerfilador.intermediarios[0];
-    valorCUA = datosPerfilador.intermediarios[0];
-    valorDA = "123456";
+    getDeasCuas(context , widget.responsive);
     posicionCUA = 0;
 
     print(DateTime.now());
   }
 
+  void getDeasCuas (BuildContext context, Responsive _responsive) async {
+
+    print("Da Y Cua");
+    valorDA = datosPerfilador.daList.elementAt(0).cveDa;
+    dropdownValue = datosPerfilador.daList.elementAt(0).cveDa;
+    print(valorDA);
+    print(datosPerfilador.daList);
+    print(datosUsuario.idparticipante);
+    for(int i =0; i < datosPerfilador.daList.length; i++ ){
+      
+      listadoDA.add("${datosPerfilador.daList.elementAt(i).cveDa}");
+      print(listadoDA.elementAt(i));
+    }
+
+    if(datosPerfilador.daList.length>1){
+      showDea = true;
+    }else{
+      showDea =  false;
+    }
+
+    valorCUA = datosPerfilador.intermediarios[0];
+    dropdownValue2 = datosPerfilador.intermediarios[0];
+
+    for(int j =0; j < datosPerfilador.intermediarios.length; j++ ){
+      listadoCUA.add("${datosPerfilador.intermediarios[j]} - ${ datosPerfilador.agenteInteresadoList.elementAt(j).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(j).apellidoPaterno}");
+    }
+
+    if(datosPerfilador.intermediarios.length>1){
+      showCua = true;
+    }else{
+      showCua =  false;
+    }
+  }
+  void setDACua(String pos, bool isDea){
+    if(isDea){
+      valorDA = pos;
+      dropdownValue = pos;
+    }else{
+      valorCUA = pos;
+      dropdownValue2 = pos;
+    }
+    setState(() {
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    Responsive responsive = Responsive.of(context);
-
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -104,13 +147,11 @@ class _PerfilPageState extends State<PerfilPage> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => VerFotoPage(
-                                                  image: fotoPerfil,
-                                                )));
+                                            builder: (context) => VerFotoPage()));
                                   },
                                   child: Container(
-                                      width: responsive.wp(13),
-                                      height: responsive.hp(13),
+                                      width: widget.responsive.wp(13),
+                                      height: widget.responsive.hp(13),
                                       decoration: BoxDecoration(
                                           color: Theme.Colors.profile_logo,
                                           shape: BoxShape.circle,
@@ -119,17 +160,18 @@ class _PerfilPageState extends State<PerfilPage> {
                                               width: 2,
                                               color: Theme.Colors.Azul_2)),
                                       child: Center(
-                                        child: fotoPerfil != null
+                                        child:  datosFisicos != null && datosFisicos.personales.foto != null &&
+                                                datosFisicos.personales.foto != ""
                                             ? CircleAvatar(
-                                                backgroundImage:
-                                                    new FileImage(fotoPerfil),
                                                 radius: 200.0,
+                                                backgroundImage: NetworkImage(datosFisicos.personales.foto),
+                                                backgroundColor: Colors.transparent,
                                               )
-                                            : Text(
-                                                "${(datosPerfilador.agenteInteresadoList.elementAt(posicionCUA).nombres[0])} ${datosPerfilador.agenteInteresadoList.elementAt(posicionCUA).apellidoPaterno[0]}",
+                                            : Text(datosPerfilador != null && datosPerfilador.agenteInteresadoList != null && datosPerfilador.agenteInteresadoList.elementAt(0)!= null?
+                                          "${(datosPerfilador.agenteInteresadoList.elementAt(0).nombres.isNotEmpty? datosPerfilador.agenteInteresadoList.elementAt(0).nombres[0]: "")} ${datosPerfilador.agenteInteresadoList.elementAt(0).apellidoPaterno.isNotEmpty ? datosPerfilador.agenteInteresadoList.elementAt(0).apellidoPaterno[0]: ""}": "",
                                                 style: TextStyle(
                                                     fontSize:
-                                                        responsive.hp(3.7),
+                                                    widget.responsive.hp(3.7),
                                                     color:
                                                         Theme.Colors.Azul_gnp,
                                                     fontWeight:
@@ -146,13 +188,13 @@ class _PerfilPageState extends State<PerfilPage> {
                                     Text(
                                       "${datosPerfilador.agenteInteresadoList.elementAt(posicionCUA).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(posicionCUA).apellidoPaterno}",
                                       style: TextStyle(
-                                          fontSize: responsive.ip(3),
+                                          fontSize: widget.responsive.ip(3),
                                           color: Theme.Colors.Azul_gnp),
                                     ),
                                     Text(
                                       datosUsuario.emaillogin,
                                       style: TextStyle(
-                                          fontSize: responsive.ip(2),
+                                          fontSize: widget.responsive.ip(2),
                                           color: Theme.Colors.Azul_2),
                                     ),
                                   ],
@@ -162,15 +204,15 @@ class _PerfilPageState extends State<PerfilPage> {
                           ),
                           //Button camera
                           Positioned(
-                            top: responsive.hp(6.8),
-                            left: responsive.wp(18.9),
+                            top: widget.responsive.hp(6.8),
+                            left: widget.responsive.wp(18.9),
                             child: GestureDetector(
                               onTap: () async {
                                 _showPicker(context);
                               },
                               child: Container(
-                                  width: responsive.wp(10),
-                                  height: responsive.hp(10),
+                                  width: widget.responsive.wp(10),
+                                  height: widget.responsive.hp(10),
                                   decoration: BoxDecoration(
                                     color: Theme.Colors.White,
                                     shape: BoxShape.circle,
@@ -186,15 +228,15 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     //DA y QA
                     Container(
-                      margin: EdgeInsets.only(top: responsive.hp(5)),
-                      height: responsive.hp(7.5),
+                      margin: EdgeInsets.only(top: widget.responsive.hp(5)),
+                      height: widget.responsive.hp(7.5),
                       child: Row(
                         children: [
                           Expanded(
                             child: (Container(
                               margin: new EdgeInsets.only(
-                                  left: responsive.wp(4.4),
-                                  right: responsive.wp(2.2)),
+                                  left: widget.responsive.wp(4.4),
+                                  right: widget.responsive.wp(2.2)),
                               decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
@@ -210,7 +252,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Theme.Colors.Azul_gnp,
-                                        fontSize: responsive.ip(2)),
+                                        fontSize: widget.responsive.ip(2)),
                                   ),
                                 ],
                               ),
@@ -219,8 +261,8 @@ class _PerfilPageState extends State<PerfilPage> {
                           Expanded(
                             child: (Container(
                               margin: new EdgeInsets.only(
-                                  right: responsive.wp(4.4),
-                                  left: responsive.wp(2.2)),
+                                  right: widget.responsive.wp(4.4),
+                                  left: widget.responsive.wp(2.2)),
                               decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
@@ -236,7 +278,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                     style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         color: Theme.Colors.Azul_gnp,
-                                        fontSize: responsive.ip(2)),
+                                        fontSize: widget.responsive.ip(2)),
                                   ),
                                 ],
                               ),
@@ -264,6 +306,17 @@ class _PerfilPageState extends State<PerfilPage> {
                                   horizontal: 20.0, vertical: 8.0),
                               child: showDea ? DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
+                                  onTap: (){
+                                    Navigator.push(
+                                        context,
+                                        new MaterialPageRoute(
+                                            builder: (_) => new listaCUA(
+                                              responsive: widget.responsive,
+                                              list: listadoDA,
+                                              isDA: true,
+                                              callback: setDACua,
+                                            )));
+                                  },
                                   value: dropdownValue,
                                   isExpanded: true,
                                   icon: Icon(Icons.arrow_drop_down),
@@ -271,7 +324,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                   elevation: 16,
                                   style: TextStyle(
                                     color: Theme.Colors.Azul_2,
-                                    fontSize: responsive.ip(1.8),
+                                    fontSize: widget.responsive.ip(1.8),
                                   ),
                                   onChanged: (String newValue) {
                                     setState(() {
@@ -290,7 +343,7 @@ class _PerfilPageState extends State<PerfilPage> {
                               ): Center(
                                 child: Text(dropdownValue,style: TextStyle(
                                   color: Theme.Colors.Azul_2,
-                                  fontSize: responsive.ip(1.8),
+                                  fontSize: widget.responsive.ip(1.8),
                                 ),),
                               ),
                             ),
@@ -315,7 +368,11 @@ class _PerfilPageState extends State<PerfilPage> {
                                         context,
                                         new MaterialPageRoute(
                                             builder: (_) => new listaCUA(
-                                                responsive: responsive)));
+                                                responsive: widget.responsive,
+                                              list: listadoCUA,
+                                              isDA: false,
+                                              callback: setDACua,
+                                            )));
                                   },
                                   value: dropdownValue2,
                                   isExpanded: true,
@@ -324,7 +381,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                   elevation: 16,
                                   style: TextStyle(
                                     color: Theme.Colors.Azul_2,
-                                    fontSize: responsive.ip(1.8),
+                                    fontSize: widget.responsive.ip(1.8),
                                   ),
                                   onChanged: (String newValue) {
                                     setState(() {
@@ -344,7 +401,7 @@ class _PerfilPageState extends State<PerfilPage> {
                               ) : Center(
                                 child: Text(dropdownValue2, style: TextStyle(
                                   color: Theme.Colors.Azul_2,
-                                  fontSize: responsive.ip(1.8),
+                                  fontSize: widget.responsive.ip(1.8),
                                 ),),
                               ),
                             ),
@@ -353,10 +410,10 @@ class _PerfilPageState extends State<PerfilPage> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: responsive.hp(9)),
+                      margin: EdgeInsets.only(top: widget.responsive.hp(9)),
                       child: Divider(
                         color: Theme.Colors.divider_color,
-                        thickness: responsive.hp(0.15),
+                        thickness: widget.responsive.hp(0.15),
                       ),
                     ),
                     CupertinoButton(
@@ -366,14 +423,14 @@ class _PerfilPageState extends State<PerfilPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => LoginActualizarContrasena(
-                                  responsive: responsive)),
+                                  responsive: widget.responsive)),
                         );
                       },
                       child: Container(
                         margin: EdgeInsets.only(
                             top: 15.0,
-                            left: responsive.wp(4.4),
-                            right: responsive.wp(4.4),
+                            left: widget.responsive.wp(4.4),
+                            right: widget.responsive.wp(4.4),
                             bottom: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -382,12 +439,12 @@ class _PerfilPageState extends State<PerfilPage> {
                               "Actualizar contraseña",
                               style: TextStyle(
                                   color: Theme.Colors.Encabezados,
-                                  fontSize: responsive.ip(1.8)),
+                                  fontSize: widget.responsive.ip(1.8)),
                             ),
                             Icon(
                               Icons.arrow_forward_ios,
                               color: Theme.Colors.GNP,
-                              size: responsive.ip(1.6),
+                              size: widget.responsive.ip(1.6),
                             )
                           ],
                         ),
@@ -400,14 +457,14 @@ class _PerfilPageState extends State<PerfilPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => LoginActualizarNumero(
-                                  responsive: responsive)),
+                                  responsive: widget.responsive)),
                         );
                       },
                       child: Container(
                         margin: EdgeInsets.only(
                             top: 15.0,
-                            left: responsive.wp(4.4),
-                            right: responsive.wp(4.4),
+                            left: widget.responsive.wp(4.4),
+                            right: widget.responsive.wp(4.4),
                             bottom: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -416,11 +473,11 @@ class _PerfilPageState extends State<PerfilPage> {
                               "Actualizar número de celular",
                               style: TextStyle(
                                   color: Theme.Colors.Encabezados,
-                                  fontSize: responsive.ip(1.8)),
+                                  fontSize: widget.responsive.ip(1.8)),
                             ),
                             Icon(Icons.arrow_forward_ios,
                                 color: Theme.Colors.GNP,
-                                size: responsive.ip(1.6)),
+                                size: widget.responsive.ip(1.6)),
                           ],
                         ),
                       ),
@@ -437,8 +494,8 @@ class _PerfilPageState extends State<PerfilPage> {
                       child: Container(
                         margin: EdgeInsets.only(
                             top: 15.0,
-                            left: responsive.wp(4.4),
-                            right: responsive.wp(4.4),
+                            left: widget.responsive.wp(4.4),
+                            right: widget.responsive.wp(4.4),
                             bottom: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -447,12 +504,12 @@ class _PerfilPageState extends State<PerfilPage> {
                               "Ver tutorial",
                               style: TextStyle(
                                   color: Theme.Colors.Encabezados,
-                                  fontSize: responsive.ip(1.8)),
+                                  fontSize: widget.responsive.ip(1.8)),
                             ),
                             Icon(
                               Icons.arrow_forward_ios,
                               color: Theme.Colors.GNP,
-                              size: responsive.ip(1.6),
+                              size: widget.responsive.ip(1.6),
                             )
                           ],
                         ),
@@ -460,13 +517,13 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     Divider(
                       color: Theme.Colors.divider_color,
-                      thickness: responsive.hp(0.15),
+                      thickness: widget.responsive.hp(0.15),
                     ),
                     is_available_finger != false || is_available_face != false ?
                     Row(
                       children: [
                         Container(
-                          margin: EdgeInsets.only(left: responsive.wp(2)),
+                          margin: EdgeInsets.only(left: widget.responsive.wp(2)),
                           child: Switch(
                             value: isSwitchedPerfill,
                             onChanged: (on) {
@@ -479,7 +536,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                     context,
                                     "",
                                     "",
-                                    responsive);
+                                    widget.responsive);
                               } else {
                                 if( isSwitchedPerfill == false){
                                 customAlertTablet(
@@ -488,7 +545,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                     context,
                                     "",
                                     "",
-                                    responsive);}
+                                    widget.responsive);}
                               }
                               setState(() {
                                 isSwitchedPerfill = on;
@@ -509,14 +566,14 @@ class _PerfilPageState extends State<PerfilPage> {
                                 "Inicio de sesión con datos biométricos",
                                 style: TextStyle(
                                     color: Theme.Colors.Azul_2,
-                                    fontSize: responsive.ip(2)),
+                                    fontSize: widget.responsive.ip(2)),
                               )),
                         ),
                       ],
                     ) : Container(),
                     Divider(
                       color: Theme.Colors.divider_color,
-                      thickness: responsive.hp(0.15),
+                      thickness: widget.responsive.hp(0.15),
                     ),
                     TextButton(
                       onPressed: () {
@@ -525,28 +582,28 @@ class _PerfilPageState extends State<PerfilPage> {
                             context,
                             "",
                             "",
-                            responsive);
+                            widget.responsive);
                       },
                       child: Text(
                         "CERRAR SESIÓN",
                         style: TextStyle(
-                            fontSize: responsive.ip(2),
+                            fontSize: widget.responsive.ip(2),
                             color: Theme.Colors.GNP),
                       ),
                     ),
                     Divider(
                       color: Theme.Colors.divider_color,
-                      thickness: responsive.hp(0.15),
+                      thickness: widget.responsive.hp(0.15),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(vertical: responsive.hp(1)),
+                      margin: EdgeInsets.symmetric(vertical: widget.responsive.hp(1)),
                       child: Center(
                           child: Text(
                         ""
                                 "Última sesión: " +
                            ultimaSesion,
                         style: TextStyle(
-                            fontSize: responsive.ip(1.8),
+                            fontSize: widget.responsive.ip(1.8),
                             color: Theme.Colors.fecha_1),
                       )),
                     )

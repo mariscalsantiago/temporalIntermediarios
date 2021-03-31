@@ -70,7 +70,9 @@ class TabsInteractor implements TabsUseCase {
           localIcon: "assets/menu.png",
           habilitado: true,
           accion: "flutter_app/menu"),
-    ]);
+
+    ]
+    );
   }
 
 

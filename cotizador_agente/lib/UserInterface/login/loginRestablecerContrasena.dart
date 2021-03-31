@@ -3,6 +3,7 @@ import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
+import 'package:flutter/services.dart';
 
 class LoginRestablecerContrasena extends StatefulWidget {
   final Responsive responsive;
@@ -30,7 +31,8 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
   FocusNode focusNuevaContrasena;
   TextEditingController controllerConfirmarContrasena;
   FocusNode focusConfirmarContrasena;
-  RegExp reConsecutive = RegExp('^(?!.*([A-Za-z0-9])\1{2})(?=.*[az])(?=.*\d)[A-Za-z0-9]+\$');
+  RegExp reConsecutive = RegExp('(.)\\1'); // 111 aaa
+  RegExp reConsecutive2 = RegExp('(12|23|34|45|56|67|78|89|98|87|76|54|43|32|21)');// 123 abcd
 
   @override
   void initState() {
@@ -144,6 +146,9 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
 
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+      ],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
@@ -173,6 +178,24 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
           )
       ),
       validator: (value) {
+        if(!lentPass){
+          return 'La contraseña no tiene el tamaño correcto';
+        }
+        if(!hasMayusPass){
+          return 'La contraseña no contiene mayusculas';
+        }
+        if(!hasNumPass){
+          return 'La contraseña no contiene numeros';
+        }
+        if(hasGNPPass){
+          return 'La contraseña contiene GNP';
+        }
+        if(hasConsecutiveIgualesPass){
+          return 'La contraseña contiene numeros consecutivos iguales';
+        }
+        if(hasConsecutivosPass){
+          return 'La contraseña contiene numeros consecutivos';
+        }
 
         if (value.isEmpty) {
           return 'Este campo es requerido';
@@ -210,9 +233,16 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
             hasEspacePass=false;
           }
           if(reConsecutive.hasMatch(value)){
-            hasConsecutiveIgualesPass = false;
-          } else {
             hasConsecutiveIgualesPass = true;
+          } else {
+            hasConsecutiveIgualesPass = false;
+          }
+          if(reConsecutive2.hasMatch(value)){
+            print(reConsecutive2.hasMatch(value));
+            hasConsecutivosPass = true;
+          } else {
+            print(reConsecutive2.hasMatch(value));
+            hasConsecutivosPass =false;
           }
 
         });
@@ -222,6 +252,9 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
 
   Widget inputTextConfirmarContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+      ],
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,
       obscureText: confirmarnuevaContrasena,
@@ -250,6 +283,24 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
           )
       ),
       validator: (value) {
+        if(!lentPass){
+          return 'La contraseña no tiene el tamaño correcto';
+        }
+        if(!hasMayusPass){
+          return 'La contraseña no contiene mayusculas';
+        }
+        if(!hasNumPass){
+          return 'La contraseña no contiene numeros';
+        }
+        if(hasGNPPass){
+          return 'La contraseña contiene GNP';
+        }
+        if(hasConsecutiveIgualesPass){
+          return 'La contraseña contiene numeros consecutivos iguales';
+        }
+        if(hasConsecutivosPass){
+          return 'La contraseña contiene numeros consecutivos';
+        }
 
         if (value!= controllerNuevaContrasena.text)
           return 'La contraseña no coincide';
@@ -288,6 +339,8 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
         onPressed: (){
           if(_formKey.currentState.validate()){
             Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+          }else{
+
           }
 
         }
@@ -439,8 +492,8 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
                 children: <Widget>[
                   Container(
                       margin: EdgeInsets.only(right: responsive.width * 0.02),
-                      child: Image.asset(!hasConsecutiveIgualesPass ? "assets/login/checkcircle.png": "assets/login/checkfail.png" ,color: !hasConsecutiveIgualesPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
-                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos (p.e. 123, abc).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutiveIgualesPass?Colors.green:Colors.red,),))
+                      child: Image.asset(!hasConsecutivosPass ? "assets/login/checkcircle.png": "assets/login/checkfail.png" ,color: !hasConsecutivosPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
+                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos (p.e. 123, abc).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutivosPass?Colors.green:Colors.red,),))
                 ],
               ),
             ) : Container(

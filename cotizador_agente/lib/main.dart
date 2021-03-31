@@ -18,8 +18,6 @@ import 'UserInterface/login/onboarding_APyAutos/ap_autos.dart';
 import 'UserInterface/login/principal_form_login.dart';
 
 
-File fotoPerfil;
-
 enum Vistas { login, home, perfil, biometricos }
 enum ScreenType {phone,tabletLan, tabletPor}
 bool is_available_face=false;
@@ -45,6 +43,9 @@ void main() async {
     urlBase: 'https://gmm-cotizadores-qa.gnp.com.mx/',
     urlSendAnalytics: 'https://www.google-analytics.com/',
     idContenedorAnalytics: 'UA-146126625-2',
+
+    serviceBCA: 'https://bca-ws-qa.gnp.com.mx',
+    apikeyBCA: 'd41d8cd98f00b204e9800998ecf8427e',
 
     child: new MyApp(),
   );
@@ -73,30 +74,42 @@ class MyApp extends StatelessWidget {
           }
           // Once complete, show your application
           if (snapshot.connectionState == ConnectionState.done) {
-            return  MaterialApp(
-              localizationsDelegates: [
-                // ... app-specific localization delegate[s] here
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: [
-                const Locale('en'), // English
-                const Locale('es'), // español
-              ],
-              initialRoute: '/',
-              routes: {
-                '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
-                '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
-                '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
-                '/login': (context) => PrincipalFormLogin(),
+            return  GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+                if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+                  FocusManager.instance.primaryFocus.unfocus();
+                }
               },
-              title: 'App Contratacion',
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                primarySwatch: Colors.red,
+              child: MaterialApp(
+                localizationsDelegates: [
+                  // ... app-specific localization delegate[s] here
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: [
+                  const Locale('en'), // English
+                  const Locale('es'), // español
+                ],
+                initialRoute: '/',
+                routes: {
+                  '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
+                  '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
+                  '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
+                  '/login': (context) => PrincipalFormLogin(),
+                },
+                title: 'App Contratacion',
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+                  primarySwatch: Colors.red,
+                ),
+                home: SplashMain(),
               ),
-              home: SplashMain(),
             );
           }
           return Container();

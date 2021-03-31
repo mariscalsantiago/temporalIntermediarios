@@ -7,15 +7,19 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 
 
 class listaCUA extends StatefulWidget {
+  final Function callback;
   final Responsive responsive;
+  final List<String> list;
+  final bool isDA;
 
 
-  const listaCUA({Key key, this.responsive}) : super(key: key);
+  const listaCUA({Key key, this.responsive, this.list, this.isDA, this.callback}) : super(key: key);
   @override
   _listaCUAState createState() => _listaCUAState();
 }
 
 class _listaCUAState extends State<listaCUA> {
+
 
   bool _saving;
   int _character = 99999;
@@ -24,6 +28,7 @@ class _listaCUAState extends State<listaCUA> {
   void initState() {
     _saving = false;
     // TODO: implement initState
+    print(widget.list);
     super.initState();
   }
 
@@ -69,12 +74,14 @@ class _listaCUAState extends State<listaCUA> {
                   scrollDirection:  Axis.vertical,
                   shrinkWrap: true,
                   itemBuilder: (context, posicion) {
-                    return PreguntaUno(responsive,datosPerfilador.intermediarios.elementAt(posicion), datosPerfilador.agenteInteresadoList.elementAt(posicion).nombres,datosPerfilador.agenteInteresadoList.elementAt(posicion).apellidoPaterno ,posicion);
+                    //return PreguntaUno(responsive,widget.list, datosPerfilador.agenteInteresadoList.elementAt(posicion).nombres,datosPerfilador.agenteInteresadoList.elementAt(posicion).apellidoPaterno ,posicion);
+                    print(widget.list.elementAt(posicion));
+                    return PreguntaUno(responsive,widget.list.elementAt(posicion),posicion);
                   },
                   separatorBuilder: (context, posicion) {
                     return separacion(responsive,1);
                   },
-                  itemCount: datosPerfilador.intermediarios.length,
+                  itemCount: widget.list.length,
                 )
             ),
             separacion(responsive,10),
@@ -114,9 +121,10 @@ class _listaCUAState extends State<listaCUA> {
     return l;
   }
 
-  Widget PreguntaUno(Responsive responsive, String cua,String nombre , String apellido,int posicion){
+  Widget PreguntaUno(Responsive responsive, String cua,int posicion){
     return  ListTile(
-      title:  Text("${cua} - ${nombre} ${apellido}",
+      //title:  Text("${cua} - ${nombre} ${apellido}",
+      title:  Text("${cua}",
         style: TextStyle(
             letterSpacing: 0.16,
             fontWeight: FontWeight.normal,
@@ -129,8 +137,13 @@ class _listaCUAState extends State<listaCUA> {
         onChanged: (int value) {
           setState(() {
             _character = value;
-            posicionCUA = value;
-            valorCUA = cua;
+            if(widget.isDA){
+              posicionDA = value;
+              valorDA = widget.list.elementAt(value);
+            }else{
+              posicionCUA = value;
+              valorCUA = cua;
+            }
             print("_character ${_character}");
           });
         },
@@ -163,6 +176,17 @@ class _listaCUAState extends State<listaCUA> {
         ),
         onPressed: () async {
           if(_character != 99999){
+            if(widget.isDA){
+              valorDA = widget.list.elementAt(_character);
+              widget.callback(valorDA,widget.isDA);
+            }else{
+              posicionCUA = _character;
+              valorCUA = datosPerfilador.intermediarios[_character];
+              widget.callback(valorCUA,widget.isDA);
+            }
+            setState(() {
+            });
+
             Navigator.pop(context,true);
           }
 

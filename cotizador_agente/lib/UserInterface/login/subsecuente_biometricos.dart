@@ -1,7 +1,10 @@
 
 import 'dart:ui';
+import 'package:cotizador_agente/Services/LoginServices.dart';
+import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
@@ -28,9 +31,10 @@ class _BiometricosPage extends State<BiometricosPage> {
   bool face = false;
   bool showBio = true;
   var localAuth = new LocalAuthentication();
-
+  bool _saving;
   @override
   void initState() {
+    _saving = false;
     // TODO: implement initState
     super.initState();
     if(is_available_finger != false  ){
@@ -53,120 +57,166 @@ class _BiometricosPage extends State<BiometricosPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          //mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            separacion(widget.responsive, 8),
-            LoginEncabezadoLogin(responsive: widget.responsive),
-            separacion(widget.responsive, 8),
-            Center(
-                child: Text(
-              "¡Hola Nombre!",
-              style: TextStyle(color: Tema.Colors.Encabezados, fontSize: widget.responsive.ip(3)),
-            )),
-            separacion(widget.responsive, 8),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child:Scaffold(
+        body: SingleChildScrollView(
+          child:  Stack(
+              children: builData(widget.responsive)
+          )
+        ),
+      ),
+    );
+  }
 
-            Container(
-                margin: EdgeInsets.only(
-                    left: widget.responsive.wp(2),
-                    right: widget.responsive.wp(2)),
-                child: GestureDetector(
+  List<Widget> builData(Responsive responsive){
+    Widget data = Container();
+
+    data = SingleChildScrollView(
+      child: Column(
+        //mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          separacion(widget.responsive, 8),
+          LoginEncabezadoLogin(responsive: widget.responsive),
+          separacion(widget.responsive, 8),
+          Center(
+              child: Text(
+                "¡ Hola ${prefs.getString("nombreUsuario")} !",
+                style: TextStyle(color: Tema.Colors.Encabezados, fontSize: widget.responsive.ip(3)),
+              )),
+          separacion(widget.responsive, 8),
+
+          Container(
+              margin: EdgeInsets.only(
+                  left: widget.responsive.wp(2),
+                  right: widget.responsive.wp(2)),
+              child: GestureDetector(
                   onTap: (){
-                    if(face){}else{
-                      _authenticateHuella();
-                    }
+                    //if(face){}else{
+                    _authenticateHuella(widget.responsive);
+                    // }
                   },
-                    child: Icon(face != false ? Tema.Icons.facial : Icons.fingerprint, size: widget.responsive.ip(9), color: Tema.Colors.GNP,))),
-            Container(
-              margin: EdgeInsets.only(top: widget.responsive.hp(3), bottom: widget.responsive.hp(4), left: widget.responsive.wp(30), right: widget.responsive.wp(30)),
-              child:
-                  Text(face != false ?"Mira fijamente a la cámara de tu dispositivo": "Coloca tu huella en el lector de tu dispositivo",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Tema.Colors.Funcional_Textos_Body, fontSize: widget.responsive.ip(1.5)),
-                  ),
+                  child: Icon(face != false ? Tema.Icons.facial : Icons.fingerprint, size: widget.responsive.ip(9), color: Tema.Colors.GNP,))),
+          Container(
+            margin: EdgeInsets.only(top: widget.responsive.hp(3), bottom: widget.responsive.hp(4), left: widget.responsive.wp(30), right: widget.responsive.wp(30)),
+            child:
+            Text(face != false ?"Mira fijamente a la cámara de tu dispositivo": "Coloca tu huella en el lector de tu dispositivo",
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Tema.Colors.Funcional_Textos_Body, fontSize: widget.responsive.ip(1.5)),
             ),
-            showBio != false ? CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: Container(
-            margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-            ),
-            padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
-            width: widget.responsive.width,
-            child: Text(face != false ?"INGRESAR CON LECTOR DE HUELLA": "INGRESAR CON RECONOCIMIENTO FACIAL", style: TextStyle(
-              color: Tema.Colors.gnpOrange,
-            ),
-                textAlign: TextAlign.center),
           ),
-          onPressed: () {
-            setState(() {
-              if (face) {
-                face=false;
-              }
-              else {
-                face=true;
-              }
-            });
+          showBio != false ? CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: Container(
+                margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
+                width: widget.responsive.width,
+                child: Text(face != false ?"INGRESAR CON LECTOR DE HUELLA": "INGRESAR CON RECONOCIMIENTO FACIAL", style: TextStyle(
+                  color: Tema.Colors.gnpOrange,
+                ),
+                    textAlign: TextAlign.center),
+              ),
+              onPressed: () {
+                setState(() {
+                  if (face) {
+                    face=false;
+                  }
+                  else {
+                    face=true;
+                  }
+                });
 
-          }
-      ):Container(),
-            CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: Container(
-                  margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
-                  width: widget.responsive.width,
-                  child: Text("INGRESAR CON CONTRASEÑA", style: TextStyle(
-                    color: Tema.Colors.gnpOrange,
-                  ),
-                      textAlign: TextAlign.center),
+              }
+          ):Container(),
+          CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: Container(
+                margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(3),
                 ),
-                onPressed: () async {
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
-                }
-            ),
-            CupertinoButton(
-                padding: EdgeInsets.zero,
-                child: Container(
-                  margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
-                  width: widget.responsive.width,
-                  child: Text("INGRESAR CON OTRO USUARIO", style: TextStyle(
-                    color: Tema.Colors.gnpOrange,
-                  ),
-                      textAlign: TextAlign.center),
+                padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
+                width: widget.responsive.width,
+                child: Text("INGRESAR CON CONTRASEÑA", style: TextStyle(
+                  color: Tema.Colors.gnpOrange,
                 ),
-                onPressed: () async {
-                  prefs.setBool("userRegister", false);
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
-                }
-            ),
-        Container(
-          margin: EdgeInsets.only(left:widget.responsive.wp(0), top: widget.responsive.hp(9)),
-          child: Text("Versión 2.0",
-            style: TextStyle(
+                    textAlign: TextAlign.center),
+              ),
+              onPressed: () async {
+                prefs.setBool("activarBiometricos", false);
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+              }
+          ),
+          CupertinoButton(
+              padding: EdgeInsets.zero,
+              child: Container(
+                margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(3),
+                ),
+                padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
+                width: widget.responsive.width,
+                child: Text("INGRESAR CON OTRO USUARIO", style: TextStyle(
+                  color: Tema.Colors.gnpOrange,
+                ),
+                    textAlign: TextAlign.center),
+              ),
+              onPressed: () async {
+                prefs.setBool("userRegister", false);
+                prefs.setString("contrasenaUsuario","");
+                prefs.setString("correoUsuario", "");
+                prefs.setBool("activarBiometricos", false);
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+              }
+          ),
+          Container(
+            margin: EdgeInsets.only(left:widget.responsive.wp(0), top: widget.responsive.hp(9)),
+            child: Text("Versión 2.0",
+              style: TextStyle(
                 color: Tema.Colors.Azul_2,
                 fontSize: widget.responsive.ip(1.5),
                 fontWeight: FontWeight.normal,
 
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
-        ),
-          ],
-        ),
+        ],
       ),
     );
+
+    var l = new List<Widget>();
+    l.add(data);
+    if (_saving) {
+      var modal = Stack(
+        children: [
+          Container(
+            height: responsive.height,
+            child: Opacity(
+              opacity: 0.7,
+              child: const ModalBarrier(dismissible: false, color: Tema.Colors.primary),
+            ),
+          ),
+          new Center(
+            child: Container(
+                margin: EdgeInsets.only(top: responsive.hp(35)),
+                height: responsive.height*0.1,
+                width: responsive.width* 0.2,
+                child: Theme(
+                  data: Theme.of(context).copyWith(accentColor: Tema.Colors.tituloTextoDrop),
+                  child:   new CircularProgressIndicator(),
+                )
+            ),
+          ),
+        ],
+      );
+      l.add(modal);
+    }
+    return l;
   }
 
   Widget separacion(Responsive responsive, double tamano) {
@@ -175,7 +225,7 @@ class _BiometricosPage extends State<BiometricosPage> {
     );
   }
 
-  Future<void> _authenticateHuella() async {
+  Future<void> _authenticateHuella(Responsive responsive) async {
     bool authenticated = false;
     try {
       setState(() {
@@ -192,7 +242,23 @@ class _BiometricosPage extends State<BiometricosPage> {
       });
       print("Authetificación Usuario");
       if(authenticated){
-       //TODO enviar login
+        setState(() {
+          _saving = true;
+        });
+        datosUsuario = await logInServices(context,prefs.getString("correoUsuario"), prefs.getString("contrasenaUsuario"), prefs.getString("correoUsuario"),responsive);
+        setState(() {
+          _saving = false;
+        });
+        if(datosUsuario!= null){
+          Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage()));
+        }else{
+          customAlert(face?AlertDialogType.Rostro_no_reconocido:
+              AlertDialogType.Huella_no_reconocida,
+              context,
+              "",
+              "",
+              responsive);
+        }
       }
     } on PlatformException catch (e) {
       print(e);
