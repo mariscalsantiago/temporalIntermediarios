@@ -51,24 +51,27 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
         appBar: AppBar(
           elevation: 0,
           title: Text(
-            'editar',
-            style: TextStyle(color: Colors.black),
+            'Ajustar foto',
+            style: TextStyle(color: Theme.Colors.Azul_gnp),
           ),
           backgroundColor: Colors.white,
           leading: new IconButton(
             icon:
-            new Icon(Icons.navigate_before, color: Colors.black, size: 40),
+            new Icon(Icons.navigate_before, color: Theme.Colors.gnpOrange, size: 40),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ),
         body: Center(
-          child: ImgCrop(
-            key: cropKey,
-            chipRadius: 150,
-            chipShape: 'circle',
-            maximumScale: 3,
-            image: FileImage(widget.image),
-            // handleSize: 0.0,
+          child: Container(
+            color: Theme.Colors.Azul_gnp,
+            child: ImgCrop(
+              key: cropKey,
+              chipRadius: 150,
+              chipShape: 'circle',
+              maximumScale: 3,
+              image: FileImage(widget.image),
+              // handleSize: 0.0,
+            ),
           ),
         ),
         floatingActionButton:GestureDetector(

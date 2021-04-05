@@ -115,7 +115,7 @@ class _PerfilPageState extends State<PerfilPage> {
             backgroundColor: Colors.white,
             centerTitle: false,
             title: Text(
-              "Mi Perfil",
+              "Mi perfil",
               style: TextStyle(color: Theme.Colors.Azul_2),
             ),
             leading: IconButton(
@@ -218,7 +218,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
-                                    Icons.camera_alt,
+                                    Icons.camera_alt_outlined,
                                     color: Theme.Colors.GNP,
                                   )),
                             ),

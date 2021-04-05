@@ -90,6 +90,7 @@ void getInicialesName(){
                             ),
                             onChanged: (String newValue) {
                               setState(() {
+                                if(dropdownValue == "Atuos"){opcionElegida = HomeSelection.Atuos;}else if(dropdownValue == "AP"){opcionElegida = HomeSelection.AP;}
                                 dropdownValue = newValue;
                               });
                             },
