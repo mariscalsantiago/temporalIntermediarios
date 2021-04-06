@@ -29,8 +29,8 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   TextEditingController controllerActualContrasena;
   FocusNode focusActualContrasena;
   //RegExp reConsecutive = RegExp('^(?!.*([A-Za-z0-9])\1{2})(?=.*[az])(?=.*\d)[A-Za-z0-9]+\$');
-  RegExp reConsecutive = RegExp('(.)\\1'); // 111 aaa
-  RegExp reConsecutive2 = RegExp('(12|23|34|45|56|67|78|89|98|87|76|54|43|32|21)');// 123 abcd
+  RegExp reConsecutive = RegExp('(.)\\1{2}'); // 111 aaa
+  RegExp reConsecutive2 = RegExp('(123|234|345|456|567|678|789|987|876|654|543|432|321)');// 123 abcd
   final _formKey = GlobalKey<FormState>();
   bool _saving;
   bool actualContrasena;

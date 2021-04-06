@@ -11,9 +11,9 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../main.dart';
-enum HomeSelection {Atuos,AP}
+enum HomeSelection {Atuos,AP,None}
 
-HomeSelection opcionElegida =  HomeSelection.Atuos;
+HomeSelection opcionElegida =  HomeSelection.None;
 
 String iniciales="EJ";
 class HomePage extends StatefulWidget {
@@ -90,7 +90,7 @@ void getInicialesName(){
                             ),
                             onChanged: (String newValue) {
                               setState(() {
-                                if(dropdownValue == "Atuos"){opcionElegida = HomeSelection.Atuos;}else if(dropdownValue == "AP"){opcionElegida = HomeSelection.AP;}
+                                //if(dropdownValue == "Atuos"){opcionElegida = HomeSelection.Atuos;}else if(dropdownValue == "AP"){opcionElegida = HomeSelection.AP;}
                                 dropdownValue = newValue;
                               });
                             },
@@ -113,11 +113,21 @@ void getInicialesName(){
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
                       onTap: (){
-                        //Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
                         setState(() {
-
                         });
-                        opcionElegida = HomeSelection.Atuos;
+                        //opcionElegida = HomeSelection.Atuos;
+                      },
+                      onLongPressStart: (j){
+                        setState(() {
+                          opcionElegida = HomeSelection.Atuos;
+                        });
+                      },
+                      onLongPressEnd: (j){
+                        setState(() {
+                          opcionElegida = HomeSelection.None;
+                        });
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
                       },
                       child: Card(
                         shape: RoundedRectangleBorder(
@@ -161,10 +171,21 @@ void getInicialesName(){
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
                       onTap: (){
-                        //Navigator.pushNamed(context, "/cotizadorUnicoAP");
+                        Navigator.pushNamed(context, "/cotizadorUnicoAP");
                         setState(() {
                         });
-                        opcionElegida = HomeSelection.AP;
+                        //opcionElegida = HomeSelection.AP;
+                      },
+                      onLongPressStart: (j){
+                        setState(() {
+                          opcionElegida = HomeSelection.AP;
+                        });
+                      },
+                      onLongPressEnd: (j){
+                        setState(() {
+                          opcionElegida = HomeSelection.None;
+                        });
+                        Navigator.pushNamed(context, "/cotizadorUnicoAP");
                       },
                       child: Container(
                         child: Card(
@@ -216,9 +237,10 @@ void getInicialesName(){
               )*/
             ),
           ),
+          /*
           bottomNavigationBar: TabsController(
             isSecondLevel: false,
-          ),
+          ),*/
         ),
       ),
     );

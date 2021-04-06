@@ -170,6 +170,7 @@ class _BiometricosPage extends State<BiometricosPage> {
                 prefs.setString("contrasenaUsuario","");
                 prefs.setString("correoUsuario", "");
                 prefs.setBool("activarBiometricos", false);
+                prefs.setBool("regitroDatosLoginExito", false);
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
               }
           ),

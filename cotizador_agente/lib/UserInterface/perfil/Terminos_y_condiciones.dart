@@ -1,6 +1,7 @@
 
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class TerminosYCondicionesPage extends StatefulWidget {
 
 class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
 
+
   double width = 300.0;
   double height = 150.0;
   @override
@@ -30,12 +32,12 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
         leading: IconButton(
           icon:Icon(Icons.close, color: Theme.Colors.GNP,),
           onPressed: (){
-            setState(() {
-              prefs.setBool("activarBiometricos", false);
-              isSwitchedPerfill = false;
 
-            Navigator.pop(context,true);
-            });
+              prefs.setBool("activarBiometricos", false);
+              setState(() {
+                isSwitchedPerfill = false;
+              });
+              Navigator.pop(context,true);
           },
         ),
         backgroundColor: Theme.Colors.White,
@@ -45,6 +47,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
         child: Stack(
           children: [
             SingleChildScrollView(
+
               child: Container(
                 child: Column(
                   //mainAxisAlignment: MainAxisAlignment.center,
@@ -140,9 +143,8 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                       value: checkedValue,
                       onChanged: (bool value) {
                         setState(() {
-
+                          checkedValue = value;
                         });
-                        checkedValue = value;
                         prefs.setBool("aceptoTerminos", checkedValue);
                       },
                       controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
@@ -150,6 +152,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                     CupertinoButton(
                         padding: EdgeInsets.zero,
                         child: Container(
+                          margin: EdgeInsets.only(top: responsive.hp(4), bottom: responsive.hp(3)),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(3),
                             color: (checkedValue) ?
@@ -164,14 +167,15 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                               textAlign: TextAlign.center),
                         ),
                         onPressed: () async {
-                          Navigator.pop(context,true);
-                          customAlert(
-                              AlertDialogType
-                                  .activacionExitosa_Reconocimiento_facial,
-                              context,
-                              "",
-                              "",
-                              responsive);
+                          if(checkedValue){
+                            Navigator.pop(context,true);
+                            is_available_finger != false ?
+                              customAlert(AlertDialogType.activacionExitosa_Huella, context, "", "", responsive) :
+                              customAlert(AlertDialogType.activacionExitosa_Reconocimiento_facial, context, "", "", responsive);
+                              setState(() {
+                                checkedValue = false;
+                              });
+                          }
                         }
                     )
                   ],

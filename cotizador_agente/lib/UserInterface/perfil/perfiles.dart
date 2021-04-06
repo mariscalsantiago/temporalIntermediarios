@@ -31,7 +31,9 @@ String dropdownValue;
 String dropdownValue2;
 ServiceGetDeasModel dasData;
 bool showDea = false;
+bool preesDea = false;
 bool showCua = false;
+bool preesCua = false;
 String valorCUA ;
 String valorDA ;
 int posicionCUA;
@@ -55,6 +57,7 @@ class _PerfilPageState extends State<PerfilPage> {
     listadoDA= [];
     listadoCUA= [];
     isSwitchedPerfill = prefs.getBool("activarBiometricos");
+    print("state isSwitchedPerfill ${isSwitchedPerfill}");
     getDeasCuas(context , widget.responsive);
     posicionCUA = 0;
 
@@ -108,6 +111,8 @@ class _PerfilPageState extends State<PerfilPage> {
 
   @override
   Widget build(BuildContext context) {
+    isSwitchedPerfill = prefs.getBool("activarBiometricos");
+    print("build isSwitchedPerfill ${isSwitchedPerfill}");
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -291,121 +296,142 @@ class _PerfilPageState extends State<PerfilPage> {
                     Container(
                       child: Row(
                         children: [
+                          //DEA
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Theme.Colors.borderInput,
+                                  color: preesDea ? Theme.Colors.gnpOrange:Theme.Colors.borderInput,
                                   width: 1,
                                 ),
-                                color: Theme.Colors.backgroud,
+                                color: showDea ? Theme.Colors.backgroud :Theme.Colors.botonlogin,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               margin: EdgeInsets.only(left: 20.0, right: 10),
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20.0, vertical: 8.0),
-                              child: showDea ? DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  onTap: (){
-                                    Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                            builder: (_) => new listaCUA(
-                                              responsive: widget.responsive,
-                                              list: listadoDA,
-                                              isDA: true,
-                                              callback: setDACua,
-                                            )));
-                                  },
-                                  value: dropdownValue,
-                                  isExpanded: true,
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  iconSize: 24,
-                                  elevation: 16,
-                                  style: TextStyle(
-                                    color: Theme.Colors.Azul_2,
-                                    fontSize: widget.responsive.ip(1.8),
-                                  ),
-                                  onChanged: (String newValue) {
-                                    setState(() {
-                                      dropdownValue = newValue;
-                                    });
-                                  },
-                                  items: <String>['${valorDA.toString()}']
-                                      .map<DropdownMenuItem<String>>(
-                                          (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                ),
-                              ): Center(
-                                child: Text(dropdownValue,style: TextStyle(
+                              child: showDea ? GestureDetector(
+                                onTap: (){
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (_) => new listaCUA(
+                                            responsive: widget.responsive,
+                                            list: listadoDA,
+                                            isDA: true,
+                                            callback: setDACua,
+                                          )));
+                                },
+                                onLongPressStart: (p){
+                                  setState(() {
+                                    preesDea=true;
+                                  });
+
+                                },
+                                onLongPressEnd: (p){
+                                  setState(() {
+                                    preesDea=false;
+                                  });
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (_) => new listaCUA(
+                                            responsive: widget.responsive,
+                                            list: listadoDA,
+                                            isDA: true,
+                                            callback: setDACua,
+                                          )));
+                                },
+                                child:  Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(dropdownValue,style: TextStyle(
                                   color: Theme.Colors.Azul_2,
-                                  fontSize: widget.responsive.ip(1.8),
-                                ),),
+                                  fontSize: widget.responsive.ip(1.8))),
+                                    Icon(preesDea ? Icons.arrow_drop_up:Icons.arrow_drop_down, color:preesDea ? Theme.Colors.gnpOrange:Theme.Colors.Funcional_Textos_Body,)
+                                  ],
+                                ),
+                              ):Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(dropdownValue,style: TextStyle(
+                                      color: Theme.Colors.botonletra,
+                                      fontSize: widget.responsive.ip(1.8))),
+                                  Icon(Icons.arrow_drop_down)
+                                ],
                               ),
+
                             ),
                           ),
+                          //Cua
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: Theme.Colors.borderInput,
+                                  color: preesCua ? Theme.Colors.gnpOrange:Theme.Colors.borderInput,
                                   width: 1,
                                 ),
-                                color: Theme.Colors.backgroud,
+                                color: showCua ? Theme.Colors.backgroud :Theme.Colors.botonlogin,
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               margin: EdgeInsets.only(right: 20.0, left: 10.0),
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20.0, vertical: 8.0),
-                              child: showCua ? DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        new MaterialPageRoute(
-                                            builder: (_) => new listaCUA(
-                                                responsive: widget.responsive,
-                                              list: listadoCUA,
-                                              isDA: false,
-                                              callback: setDACua,
-                                            )));
-                                  },
-                                  value: dropdownValue2,
-                                  isExpanded: true,
-                                  icon: Icon(Icons.arrow_drop_down),
-                                  iconSize: 24,
-                                  elevation: 16,
-                                  style: TextStyle(
-                                    color: Theme.Colors.Azul_2,
-                                    fontSize: widget.responsive.ip(1.8),
-                                  ),
-                                  onChanged: (String newValue) {
-                                    setState(() {
-                                      dropdownValue2 = newValue;
-                                    });
-                                  },
-                                  items: <String>[
-                                    '${valorCUA.toString()}',
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                ),
-                              ) : Center(
-                                child: Text(dropdownValue2, style: TextStyle(
-                                  color: Theme.Colors.Azul_2,
-                                  fontSize: widget.responsive.ip(1.8),
-                                ),),
-                              ),
+                              child: showCua ? GestureDetector(
+                                onTap: (){
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (_) => new listaCUA(
+                                            responsive: widget.responsive,
+                                            list: listadoCUA,
+                                            isDA: false,
+                                            callback: setDACua,
+                                          )));
+                                },
+                                onLongPressStart: (p){
+                                  setState(() {
+                                    preesCua=true;
+                                  });
+
+                                },
+                                onLongPressEnd: (p){
+                                  setState(() {
+                                    preesCua=false;
+                                  });
+
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (_) => new listaCUA(
+                                            responsive: widget.responsive,
+                                            list: listadoCUA,
+                                            isDA: false,
+                                            callback: setDACua,
+                                          )));
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(dropdownValue2,style: TextStyle(
+                                        color: Theme.Colors.Azul_2,
+                                        fontSize: widget.responsive.ip(1.8))),
+                                    Icon(preesCua ? Icons.arrow_drop_up:Icons.arrow_drop_down, color:preesCua ? Theme.Colors.gnpOrange:Theme.Colors.Funcional_Textos_Body,)
+                                  ],
+                              )):Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                Text(dropdownValue2,style: TextStyle(
+                                color: Theme.Colors.botonletra,
+                                fontSize: widget.responsive.ip(1.8))),
+                            Icon(Icons.arrow_drop_down)
+                            ],
                             ),
-                          ),
+                                  )),
                         ],
                       ),
                     ),
@@ -433,6 +459,7 @@ class _PerfilPageState extends State<PerfilPage> {
                             right: widget.responsive.wp(4.4),
                             bottom: 10),
                         child: Row(
+
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
@@ -528,24 +555,24 @@ class _PerfilPageState extends State<PerfilPage> {
                             value: isSwitchedPerfill,
                             onChanged: (on) {
                               setState(() {
+                                isSwitchedPerfill;
                               });
-                              if (deviceType == ScreenType.phone && isSwitchedPerfill == false ) {
-                                customAlert(
-                                    AlertDialogType
-                                        .opciones_de_inicio_de_sesion,
-                                    context,
-                                    "",
-                                    "",
-                                    widget.responsive);
-                              } else {
-                                if( isSwitchedPerfill == false){
-                                customAlertTablet(
-                                    AlertDialogTypeTablet
-                                        .opciones_de_inicio_de_sesion,
-                                    context,
-                                    "",
-                                    "",
-                                    widget.responsive);}
+                              prefs.setBool("primeraVez", false);
+                              prefs.setBool("esPerfil", true);
+                              if(is_available_finger != false && is_available_face != false && isSwitchedPerfill == false){
+                                if (deviceType == ScreenType.phone && isSwitchedPerfill == false ) {
+                                  customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context, "", "", widget.responsive);
+                                } else {
+                                  if( isSwitchedPerfill == false){
+                                    customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion, context, "", "", widget.responsive);
+                                  }
+                                }
+                              } else{
+                                if(isSwitchedPerfill == false){
+                                  is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", widget.responsive)
+                                      : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", widget.responsive);
+                                }
+
                               }
                               setState(() {
                                 isSwitchedPerfill = on;

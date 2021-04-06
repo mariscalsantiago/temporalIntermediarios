@@ -31,7 +31,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   FocusNode focusCorreo;
   FocusNode focusContrasena;
   bool contrasena;
-  bool _huella;
+  bool _biometricos;
   bool existeUsuario;
   String correoUsuario;
   String contrasenaUsuario;
@@ -49,21 +49,23 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     controllerCorreo = new TextEditingController();
     //showOnboarding();
     if(prefs != null && prefs.getBool("userRegister") != null){
-      if(prefs.getBool("userRegister") == true){
+      if(prefs.getBool("userRegister")){
+        prefs.setBool("hacerLogin", false);
+        prefs.setBool("esPerfil", false);
         existeUsuario = true;
-        _huella =  prefs.getBool("activarBiometricos");
+        _biometricos =  prefs.getBool("activarBiometricos");
         prefs.setBool("primeraVez", false);
       } else{
-        _huella = false;
+        _biometricos = false;
         existeUsuario = false;
-        prefs.setBool("activarBiometricos", _huella);
+        prefs.setBool("activarBiometricos", _biometricos);
         prefs.setString("contrasenaUsuario","");
         prefs.setString("correoUsuario", controllerCorreo.text);
       }
     } else {
-      _huella = false;
+      _biometricos = false;
       aceptoTerminos = false;
-      prefs.setBool("activarBiometricos", _huella);
+      prefs.setBool("activarBiometricos", _biometricos);
       prefs.setBool("aceptoTerminos", aceptoTerminos);
       existeUsuario = false;
       prefs.setBool("primeraVez", true);
@@ -115,7 +117,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                             existeUsuario ? separacion(responsive, 6) : separacion(responsive, 2),
                             botonInicioSesion(responsive),
                             separacion(responsive, 1),
-                            is_available_finger != false || is_available_face != false ? activarHuella(responsive) : Container(height: 10,width: 10,),
+                            is_available_finger|| is_available_face ? activarHuella(responsive) : Container(height: 10,width: 10,),
+                            separacion(responsive, 1),
+                            existeUsuario ? ingresarConOtroUsuario() : Container(),
                             separacion(responsive, 1),
                             version(responsive)
                           ]
@@ -310,24 +314,31 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                  contrasenaUsuario = prefs.getString("contrasenaUsuario");
                }
 
+               print("correoUsuario ${correoUsuario}");
+               print("contrasenaUsuario ${contrasenaUsuario}");
+
             } else {
               prefs.setString("correoUsuario", controllerCorreo.text);
               correoUsuario = controllerCorreo.text;
               prefs.setString("contrasenaUsuario", controllerContrasena.text);
               contrasenaUsuario = controllerContrasena.text;
+              print("ELSE correoUsuario ${correoUsuario}");
+              print("contrasenaUsuario ${contrasenaUsuario}");
             }
             datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
              setState(() {
                _saving = false;
              });
             if(datosUsuario != null){
-              print("servicios null");
+              print("if datosUsuario ${datosUsuario}");
+              prefs.setBool("hacerLogin", true);
               prefs.setBool("regitroDatosLoginExito", true);
               prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
               ultimaSesion = fechaPrototipo(DateTime.now().toString());
               redirect(responsive);
             } else {
-              if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito") == true) {
+              print("else datosUsuario ${datosUsuario}");
+              if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
 
               } else{
                 prefs.setBool("regitroDatosLoginExito", false);
@@ -335,7 +346,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                 prefs.setString("correoUsuario", "");
                 prefs.setString("contrasenaUsuario", "");
               }
-
             }
             setState(() {
               _saving = false;
@@ -353,8 +363,27 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       if (existeUsuario) {
           controllerContrasena.clear();
           controllerCorreo.clear();
-          if(_huella){
+          if(_biometricos){
+            if(is_available_finger != false && is_available_face != false){
+              if (deviceType == ScreenType.phone) {
+                customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive);
+              }
+              else{
+                customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
+              }
+            } else{
+              is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive)
+              : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive);
+            }
 
+          } else{
+            Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage()));
+          }
+
+      } else {
+        prefs.setBool("userRegister", true);
+        if(_biometricos){
+          if(is_available_finger != false && is_available_face != false){
             if (deviceType == ScreenType.phone) {
               customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive);
             }
@@ -362,20 +391,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
             }
           } else{
-            Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage()));
+            is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive)
+                : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive);
           }
 
-
-      } else {
-        prefs.setBool("userRegister", true);
-        if(_huella){
-
-          if (deviceType == ScreenType.phone) {
-            customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive);
-          }
-          else{
-            customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
-          }
         } else{
           if (deviceType == ScreenType.phone) {
             customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive);
@@ -386,6 +405,34 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         }
       }
     }
+  }
+
+  ingresarConOtroUsuario(){
+
+    return CupertinoButton(
+        padding: EdgeInsets.zero,
+        child: Container(
+          margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(3),
+          ),
+          padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
+          width: widget.responsive.width,
+          child: Text("INGRESAR CON OTRO USUARIO", style: TextStyle(
+            color: Tema.Colors.gnpOrange,
+          ),
+              textAlign: TextAlign.center),
+        ),
+        onPressed: () async {
+          prefs.setBool("userRegister", false);
+          prefs.setString("contrasenaUsuario","");
+          prefs.setString("correoUsuario", "");
+          prefs.setBool("activarBiometricos", false);
+          prefs.setBool("regitroDatosLoginExito", false);
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+        }
+    );
+
   }
 
   showOnboarding() async {
@@ -411,21 +458,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             Switch(
               onChanged:(val) {
                 setState(() {
-                  _huella = val;
-                  prefs.setBool("activarBiometricos", _huella);
+                  _biometricos = val;
+                  prefs.setBool("activarBiometricos", _biometricos);
                 });
-                /*if(_huella){
-                  //TODO cambiar clasa home por prueba de biometricos
-                  //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => BiometricosPage(responsive: widget.responsive,)));
-                  if (deviceType == ScreenType.phone) {
-                    customAlert(AlertDialogType. opciones_de_inicio_de_sesion,context,"","", responsive);
-                  }
-                  else{
-                    customAlertTablet(AlertDialogTypeTablet. opciones_de_inicio_de_sesion,context,"","", responsive);
-                  }
-                }*/
               },
-              value: _huella,
+              value: _biometricos,
               activeColor: Tema.Colors.GNP,
               activeTrackColor: Tema.Colors.biometrico,
               inactiveThumbColor: Tema.Colors.Azul_gnp,

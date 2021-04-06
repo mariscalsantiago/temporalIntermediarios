@@ -54,7 +54,7 @@ class _SplashMainState extends State<SplashMain> {
     } on PlatformException catch (e) {
       print(e);
     }
-    if(availableBiometrics.contains(BiometricType.fingerprint)&& availableBiometrics.contains(BiometricType.face)){
+    /*if(availableBiometrics.contains(BiometricType.fingerprint)&& availableBiometrics.contains(BiometricType.face)){
       is_available_face = true;
       is_available_finger = true;
     }
@@ -81,6 +81,17 @@ class _SplashMainState extends State<SplashMain> {
       }else{
         is_available_face = false;
         is_available_finger = false;
+      }
+    }*/
+    if (Platform.isIOS) {
+      if(availableBiometrics.contains(BiometricType.fingerprint)){
+        is_available_finger = true;
+      } else if(availableBiometrics.contains(BiometricType.face)){
+        is_available_face = true;
+      }
+    } else {
+      if(availableBiometrics.contains(BiometricType.fingerprint)){
+        is_available_finger = true;
       }
     }
     if (!mounted) return;
@@ -221,9 +232,9 @@ class _SplashMainState extends State<SplashMain> {
   void finishSplash(SplashData splashData) async {
     prefs = await SharedPreferences.getInstance();
     Vistas tipoVista;
-    if(prefs != null && prefs.getBool("activarBiometricos") != null){
+    if(prefs != null && prefs.getBool("activarBiometricos") != null && prefs.getBool("hacerLogin") != null){
 
-      if(prefs.getBool("activarBiometricos") == true){
+      if(prefs.getBool("activarBiometricos") && prefs.getBool("hacerLogin")){
           tipoVista = Vistas.biometricos;
       } else {
           tipoVista = Vistas.login;

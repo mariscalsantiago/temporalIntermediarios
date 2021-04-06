@@ -39,7 +39,7 @@ class _listaCUAState extends State<listaCUA> {
       appBar: AppBar(
         backgroundColor: Tema.Colors.backgroud,
         elevation: 0,
-        title: Text('CUA', style: TextStyle(
+        title: Text(widget.isDA ? 'DA' :'CUA', style: TextStyle(
             color: Tema.Colors.Azul_2,
             fontWeight: FontWeight.normal,
             fontSize: widget.responsive.ip(2.5)

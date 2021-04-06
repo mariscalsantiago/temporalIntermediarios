@@ -437,7 +437,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2)),
                               )),
-                          is_available_finger != false ? Container(
+                          Container(
                             margin: EdgeInsets.only(
                               bottom: responsive.height * 0.05,
                               left: responsive.wp(4),
@@ -475,8 +475,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 ],
                               ),
                             ),
-                          ) : Container(),
-                          is_available_face != false ? Container(
+                          ),
+                          Container(
                             margin: EdgeInsets.only(
                               bottom: responsive.height * 0.05,
                               left: responsive.wp(4),
@@ -492,6 +492,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       responsive);
                                 },
                                 child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Icon(
                                       Icons.face,
@@ -508,7 +509,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                               fontSize: responsive.ip(2.3)),
                                         )),
                                     Container(
-                                      margin: EdgeInsets.only(left: responsive.wp(43), right: responsive.wp(4)),
+                                      margin: EdgeInsets.only( right: responsive.wp(4)),
                                       child: Icon(
                                         Icons.arrow_forward_ios,
                                         color: Theme.Colors.gnpOrange,
@@ -517,7 +518,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ],
 
                                 )),
-                          ) : Container(),
+                          ),
                           Center(
                             child: Container(
                               height: responsive.hp(6.25),
@@ -650,15 +651,11 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 top: responsive.height * 0.03,
                                 bottom: responsive.height * 0.05),
                             child: Center(
-                              child: GestureDetector(
-                                onTap: () {
+                              child: CupertinoButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
                                   Navigator.pop(context,true);
-                                  customAlert(
-                                      AlertDialogType.EnOtroMomento_Huella,
-                                      context,
-                                      "",
-                                      "",
-                                      responsive);
+                                  customAlert(AlertDialogType.EnOtroMomento_Huella, context, "", "", responsive);
                                 },
                                 child: Text(
                                   "EN OTRO MOMENTO",
@@ -800,7 +797,23 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pop(context,true);
+                                    print("-----------Exito----------------------");
+                                    if(prefs.getBool("primeraVez") == true){
+                                      if (deviceType == ScreenType.phone) {
+                                        customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive);
+                                      }
+                                      else{
+                                        customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
+                                      }
+                                    } else {
+                                      if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") ){
+                                        Navigator.pop(context,true);
+                                      } else{
+                                        print("Exito----------------------");
+                                        Navigator.pop(context,true);
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                                      }
+                                    }
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -1365,11 +1378,12 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
                                       }
                                     } else {
-                                      Navigator.pop(context,true);
-                                      Navigator.push(context,
-                                          MaterialPageRoute(
-                                            builder: (context) => HomePage()
-                                          ));
+                                      if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") ){
+                                        Navigator.pop(context,true);
+                                      } else{
+                                        Navigator.pop(context,true);
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                                      }
                                     }
 
                                   },
@@ -3637,8 +3651,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    isSwitchedPerfill = true;
-                                    Navigator.pop(context,true);
+                                    prefs.setBool("activarBiometricos", false);
+                                    isSwitchedPerfill = false;
+                                    Navigator.pop(context,false);
                                   },
                                   child: Text(
                                     "SÍ",
