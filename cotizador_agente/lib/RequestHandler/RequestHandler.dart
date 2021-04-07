@@ -7,14 +7,14 @@ import 'package:http/http.dart' as http;
 
 class RequestHandler {
   static Future<MyResponse> httpRequest(MyRequest request) async {
-    print("services url: ${request.baseUrl}${request.path}");
-    print("services headers: ${request.headers}");
-    print("services body: ${request.body}");
+
     var fullURL = request.baseUrl + request.path;
     switch (request.method) {
       case Method.GET:
         try {
           var res = await http.get(fullURL, headers: request.headers);
+          print("res get ${res.body}");
+          print("res get ${res.statusCode}");
           var code = res.statusCode;
           // if (res.body != null) {
           //   print("services payload: ${jsonDecode(res.body).toString()}");

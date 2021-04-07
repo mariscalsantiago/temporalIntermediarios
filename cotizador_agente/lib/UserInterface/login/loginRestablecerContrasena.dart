@@ -1,4 +1,5 @@
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
     controllerConfirmarContrasena = new TextEditingController();
     focusNuevaContrasena = new FocusNode();
     focusConfirmarContrasena = new FocusNode();
+    validateIntenetstatus(context, widget.responsive);
     super.initState();
   }
 
@@ -179,7 +181,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
       ),
       validator: (value) {
         if(!lentPass){
-          return 'La contraseña no tiene el tamaño correcto';
+          return 'Este campo es requerido';
         }
         if(!hasMayusPass){
           return 'La contraseña no contiene mayusculas';
@@ -196,7 +198,6 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
         if(hasConsecutivosPass){
           return 'La contraseña contiene numeros consecutivos';
         }
-
         if (value.isEmpty) {
           return 'Este campo es requerido';
         }
@@ -258,6 +259,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,
       obscureText: confirmarnuevaContrasena,
+
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -284,7 +286,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
       ),
       validator: (value) {
         if(!lentPass){
-          return 'La contraseña no tiene el tamaño correcto';
+          return 'Este campo es requerido';
         }
         if(!hasMayusPass){
           return 'La contraseña no contiene mayusculas';
@@ -338,7 +340,9 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
         ),
         onPressed: (){
           if(_formKey.currentState.validate()){
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
+            print("Validar flujo");
+            prefs.setBool("flujoCompletoLogin", true);
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage(responsive: widget.responsive,)));
           }else{
 
           }

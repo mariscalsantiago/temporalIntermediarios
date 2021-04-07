@@ -67,45 +67,48 @@ class _AutosPageState extends State<AutosPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: /*InAppWebView(
-        key: webViewKey,
-        // contextMenu: contextMenu,
-        initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}", // initialFile: "assets/index.html",
-        initialOptions: options,
-        onWebViewCreated: (controller) {
-          webViewController = controller;
-        },
-        onLoadStart: (controller, url) {
-          setState(() {
-           // this.url = url.toString();
-            //urlController.text = this.url;
-          });
-        },
-        androidOnPermissionRequest: (controller, origin, resources) async {
-          return PermissionRequestResponse(
-              resources: resources,
-              action: PermissionRequestResponseAction.GRANT);
-        },
-        shouldOverrideUrlLoading: (controller, navigationAction) async {
-          var uri = navigationAction.url;
-
-          print(navigationAction);
-          if (uri.contains(returnToApp)) {
-            Navigator.pop(context,true);
-            }
+    return WillPopScope(
+      onWillPop: () async => false,
+      child:  SafeArea(
+        child: /*InAppWebView(
+          key: webViewKey,
+          // contextMenu: contextMenu,
+          initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}", // initialFile: "assets/index.html",
+          initialOptions: options,
+          onWebViewCreated: (controller) {
+            webViewController = controller;
           },
-        onConsoleMessage: (controller, consoleMessage) {
-          print(consoleMessage);
-        },
-    ),
-    */WebviewScaffold(
-        withZoom: false,
-          displayZoomControls: false,
-          withJavascript: true,
-          url:'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",
+          onLoadStart: (controller, url) {
+            setState(() {
+             // this.url = url.toString();
+              //urlController.text = this.url;
+            });
+          },
+          androidOnPermissionRequest: (controller, origin, resources) async {
+            return PermissionRequestResponse(
+                resources: resources,
+                action: PermissionRequestResponseAction.GRANT);
+          },
+          shouldOverrideUrlLoading: (controller, navigationAction) async {
+            var uri = navigationAction.url;
 
-      )
+            print(navigationAction);
+            if (uri.contains(returnToApp)) {
+              Navigator.pop(context,true);
+              }
+            },
+          onConsoleMessage: (controller, consoleMessage) {
+            print(consoleMessage);
+          },
+      ),
+      */WebviewScaffold(
+          withZoom: false,
+            displayZoomControls: false,
+            withJavascript: true,
+            url:'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",
+
+        )
+      ),
     );
 
     _flutterWebViewPlugin.onDestroy.listen((Null n) {

@@ -1,5 +1,6 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
@@ -7,6 +8,7 @@ import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/Onboard
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,7 +51,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     controllerCorreo = new TextEditingController();
     //showOnboarding();
     if(prefs != null && prefs.getBool("userRegister") != null){
-      if(prefs.getBool("userRegister")){
+      if(prefs.getBool("userRegister") && (prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin"))){
         prefs.setBool("hacerLogin", false);
         prefs.setBool("esPerfil", false);
         existeUsuario = true;
@@ -60,7 +62,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         existeUsuario = false;
         prefs.setBool("activarBiometricos", _biometricos);
         prefs.setString("contrasenaUsuario","");
-        prefs.setString("correoUsuario", controllerCorreo.text);
+        prefs.setString("correoUsuario", "");
+        prefs.setBool("primeraVez", true);
       }
     } else {
       _biometricos = false;
@@ -70,6 +73,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       existeUsuario = false;
       prefs.setBool("primeraVez", true);
     }
+    validateIntenetstatus(context, widget.responsive);
     super.initState();
   }
 
@@ -335,6 +339,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               prefs.setBool("regitroDatosLoginExito", true);
               prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
               ultimaSesion = fechaPrototipo(DateTime.now().toString());
+              //ultimoAcceso();
               redirect(responsive);
             } else {
               print("else datosUsuario ${datosUsuario}");
@@ -377,7 +382,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             }
 
           } else{
-            Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage()));
+            Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
           }
 
       } else {
@@ -608,3 +613,15 @@ String fechaPrototipo(String fecha){
 
   return "${dia}/${valorMes}/${ano} ${valorHora}";
 }
+
+void ultimoAcceso() async {
+  print("== Firebase ==");
+  DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+  await _dataBaseReference.child("accesoUsuarios").once().then((DataSnapshot _snapshot) {
+
+    print("Data --- ${_snapshot.value}");
+    //print("Environment: " + validateNotEmptyToString(_snapshot.value, ""));
+  });
+
+}
+

@@ -65,6 +65,7 @@ enum AlertDialogType {
   En_mantenimiento_llave,
   Sin_acceso_herramientas_cotizacion,
   menu_home,
+  errorServicio
 }
 
 void customAlert(AlertDialogType type, BuildContext context, String title,
@@ -431,7 +432,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   right: responsive.wp(1),
                                   left: responsive.wp(5)),
                               child: Text(
-                                "Al activar la funcionalidad permites iniciar sesión en Intermediario GNP usando los datos biométricos que tienes activados en este dispositivo.",
+                                "Al activar la funcionalidad permites iniciar sesión en tu App Intermediario GNP usando los datos biométricos que tienes activados en este dispositivo.",
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
@@ -602,7 +603,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 right: responsive.wp(1),
                                 left: responsive.wp(5)),
                             child: Text(
-                              "Al activar esta funcionalidad podrás iniciar sesión en tu App Soy Intermediario GNP más rápido con cualquier huella registrada en este dispositivo.",
+                              "Al activar esta funcionalidad podrás iniciar sesión en tu App Intermediario GNP más rápido con cualquier huella registrada en este dispositivo.",
                               textAlign: TextAlign.left,
                               style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
@@ -811,7 +812,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       } else{
                                         print("Exito----------------------");
                                         Navigator.pop(context,true);
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(responsive: responsive,)));
                                       }
                                     }
                                   },
@@ -901,8 +902,6 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
                                     Navigator.pop(context,true);
-                                    customAlert(AlertDialogType.Desactivar_huella_digital, context,
-                                        "", "", responsive);
                                   },
                                   child: Text(
                                     "SÍ",
@@ -922,9 +921,6 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.pop(context,true);
-
-                                    customAlert(AlertDialogType.huella, context,
-                                        "", "", responsive);
                                   },
                                   child: Text(
                                     "NO",
@@ -1382,7 +1378,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         Navigator.pop(context,true);
                                       } else{
                                         Navigator.pop(context,true);
-                                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+                                        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(responsive: responsive,)));
                                       }
                                     }
 
@@ -3673,8 +3669,6 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.pop(context,true);
-                                    customAlert(AlertDialogType.EnOtroMomento_Huella, context,
-                                        "", "", responsive);
                                   },
                                   child: Text(
                                     "NO",
@@ -4028,7 +4022,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                             ),
                             Container(
                               margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.05),
-                              child: Text("¿Estás seguro de que deseas salir de Intermediario GNP?",
+                              child: Text("¿Estás seguro de que deseas salir de tu App Intermediario GNP?",
                                 style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
                                   fontSize: responsive.ip(2),
@@ -4433,12 +4427,97 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                   ],
                 ),
               ],
+
             );
           });
       break;
-
-
-
+    case AlertDialogType.errorServicio:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(children: [
+              Opacity(
+                opacity: 0.6,
+                child: Container(
+                  height: responsive.height,
+                  width: responsive.width,
+                  color: Theme.Colors.Azul_gnp,
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    width: responsive.width,
+                    child: Card(
+                      color: Theme.Colors.White,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin:
+                            EdgeInsets.only(top: responsive.height * 0.03),
+                            child: Center(
+                              child: Text(
+                                "¡ Lo sentimos !",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Theme.Colors.Encabezados,
+                                    fontSize: responsive.ip(2.5)),
+                              ),
+                            ),
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  bottom: responsive.height * 0.05,
+                                  right: responsive.wp(1),
+                                  left: responsive.wp(5)),
+                              child: Text(
+                                "Se produjo un error en el servicio, intente más tarde.",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: Theme.Colors.Funcional_Textos_Body,
+                                    fontSize: responsive.ip(2)),
+                              )
+                          ),
+                          Center(
+                            child: Container(
+                              height: responsive.hp(6.25),
+                              width: responsive.wp(90),
+                              margin: EdgeInsets.only(
+                                bottom: responsive.height * 0.03,
+                                top: responsive.height * 0.02,
+                              ),
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                color: Theme.Colors.GNP,
+                                onPressed: () {
+                                  Navigator.pop(context,true);
+                                },
+                                child: Text(
+                                  "Aceptar",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.White,
+                                      fontSize: responsive.ip(2.0)),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              )
+            ]);
+          });
       break;
   }
 }

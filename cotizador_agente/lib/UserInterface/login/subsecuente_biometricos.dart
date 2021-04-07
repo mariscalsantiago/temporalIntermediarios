@@ -1,5 +1,6 @@
 
 import 'dart:ui';
+import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
@@ -12,6 +13,7 @@ import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
 import '../../main.dart';
 import 'logoEncabezadoLogin.dart';
@@ -54,6 +56,7 @@ class _BiometricosPage extends State<BiometricosPage> {
         showBio = false;
       }
     }
+    validateIntenetstatus(context, widget.responsive);
   }
   @override
   Widget build(BuildContext context) {
@@ -233,15 +236,17 @@ class _BiometricosPage extends State<BiometricosPage> {
         _isAuthenticating = true;
         _authorized = 'Authenticating';
       });
+
       authenticated = await localAuth.authenticateWithBiometrics(
           localizedReason: 'Ingresa tu huella para Autenticarte',
           useErrorDialogs: false,
-          stickyAuth: false);
+          stickyAuth: false,
+      );
       setState(() {
         _isAuthenticating = false;
         _authorized = 'Authenticating';
       });
-      print("Authetificación Usuario");
+
       if(authenticated){
         setState(() {
           _saving = true;
@@ -251,7 +256,8 @@ class _BiometricosPage extends State<BiometricosPage> {
           _saving = false;
         });
         if(datosUsuario!= null){
-          Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage()));
+          //ultimoAcceso();
+          Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
         }else{
           customAlert(face?AlertDialogType.Rostro_no_reconocido:
               AlertDialogType.Huella_no_reconocida,
@@ -260,9 +266,14 @@ class _BiometricosPage extends State<BiometricosPage> {
               "",
               responsive);
         }
+      } else {
+
       }
     } on PlatformException catch (e) {
-      print(e);
+      print("eeeeeee ${e}");
+      face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive):
+                       customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive);
+
     }
     if (!mounted) return;
 

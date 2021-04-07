@@ -3,7 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<string>es_MX</string>
+	<key>CFBundleDisplayName</key>
+	<string>Agentes GNP</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -11,41 +13,85 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>cotizador_agente</string>
+	<string>agentesgnp</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(FLUTTER_BUILD_NAME)</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<string>1</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemaps</string>
+		<string>baidumap</string>
+		<string>iosamap</string>
+		<string>waze</string>
+		<string>yandexmaps</string>
+		<string>yandexnavi</string>
+		<string>citymapper</string>
+		<string>instagram</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Agentes GNP no tiene acceso a la Cámara. Permitir acceso a la Cámara.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This app requires Contacts access to function properly.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Autoriza lectura de Biometricos en Agentes GNP</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Agentes GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Agentes GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Agentes GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Agentes GNP no tiene acceso al micrófono. Permitir acceso al micrófono.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Agentes GNP no tiene acceso a tu Galería de fotos. Permitir acceso a tu Galería2.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Agentes GNP no tiene acceso a tu Galería de fotos. Permitir acceso a tu Galería.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>bluetooth-central</string>
+		<string>fetch</string>
+		<string>processing</string>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSFaceIDUsageDescription</key>
-    <string>Why is my app authenticating using face id?</string>
+	<key>UIStatusBarHidden</key>
+	<false/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
-	<key>NSPhotoLibraryUsageDescription</key>
-    <string>App needs access to photo lib for profile images</string>
-    <key>NSCameraUsageDescription</key>
-    <string>To capture profile photo please grant camera access</string>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationlandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>

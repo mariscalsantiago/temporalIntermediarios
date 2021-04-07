@@ -262,7 +262,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
       ),
       validator: (value) {
         if(!lentPass){
-          return 'La contraseña no tiene el tamaño correcto';
+          return 'Este campo es requerido';
         }
         if(!hasMayusPass){
           return 'La contraseña no contiene mayusculas';
@@ -357,7 +357,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
       ),
       validator: (value) {
         if(!lentPass){
-          return 'La contraseña no tiene el tamaño correcto';
+          return 'Este campo es requerido';
         }
         if(!hasMayusPass){
           return 'La contraseña no contiene mayusculas';

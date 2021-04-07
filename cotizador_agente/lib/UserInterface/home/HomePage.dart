@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
@@ -18,7 +19,8 @@ HomeSelection opcionElegida =  HomeSelection.None;
 String iniciales="EJ";
 class HomePage extends StatefulWidget {
   bool verificacionCodigo;
-  HomePage({Key key, this.verificacionCodigo}) : super(key: key);
+  Responsive responsive;
+  HomePage({Key key, this.verificacionCodigo, this.responsive}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -31,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     dropdownValue = "Autos";
-
+    validateIntenetstatus(context, widget.responsive);
     super.initState();
   }
   int _selectedIndex = 0;

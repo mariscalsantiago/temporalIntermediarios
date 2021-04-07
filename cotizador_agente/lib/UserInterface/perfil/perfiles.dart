@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/Models/DeasModel.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
@@ -60,7 +61,7 @@ class _PerfilPageState extends State<PerfilPage> {
     print("state isSwitchedPerfill ${isSwitchedPerfill}");
     getDeasCuas(context , widget.responsive);
     posicionCUA = 0;
-
+    validateIntenetstatus(context, widget.responsive);
     print(DateTime.now());
   }
 
@@ -562,6 +563,8 @@ class _PerfilPageState extends State<PerfilPage> {
                               if(is_available_finger != false && is_available_face != false && isSwitchedPerfill == false){
                                 if (deviceType == ScreenType.phone && isSwitchedPerfill == false ) {
                                   customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context, "", "", widget.responsive);
+                                }else if(on == false){
+                                  is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive):customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive);
                                 } else {
                                   if( isSwitchedPerfill == false){
                                     customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion, context, "", "", widget.responsive);
@@ -571,14 +574,18 @@ class _PerfilPageState extends State<PerfilPage> {
                                 if(isSwitchedPerfill == false){
                                   is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", widget.responsive)
                                       : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", widget.responsive);
+                                }else if(on == false){
+                                  is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive):customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive);
                                 }
 
                               }
+
                               setState(() {
                                 isSwitchedPerfill = on;
                                 print("isSwitched ${isSwitchedPerfill} ");
                                 prefs.setBool("activarBiometricos", isSwitchedPerfill);
                               });
+
                             },
                             inactiveThumbColor: Theme.Colors.Encabezados,
                             inactiveTrackColor: Colors.blueGrey[50],

@@ -1,3 +1,9 @@
+import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:flutter/cupertino.dart';
+
+import 'CustomAlert.dart';
+
 String validateNotEmptyToString(dynamic data, String defaultData){
   data=data!=null?data.toString():defaultData;
   return data;
@@ -22,5 +28,14 @@ bool validateNotEmptyBoolWhitDefault(dynamic _data, bool _default ){
     _data=false;
   }
   return _data;
+}
+
+void validateIntenetstatus(BuildContext context, Responsive responsive){
+  var subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    if(result == ConnectivityResult.none){
+      customAlert(AlertDialogType.errorConexion, context, "",
+          "", responsive);
+    }
+  });
 }
 

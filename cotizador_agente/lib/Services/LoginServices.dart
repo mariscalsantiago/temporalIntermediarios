@@ -40,6 +40,9 @@ import '../main.dart';
     //prefs=await SharedPreferences.getInstance();
     try{
     datosUsuario = await logInPost(context,mail, password, user);
+
+    print("IDParticipante ${datosUsuario.idparticipante}");
+
     if(datosUsuario == null){
       return null;
     }
@@ -58,12 +61,22 @@ import '../main.dart';
     _sharedPreferences.setString('datosHuella', encodeData);
 
     datosPerfilador = await getPerfiladorAcceso(context, datosUsuario.idparticipante);
+    print("datosPerfilador ${datosPerfilador}");
+
     if(datosPerfilador == null){
+      customAlert(AlertDialogType.errorServicio,context,"","", responsive);
       return null;
     }
 
-    currentCuaGNP = datosPerfilador.intermediarios[0];
-    currentCuaLogros = datosPerfilador.intermediarios[0];
+    print("datosPerfilador ${datosPerfilador}");
+
+    if(datosPerfilador.intermediarios.isNotEmpty && datosPerfilador.intermediarios.length > 0 ){
+      currentCuaGNP = datosPerfilador.intermediarios[0];
+      currentCuaLogros = datosPerfilador.intermediarios[0];
+    } else{
+      currentCuaGNP = "0";
+      currentCuaLogros = "0";
+    }
 
     print("Datos fisicos");
     datosFisicos = await getPersonaFisica(context, datosUsuario.idparticipante, false);
@@ -116,6 +129,8 @@ import '../main.dart';
         body: _loginJSONData,
         headers: headers).timeout(const Duration(seconds: 10));
 
+    print("response ${response.body}");
+    print("response ${response.statusCode}");
     if(response != null){
       if(response.body != null && response.body.isNotEmpty){
         if (response.statusCode == 200) {
@@ -152,8 +167,6 @@ import '../main.dart';
           else{
             customAlertTablet(AlertDialogTypeTablet.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive);
           }
-
-
 
           //output.showAlert(Constants.tlt_nocoinciden, Constants.ms_nocoinciden, TipoDialogo.ADVERTENCIA, "CERRAR");
           return null;
@@ -198,14 +211,18 @@ import '../main.dart';
     );
 
     MyResponse response = await RequestHandler.httpRequest(request); //.timeout(const Duration (seconds:6),onTimeout :  _onTimeout(context, _responsive));
+
+
+    print("response--- ${response.success}");
     try{
       if (response.success) {
         mapPerfilador = response.response;
-        PerfiladorModel _datosPerfilador = PerfiladorModel.fromJson(
-            mapPerfilador);
+        PerfiladorModel _datosPerfilador = PerfiladorModel.fromJson(mapPerfilador);
+        print("datosPerfilador/// ${_datosPerfilador}");
         if (_datosPerfilador.agenteInteresadoList.isNotEmpty ||
             _datosPerfilador.daList.isNotEmpty ||
             _datosPerfilador.intermediarios.isNotEmpty) {
+          print("if _datosPerfilador");
           for (var list in _datosPerfilador.agenteInteresadoList) {
             String moral = list.cveTipoInteres;
             if (moral == "INF") {
@@ -217,7 +234,9 @@ import '../main.dart';
           return _datosPerfilador;
         }
       }else {
+        //customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", _responsive);
         throw Exception(ErrorLoginMessageModel().responseNullErrorTextException);
+
       }
     }catch(e){
       /*writeLoginBinnacle(datosUsuario.idparticipante,

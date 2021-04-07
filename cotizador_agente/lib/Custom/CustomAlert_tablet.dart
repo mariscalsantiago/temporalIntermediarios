@@ -386,7 +386,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                     right: responsive.wp(2),
                                     left: responsive.wp(2)),
                                 child: Text(
-                                  "Al activar la funcionalidad permites iniciar sesión en Intermediario GNP usando los datos biométricos que tienes activados en este dispositivo.",
+                                  "Al activar la funcionalidad permites iniciar sesión en tu App Intermediario GNP usando los datos biométricos que tienes activados en este dispositivo.",
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color: Theme.Colors.Funcional_Textos_Body,
@@ -1565,12 +1565,6 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                     color: Theme.Colors.GNP,
                                     onPressed: () {
                                       Navigator.pop(context,true);
-                                      customAlertTablet(
-                                          AlertDialogTypeTablet.Desactivar_recoFacial,
-                                          context,
-                                          "",
-                                          "",
-                                          responsive);
                                     },
                                     child: Text(
                                       "SÍ",
@@ -1590,12 +1584,6 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                   child: GestureDetector(
                                     onTap: () {
                                       Navigator.pop(context,true);
-                                      customAlertTablet(
-                                          AlertDialogTypeTablet.Reconocimiento_facial,
-                                          context,
-                                          "",
-                                          "",
-                                          responsive);
                                     },
                                     child: Text(
                                       "NO",
@@ -3981,7 +3969,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                             ),
                             Container(
                               margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.03),
-                              child: Text("¿Estás seguro de que deseas salir de Intermediario\n GNP?",
+                              child: Text("¿Estás seguro de que deseas salir de tu App Intermediario\n GNP?",
                                 style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
                                   fontSize: responsive.ip(2),
