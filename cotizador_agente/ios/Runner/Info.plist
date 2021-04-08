@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>es_MX</string>
 	<key>CFBundleDisplayName</key>
-	<string>Agentes GNP</string>
+	<string>Intermediarios GNP</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>agentesgnp</string>
+	<string>intermediariosgnp</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -47,23 +47,23 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Agentes GNP no tiene acceso a la Cámara. Permitir acceso a la Cámara.</string>
+	<string>Conceder permisos</string>
 	<key>NSContactsUsageDescription</key>
 	<string>This app requires Contacts access to function properly.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Autoriza lectura de Biometricos en Agentes GNP</string>
+	<string>Why is my app authenticating using face id?</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Agentes GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
+	<string>Intermediarios GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Agentes GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
+	<string>Intermediarios GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Agentes GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
+	<string>Intermediarios GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Agentes GNP no tiene acceso al micrófono. Permitir acceso al micrófono.</string>
+	<string>Conceder permisos</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Agentes GNP no tiene acceso a tu Galería de fotos. Permitir acceso a tu Galería2.</string>
+	<string>Intermediarios GNP no tiene acceso a tu Galería de fotos. Permitir acceso a tu Galería2.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Agentes GNP no tiene acceso a tu Galería de fotos. Permitir acceso a tu Galería.</string>
+	<string>Conceder permisos</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>
@@ -75,10 +75,6 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>UIStatusBarHidden</key>
-	<false/>
-	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

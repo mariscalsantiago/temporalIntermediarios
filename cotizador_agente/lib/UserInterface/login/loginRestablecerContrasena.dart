@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
