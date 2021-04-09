@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/CotizaTusNegocios.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -23,15 +24,17 @@ class _APyAutosOnboarding extends State<APyAutosOnboarding> {
         child: Padding(
             padding: EdgeInsets.all(8.0),
             child: Column(
-              children: [Image.asset('assets/images/ilustracion_es.png', fit:BoxFit.contain, height:responsive.hp(60), width: responsive.wp(70),),
-
-            Center(
-            child: Container(
-              margin: EdgeInsets.only(top: responsive.height * 0.00),
-                  child: Text("¡Tu App Intermediario GNP\n te da la bienvenida!",
-                  style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.7) ),
-                  textAlign: TextAlign.center,),
-                  ),
+              children: [
+                Container(
+                    margin: EdgeInsets.only(top: responsive.hp(4)),
+                    child: Image.asset('assets/images/ilustracion_es.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
+                Center(
+                  child: Container(
+                    margin: EdgeInsets.only(top: responsive.height * 0.03),
+                    child: Text("¡Tu App Intermediario GNP\n te da la bienvenida!",
+                    style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.7) ),
+                    textAlign: TextAlign.center,),
+                    ),
                 ),
                 Container(
                   margin: EdgeInsets.only(top: responsive.height * 0.03),
@@ -40,21 +43,31 @@ class _APyAutosOnboarding extends State<APyAutosOnboarding> {
                     textAlign: TextAlign.center,),
                 ),
                 Container(
-                  margin: EdgeInsets.only(
-                      top: responsive.height * 0.11,
-                  left: responsive.wp(64)),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context,true);
-                        },
-                      child: Text(
-                        "Omitir",
-                        style: TextStyle(
-                            color: Theme.Colors.GNP,
-                            fontSize: responsive.ip(2.0)),
-                      ),
-                    ),
-
+                  margin: EdgeInsets.only(top: responsive.hp(9), left: responsive.wp(8), right: responsive.wp(8)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Image.asset('assets/images/cuarto.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),),
+                      Container(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context, MaterialPageRoute(
+                                  builder: (context) => CotizaTusNegocios_Onboarding(),
+                                )
+                            );
+                          },
+                          child: Text(
+                            "Omitir",
+                            style: TextStyle(
+                                color: Theme.Colors.GNP,
+                                fontWeight: FontWeight.normal,
+                                fontSize: responsive.ip(2.5)),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 )
               ],
             ),

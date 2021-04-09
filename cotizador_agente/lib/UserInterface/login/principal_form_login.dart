@@ -4,6 +4,7 @@ import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -49,7 +50,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     focusContrasena = new FocusNode();
     controllerContrasena = new TextEditingController();
     controllerCorreo = new TextEditingController();
-    //showOnboarding();
+    if(prefs.getBool("onBoardingVisible") != null && prefs.getBool("onBoardingVisible")){}
+    else{
+      showOnboarding();
+      prefs.setBool("onBoardingVisible", true);
+    }
     if(prefs != null && prefs.getBool("userRegister") != null){
       if(prefs.getBool("userRegister") && (prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin"))){
         prefs.setBool("hacerLogin", false);
@@ -446,10 +451,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       if (prefs.getBool("userRegister") != null) {
         if (prefs.getBool("userRegister") == true) {}
         else{
-          Navigator.push(context,new MaterialPageRoute(builder: (_) => new OnboardingPage()));
+          Navigator.push(context,new MaterialPageRoute(builder: (_) => OnBoardingAppAutos()));
         }
       } else {
-          Navigator.push(context, new MaterialPageRoute(builder: (_) => new OnboardingPage()));
+          Navigator.push(context, new MaterialPageRoute(builder: (_) => OnBoardingAppAutos()));
       }
     }
   }

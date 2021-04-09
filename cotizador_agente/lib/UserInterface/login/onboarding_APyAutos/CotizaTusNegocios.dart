@@ -23,11 +23,13 @@ class _CotizaTusNegocios_Onboarding extends State<CotizaTusNegocios_Onboarding> 
         child: Padding(
           padding: EdgeInsets.all(0.00),
           child: Column(
-            children: [Image.asset('assets/images/señores_telefono.png', fit:BoxFit.contain, height:responsive.hp(66), width: responsive.wp(70),),
-
+            children: [
+              Container(
+                  margin: EdgeInsets.only(top: responsive.hp(4)),
+                  child: Image.asset('assets/images/señores_telefono.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
               Center(
                 child: Container(
-                  margin: EdgeInsets.only(top: responsive.height * 0.01),
+                  margin: EdgeInsets.only(top: responsive.height * 0.03),
                   child: Text("Cotiza tus negocios al instante",
                     style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.7) ),
                     textAlign: TextAlign.center,),
@@ -43,7 +45,7 @@ class _CotizaTusNegocios_Onboarding extends State<CotizaTusNegocios_Onboarding> 
                 height: responsive.hp(6.25),
                 width: responsive.wp(90),
                 margin: EdgeInsets.only(
-                    top: responsive.height * 0.03,
+                    top: responsive.height * 0.15,
                     left: responsive.wp(4.4),
                     right: responsive.wp(4.4)),
                 child: RaisedButton(
