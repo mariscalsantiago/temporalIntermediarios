@@ -41,8 +41,6 @@ import '../main.dart';
     try{
     datosUsuario = await logInPost(context,mail, password, user);
 
-    print("IDParticipante ${datosUsuario.idparticipante}");
-
     if(datosUsuario == null){
       return null;
     }
@@ -182,11 +180,13 @@ import '../main.dart';
         }
         else{
           //output?.hideLoader();
-          throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+          //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+          return null;
         }
       }else{
         //output?.hideLoader();
-        throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+        //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+        return  null;
       }
     }
   }
