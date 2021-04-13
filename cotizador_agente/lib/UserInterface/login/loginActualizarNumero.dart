@@ -260,10 +260,13 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         ),
         onPressed: (){
           if(_formKey.currentState.validate()){
-            customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive);
+            customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAlerta);
           }
         }
     );
   }
 
+  void funcionAlerta(){
+
+  }
 }

@@ -7,6 +7,10 @@ import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
+void funcionAlerta(){
+
+}
+
 class NavigationHandler {
   BuildContext mContext;
   NavigationHandler();
@@ -28,7 +32,7 @@ class NavigationHandler {
       case "flutter_app/menu":
         //showMenu(context);
         Responsive responsive = Responsive.of(context);
-        customAlert(AlertDialogType.menu_home,context,"","", responsive);
+        customAlert(AlertDialogType.menu_home,context,"","", responsive, funcionAlerta);
         break;
       default:
         break;

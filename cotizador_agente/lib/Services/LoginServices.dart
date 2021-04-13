@@ -33,6 +33,9 @@ import '../main.dart';
   AppConfig _appEnvironmentConfig;
   Responsive _responsive;
 
+  void funcionAlerta(){
+
+  }
 
   Future<LoginDatosModel> logInServices(BuildContext context, String mail, String password, String user, Responsive responsive) async {
     _responsive = responsive;
@@ -62,7 +65,7 @@ import '../main.dart';
     print("datosPerfilador ${datosPerfilador}");
 
     if(datosPerfilador == null){
-      customAlert(AlertDialogType.errorServicio,context,"","", responsive);
+      customAlert(AlertDialogType.errorServicio,context,"","", responsive, funcionAlerta);
       return null;
     }
 
@@ -102,7 +105,7 @@ import '../main.dart';
     if (!await ConnectionManager.isConnected()) {
       //output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
       if (deviceType == ScreenType.phone) {
-        customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive);
+        customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive, funcionAlerta);
       }
       else{
         customAlertTablet(AlertDialogTypeTablet.errorConexion, context, "",  "", _responsive);
@@ -160,7 +163,7 @@ import '../main.dart';
         else if (response.statusCode == 401) {
           //output?.hideLoader();
           if (deviceType == ScreenType.phone) {
-            customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive);
+            customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive, funcionAlerta);
           }
           else{
             customAlertTablet(AlertDialogTypeTablet.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive);
@@ -171,7 +174,7 @@ import '../main.dart';
         }
         else if (response.statusCode == 404) {
           if (deviceType == ScreenType.phone) {
-            customAlert(AlertDialogType.Correo_no_registrado, context, "",  "", _responsive);
+            customAlert(AlertDialogType.Correo_no_registrado, context, "",  "", _responsive, funcionAlerta);
           }
           else{
             customAlertTablet(AlertDialogTypeTablet.Correo_no_registrado, context, "",  "", _responsive);
@@ -186,7 +189,7 @@ import '../main.dart';
       }else{
         //output?.hideLoader();
         //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
-        return  null;
+        return null;
       }
     }
   }
@@ -500,7 +503,7 @@ import '../main.dart';
 
 
  _onTimeout(BuildContext context, Responsive responsive){
-    customAlert(AlertDialogType.timeOut, context, "",  "", responsive);
+    customAlert(AlertDialogType.timeOut, context, "",  "", responsive, funcionAlerta);
     return null;
   }
 

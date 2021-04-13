@@ -34,7 +34,8 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
   TextEditingController controllerConfirmarContrasena;
   FocusNode focusConfirmarContrasena;
   RegExp reConsecutive = RegExp('(.)\\1{2}'); // 111 aaa
-  RegExp reConsecutive2 = RegExp('(123|234|345|456|567|678|789|987|876|654|543|432|321)');// 123 abcd
+  RegExp reConsecutive2 = RegExp('(123|234|345|456|567|678|789|987|876|654|543|432|321|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mnñ|nño|ñop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)');// 123 abcd
+  //abcdefghijklmnñopqrstuvwxyz
 
   @override
   void initState() {

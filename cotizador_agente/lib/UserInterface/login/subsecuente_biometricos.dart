@@ -265,15 +265,16 @@ class _BiometricosPage extends State<BiometricosPage> {
               context,
               "",
               "",
-              responsive);
+              responsive,
+              funcionAlerta);
         }
       } else {
 
       }
     } on PlatformException catch (e) {
       print("eeeeeee ${e}");
-      face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive):
-                       customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive);
+      face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
+                       customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
 
     }
     if (!mounted) return;
@@ -282,6 +283,10 @@ class _BiometricosPage extends State<BiometricosPage> {
     setState(() {
       _authorized = message;
     });
+  }
+
+  void funcionAlerta(){
+
   }
 
 }

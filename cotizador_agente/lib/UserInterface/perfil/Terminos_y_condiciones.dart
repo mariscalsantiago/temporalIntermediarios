@@ -170,8 +170,8 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                           if(checkedValue){
                             Navigator.pop(context,true);
                             is_available_finger != false ?
-                              customAlert(AlertDialogType.activacionExitosa_Huella, context, "", "", responsive) :
-                              customAlert(AlertDialogType.activacionExitosa_Reconocimiento_facial, context, "", "", responsive);
+                              customAlert(AlertDialogType.activacionExitosa_Huella, context, "", "", responsive, funcionAlerta) :
+                              customAlert(AlertDialogType.activacionExitosa_Reconocimiento_facial, context, "", "", responsive, funcionAlerta);
                               setState(() {
                                 checkedValue = false;
                               });
@@ -186,5 +186,9 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
         ),
       ),
     );
+  }
+
+  void funcionAlerta(){
+
   }
 }

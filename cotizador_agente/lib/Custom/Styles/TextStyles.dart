@@ -19,4 +19,12 @@ class TextStyles {
       color: Colors.texto_MPSinSeleccionar
   );
   */
+
+  static const TextStyle Funcional_Textos_Texto_sistema  = const TextStyle(
+      fontFamily: "Museo Sans",
+      fontWeight: _Regular,
+      fontSize: 16,
+      color: Colors.fecha_1
+  );
+
 }

@@ -562,20 +562,23 @@ class _PerfilPageState extends State<PerfilPage> {
                               prefs.setBool("esPerfil", true);
                               if(is_available_finger != false && is_available_face != false && isSwitchedPerfill == false){
                                 if (deviceType == ScreenType.phone && isSwitchedPerfill == false ) {
-                                  customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context, "", "", widget.responsive);
+                                  customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context, "", "", widget.responsive, funcionAlerta);
                                 }else if(on == false){
-                                  is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive):customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive);
+                                  is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive, funcionAlerta)
+                                      :customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive, funcionAlerta);
                                 } else {
                                   if( isSwitchedPerfill == false){
                                     customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion, context, "", "", widget.responsive);
                                   }
                                 }
                               } else{
+
                                 if(isSwitchedPerfill == false){
-                                  is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", widget.responsive)
-                                      : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", widget.responsive);
+                                  is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", widget.responsive, funcionAlertaBiometricos)
+                                      : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", widget.responsive, funcionAlertaBiometricos);
                                 }else if(on == false){
-                                  is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive):customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive);
+                                  is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive, funcionAlerta)
+                                      :customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive, funcionAlerta);
                                 }
 
                               }
@@ -616,7 +619,8 @@ class _PerfilPageState extends State<PerfilPage> {
                             context,
                             "",
                             "",
-                            widget.responsive);
+                            widget.responsive,
+                            funcionAlerta);
                       },
                       child: Text(
                         "CERRAR SESIÓN",
@@ -714,5 +718,17 @@ class _PerfilPageState extends State<PerfilPage> {
                 image: _image,
               )),
     );
+  }
+
+  void funcionAlerta(bool biometricosActivos){
+      setState(() {
+        isSwitchedPerfill = biometricosActivos;
+      });
+  }
+
+  void funcionAlertaBiometricos(bool biometricosActivos){
+    setState(() {
+      isSwitchedPerfill = biometricosActivos;
+    });
   }
 }

@@ -57,20 +57,23 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     }
     if(prefs != null && prefs.getBool("userRegister") != null){
       if(prefs.getBool("userRegister") && (prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin"))){
-        prefs.setBool("hacerLogin", false);
+        prefs.setBool("seHizoLogin", false);
         prefs.setBool("esPerfil", false);
         existeUsuario = true;
         _biometricos =  prefs.getBool("activarBiometricos");
         prefs.setBool("primeraVez", false);
       } else{
+        prefs.setBool("seHizoLogin", false);
         _biometricos = false;
         existeUsuario = false;
         prefs.setBool("activarBiometricos", _biometricos);
         prefs.setString("contrasenaUsuario","");
         prefs.setString("correoUsuario", "");
         prefs.setBool("primeraVez", true);
+        prefs.setString("nombreUsuario", "");
       }
     } else {
+      prefs.setBool("seHizoLogin", false);
       _biometricos = false;
       aceptoTerminos = false;
       prefs.setBool("activarBiometricos", _biometricos);
@@ -279,12 +282,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     return CupertinoButton(
         padding: EdgeInsets.zero,
         child: Text("¿Olvidaste tu contraseña?", style: TextStyle(
-          color:  Tema.Colors.GNP,
+          color: controllerCorreo.text!= null && controllerCorreo.text!="" && controllerCorreo.text!=" " && controllerCorreo.text.isNotEmpty ? Tema.Colors.GNP :Tema.Colors.botonletra,
           fontWeight: FontWeight.normal,
           fontSize: responsive.ip(2.3),
         )),
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
+          if(controllerCorreo.text!= null && controllerCorreo.text!="" && controllerCorreo.text!=" " && controllerCorreo.text.isNotEmpty){
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));}
         }
     );
   }
@@ -340,7 +344,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
              });
             if(datosUsuario != null){
               print("if datosUsuario ${datosUsuario}");
-              prefs.setBool("hacerLogin", true);
+              prefs.setBool("seHizoLogin", true);
               prefs.setBool("regitroDatosLoginExito", true);
               prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
               ultimaSesion = fechaPrototipo(DateTime.now().toString());
@@ -376,14 +380,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           if(_biometricos){
             if(is_available_finger != false && is_available_face != false){
               if (deviceType == ScreenType.phone) {
-                customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive);
+                customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlerta);
               }
               else{
                 customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
               }
             } else{
-              is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive)
-              : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive);
+              is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive, funcionAlerta)
+              : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, funcionAlerta);
             }
 
           } else{
@@ -395,19 +399,19 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         if(_biometricos){
           if(is_available_finger != false && is_available_face != false){
             if (deviceType == ScreenType.phone) {
-              customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive);
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlerta);
             }
             else{
               customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
             }
           } else{
-            is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive)
-                : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive);
+            is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive, funcionAlertaHullaLogin)
+                : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, funcionAlertaHullaLogin);
           }
 
         } else{
           if (deviceType == ScreenType.phone) {
-            customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive);
+            customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlerta);
           }
           else{
             customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
@@ -513,6 +517,17 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     return SizedBox(
       height: responsive.hp(tamano),
     );
+  }
+
+  void funcionAlerta(){
+
+  }
+
+  void funcionAlertaHullaLogin(bool activar){
+      setState(() {
+        _biometricos = activar;
+      });
+      prefs.setBool("activarBiometricos", _biometricos);
   }
 }
 

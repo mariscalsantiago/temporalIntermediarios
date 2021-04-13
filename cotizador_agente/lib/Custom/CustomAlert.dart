@@ -68,8 +68,7 @@ enum AlertDialogType {
   errorServicio
 }
 
-void customAlert(AlertDialogType type, BuildContext context, String title,
-    String message, Responsive responsive) {
+void customAlert(AlertDialogType type, BuildContext context, String title, String message, Responsive responsive,  Function callback) {
 
   switch (type) {
     case AlertDialogType.errorConexion:
@@ -447,7 +446,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               onTap: () {
                                 Navigator.pop(context,true);
                                 customAlert(AlertDialogType.huella, context, "",
-                                    "", responsive);
+                                    "", responsive, FuncionAlerta);
                               },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -490,7 +489,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       context,
                                       "",
                                       "",
-                                      responsive);
+                                      responsive, FuncionAlerta);
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -656,7 +655,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 padding: EdgeInsets.zero,
                                 onPressed: () {
                                   Navigator.pop(context,true);
-                                  customAlert(AlertDialogType.EnOtroMomento_Huella, context, "", "", responsive);
+                                  customAlert(AlertDialogType.EnOtroMomento_Huella, context, "", "", responsive, callback);
                                 },
                                 child: Text(
                                   "EN OTRO MOMENTO",
@@ -709,7 +708,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   context,
                                   "",
                                   "",
-                                  responsive);
+                                  responsive, FuncionAlerta);
                             },
                             child: Text(
                               "Terminos y\n condiciones",
@@ -801,7 +800,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     print("-----------Exito----------------------");
                                     if(prefs.getBool("primeraVez") == true){
                                       if (deviceType == ScreenType.phone) {
-                                        customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive);
+                                        customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
                                       }
                                       else{
                                         customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
@@ -901,7 +900,17 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context,true);
+                                    if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+                                      prefs.setBool("activarBiometricos", false);
+                                      callback(false);
+                                      Navigator.pop(context,true);
+                                    } else {
+                                      prefs.setBool("activarBiometricos", false);
+                                      callback(false);
+                                      customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
+
+                                    }
+
                                   },
                                   child: Text(
                                     "SÍ",
@@ -921,6 +930,13 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.pop(context,true);
+                                    customAlert(
+                                        AlertDialogType.huella,
+                                        context,
+                                        "",
+                                        "",
+                                        responsive,
+                                        FuncionAlerta);
                                   },
                                   child: Text(
                                     "NO",
@@ -943,6 +959,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.verificaTuNumeroCelular:
       showDialog(
+        barrierDismissible: true,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -1169,7 +1186,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       context,
                                       "",
                                       "",
-                                      responsive);
+                                      responsive, FuncionAlerta);
                                 },
                                 child: Text(
                                   "EN OTRO MOMENTO",
@@ -1368,7 +1385,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   onTap: () {
                                     if(prefs.getBool("primeraVez") == true){
                                       if (deviceType == ScreenType.phone) {
-                                        customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive);
+                                        customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
                                       }
                                       else{
                                         customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
@@ -1549,7 +1566,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       context,
                                       "",
                                       "",
-                                      responsive);
+                                      responsive,
+                                      FuncionAlerta);
                                 }
                             )
                           ],
@@ -1629,13 +1647,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
+                                    prefs.setBool("activarBiometricos", false);
+                                    callback(false);
                                     Navigator.pop(context,true);
-                                    customAlert(
-                                        AlertDialogType.Desactivar_recoFacial,
-                                        context,
-                                        "",
-                                        "",
-                                        responsive);
                                   },
                                   child: Text(
                                     "SÍ",
@@ -1660,7 +1674,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         context,
                                         "",
                                         "",
-                                        responsive);
+                                        responsive,
+                                        FuncionAlerta);
                                   },
                                   child: Text(
                                     "NO",
@@ -3455,7 +3470,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       context,
                                       "",
                                       "",
-                                      responsive);
+                                      responsive,
+                                      FuncionAlerta);
                                 },
                                 child: Row(
                                   children: [
@@ -3550,7 +3566,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         context,
                                         "",
                                         "",
-                                        responsive);
+                                        responsive,
+                                        FuncionAlerta);
                                   },
                                   child: Text(
                                     "SÍ",
@@ -3767,7 +3784,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   onTap: () {
                                     Navigator.pop(context,true);
                                     customAlert(AlertDialogType.EnOtroMomento_reconocimiento_facial, context,
-                                        "", "", responsive);
+                                        "", "", responsive, FuncionAlerta);
                                   },
                                   child: Text(
                                     "NO",
@@ -3864,7 +3881,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         context,
                                         "",
                                         "",
-                                        responsive);
+                                        responsive, FuncionAlerta);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -3961,7 +3978,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         context,
                                         "",
                                         "",
-                                        responsive);
+                                        responsive, FuncionAlerta);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -4160,7 +4177,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         context,
                                         "",
                                         "",
-                                        responsive);
+                                        responsive, FuncionAlerta);
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -4520,4 +4537,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
           });
       break;
   }
+}
+
+void FuncionAlerta(){
+
 }

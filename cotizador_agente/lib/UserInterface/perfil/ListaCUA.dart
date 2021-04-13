@@ -67,6 +67,8 @@ class _listaCUAState extends State<listaCUA> {
         child: Column(
           children: [
             separacion(responsive,2),
+            Text("Selecciona una opción", style: Tema.TextStyles.Funcional_Textos_Texto_sistema,),
+            separacion(responsive,2),
             Container(
                 margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5)),
                 child: ListView.separated(
@@ -133,6 +135,7 @@ class _listaCUAState extends State<listaCUA> {
       ),
       leading: Radio<int>(
         value: posicion,
+        focusColor: Tema.Colors.Azul_gnp,
         groupValue: _character,
         onChanged: (int value) {
           setState(() {
@@ -176,6 +179,8 @@ class _listaCUAState extends State<listaCUA> {
         ),
         onPressed: () async {
           if(_character != 99999){
+            setState(() {
+            });
             if(widget.isDA){
               valorDA = widget.list.elementAt(_character);
               widget.callback(valorDA,widget.isDA);

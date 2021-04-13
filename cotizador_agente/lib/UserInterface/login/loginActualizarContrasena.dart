@@ -30,7 +30,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   FocusNode focusActualContrasena;
   //RegExp reConsecutive = RegExp('^(?!.*([A-Za-z0-9])\1{2})(?=.*[az])(?=.*\d)[A-Za-z0-9]+\$');
   RegExp reConsecutive = RegExp('(.)\\1{2}'); // 111 aaa
-  RegExp reConsecutive2 = RegExp('(123|234|345|456|567|678|789|987|876|654|543|432|321)');// 123 abcd
+  RegExp reConsecutive2 = RegExp('(123|234|345|456|567|678|789|987|876|654|543|432|321|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mnñ|nño|ñop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)');// 123 abcd;// 123 abcd
   final _formKey = GlobalKey<FormState>();
   bool _saving;
   bool actualContrasena;

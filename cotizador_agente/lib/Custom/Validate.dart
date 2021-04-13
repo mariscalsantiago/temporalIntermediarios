@@ -34,8 +34,12 @@ void validateIntenetstatus(BuildContext context, Responsive responsive){
   var subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
     if(result == ConnectivityResult.none){
       customAlert(AlertDialogType.errorConexion, context, "",
-          "", responsive);
+          "", responsive, funcionAlerta);
     }
   });
+}
+
+void funcionAlerta(){
+
 }
 

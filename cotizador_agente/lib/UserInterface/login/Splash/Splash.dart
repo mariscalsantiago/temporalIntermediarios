@@ -232,9 +232,9 @@ class _SplashMainState extends State<SplashMain> {
   void finishSplash(SplashData splashData) async {
     prefs = await SharedPreferences.getInstance();
     Vistas tipoVista;
-    if(prefs != null && prefs.getBool("activarBiometricos") != null && prefs.getBool("hacerLogin") != null){
+    if(prefs != null && prefs.getBool("activarBiometricos") != null && prefs.getBool("seHizoLogin") != null){
 
-      if(prefs.getBool("activarBiometricos") && prefs.getBool("hacerLogin")){
+      if(prefs.getBool("activarBiometricos") && prefs.getBool("seHizoLogin")){
           tipoVista = Vistas.biometricos;
       } else {
           tipoVista = Vistas.login;
