@@ -64,34 +64,51 @@ class _listaCUAState extends State<listaCUA> {
     Form form;
     data = SingleChildScrollView(
         controller: scrollController,
-        child: Column(
-          children: [
-            separacion(responsive,2),
-            Text("Selecciona una opción", style: Tema.TextStyles.Funcional_Textos_Texto_sistema,),
-            separacion(responsive,2),
-            Container(
-                margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5)),
-                child: ListView.separated(
-                  controller:scrollController,
-                  scrollDirection:  Axis.vertical,
-                  shrinkWrap: true,
-                  itemBuilder: (context, posicion) {
-                    //return PreguntaUno(responsive,widget.list, datosPerfilador.agenteInteresadoList.elementAt(posicion).nombres,datosPerfilador.agenteInteresadoList.elementAt(posicion).apellidoPaterno ,posicion);
-                    print(widget.list.elementAt(posicion));
-                    return PreguntaUno(responsive,widget.list.elementAt(posicion),posicion);
-                  },
-                  separatorBuilder: (context, posicion) {
-                    return separacion(responsive,1);
-                  },
-                  itemCount: widget.list.length,
-                )
-            ),
-            separacion(responsive,10),
-            Container(
-                margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), bottom:responsive.hp(4) ),
-                child: botonSeleccionarPregunta(responsive)),
-          ],
+        child: Container(
+          height: responsive.height*0.85,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  separacion(responsive,2),
+                  Container(
+                      margin: EdgeInsets.only(left: responsive.wp(7)),
+                      child: Text("Selecciona una opción", style: TextStyle(
+                          fontSize: responsive.ip(2.3),
+                          fontWeight: FontWeight.normal,
+                          color: Tema.Colors.fecha_1
+                      ))
+                  ),
+                  separacion(responsive,2),
+                  Container(
+                      margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(5)),
+                      child: ListView.separated(
+                        controller:scrollController,
+                        scrollDirection:  Axis.vertical,
+                        shrinkWrap: true,
+                        itemBuilder: (context, posicion) {
+                          //return PreguntaUno(responsive,widget.list, datosPerfilador.agenteInteresadoList.elementAt(posicion).nombres,datosPerfilador.agenteInteresadoList.elementAt(posicion).apellidoPaterno ,posicion);
+                          print(widget.list.elementAt(posicion));
+                          return PreguntaUno(responsive,widget.list.elementAt(posicion),posicion);
+                        },
+                        separatorBuilder: (context, posicion) {
+                          return separacion(responsive,1);
+                        },
+                        itemCount: widget.list.length,
+                      )
+                  ),
+                ],
+              ),
+              Container(
+                  margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), bottom:responsive.hp(4)),
+                  child: botonSeleccionarPregunta(responsive)),
+            ],
+          ),
         )
+
     );
 
     var l = new List<Widget>();
@@ -135,7 +152,8 @@ class _listaCUAState extends State<listaCUA> {
       ),
       leading: Radio<int>(
         value: posicion,
-        focusColor: Tema.Colors.Azul_gnp,
+        activeColor: Tema.Colors.Rectangle_PA,
+        hoverColor: Tema.Colors.primary,
         groupValue: _character,
         onChanged: (int value) {
           setState(() {
@@ -184,7 +202,7 @@ class _listaCUAState extends State<listaCUA> {
             if(widget.isDA){
               valorDA = widget.list.elementAt(_character);
               widget.callback(valorDA,widget.isDA);
-            }else{
+            } else {
               posicionCUA = _character;
               valorCUA = datosPerfilador.intermediarios[_character];
               widget.callback(valorCUA,widget.isDA);

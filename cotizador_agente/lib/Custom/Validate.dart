@@ -33,7 +33,7 @@ bool validateNotEmptyBoolWhitDefault(dynamic _data, bool _default ){
 void validateIntenetstatus(BuildContext context, Responsive responsive){
   var subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
     if(result == ConnectivityResult.none){
-      customAlert(AlertDialogType.errorConexion, context, "",
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
           "", responsive, funcionAlerta);
     }
   });

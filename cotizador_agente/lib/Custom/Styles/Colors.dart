@@ -200,6 +200,7 @@ class Colors {
   static const Color Subtitle_1_PA= const Color(0xFF33445F);
   static const Color Rectangle_PA= const Color(0xFFFF6B0B);
   static const Color Rectangle_1117_PA= const Color(0xFFF6F9FD);
+  static const Color azul_apoyo= const Color (0xFF73A8E7);
 
 
   static const Color azulMesaggeCongresos = const Color(0xFF343F61);

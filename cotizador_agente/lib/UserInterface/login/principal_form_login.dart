@@ -28,6 +28,8 @@ class PrincipalFormLogin extends StatefulWidget {
 class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
 
   bool _saving;
+  bool _enable = true;
+  bool _validEmail = false;
   final _formKey = GlobalKey<FormState>();
   TextEditingController controllerContrasena;
   TextEditingController controllerCorreo;
@@ -45,6 +47,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     correoUsuario = "";
     contrasenaUsuario = "";
     _saving = false;
+    _enable = true;
     contrasena = true;
     focusCorreo = new FocusNode();
     focusContrasena = new FocusNode();
@@ -198,6 +201,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       focusNode: focusCorreo,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusContrasena);},
       obscureText: false,
+      enabled: _enable,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -215,18 +219,32 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       ),
       validator: (value) {
         String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+        setState(() {});
         RegExp regExp = new RegExp(p);
         if (value.isEmpty) {
+          _validEmail  = false;
           return 'Este campo es requerido';
         } else if (regExp.hasMatch(value)) {
+          _validEmail  = true;
           return null;
         } else {
+          _validEmail  = false;
           return 'Este campo es inválido';
         }
         return null;
       },
       onChanged: (value){
         setState(() {
+          String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+          RegExp regExp = new RegExp(p);
+          if (value.isEmpty) {
+            _validEmail  = false;
+          } else if (regExp.hasMatch(value)) {
+            _validEmail  = true;
+            return null;
+          } else {
+            _validEmail  = false;
+          }
           focusCorreo.hasFocus;
           controllerCorreo.text;
         });
@@ -239,6 +257,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       controller: controllerContrasena,
       focusNode: focusContrasena,
       obscureText: contrasena,
+      enabled: _enable,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -282,12 +301,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     return CupertinoButton(
         padding: EdgeInsets.zero,
         child: Text("¿Olvidaste tu contraseña?", style: TextStyle(
-          color: controllerCorreo.text!= null && controllerCorreo.text!="" && controllerCorreo.text!=" " && controllerCorreo.text.isNotEmpty ? Tema.Colors.GNP :Tema.Colors.botonletra,
+          color: prefs.getBool("userRegister") && prefs.getString("correoUsuario") != "" || _validEmail  ? Tema.Colors.GNP :Tema.Colors.botonletra,
           fontWeight: FontWeight.normal,
           fontSize: responsive.ip(2.3),
         )),
         onPressed: (){
-          if(controllerCorreo.text!= null && controllerCorreo.text!="" && controllerCorreo.text!=" " && controllerCorreo.text.isNotEmpty){
+          if((prefs.getBool("userRegister") && prefs.getString("correoUsuario") != "" ) || _validEmail ){
           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));}
         }
     );
@@ -316,9 +335,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           if(_formKey.currentState.validate()){
            setState(() {
               _saving = true;
+              _enable = false;
             });
 
-            if(prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != ""){
+            if(prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "" ){
                correoUsuario = prefs.getString("correoUsuario");
                if(controllerContrasena.text != prefs.getString("contrasenaUsuario")){
                  contrasenaUsuario = controllerContrasena.text;
@@ -341,6 +361,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
              setState(() {
                _saving = false;
+               _enable = true;
              });
             if(datosUsuario != null){
               print("if datosUsuario ${datosUsuario}");
@@ -363,6 +384,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             }
             setState(() {
               _saving = false;
+              _enable = true;
             });
 
           } else{

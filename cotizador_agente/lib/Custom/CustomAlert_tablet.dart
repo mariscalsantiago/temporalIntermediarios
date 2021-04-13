@@ -3866,7 +3866,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                               child: Center(
                                 child: Icon(
                                   Icons.wifi_off_outlined,
-                                  color: Colors.blueAccent,
+                                  color: Theme.Colors.azul_apoyo,
                                   size: 57,
                                 ),
                               ),
@@ -3889,7 +3889,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                 left: responsive.width * 0.03,
                               ),
                               child: Text(
-                                "Comprueba que tienes acceso a una red Wi-Fi o\n que cuentas con datos móviles activados.",
+            "Comprueba que tienes acceso a una red Wi-Fi o que cuentes con el uso de datos móviles activado, se pueden aplicar cargos adicionales por el uso de datos móviles.",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
