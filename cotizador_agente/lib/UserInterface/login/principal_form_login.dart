@@ -301,12 +301,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     return CupertinoButton(
         padding: EdgeInsets.zero,
         child: Text("¿Olvidaste tu contraseña?", style: TextStyle(
-          color: prefs.getBool("userRegister") && prefs.getString("correoUsuario") != "" || _validEmail  ? Tema.Colors.GNP :Tema.Colors.botonletra,
+          color:((prefs.getBool("userRegister") != null && prefs.getBool("userRegister")) && (prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "")) || _validEmail  ? Tema.Colors.GNP :Tema.Colors.botonletra,
           fontWeight: FontWeight.normal,
           fontSize: responsive.ip(2.3),
         )),
         onPressed: (){
-          if((prefs.getBool("userRegister") && prefs.getString("correoUsuario") != "" ) || _validEmail ){
+          if((prefs.getBool("userRegister") != null && prefs.getBool("userRegister")) && (prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "") || _validEmail ){
           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));}
         }
     );
