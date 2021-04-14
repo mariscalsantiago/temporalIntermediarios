@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jiffy/jiffy.dart';
 import 'modelo_seccion.dart';
+import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 
 ////COMBOBOX
 class ComboBoxDinamico extends StatefulWidget {
@@ -1157,6 +1158,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       reverse: true,
                       child: TextFormField(
                         controller: _controller,
+                        cursorColor: Tema.Colors.GNP,
                         style: TextStyle(color: AppColors.gnpTextUser, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                         key: ValueKey('Key_' + widget.campo.hashCode.toString() + "_" + DateTime.now().millisecondsSinceEpoch.toString()),
                         inputFormatters: [new WhitelistingTextInputFormatter(new RegExp(widget.campo.reg_ex)), //[0-9]
@@ -1371,6 +1373,7 @@ class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
                 inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
                 maxLength: 30,
                 maxLengthEnforced: true,
+                cursorColor: Tema.Colors.GNP,
                 decoration:
                 InputDecoration(
                   hintText: "Nombre cotización",

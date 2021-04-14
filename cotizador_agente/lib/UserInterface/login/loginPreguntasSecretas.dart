@@ -141,6 +141,8 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
           controller: controllerPreguntaUno,
           focusNode: focusPreguntaUno,
           obscureText: false,
+          cursorColor: Tema.Colors.GNP,
+
           decoration: new InputDecoration(
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -187,6 +189,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
       controller: controllerRespuestaUno,
       focusNode: focusRespuestaUno,
       obscureText: respuestaUno,
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -232,6 +235,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
       controller: controllerPreguntaDos,
       focusNode: focusPreguntaDos,
       obscureText: false,
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -276,6 +280,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
       controller: controllerRespuestaDos,
       focusNode: focusRespuestaDos,
       obscureText: respuestaDos,
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),

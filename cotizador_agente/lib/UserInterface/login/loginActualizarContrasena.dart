@@ -148,6 +148,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
       controller: controllerActualContrasena,
       focusNode: focusActualContrasena,
       obscureText: actualContrasena,
+      cursorColor: Tema.Colors.GNP,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusNuevaContrasena);},
       decoration: new InputDecoration(
         focusColor: Tema.Colors.gnpOrange,
@@ -239,6 +240,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
       ],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
+      cursorColor: Tema.Colors.GNP,
       obscureText: nuevaContrasena,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
       decoration: new InputDecoration(
@@ -342,6 +344,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,
       obscureText: confirmarnuevaContrasena,
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -516,6 +519,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                 ],
               ),
             ),
+            //hasConsecutiveIgualesPass
             controllerNuevaContrasena.text != ""  || controllerConfirmarContrasena.text != "" ? Container(
               margin: EdgeInsets.only(bottom: responsive.hp(1)),
               child: Row(
@@ -534,19 +538,22 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                 children: <Widget>[
                   Container(
                       margin: EdgeInsets.only(right: responsive.width * 0.02),
-                      child: Image.asset(!hasConsecutiveIgualesPass ? "assets/login/checkcircle.svg": "assets/login/checkfail.svg",color: !hasConsecutiveIgualesPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
-                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos iguales (p.e. 222, eee).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutiveIgualesPass?Colors.green:Colors.red,),))
+                      child: Image.asset("assets/login/radioContrasena.png", color: Tema.Colors.togglegris, width: 22, height: 22)
+                  ),
+                  Expanded(child: Text("No debe contener más de dos caracteres consecutivos iguales (p.e. 222, eee).", style: TextStyle(fontSize: responsive.ip(1.8), color:Tema.Colors.letragris),))
                 ],
               ),
             ),
+
+            //hasConsecutivosPass
             controllerNuevaContrasena.text != ""  || controllerConfirmarContrasena.text != "" ? Container(
               margin: EdgeInsets.only(bottom: responsive.hp(1)),
-              child:  Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   Container(
                       margin: EdgeInsets.only(right: responsive.width * 0.02),
-                      child: Image.asset(!hasConsecutivosPass ? "assets/login/checkcircle.svg": "assets/login/checkfail.svg" ,color: !hasConsecutivosPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
+                      child: Image.asset(!hasConsecutivosPass ? "assets/login/checkcircle.png": "assets/login/checkfail.png" ,color: !hasConsecutivosPass?Colors.green:Colors.red, width: responsive.wp(2.3), height: responsive.hp(2.3))),
                   Expanded(child: Text("No debe contener más de dos caracteres consecutivos (p.e. 123, abc).", style: TextStyle(fontSize: responsive.ip(1.8), color:!hasConsecutivosPass?Colors.green:Colors.red,),))
                 ],
               ),

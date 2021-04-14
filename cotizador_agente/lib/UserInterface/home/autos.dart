@@ -19,7 +19,7 @@ class _AutosPageState extends State<AutosPage> {
   String returnToApp = "/returnApp";
   final GlobalKey webViewKey = GlobalKey();
 
- /* InAppWebViewController webViewController;
+  InAppWebViewController webViewController;
   InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
       crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,
@@ -31,12 +31,12 @@ class _AutosPageState extends State<AutosPage> {
         allowsInlineMediaPlayback: true,
       ));
 
-  PullToRefreshController pullToRefreshController;
+  //PullToRefreshController pullToRefreshController;
   ContextMenu contextMenu;
   String url = "";
   double progress = 0;
   final urlController = TextEditingController();
-  */
+
   @override
   void initState() {
     
@@ -70,7 +70,7 @@ class _AutosPageState extends State<AutosPage> {
     return WillPopScope(
       onWillPop: () async => false,
       child:  SafeArea(
-        child: /*InAppWebView(
+        child: InAppWebView(
           key: webViewKey,
           // contextMenu: contextMenu,
           initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}", // initialFile: "assets/index.html",
@@ -101,13 +101,14 @@ class _AutosPageState extends State<AutosPage> {
             print(consoleMessage);
           },
       ),
-      */WebviewScaffold(
+      /*WebviewScaffold(
           withZoom: false,
-            displayZoomControls: false,
-            withJavascript: true,
-            url:'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",
+          enableAppScheme: false,
+          displayZoomControls: false,
+          withJavascript: true,
+          url:'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",
 
-        )
+        )*/
       ),
     );
 

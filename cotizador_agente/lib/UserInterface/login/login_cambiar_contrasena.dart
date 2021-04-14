@@ -147,6 +147,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
       controller: controllerActualContrasena,
       focusNode: focusActualContrasena,
       obscureText: actualContrasena,
+      cursorColor: Tema.Colors.GNP,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusNuevaContrasena);},
       decoration: new InputDecoration(
         focusColor: Tema.Colors.gnpOrange,
@@ -234,6 +235,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
+      cursorColor: Tema.Colors.GNP,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
       decoration: new InputDecoration(
         focusColor: Tema.Colors.gnpOrange,
@@ -331,6 +333,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,
       obscureText: confirmarnuevaContrasena,
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -501,6 +504,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
                 ],
               ),
             ),
+            //hasConsecutiveIgualesPass
             controllerNuevaContrasena.text != ""  || controllerConfirmarContrasena.text != "" ? Container(
               margin: EdgeInsets.only(bottom: responsive.hp(1)),
               child: Row(
@@ -525,6 +529,8 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
                 ],
               ),
             ),
+
+            //hasConsecutivosPass
             controllerNuevaContrasena.text != ""  || controllerConfirmarContrasena.text != "" ? Container(
               margin: EdgeInsets.only(bottom: responsive.hp(1)),
               child: Row(
@@ -543,7 +549,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
                 children: <Widget>[
                   Container(
                       margin: EdgeInsets.only(right: responsive.width * 0.02),
-                      child:Image.asset("assets/login/radioContrasena.png", color: Tema.Colors.togglegris, width: 22, height: 22)
+                      child: Image.asset("assets/login/radioContrasena.png", color: Tema.Colors.togglegris, width: 22, height: 22)
                   ),
                   Expanded(child: Text("No debe contener más de dos caracteres consecutivos (p.e. 123, abc).", style: TextStyle(fontSize: responsive.ip(1.8), color:Tema.Colors.letragris),))
                 ],

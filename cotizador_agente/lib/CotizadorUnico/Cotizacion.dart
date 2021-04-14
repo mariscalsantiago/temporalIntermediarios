@@ -21,7 +21,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
-
+import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 
 
 class CotizacionVista extends StatefulWidget {
@@ -1362,6 +1362,7 @@ class _listaCheckState extends State<listaCheck> {
               },
               keyboardType: TextInputType.text,
               inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+              cursorColor: Tema.Colors.GNP,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.only(left: 12.0),
                 labelText: widget.abrirPdf == true && widget.idFormato != Utilidades.FORMATO_COMPARATIVA ? Mensajes.propuesta +" "+ (widget.index + 1).toString() : widget.abrirPdf == true && widget.idFormato == Utilidades.FORMATO_COMPARATIVA ?  Mensajes.tabla_Comp : Mensajes.propuesta + " 1",
@@ -1434,6 +1435,7 @@ class _listaCheckState extends State<listaCheck> {
                   },
                   keyboardType: TextInputType.text,
                   inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+                  cursorColor: Tema.Colors.GNP,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(left: 12.0),
                     labelText: Mensajes.propuesta + " 2",
@@ -1508,6 +1510,7 @@ class _listaCheckState extends State<listaCheck> {
                   },
                   keyboardType: TextInputType.text,
                   inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
+                  cursorColor: Tema.Colors.GNP,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.only(left: 12.0),
                     labelText: Mensajes.propuesta + " 3",

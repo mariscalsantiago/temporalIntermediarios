@@ -798,7 +798,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 child: GestureDetector(
                                   onTap: () {
                                     print("-----------Exito----------------------");
-                                    if(prefs.getBool("primeraVez") == true){
+                                    if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin") ){
                                       if (deviceType == ScreenType.phone) {
                                         customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
                                       }
@@ -967,10 +967,15 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
               children: [
                 Opacity(
                   opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      height: responsive.height,
+                      width: responsive.width,
+                      color: Theme.Colors.Azul_gnp,
+                    ),
                   ),
                 ),
                 Column(

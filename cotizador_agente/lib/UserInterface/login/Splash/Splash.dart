@@ -234,13 +234,15 @@ class _SplashMainState extends State<SplashMain> {
     Vistas tipoVista;
     if(prefs != null && prefs.getBool("activarBiometricos") != null && prefs.getBool("seHizoLogin") != null){
 
-      if(prefs.getBool("activarBiometricos") && prefs.getBool("seHizoLogin")){
+      if(prefs.getBool("activarBiometricos") && prefs.getBool("seHizoLogin") && (prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin"))){
           tipoVista = Vistas.biometricos;
       } else {
+          prefs.setBool("activarBiometricos", false);
           tipoVista = Vistas.login;
       }
 
     } else {
+      prefs.setBool("activarBiometricos", false);
       tipoVista = Vistas.login;
     }
     var shortestSide = MediaQuery.of(context).size.shortestSide;

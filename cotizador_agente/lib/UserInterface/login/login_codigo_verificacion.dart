@@ -161,6 +161,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp("[0-9]")),
       ],
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),

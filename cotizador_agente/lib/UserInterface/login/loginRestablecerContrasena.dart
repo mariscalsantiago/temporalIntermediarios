@@ -156,6 +156,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
+      cursorColor: Tema.Colors.GNP,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
@@ -261,7 +262,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,
       obscureText: confirmarnuevaContrasena,
-
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -467,6 +468,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
                 ],
               ),
             ),
+            //hasConsecutiveIgualesPass
             controllerNuevaContrasena.text != ""  || controllerConfirmarContrasena.text != "" ? Container(
               margin: EdgeInsets.only(bottom: responsive.hp(1)),
               child: Row(
@@ -491,6 +493,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
                 ],
               ),
             ),
+            //hasConsecutivosPass
             controllerNuevaContrasena.text != ""  || controllerConfirmarContrasena.text != "" ? Container(
               margin: EdgeInsets.only(bottom: responsive.hp(1)),
               child: Row(

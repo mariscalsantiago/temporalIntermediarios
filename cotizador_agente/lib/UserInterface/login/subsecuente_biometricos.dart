@@ -175,6 +175,7 @@ class _BiometricosPage extends State<BiometricosPage> {
                 prefs.setString("correoUsuario", "");
                 prefs.setBool("activarBiometricos", false);
                 prefs.setBool("regitroDatosLoginExito", false);
+                prefs.setBool("flujoCompletoLogin", false);
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
               }
           ),
@@ -239,7 +240,8 @@ class _BiometricosPage extends State<BiometricosPage> {
       });
 
       authenticated = await localAuth.authenticateWithBiometrics(
-          localizedReason: 'Ingresa tu huella para Autenticarte',
+        androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar"),
+          localizedReason: ' ',
           useErrorDialogs: false,
           stickyAuth: false,
       );

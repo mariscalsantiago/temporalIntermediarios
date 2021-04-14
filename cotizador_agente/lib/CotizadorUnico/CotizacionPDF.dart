@@ -26,6 +26,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
+import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 
 
 
@@ -365,6 +366,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                           }
                                         }
                                       },
+                                      cursorColor: Tema.Colors.GNP,
                                       decoration: new InputDecoration(
                                         counter: SizedBox(
                                           width: 0,
@@ -531,6 +533,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                           minLines: 3,
                           maxLines: 50,
                           maxLength: 999,
+                          cursorColor: Tema.Colors.GNP,
                           decoration: InputDecoration(
                             hintText: "Escribe tu mensaje...",
                             counterText: "",

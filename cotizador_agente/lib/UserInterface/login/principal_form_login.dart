@@ -7,6 +7,7 @@ import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:firebase_database/firebase_database.dart';
@@ -53,13 +54,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     focusContrasena = new FocusNode();
     controllerContrasena = new TextEditingController();
     controllerCorreo = new TextEditingController();
+
     if(prefs.getBool("onBoardingVisible") != null && prefs.getBool("onBoardingVisible")){}
     else{
       showOnboarding();
       prefs.setBool("onBoardingVisible", true);
     }
     if(prefs != null && prefs.getBool("userRegister") != null){
-      if(prefs.getBool("userRegister") && (prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin"))){
+      if(prefs.getBool("userRegister")){
         prefs.setBool("seHizoLogin", false);
         prefs.setBool("esPerfil", false);
         existeUsuario = true;
@@ -151,23 +153,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     if (_saving) {
       var modal = Stack(
         children: [
-          Container(
-            height: responsive.height,
-            child: Opacity(
-              opacity: 0.7,
-              child: const ModalBarrier(dismissible: false, color: Tema.Colors.primary),
-            ),
-          ),
-          new Center(
-            child: Container(
-                height: responsive.height*0.1,
-                width: responsive.width* 0.2,
-                child: Theme(
-                  data: Theme.of(context).copyWith(accentColor: Tema.Colors.tituloTextoDrop),
-                  child:   new CircularProgressIndicator(),
-                )
-            ),
-          ),
+          LoadingController(
+
+          )
         ],
       );
       l.add(modal);
@@ -202,6 +190,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusContrasena);},
       obscureText: false,
       enabled: _enable,
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -258,6 +247,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       focusNode: focusContrasena,
       obscureText: contrasena,
       enabled: _enable,
+      cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -413,7 +403,17 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             }
 
           } else{
-            Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+            if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
+              Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+            } else{
+              if (deviceType == ScreenType.phone) {
+                customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlerta);
+              }
+              else{
+                customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
+              }
+            }
+
           }
 
       } else {
@@ -465,6 +465,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           prefs.setString("correoUsuario", "");
           prefs.setBool("activarBiometricos", false);
           prefs.setBool("regitroDatosLoginExito", false);
+          prefs.setBool("flujoCompletoLogin", false);
           Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
         }
     );
