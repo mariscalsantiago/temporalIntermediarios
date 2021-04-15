@@ -87,6 +87,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                         child: Text(
                           "Omitir",
                           style: TextStyle(
+                              decoration: TextDecoration.underline,
                               color: Theme.Colors.GNP,
                               fontWeight: FontWeight.normal,
                               fontSize: responsive.ip(2.5)),
@@ -112,7 +113,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
             children: [
               Container(
                   margin: EdgeInsets.only(top: responsive.hp(4)),
-                  child: Image.asset('assets/images/señorde_traje.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
+                  child: Image.asset('assets/images/senorde_traje.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
               Center(
                 child: Container(
                   margin: EdgeInsets.only(top: responsive.height * 0.03),
@@ -145,6 +146,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                         child: Text(
                           "Omitir",
                           style: TextStyle(
+                              decoration: TextDecoration.underline,
                               color: Theme.Colors.GNP,
                               fontWeight: FontWeight.normal,
                               fontSize: responsive.ip(2.5)),
@@ -171,7 +173,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
             children: [
               Container(
                   margin: EdgeInsets.only(top: responsive.hp(4)),
-                  child: Image.asset('assets/images/señorade_traje.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
+                  child: Image.asset('assets/images/senorade_traje.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
               Center(
                 child: Container(
                   margin: EdgeInsets.only(top: responsive.height * 0.03),
@@ -204,6 +206,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                         child: Text(
                           "Omitir",
                           style: TextStyle(
+                              decoration: TextDecoration.underline,
                               color: Theme.Colors.GNP,
                               fontWeight: FontWeight.normal,
                               fontSize: responsive.ip(2.5)),
@@ -230,7 +233,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
             children: [
               Container(
                   margin: EdgeInsets.only(top: responsive.hp(4)),
-                  child: Image.asset('assets/images/señora_telefono.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
+                  child: Image.asset('assets/images/senora_telefono.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
               Center(
                 child: Container(
                   margin: EdgeInsets.only(top: responsive.height * 0.03),
@@ -263,6 +266,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                         child: Text(
                           "Omitir",
                           style: TextStyle(
+                              decoration: TextDecoration.underline,
                               color: Theme.Colors.GNP,
                               fontWeight: FontWeight.normal,
                               fontSize: responsive.ip(2.5)),
@@ -290,7 +294,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
             children: [
               Container(
                   margin: EdgeInsets.only(top: responsive.hp(4)),
-                  child: Image.asset('assets/images/señores_telefono.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
+                  child: Image.asset('assets/images/senores_telefono.png', fit:BoxFit.contain, height:responsive.hp(46), width: responsive.wp(90),)),
               Center(
                 child: Container(
                   margin: EdgeInsets.only(top: responsive.height * 0.03),
@@ -325,6 +329,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                     "CONTINUAR",
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      decoration: TextDecoration.underline,
                       color: Theme.Colors.White,
                       fontSize: responsive.ip(2.0),
                     ),
