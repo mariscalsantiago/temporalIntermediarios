@@ -86,7 +86,7 @@ class _BiometricosPage extends State<BiometricosPage> {
           separacion(widget.responsive, 8),
           Center(
               child: Text(
-                "¡ Hola ${prefs.getString("nombreUsuario")} !",
+                "¡Hola${prefs.getString("nombreUsuario")}!",
                 style: TextStyle(color: Tema.Colors.Encabezados, fontSize: widget.responsive.ip(3)),
               )),
           separacion(widget.responsive, 8),
@@ -179,16 +179,18 @@ class _BiometricosPage extends State<BiometricosPage> {
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
               }
           ),
-          Container(
-            margin: EdgeInsets.only(left:widget.responsive.wp(0), top: widget.responsive.hp(9)),
-            child: Text("Versión 2.0",
-              style: TextStyle(
-                color: Tema.Colors.Azul_2,
-                fontSize: widget.responsive.ip(1.5),
-                fontWeight: FontWeight.normal,
+          Center(
+            child: Container(
+              margin: EdgeInsets.only(top: responsive.hp(4), bottom: responsive.hp(4)),
+              child: Text("Versión 2.0",
+                style: TextStyle(
+                  color: Tema.Colors.Azul_2,
+                  fontSize: widget.responsive.ip(1.5),
+                  fontWeight: FontWeight.normal,
 
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
           ),
         ],
@@ -243,7 +245,8 @@ class _BiometricosPage extends State<BiometricosPage> {
         androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar"),
           localizedReason: ' ',
           useErrorDialogs: false,
-          stickyAuth: false,
+          stickyAuth: true,
+
       );
       setState(() {
         _isAuthenticating = false;
@@ -262,6 +265,9 @@ class _BiometricosPage extends State<BiometricosPage> {
           //ultimoAcceso();
           Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
         }else{
+          setState(() {
+            prefs.setBool("activarBiometricos", false);
+          });
           customAlert(face?AlertDialogType.Rostro_no_reconocido:
               AlertDialogType.Huella_no_reconocida,
               context,
@@ -275,8 +281,12 @@ class _BiometricosPage extends State<BiometricosPage> {
       }
     } on PlatformException catch (e) {
       print("eeeeeee ${e}");
+      setState(() {
+        prefs.setBool("activarBiometricos", false);
+      });
       face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
                        customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
+
 
     }
     if (!mounted) return;
@@ -288,6 +298,7 @@ class _BiometricosPage extends State<BiometricosPage> {
   }
 
   void funcionAlerta(){
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
 
   }
 

@@ -142,6 +142,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
     return TextFormField(
       inputFormatters: [
         FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        LengthLimitingTextInputFormatter(24),
       ],
       enableInteractiveSelection: false,
       controller: controllerActualContrasena,
@@ -230,13 +231,16 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
     return TextFormField(
       inputFormatters: [
         FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        LengthLimitingTextInputFormatter(24),
       ],
       enableInteractiveSelection: false,
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
       cursorColor: Tema.Colors.GNP,
-      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
+      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);
+      focusNuevaContrasena.nextFocus();
+      focusNuevaContrasena.unfocus();},
       decoration: new InputDecoration(
         focusColor: Tema.Colors.gnpOrange,
           focusedBorder: UnderlineInputBorder(
@@ -306,7 +310,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
           } else {
             hasNumPass = false;
           }
-          if(value.contains("GNP") || value.contains("Gnp") || value.contains("gnp") || value.contains("GNp")){
+          if(value.contains("GNP") || value.contains("Gnp") || value.contains("gnp") || value.contains("GNp") || value.contains("gNp") || value.contains("gnP")|| value.contains("GnP") || value.contains("gNP")){
             hasGNPPass = true;
           } else {
             hasGNPPass =false;
@@ -329,6 +333,10 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
 
   Widget inputTextConfirmarContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        LengthLimitingTextInputFormatter(24),
+      ],
       enableInteractiveSelection: false,
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,

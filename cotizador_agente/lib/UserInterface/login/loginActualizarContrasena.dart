@@ -144,6 +144,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     return TextFormField(
       inputFormatters: [
         FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerActualContrasena,
       focusNode: focusActualContrasena,
@@ -237,12 +238,15 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     return TextFormField(
       inputFormatters: [
         FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       cursorColor: Tema.Colors.GNP,
       obscureText: nuevaContrasena,
-      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
+      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);
+      focusNuevaContrasena.nextFocus();
+      focusNuevaContrasena.unfocus();},
       decoration: new InputDecoration(
         focusColor: Tema.Colors.gnpOrange,
           focusedBorder: UnderlineInputBorder(
@@ -312,7 +316,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           } else {
             hasNumPass = false;
           }
-          if(value.contains("GNP") || value.contains("Gnp") || value.contains("gnp") || value.contains("GNp")){
+          if(value.contains("GNP") || value.contains("Gnp") || value.contains("gnp") || value.contains("GNp") || value.contains("gNp") || value.contains("gnP")|| value.contains("GnP") || value.contains("gNP")){
             hasGNPPass = true;
           } else {
             hasGNPPass =false;
@@ -341,6 +345,10 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
 
   Widget inputTextConfirmarContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        LengthLimitingTextInputFormatter(24),
+      ],
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,
       obscureText: confirmarnuevaContrasena,

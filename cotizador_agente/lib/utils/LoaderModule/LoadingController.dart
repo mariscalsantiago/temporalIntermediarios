@@ -14,7 +14,7 @@ class LoadingController extends StatelessWidget {
           opacity: 0.6,
           child: GestureDetector(
             onTap: (){
-              Navigator.pop(context);
+              //Navigator.pop(context);
             },
             child: Container(
               height: responsive.height,

@@ -20,16 +20,21 @@ class _AutosPageState extends State<AutosPage> {
   final GlobalKey webViewKey = GlobalKey();
 
   InAppWebViewController webViewController;
+
+
   InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
+
       crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,
         mediaPlaybackRequiresUserGesture: false,
+        supportZoom: false,
       ),
       android: AndroidInAppWebViewOptions(
           allowContentAccess: true,),
       ios: IOSInAppWebViewOptions(
         allowsInlineMediaPlayback: true,
       ));
+
 
   //PullToRefreshController pullToRefreshController;
   ContextMenu contextMenu;
@@ -43,6 +48,7 @@ class _AutosPageState extends State<AutosPage> {
     // TODO: implement initState
 
     _flutterWebViewPlugin = FlutterWebviewPlugin();
+
     _flutterWebViewPlugin.onStateChanged.listen((onData) async {
 
 
@@ -91,7 +97,6 @@ class _AutosPageState extends State<AutosPage> {
           },
           shouldOverrideUrlLoading: (controller, navigationAction) async {
             var uri = navigationAction.url;
-
             print(navigationAction);
             if (uri.contains(returnToApp)) {
               Navigator.pop(context,true);

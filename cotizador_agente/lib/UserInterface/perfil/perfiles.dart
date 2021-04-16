@@ -38,7 +38,7 @@ bool preesCua = false;
 String valorCUA ;
 String valorDA ;
 int posicionCUA;
-int posicionDA;
+int posicionDA=0;
 bool internet;
 var _image;
 bool isSwitchedPerfill;
@@ -59,13 +59,15 @@ class _PerfilPageState extends State<PerfilPage> {
     listadoCUA= [];
     isSwitchedPerfill = prefs.getBool("activarBiometricos");
     print("state isSwitchedPerfill ${isSwitchedPerfill}");
-    getDeasCuas(context , widget.responsive);
+    getDeasCuas(context);
     posicionCUA = 0;
-    validateIntenetstatus(context, widget.responsive);
+    //validateIntenetstatus(context, widget.responsive);
     print(DateTime.now());
   }
 
-  void getDeasCuas (BuildContext context, Responsive _responsive) async {
+  void getDeasCuas (BuildContext context) async {
+    listadoDA = [];
+    listadoCUA = [];
 
     print("Da Y Cua");
     valorDA = datosPerfilador.daList.elementAt(0).cveDa;
@@ -85,14 +87,17 @@ class _PerfilPageState extends State<PerfilPage> {
       showDea =  false;
     }
 
-    valorCUA = datosPerfilador.intermediarios[0];
-    dropdownValue2 = datosPerfilador.intermediarios[0];
+   // valorCUA = datosPerfilador.intermediarios[0];
+    valorCUA = datosPerfilador.daList.elementAt(posicionDA).codIntermediario[0];
+    dropdownValue2 =  datosPerfilador.daList.elementAt(posicionDA).codIntermediario[0];
+    //dropdownValue2 = datosPerfilador.intermediarios[0];
 
-    for(int j =0; j < datosPerfilador.intermediarios.length; j++ ){
-      listadoCUA.add("${datosPerfilador.intermediarios[j]} - ${ datosPerfilador.agenteInteresadoList.elementAt(j).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(j).apellidoPaterno}");
+    for(int j =0; j <  datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++ ){
+      //listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${ datosPerfilador.agenteInteresadoList.elementAt(j).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(j).apellidoPaterno}");
+      listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
     }
 
-    if(datosPerfilador.intermediarios.length>1){
+    if(listadoCUA.length>1){
       showCua = true;
     }else{
       showCua =  false;
@@ -102,6 +107,7 @@ class _PerfilPageState extends State<PerfilPage> {
     if(isDea){
       valorDA = pos;
       dropdownValue = pos;
+      getDeasCuas(context);
     }else{
       valorCUA = pos;
       dropdownValue2 = pos;

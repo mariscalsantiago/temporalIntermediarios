@@ -46,7 +46,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
     controllerConfirmarContrasena = new TextEditingController();
     focusNuevaContrasena = new FocusNode();
     focusConfirmarContrasena = new FocusNode();
-    validateIntenetstatus(context, widget.responsive);
+    //validateIntenetstatus(context, widget.responsive);
     super.initState();
   }
 
@@ -150,14 +150,22 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
 
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
+      maxLength: 24,
+      maxLengthEnforced: true,
+        autofocus: true,
       inputFormatters: [
         FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+          LengthLimitingTextInputFormatter(24),
+
+
       ],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
       cursorColor: Tema.Colors.GNP,
-      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
+      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);
+      focusNuevaContrasena.nextFocus();
+      focusNuevaContrasena.unfocus();},
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
@@ -167,10 +175,10 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
           ),
           labelText: "Nueva contraseña",
           labelStyle: TextStyle(
+              color: focusNuevaContrasena.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.inputcorreo
           ),
           suffixIcon: IconButton(
             icon: !nuevaContrasena ? Image.asset("assets/login/vercontrasena.png")  : Image.asset("assets/login/novercontrasena.png"),
@@ -226,7 +234,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
           } else {
             hasNumPass = false;
           }
-          if(value.contains("GNP") || value.contains("Gnp") || value.contains("gnp") || value.contains("GNp")){
+          if(value.contains("GNP") || value.contains("Gnp") || value.contains("gnp") || value.contains("GNp") || value.contains("gNp") || value.contains("gnP")|| value.contains("GnP") || value.contains("gNP")){
             hasGNPPass = true;
           } else {
             hasGNPPass =false;
@@ -258,6 +266,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
     return TextFormField(
       inputFormatters: [
         FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerConfirmarContrasena,
       focusNode: focusConfirmarContrasena,

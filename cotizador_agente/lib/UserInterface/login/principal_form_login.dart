@@ -166,7 +166,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   Widget subtitulo(Responsive responsive){
     return existeUsuario ?
       Text( prefs.getString("nombreUsuario") != null &&  prefs.getString("nombreUsuario")  != "" ?
-      "¡ Hola ${prefs.getString("nombreUsuario")}!"
+      "¡Hola ${prefs.getString("nombreUsuario")}!"
           : "¡Hola !", style: TextStyle(
           color: Tema.Colors.Azul_gnp,
           fontWeight: FontWeight.normal,
@@ -224,6 +224,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       },
       onChanged: (value){
         setState(() {
+          //Todo 116
+          prefs.setString("correoUsuario", controllerCorreo.text);
           String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
           RegExp regExp = new RegExp(p);
           if (value.isEmpty) {
@@ -322,6 +324,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         onPressed: () async {
           print(_saving);
           //Navigator.push(context, MaterialPageRoute(builder: (context) => PreguntasSecretas(responsive: responsive,)),);
+          if(!_saving){
           if(_formKey.currentState.validate()){
            setState(() {
               _saving = true;
@@ -377,9 +380,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               _enable = true;
             });
 
-          } else{
-
-          } 
+          } else{} }
         }
     );
   }
@@ -523,15 +524,17 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   }
 
   Widget version(Responsive responsive){
-    return Container(
-      margin: EdgeInsets.only(left: responsive.wp(35), top: responsive.hp(9)),
-      child: Text("Versión 2.0",
-        style: TextStyle(
-          color: Tema.Colors.Azul_2,
-          fontSize: responsive.ip(1.5),
-          fontWeight: FontWeight.normal
+    return Center(
+      child: Container(
+        margin: EdgeInsets.only( top: responsive.hp(4), bottom: responsive.hp(4)),
+        child: Text("Versión 2.0",
+          style: TextStyle(
+            color: Tema.Colors.Azul_2,
+            fontSize: responsive.ip(1.5),
+            fontWeight: FontWeight.normal
+          ),
+          textAlign: TextAlign.center,
         ),
-        textAlign: TextAlign.center,
       ),
     );
   }
@@ -542,8 +545,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     );
   }
 
-  void funcionAlerta(){
-
+  void funcionAlerta( bool abc){
+    setState(() {});
   }
 
   void funcionAlertaHullaLogin(bool activar){

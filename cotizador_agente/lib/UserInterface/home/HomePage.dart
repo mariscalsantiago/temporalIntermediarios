@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     dropdownValue = "Autos";
-    validateIntenetstatus(context, widget.responsive);
+    //validateIntenetstatus(context, widget.responsive);
     super.initState();
   }
   int _selectedIndex = 0;

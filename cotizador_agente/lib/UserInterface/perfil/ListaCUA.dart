@@ -20,7 +20,6 @@ class listaCUA extends StatefulWidget {
 
 class _listaCUAState extends State<listaCUA> {
 
-
   bool _saving;
   int _character = 99999;
 
@@ -37,6 +36,7 @@ class _listaCUAState extends State<listaCUA> {
     return Scaffold(
       backgroundColor: Tema.Colors.backgroud,
       appBar: AppBar(
+        centerTitle: false,
         backgroundColor: Tema.Colors.backgroud,
         elevation: 0,
         title: Text(widget.isDA ? 'DA' :'CUA', style: TextStyle(
@@ -161,6 +161,7 @@ class _listaCUAState extends State<listaCUA> {
             if(widget.isDA){
               posicionDA = value;
               valorDA = widget.list.elementAt(value);
+
             }else{
               posicionCUA = value;
               valorCUA = cua;
