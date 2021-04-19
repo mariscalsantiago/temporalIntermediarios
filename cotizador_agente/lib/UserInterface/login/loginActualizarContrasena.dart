@@ -143,7 +143,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   Widget inputTextActualContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerActualContrasena,
@@ -237,7 +237,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerNuevaContrasena,
@@ -346,7 +346,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   Widget inputTextConfirmarContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerConfirmarContrasena,

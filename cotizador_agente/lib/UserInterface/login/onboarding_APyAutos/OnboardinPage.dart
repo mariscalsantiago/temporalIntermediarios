@@ -25,43 +25,46 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
 
-    return IntroductionScreen(
-      pages: listPagesViewModel,
-      onDone: () {
-        // When done button is press
-      },
-      dotsDecorator: DotsDecorator(
-          size: const Size.square(10.0),
-          activeSize: const Size(20.0, 10.0),
-          activeColor:  Theme.Colors.gnpOrange,
-          color: Colors.black26,
-          spacing: const EdgeInsets.symmetric(horizontal: 3.0),
-          activeShape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25.0)
-          )
-      ),
-      showSkipButton: true,
-      showNextButton : false,
-      skip: const Text("Omitir"),
-      done: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(3),
-              color: Theme.Colors.gnpOrange,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: IntroductionScreen(
+        pages: listPagesViewModel,
+        onDone: () {
+          // When done button is press
+        },
+        dotsDecorator: DotsDecorator(
+            size: const Size.square(10.0),
+            activeSize: const Size(20.0, 10.0),
+            activeColor:  Theme.Colors.gnpOrange,
+            color: Colors.black26,
+            spacing: const EdgeInsets.symmetric(horizontal: 3.0),
+            activeShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0)
+            )
+        ),
+        showSkipButton: true,
+        showNextButton : false,
+        skip: const Text("Omitir"),
+        done: CupertinoButton(
+            padding: EdgeInsets.zero,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(3),
+                color: Theme.Colors.gnpOrange,
+              ),
+              padding: EdgeInsets.only(
+                  top: responsive.hp(2), bottom: responsive.hp(2)),
+              width: responsive.width,
+              child: Text("Continuar",
+                  style: TextStyle(
+                    color: Theme.Colors.White,
+                  ),
+                  textAlign: TextAlign.center),
             ),
-            padding: EdgeInsets.only(
-                top: responsive.hp(2), bottom: responsive.hp(2)),
-            width: responsive.width,
-            child: Text("Continuar",
-                style: TextStyle(
-                  color: Theme.Colors.White,
-                ),
-                textAlign: TextAlign.center),
-          ),
-          onPressed: () {
-            Navigator.pop(context,true);
-          }),
+            onPressed: () {
+              Navigator.pop(context,true);
+            }),
+      ),
     );
   }
 

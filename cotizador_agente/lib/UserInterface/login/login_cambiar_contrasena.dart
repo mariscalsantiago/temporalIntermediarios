@@ -230,7 +230,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       enableInteractiveSelection: false,
@@ -334,7 +334,7 @@ class _LoginCambiarContrasenaState extends State<LoginCambiarContrasena> {
   Widget inputTextConfirmarContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       enableInteractiveSelection: false,

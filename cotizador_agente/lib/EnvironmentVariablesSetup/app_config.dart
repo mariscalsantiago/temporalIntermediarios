@@ -23,6 +23,14 @@ class AppConfig extends InheritedWidget {
     @required this.idContenedorAnalytics,
     @required this.serviceBCA,
     @required this.apikeyBCA,
+    @required this.consultaPreguntasSecretas,
+    @required this.actualizarEstablecerPreguntasSecretas,
+    @required this.apiKey,
+    @required this.generarOTP,
+    @required this.validarOTP,
+    @required this.cambioContrasenaPerfil,
+    @required this.consultaUsuarioPorCorreo,
+    @required this.reestablecerContrasena,
 
   }) : super(child: child);
 
@@ -39,6 +47,14 @@ class AppConfig extends InheritedWidget {
   final String idContenedorAnalytics;
   final String serviceBCA;
   final String apikeyBCA;
+  final String consultaPreguntasSecretas;
+  final String actualizarEstablecerPreguntasSecretas;
+  final String apiKey;
+  final String generarOTP;
+  final String validarOTP;
+  final String cambioContrasenaPerfil;
+  final String consultaUsuarioPorCorreo;
+  final String reestablecerContrasena;
 
   static AppConfig of(BuildContext context) {
     return context.inheritFromWidgetOfExactType(AppConfig);

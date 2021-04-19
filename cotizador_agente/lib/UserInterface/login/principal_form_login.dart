@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
@@ -663,7 +665,22 @@ String fechaPrototipo(String fecha){
 void ultimoAcceso() async {
   print("== Firebase ==");
   DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
-  await _dataBaseReference.child("accesoUsuarios").once().then((DataSnapshot _snapshot) {
+  await _dataBaseReference.child("accesoUsuarios").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+    var jsoonn = json.encode(_snapshot.value);
+    Map response = json.decode(jsoonn);
+
+
+    List<Map<String, String>> user = [];
+    response.forEach((key, value) {
+      //user.add(key: value['accesoUser']);
+    });
+
+    if(response!= null && response.isNotEmpty){
+    String dateFirebase = response["ultimoAcceso"]!= null ? response["ultimoAcceso"]:"";
+    }else{
+      _dataBaseReference.child("accesoUsuarios").set("");
+    }
+
 
     print("Data --- ${_snapshot.value}");
     //print("Environment: " + validateNotEmptyToString(_snapshot.value, ""));
