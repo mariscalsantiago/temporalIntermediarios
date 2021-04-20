@@ -22,24 +22,27 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-            height: responsive.height,
-            color: Theme.Colors.None,
-            child: DefaultTabController(
-              length: 5,
-              child: TabBarView(
-                  controller: _controller,
-                  children: [
-                    APyAutosOnboarding(responsive),
-                    HerramientasVentas(responsive),
-                    CoparteCotizaciones_Onboarding(responsive),
-                    ActualizaTuPerfil_Onboarding(responsive),
-                    CotizaTusNegocios_Onboarding(responsive)
-                  ]
-              ),
-            )
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Container(
+              height: responsive.height,
+              color: Theme.Colors.None,
+              child: DefaultTabController(
+                length: 5,
+                child: TabBarView(
+                    controller: _controller,
+                    children: [
+                      APyAutosOnboarding(responsive),
+                      HerramientasVentas(responsive),
+                      CoparteCotizaciones_Onboarding(responsive),
+                      ActualizaTuPerfil_Onboarding(responsive),
+                      CotizaTusNegocios_Onboarding(responsive)
+                    ]
+                ),
+              )
+          ),
         ),
       ),
     );

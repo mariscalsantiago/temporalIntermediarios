@@ -1,4 +1,5 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -102,23 +103,9 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
     if (_saving) {
       var modal = Stack(
         children: [
-          Container(
-            height: responsive.height,
-            child: Opacity(
-              opacity: 0.7,
-              child: const ModalBarrier(dismissible: false, color: Tema.Colors.primary),
-            ),
-          ),
-          new Center(
-            child: Container(
-                height: responsive.height*0.1,
-                width: responsive.width* 0.2,
-                child: Theme(
-                  data: Theme.of(context).copyWith(accentColor: Tema.Colors.tituloTextoDrop),
-                  child:   new CircularProgressIndicator(),
-                )
-            ),
-          ),
+          LoadingController(
+
+          )
         ],
       );
       l.add(modal);

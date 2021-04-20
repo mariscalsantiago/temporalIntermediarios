@@ -1,6 +1,11 @@
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +64,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
           appBar: AppBar(
             backgroundColor: Tema.Colors.backgroud,
             elevation: 0,
-            title: Text('Restablecer contraseña', style: TextStyle(
+            title: Text('Reestablecer contraseña', style: TextStyle(
                 color: Tema.Colors.Azul_2,
                 fontWeight: FontWeight.normal,
                 fontSize: widget.responsive.ip(2.5)
@@ -112,23 +117,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
     if (_saving) {
       var modal = Stack(
         children: [
-          Container(
-            height: responsive.height,
-            child: Opacity(
-              opacity: 0.7,
-              child: const ModalBarrier(dismissible: false, color: Tema.Colors.primary),
-            ),
-          ),
-          new Center(
-            child: Container(
-                height: responsive.height*0.1,
-                width: responsive.width* 0.2,
-                child: Theme(
-                  data: Theme.of(context).copyWith(accentColor: Tema.Colors.tituloTextoDrop),
-                  child:   new CircularProgressIndicator(),
-                )
-            ),
-          ),
+          LoadingController()
         ],
       );
       l.add(modal);
@@ -150,15 +139,10 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
 
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
-      maxLength: 24,
-      maxLengthEnforced: true,
-        autofocus: true,
-      inputFormatters: [
-        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
-          LengthLimitingTextInputFormatter(24),
-
-
-      ],
+      autofocus: true,
+      maxLength: 5,
+      autocorrect: true,
+      inputFormatters: [LengthLimitingTextInputFormatter(5)],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
@@ -350,11 +334,34 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
             ),
           ),
         ),
-        onPressed: (){
-          if(_formKey.currentState.validate()){
-            print("Validar flujo");
-            prefs.setBool("flujoCompletoLogin", true);
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage(responsive: widget.responsive,)));
+        onPressed: () async {
+          if(_formKey.currentState.validate()) {
+            setState(() {
+              _saving = true;
+            });
+
+            ReestablecerContrasenaModel restablecerContrasena = await reestablecerContrasenaServicio(context, datosUsuario.idparticipante, controllerNuevaContrasena.text);
+
+            print("restablecerContrasena     ${restablecerContrasena}");
+
+            if(restablecerContrasena != null){
+              setState(() {
+                _saving = false;
+              });
+              if(restablecerContrasena.cambioContrasenaResponse != null && restablecerContrasena.cambioContrasenaResponse.retorno == "SUCCEEDED"){
+                print("Validar flujo");
+                prefs.setBool("flujoCompletoLogin", true);
+                customAlert(AlertDialogType.contrasena_actualiza_correctamente,context,"","", responsive, funcionAlerta);
+              } else {
+                customAlert(AlertDialogType.Sesionafinalizada_por_contrasena_debeserdiferente,context,"","", responsive, funcionAlerta);
+              }
+
+            } else {
+              setState(() {
+                _saving = false;
+              });
+
+            }
           }else{
 
           }
@@ -531,6 +538,10 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
         ),
       ),
     );
+  }
+
+  void funcionAlerta(){
+
   }
 
 }

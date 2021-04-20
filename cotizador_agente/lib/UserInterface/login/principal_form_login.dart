@@ -360,6 +360,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
              });
             if(datosUsuario != null){
               print("if datosUsuario ${datosUsuario}");
+              print("idparticipante--- ${datosUsuario.idparticipante}");
               prefs.setBool("seHizoLogin", true);
               prefs.setBool("regitroDatosLoginExito", true);
               prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
@@ -528,7 +529,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   Widget version(Responsive responsive){
     return Center(
       child: Container(
-        margin: EdgeInsets.only( top: responsive.hp(4), bottom: responsive.hp(4)),
+        //margin: EdgeInsets.only( top: responsive.hp(0.5), bottom: responsive.hp(0.5)),
         child: Text("Versión 2.0",
           style: TextStyle(
             color: Tema.Colors.Azul_2,
@@ -680,8 +681,6 @@ void ultimoAcceso() async {
     }else{
       _dataBaseReference.child("accesoUsuarios").set("");
     }
-
-
     print("Data --- ${_snapshot.value}");
     //print("Environment: " + validateNotEmptyToString(_snapshot.value, ""));
   });

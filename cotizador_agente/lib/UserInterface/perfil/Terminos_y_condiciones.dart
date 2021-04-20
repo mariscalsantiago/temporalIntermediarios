@@ -22,6 +22,11 @@ class TerminosYCondicionesPage extends StatefulWidget {
 class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
 
 
+  @override
+  void initState() {
+    checkedValue = false;
+  }
+
   double width = 300.0;
   double height = 150.0;
   @override
@@ -57,7 +62,6 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
           child: Stack(
             children: [
               SingleChildScrollView(
-
                 child: Container(
                   child: Column(
                     //mainAxisAlignment: MainAxisAlignment.center,
@@ -75,9 +79,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                             TextSpan(
                                 text: 'Consentimiento para el tratamiento de uso de datos biométricos \n \n',
                                 style: TextStyle(fontSize: responsive.ip(1.8), fontWeight: FontWeight.bold, color: Theme.Colors.letragris),
-
                                 children: <InlineSpan>[
-
                                   TextSpan(
                                     text: 'Grupo Nacional Provincial, S.A.B., ',
                                     style: TextStyle(fontSize: responsive.ip(1.8), fontWeight: FontWeight.bold, color: Theme.Colors.letragris),
@@ -150,6 +152,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                       ),
                       CheckboxListTile(
                         title: Text("Acepto los términos y condiciones de uso"),
+                        activeColor: Theme.Colors.GNP,
                         value: checkedValue,
                         onChanged: (bool value) {
                           setState(() {

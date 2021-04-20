@@ -1,3 +1,9 @@
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -116,23 +122,9 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     if (_saving) {
       var modal = Stack(
         children: [
-          Container(
-            height: responsive.height,
-            child: Opacity(
-              opacity: 0.7,
-              child: const ModalBarrier(dismissible: false, color: Tema.Colors.primary),
-            ),
-          ),
-          new Center(
-            child: Container(
-                height: responsive.height*0.1,
-                width: responsive.width* 0.2,
-                child: Theme(
-                  data: Theme.of(context).copyWith(accentColor: Tema.Colors.tituloTextoDrop),
-                  child:   new CircularProgressIndicator(),
-                )
-            ),
-          ),
+          LoadingController(
+
+          )
         ],
       );
       l.add(modal);
@@ -600,11 +592,31 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
             ),
           ),
         ),
-        onPressed: (){
-
-
+        onPressed: () async {
           if(_formKey.currentState.validate()){
-            Navigator.pop(context,true);
+            setState(() {
+              _saving = true;
+            });
+            cambioContrasenaModel  cambiocontrasena = await cambioContrasenaServicio(context, controllerActualContrasena.text, controllerNuevaContrasena.text, datosUsuario.idparticipante);
+
+            if(cambiocontrasena != null){
+              prefs.setBool("esPerfil", true);
+              setState(() {
+                _saving = false;
+              });
+                if(cambiocontrasena.requestStatus == "FAILED" && cambiocontrasena.error != ""){
+
+                  customAlert(AlertDialogType.Sesionafinalizada_por_contrasena_debeserdiferente,context,"","", responsive, funcionAlerta);
+                } else if(cambiocontrasena.error == ""){
+                  customAlert(AlertDialogType.contrasena_actualiza_correctamente,context,"","", responsive, funcionAlerta);
+                }
+            } else {
+
+              setState(() {
+                _saving = false;
+              });
+
+            }
           }
         }
     );
@@ -620,6 +632,10 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           fontSize: responsive.ip(2)
       ),),
     );
+  }
+
+  void funcionAlerta(){
+
   }
 
 }

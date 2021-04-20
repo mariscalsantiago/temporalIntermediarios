@@ -11,6 +11,7 @@ import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
+import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/perfil/ListaCUA.dart';
@@ -522,7 +523,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => OnboardingPage()),
+                              builder: (context) => OnBoardingAppAutos()),
                         );
                       },
                       child: Container(

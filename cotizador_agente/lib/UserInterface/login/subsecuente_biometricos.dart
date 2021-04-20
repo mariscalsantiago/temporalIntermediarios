@@ -7,6 +7,7 @@ import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
@@ -181,7 +182,7 @@ class _BiometricosPage extends State<BiometricosPage> {
           ),
           Center(
             child: Container(
-              margin: EdgeInsets.only(top: responsive.hp(4), bottom: responsive.hp(4)),
+              margin: EdgeInsets.only(top: responsive.hp(3.5), bottom: responsive.hp(3.5)),
               child: Text("Versión 2.0",
                 style: TextStyle(
                   color: Tema.Colors.Azul_2,
@@ -202,24 +203,9 @@ class _BiometricosPage extends State<BiometricosPage> {
     if (_saving) {
       var modal = Stack(
         children: [
-          Container(
-            height: responsive.height,
-            child: Opacity(
-              opacity: 0.7,
-              child: const ModalBarrier(dismissible: false, color: Tema.Colors.primary),
-            ),
-          ),
-          new Center(
-            child: Container(
-                margin: EdgeInsets.only(top: responsive.hp(35)),
-                height: responsive.height*0.1,
-                width: responsive.width* 0.2,
-                child: Theme(
-                  data: Theme.of(context).copyWith(accentColor: Tema.Colors.tituloTextoDrop),
-                  child:   new CircularProgressIndicator(),
-                )
-            ),
-          ),
+          LoadingController(
+
+          )
         ],
       );
       l.add(modal);

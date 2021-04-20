@@ -4,6 +4,7 @@ import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -228,9 +229,11 @@ Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(BuildContext 
   ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
 
   if(_connectivityStatus.available) {
+
+    print("available ${_connectivityStatus.available}");
     http.Response _response;
 
-    Map _loginBody = {
+    Map<String, dynamic> _loginBody = {
       "cambioContrasena": {
         "uid": IdParticipante,
         "perfil": "Intermediario",
@@ -239,10 +242,11 @@ Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(BuildContext 
     };
     String _loginJSON = json.encode(_loginBody);
 
+    print("_loginJSON   ${_loginJSON}");
     try {
-      _response = await http.post(Uri.parse(_appEnvironmentConfig.reestablecerContrasena),
+      _response = await http.post(_appEnvironmentConfig.reestablecerContrasena,
           body: _loginJSON,
-          headers: {"Content-Type": "application/json", 'apiKey': _appEnvironmentConfig.apiKey}
+          headers: {'apiKey': _appEnvironmentConfig.apiKey, "Content-Type": "application/json"}
       );
 
       print("reestablecerContrasenaServicio ${_response.body}");
@@ -258,9 +262,14 @@ Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(BuildContext 
             } else{
               return null;
             }
-          } else if(_response.statusCode == 401){
-            print("StatusCode 401");
-            return null;
+          } else if(_response.statusCode == 500){
+            Map map = json.decode(_response.body);
+            ReestablecerContrasenaModel _datosConsulta = ReestablecerContrasenaModel.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
           } else if(_response.statusCode == 404){
             print("StatusCode 404");
             return null;
@@ -291,7 +300,7 @@ Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(BuildContext 
   }
 }
 
-Future<ReestablecerContrasenaModel> consultaUsuarioPorCorreo(BuildContext context, String  correo) async {
+Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(BuildContext context, String  correo) async {
 
   print("consultaUsuarioPorCorreo");
   _appEnvironmentConfig = AppConfig.of(context);
@@ -322,7 +331,7 @@ Future<ReestablecerContrasenaModel> consultaUsuarioPorCorreo(BuildContext contex
         if(_response.body != null){
           if(_response.statusCode == 200){
             Map map = json.decode(_response.body);
-            ReestablecerContrasenaModel _datosConsulta = ReestablecerContrasenaModel.fromJson(map);
+            UsuarioPorCorreo _datosConsulta = UsuarioPorCorreo.fromJson(map);
             if(_datosConsulta != null){
               return _datosConsulta;
             } else{

@@ -65,7 +65,8 @@ enum AlertDialogType {
   En_mantenimiento_llave,
   Sin_acceso_herramientas_cotizacion,
   menu_home,
-  errorServicio
+  errorServicio,
+  contrasena_actualiza_correctamente
 }
 
 void customAlert(AlertDialogType type, BuildContext context, String title, String message, Responsive responsive,  Function callback) {
@@ -535,18 +536,19 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 onPressed: () {
                                   Navigator.pop(context,true);
                                   if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
-                                  prefs.setBool("activarBiometricos", false);
-                                  callback(false);
-                                  Navigator.pop(context,true);
+                                    prefs.setBool("activarBiometricos", false);
+                                    callback(false);
+                                    Navigator.pop(context,true);
                                   } else {
-                                  prefs.setBool("activarBiometricos", false);
-                                  callback(false);
-                                  Navigator.pop(context,true);
-                                  if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
-                                  }else{
-                                  customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
+                                    prefs.setBool("activarBiometricos", false);
+                                    callback(false);
+                                    Navigator.pop(context,true);
+                                    if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
+                                    }else{
+                                      customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
+                                    }
                                   }
-                                  }},
+                                },
                                 child: Text(
                                   "EN OTRO MOMENTO",
                                   textAlign: TextAlign.center,
@@ -572,118 +574,121 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
-            return Stack(children: [
-              Opacity(
-                opacity: 0.6,
-                child: Container(
-                  height: responsive.height,
-                  width: responsive.width,
-                  color: Theme.Colors.Azul_gnp,
-                ),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
+            return WillPopScope(
+              onWillPop: () => Future.value(false),
+              child: Stack(children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
                     width: responsive.width,
-                    child: Card(
-                      color: Theme.Colors.White,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin:
-                                EdgeInsets.only(top: responsive.height * 0.03),
-                            child: Center(
-                              child: Text(
-                                "¡Activa tu ingreso con huella digital!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Theme.Colors.Encabezados,
-                                    fontSize: responsive.ip(2.3)),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                top: responsive.height * 0.04,
-                                bottom: responsive.height * 0.01,
-                                right: responsive.wp(1),
-                                left: responsive.wp(5)),
-                            child: Text(
-                              "Al activar esta funcionalidad podrás iniciar sesión en tu App Intermediario GNP más rápido con cualquier huella registrada en este dispositivo.",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  color: Theme.Colors.Funcional_Textos_Body,
-                                  fontSize: responsive.ip(2.0)),
-                            ),
-                          ),
-                          Container(
-                            margin:
-                                EdgeInsets.only(top: responsive.height * 0.03),
-                            child: Center(
-                              child: Icon(
-                                Icons.fingerprint,
-                                color: Theme.Colors.GNP,
-                                size: 116,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: responsive.hp(6.25),
-                            width: responsive.wp(90),
-                            margin: EdgeInsets.only(
-                                top: responsive.height * 0.03,
-                                left: responsive.wp(4.4),
-                                right: responsive.wp(4.4)),
-                            child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                              ),
-                              color: Theme.Colors.GNP,
-                              onPressed: () {
-                                Navigator.pop(context,true);
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => TerminosYCondicionesPage(callback: callback,)));
-                              },
-                              child: Text(
-                                "ACEPTAR",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Theme.Colors.White,
-                                  fontSize: responsive.ip(2.0),
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin:
+                                  EdgeInsets.only(top: responsive.height * 0.03),
+                              child: Center(
+                                child: Text(
+                                  "¡Activa tu ingreso con huella digital!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
                                 ),
                               ),
                             ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                top: responsive.height * 0.03,
-                                bottom: responsive.height * 0.05),
-                            child: Center(
-                              child: CupertinoButton(
-                                padding: EdgeInsets.zero,
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  bottom: responsive.height * 0.01,
+                                  right: responsive.wp(1),
+                                  left: responsive.wp(5)),
+                              child: Text(
+                                "Al activar esta funcionalidad podrás iniciar sesión en tu App Intermediario GNP más rápido con cualquier huella registrada en este dispositivo.",
+                                textAlign: TextAlign.left,
+                                style: TextStyle(
+                                    color: Theme.Colors.Funcional_Textos_Body,
+                                    fontSize: responsive.ip(2.0)),
+                              ),
+                            ),
+                            Container(
+                              margin:
+                                  EdgeInsets.only(top: responsive.height * 0.03),
+                              child: Center(
+                                child: Icon(
+                                  Icons.fingerprint,
+                                  color: Theme.Colors.GNP,
+                                  size: 116,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: responsive.hp(6.25),
+                              width: responsive.wp(90),
+                              margin: EdgeInsets.only(
+                                  top: responsive.height * 0.03,
+                                  left: responsive.wp(4.4),
+                                  right: responsive.wp(4.4)),
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                color: Theme.Colors.GNP,
                                 onPressed: () {
                                   Navigator.pop(context,true);
-                                  customAlert(AlertDialogType.EnOtroMomento_Huella, context, "", "", responsive, callback);
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => TerminosYCondicionesPage(callback: callback,)));
                                 },
                                 child: Text(
-                                  "EN OTRO MOMENTO",
+                                  "ACEPTAR",
+                                  textAlign: TextAlign.center,
                                   style: TextStyle(
-                                      color: Theme.Colors.GNP,
-                                      fontSize: responsive.ip(2.0)),
+                                    color: Theme.Colors.White,
+                                    fontSize: responsive.ip(2.0),
+                                  ),
                                 ),
                               ),
                             ),
-                          )
-                        ],
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: responsive.height * 0.03,
+                                  bottom: responsive.height * 0.05),
+                              child: Center(
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  onPressed: () {
+                                    Navigator.pop(context,true);
+                                    customAlert(AlertDialogType.EnOtroMomento_Huella, context, "", "", responsive, callback);
+                                  },
+                                  child: Text(
+                                    "EN OTRO MOMENTO",
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(2.0)),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ]);
+                  ],
+                ),
+              ]),
+            );
           });
       break;
 
@@ -779,7 +784,10 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.height * 0.05),
+                                  top: responsive.hp(2),
+                                  left: responsive.wp(4),
+                                  right: responsive.wp(4),
+                                  bottom: responsive.hp(3)),
                               child: Center(
                                 child: Text(
                                   "Activación Exitosa de huella digital",
@@ -792,10 +800,11 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             Container(
                               margin: EdgeInsets.only(
                                 top: responsive.height * 0.05,
-                                left: responsive.width * 0.03,
+                                left: responsive.width * 0.06,
+                                right: responsive.width * 0.06,
                               ),
                               child: Text(
-                                "Ya puedes iniciar sesión con tu huella digital.",
+                                "Ya puedes iniciar sesión solo con tu huella digital.",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
@@ -874,10 +883,13 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                           children: [
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.height * 0.03),
+                                  top: responsive.hp(2),
+                                  left: responsive.wp(4),
+                                  right: responsive.wp(4),
+                                  bottom: responsive.hp(3)),
                               child: Center(
                                 child: Text(
-                                  "El incio de sesión con tu huella digital es\n más rápido",
+                                  "El inicio de sesión con tu huella digital es más rápido",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
@@ -887,9 +899,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.height * 0.04,
-                                  left: responsive.width * 0.04,
-                                  bottom: responsive.height * 0.03),
+                                  left: responsive.wp(4),
+                                  right: responsive.wp(4),
+                                  bottom: responsive.hp(1)),
                               child: Text(
                                 "¿Desea cancelar la configuración?",
                                 style: TextStyle(
@@ -1103,133 +1115,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
-            return Stack(children: [
-              Opacity(
-                opacity: 0.6,
-                child: Container(
-                  height: responsive.height,
-                  width: responsive.width,
-                  color: Theme.Colors.Azul_gnp,
-                ),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    width: responsive.width,
-                    child: Card(
-                      color: Theme.Colors.White,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            margin:
-                                EdgeInsets.only(top: responsive.height * 0.03),
-                            child: Center(
-                              child: Text(
-                                "¡Activa tu ingreso con reconocimiento facial!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Theme.Colors.Encabezados,
-                                    fontSize: responsive.ip(2.3)),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                top: responsive.height * 0.04,
-                                bottom: responsive.height * 0.01,
-                                right: responsive.wp(1),
-                                left: responsive.wp(5)),
-                            child: Text(
-                              "Al activar esta funcionalidad podrás iniciar sesión en tu App Intermediario GNP más rápido con cualquier rostro registrado en este dispositivo.",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                                  color: Theme.Colors.Funcional_Textos_Body,
-                                  fontSize: responsive.ip(2.0)),
-                            ),
-                          ),
-                          Container(
-                            margin:
-                                EdgeInsets.only(top: responsive.height * 0.03),
-                            child: Center(
-                              child: Icon(
-                                Theme.Icons.facial,
-                                color: Theme.Colors.GNP,
-                                size: 116,
-                              ),
-                            ),
-                          ),
-                          Container(
-                            height: responsive.hp(6.25),
-                            width: responsive.wp(90),
-                            margin: EdgeInsets.only(
-                                top: responsive.height * 0.03,
-                                left: responsive.wp(4.4),
-                                right: responsive.wp(4.4)),
-                            child: RaisedButton(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.0),
-                              ),
-                              color: Theme.Colors.GNP,
-                              onPressed: () {
-                                Navigator.pop(context,true);
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => TerminosYCondicionesPage(callback: callback,)));
-                              },
-                              child: Text(
-                                "ACEPTAR",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Theme.Colors.White,
-                                  fontSize: responsive.ip(2.0),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Container(
-                            margin: EdgeInsets.only(
-                                top: responsive.height * 0.03,
-                                bottom: responsive.height * 0.05),
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.pop(context,true);
-                                  customAlert(
-                                      AlertDialogType
-                                          .EnOtroMomento_reconocimiento_facial,
-                                      context,
-                                      "",
-                                      "",
-                                      responsive, FuncionAlerta);
-                                },
-                                child: Text(
-                                  "EN OTRO MOMENTO",
-                                  style: TextStyle(
-                                      color: Theme.Colors.GNP,
-                                      fontSize: responsive.ip(2.0)),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ]);
-          });
-      break;
-
-    case AlertDialogType.Reconocimiento_facial:
-      showDialog(
-          context: context,
-          builder: (context) {
-            Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
+            return WillPopScope(
+              onWillPop: () => Future.value(false),
+              child: Stack(children: [
                 Opacity(
                   opacity: 0.6,
                   child: Container(
@@ -1251,81 +1139,212 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.03),
+                              margin:
+                                  EdgeInsets.only(top: responsive.height * 0.03),
                               child: Center(
                                 child: Text(
-                                  "El incio de sesión con reconocimiento facial es\n más rápido",
+                                  "¡Activa tu ingreso con reconocimiento facial!",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
-                                      fontSize: responsive.ip(2.3)),
+                                      fontSize: responsive.ip(2.2)),
                                 ),
                               ),
                             ),
                             Container(
                               margin: EdgeInsets.only(
                                   top: responsive.height * 0.04,
-                                  left: responsive.width * 0.04,
-                                  bottom: responsive.height * 0.03),
+                                  bottom: responsive.height * 0.01,
+                                  right: responsive.wp(1),
+                                  left: responsive.wp(5)),
                               child: Text(
-                                "¿Desea cancelar la configuración?",
+                                "Al activar esta funcionalidad podrás iniciar sesión en tu App Intermediario GNP más rápido con cualquier rostro registrado en este dispositivo.",
+                                textAlign: TextAlign.left,
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
                               ),
                             ),
-                            Center(
-                              child: Container(
-                                height: responsive.hp(6.25),
-                                width: responsive.wp(90),
-                                margin: EdgeInsets.only(
-                                  bottom: responsive.height * 0.02,
-                                  top: responsive.height * 0.02,
-                                ),
-                                child: RaisedButton(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6.0),
-                                  ),
+                            Container(
+                              margin:
+                                  EdgeInsets.only(top: responsive.height * 0.03),
+                              child: Center(
+                                child: Icon(
+                                  Theme.Icons.facial,
                                   color: Theme.Colors.GNP,
-                                  onPressed: () {
-                                    Navigator.pop(context,true);
-                                  },
-                                  child: Text(
-                                    "SÍ",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: Theme.Colors.White,
-                                        fontSize: responsive.ip(1.8)),
+                                  size: 116,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: responsive.hp(6.25),
+                              width: responsive.wp(90),
+                              margin: EdgeInsets.only(
+                                  top: responsive.height * 0.03,
+                                  left: responsive.wp(4.4),
+                                  right: responsive.wp(4.4)),
+                              child: RaisedButton(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                color: Theme.Colors.GNP,
+                                onPressed: () {
+                                  Navigator.pop(context,true);
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => TerminosYCondicionesPage(callback: callback,)));
+                                },
+                                child: Text(
+                                  "ACEPTAR",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Theme.Colors.White,
+                                    fontSize: responsive.ip(2.0),
                                   ),
                                 ),
                               ),
                             ),
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.height * 0.01,
-                                  bottom: responsive.height * 0.04),
+                                  top: responsive.height * 0.03,
+                                  bottom: responsive.height * 0.05),
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.pop(context,true);
+                                    customAlert(
+                                        AlertDialogType
+                                            .EnOtroMomento_reconocimiento_facial,
+                                        context,
+                                        "",
+                                        "",
+                                        responsive, FuncionAlerta);
                                   },
                                   child: Text(
-                                    "NO",
+                                    "EN OTRO MOMENTO",
                                     style: TextStyle(
                                         color: Theme.Colors.GNP,
-                                        fontSize: responsive.ip(1.8)),
+                                        fontSize: responsive.ip(2.0)),
                                   ),
                                 ),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ),
                     ),
                   ],
                 ),
-              ],
+              ]),
+            );
+          });
+      break;
+
+    case AlertDialogType.Reconocimiento_facial:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return WillPopScope(
+              onWillPop: () => Future.value(false),
+              child: Stack(
+                children: [
+                  Opacity(
+                    opacity: 0.6,
+                    child: Container(
+                      height: responsive.height,
+                      width: responsive.width,
+                      color: Theme.Colors.Azul_gnp,
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        width: responsive.width,
+                        child: Card(
+                          color: Theme.Colors.White,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.03),
+                                child: Center(
+                                  child: Text(
+                                    "El inicio de sesión con reconocimiento facial es más rápido",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.Encabezados,
+                                        fontSize: responsive.ip(2.3)),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.hp(1),
+                                    left: responsive.wp(1),
+                                    right: responsive.wp(1),
+                                    bottom: responsive.hp(1)),
+                                child: Text(
+                                  "¿Desea cancelar la configuración?",
+                                  style: TextStyle(
+                                      color: Theme.Colors.Funcional_Textos_Body,
+                                      fontSize: responsive.ip(2.0)),
+                                ),
+                              ),
+                              Center(
+                                child: Container(
+                                  height: responsive.hp(6.25),
+                                  width: responsive.wp(90),
+                                  margin: EdgeInsets.only(
+                                    bottom: responsive.height * 0.02,
+                                    top: responsive.height * 0.02,
+                                  ),
+                                  child: RaisedButton(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6.0),
+                                    ),
+                                    color: Theme.Colors.GNP,
+                                    onPressed: () {
+                                      Navigator.pop(context,true);
+                                    },
+                                    child: Text(
+                                      "SÍ",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Theme.Colors.White,
+                                          fontSize: responsive.ip(1.8)),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.01,
+                                    bottom: responsive.height * 0.04),
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context,true);
+                                    },
+                                    child: Text(
+                                      "NO",
+                                      style: TextStyle(
+                                          color: Theme.Colors.GNP,
+                                          fontSize: responsive.ip(1.8)),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             );
           });
       break;
@@ -1359,7 +1378,10 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                           children: [
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.height * 0.03),
+                                  top: responsive.hp(2),
+                                  left: responsive.wp(4),
+                                  right: responsive.wp(4),
+                                  bottom: responsive.hp(3)),
                               child: Center(
                                 child: Icon(
                                   Icons.verified_user_outlined,
@@ -1370,23 +1392,26 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.height * 0.05),
+                                  left: responsive.wp(2),
+                                  right: responsive.wp(2),
+                                  bottom: responsive.hp(1)),
                               child: Center(
                                 child: Text(
-                                  "Activación Exitosa de reconocimiento facial",
+                                  "Activación exitosa de reconocimiento facial",
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
-                                      fontSize: responsive.ip(2.3)),
+                                      fontSize: responsive.ip(2.2)),
                                 ),
                               ),
                             ),
                             Container(
                               margin: EdgeInsets.only(
                                 top: responsive.height * 0.05,
-                                left: responsive.width * 0.03,
+                                left: responsive.width * 0.06,
+                                right: responsive.width * 0.06,
                               ),
                               child: Text(
-                                "Ya puedes iniciar sesión con reconocimiento facial",
+                                "Ya puedes iniciar sesión mostrando solo tu rostro.",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
@@ -1632,7 +1657,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   top: responsive.height * 0.03),
                               child: Center(
                                 child: Text(
-                                  "El incio de sesión con reconocimiento facial es\n más rápido",
+                                  "El inicio de sesión con reconocimiento facial es más rápido",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
@@ -1642,9 +1667,10 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.height * 0.04,
-                                  left: responsive.width * 0.04,
-                                  bottom: responsive.height * 0.03),
+                                  top: responsive.hp(1),
+                                  left: responsive.wp(1),
+                                  right: responsive.wp(1),
+                                  bottom: responsive.hp(1)),
                               child: Text(
                                 "¿Desea cancelar la configuración?",
                                 style: TextStyle(
@@ -2094,6 +2120,115 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   color: Theme.Colors.White,
                                   onPressed: () {
                                     Navigator.pop(context,true);
+                                  },
+                                  child: Text(
+                                    "CERRAR",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });
+      break;
+    case AlertDialogType.contrasena_actualiza_correctamente:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                                child: Container(
+                                    margin: EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Image.asset('assets/images/verifica.png',
+                                        fit:BoxFit.contain,
+                                        height: responsive.hp(5),
+                                        width: responsive.hp(4),
+                                    )
+                                ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text(
+                                  "Tu contraseña se actualizó \ncorrectamente",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  left: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.03),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  left: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.01,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Esta contraseña es la misma para ingresar a todas las plataformas digitales disponibles para ti.",
+                                    style: TextStyle(
+                                        color:
+                                        Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only( bottom: responsive.height * 0.02,  top: responsive.height * 0.01),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    } else{
+                                      Navigator.pop(context);
+                                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage(responsive: responsive)));
+                                    }
+
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -3672,7 +3807,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.03),
-                              child: Text("Al desactivar esta funcionalidad iniciarás sólo\n con contraseña.\n ¿Deseas desactivarla?",
+                              child: Text("Al desactivar esta funcionalidad iniciarás sólo\n con contraseña.\n\n ¿Deseas desactivarla?",
                                 style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
                                   fontSize: responsive.ip(2),
@@ -3771,7 +3906,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.03),
-                              child: Text("Al desactivar esta funcionalidad iniciarás sesión sólo con contraseña.\n \n  ¿Deseas desactivarla?",
+                              child: Text("Al desactivar esta funcionalidad iniciarás sólo\n con contraseña.\n\n ¿Deseas desactivarla?",
                                 style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
                                   fontSize: responsive.ip(2),
@@ -3788,7 +3923,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Navigator.pop(context,true);
+                                    prefs.setBool("activarBiometricos", false);
+                                    isSwitchedPerfill = false;
+                                    Navigator.pop(context,false);
                                   },
                                   child: Text(
                                     "SÍ",
@@ -3808,8 +3945,6 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 child: GestureDetector(
                                   onTap: () {
                                     Navigator.pop(context,true);
-                                    customAlert(AlertDialogType.EnOtroMomento_reconocimiento_facial, context,
-                                        "", "", responsive, FuncionAlerta);
                                   },
                                   child: Text(
                                     "NO",
