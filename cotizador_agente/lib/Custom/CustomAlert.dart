@@ -1667,7 +1667,10 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                           children: [
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.height * 0.03),
+                                  top: responsive.hp(2),
+                                  left: responsive.wp(4),
+                                  right: responsive.wp(4),
+                                  bottom: responsive.hp(3)),
                               child: Center(
                                 child: Text(
                                   "El inicio de sesión con reconocimiento facial es más rápido",
@@ -1680,9 +1683,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(
-                                  top: responsive.hp(1),
-                                  left: responsive.wp(1),
-                                  right: responsive.wp(1),
+                                  left: responsive.wp(4),
+                                  right: responsive.wp(4),
                                   bottom: responsive.hp(1)),
                               child: Text(
                                 "¿Desea cancelar la configuración?",
@@ -1705,9 +1707,17 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    prefs.setBool("activarBiometricos", false);
-                                    callback(false);
-                                    Navigator.pop(context,true);
+                                    if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+                                      prefs.setBool("activarBiometricos", false);
+                                      callback(false);
+                                      Navigator.pop(context,true);
+                                    } else {
+                                      prefs.setBool("activarBiometricos", false);
+                                      callback(false);
+                                      customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
+
+                                    }
+
                                   },
                                   child: Text(
                                     "SÍ",
@@ -1733,7 +1743,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                         "",
                                         "",
                                         responsive,
-                                        FuncionAlerta);
+                                        callback);
                                   },
                                   child: Text(
                                     "NO",
