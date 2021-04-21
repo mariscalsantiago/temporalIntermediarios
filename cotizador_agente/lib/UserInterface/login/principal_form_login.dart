@@ -25,7 +25,6 @@ import '../../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_codigo_verificacion.dart';
 import 'logoEncabezadoLogin.dart';
-import 'package:flutter_keyboard_aware_dialog/flutter_keyboard_aware_dialog.dart';
 
 double tamano;
 String idParticipanteValidaPorCorre;
