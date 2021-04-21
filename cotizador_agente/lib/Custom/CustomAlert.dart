@@ -2247,7 +2247,10 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                     if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
                                       Navigator.pop(context);
                                       Navigator.pop(context);
-                                    } else{
+                                    } else if(prefs.getBool("flujoOlvideContrasena") != null && prefs.getBool("flujoOlvideContrasena")) {
+                                      Navigator.pop(context);
+                                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: responsive)));
+                                    }else {
                                       Navigator.pop(context);
                                       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PreguntasSecretas(responsive: responsive)));
                                     }

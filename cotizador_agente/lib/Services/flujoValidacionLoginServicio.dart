@@ -332,7 +332,7 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(BuildContext context, String  
       if(_response != null){
         if(_response.body != null){
           if(_response.statusCode == 200){
-            Map map = json.decode(_response.body);
+            Map<String, dynamic> map = json.decode(_response.body);
             UsuarioPorCorreo _datosConsulta = UsuarioPorCorreo.fromJson(map);
             if(_datosConsulta != null){
               return _datosConsulta;

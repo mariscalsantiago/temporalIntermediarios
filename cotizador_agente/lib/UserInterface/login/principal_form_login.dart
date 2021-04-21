@@ -28,6 +28,7 @@ import 'logoEncabezadoLogin.dart';
 import 'package:flutter_keyboard_aware_dialog/flutter_keyboard_aware_dialog.dart';
 
 double tamano;
+String idParticipanteValidaPorCorre;
 
 class PrincipalFormLogin extends StatefulWidget {
   final Responsive responsive;
@@ -308,14 +309,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     return CupertinoButton(
         padding: EdgeInsets.zero,
         child: Text("¿Olvidaste tu contraseña?", style: TextStyle(
-          color:((prefs.getBool("userRegister") != null && prefs.getBool("userRegister")) && (prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "")) || _validEmail  ? Tema.Colors.GNP :Tema.Colors.botonletra,
+          color: Tema.Colors.GNP ,
           fontWeight: FontWeight.normal,
           fontSize: responsive.ip(2.3),
         )),
         onPressed: (){
-          if((prefs.getBool("userRegister") != null && prefs.getBool("userRegister")) && (prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "") || _validEmail ){
-            dialogo(context, responsive);
-          }
+          controllerCorreoCambio.text = "";
+          dialogo(context, responsive);
+
         }
     );
   }
@@ -338,6 +339,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           Container(
             /*margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
+
+                top: responsive.hp(15)),
             top: responsive.hp(15)
 
             ),*/
@@ -460,17 +463,31 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6.0),
                       ),
-                      color: controllerCorreo.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
+                      color: controllerCorreoCambio.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
                       onPressed: () async {
                         UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, controllerCorreoCambio.text);
-
+                        print("respuesta correo ${respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre}");
                         if(respuesta != null){
-                            if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIOS.idParticipante != ""){
-                              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
+                            if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.idParticipante != ""){
+                              idParticipanteValidaPorCorre = respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid;
+                              print("respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIOS.idParticipante ${respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid}");
+                              prefs.setBool('flujoOlvideContrasena', true);
+                              Navigator.pop(context,true);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (BuildContext context) =>
+                                          LoginCodigoVerificaion(responsive: responsive,)
+                                  )
+                              );
+
                             } else {
+                              Navigator.pop(context,true);
+                              customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
 
                             }
                         } else {
+                          Navigator.pop(context,true);
+                          customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
 
                         }
                       },
@@ -478,7 +495,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                         "ACEPTAR",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: controllerCorreo.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
+                          color: controllerCorreoCambio.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
                           fontSize: responsive.ip(2.0),
                         ),
                       ),
@@ -820,6 +837,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   }
 
   redirect( Responsive responsive) async {
+    prefs.setBool('flujoOlvideContrasena', false);
     if (prefs != null) {
       if (existeUsuario) {
           controllerContrasena.clear();

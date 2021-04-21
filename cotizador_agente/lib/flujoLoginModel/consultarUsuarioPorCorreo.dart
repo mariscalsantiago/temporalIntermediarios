@@ -1,5 +1,6 @@
 class UsuarioPorCorreo{
   Usuario consultaUsuarioPorCorreoResponse;
+
   UsuarioPorCorreo({this.consultaUsuarioPorCorreoResponse});
 
   factory UsuarioPorCorreo.fromJson(Map<dynamic, dynamic> data){
@@ -37,19 +38,19 @@ class Usuario {
 
 class UsuarioUno{
 
-  UsuarioDos USUARIOS;
+  UsuarioDos USUARIO;
 
-  UsuarioUno({this.USUARIOS});
+  UsuarioUno({this.USUARIO});
 
   factory UsuarioUno.fromJson(Map<dynamic, dynamic> data){
     return UsuarioUno(
-      USUARIOS:   data["USUARIOS"] != null ? UsuarioDos.fromJson(data["USUARIOS"]): UsuarioDos(),
+      USUARIO:   data["USUARIO"] != null ? UsuarioDos.fromJson(data["USUARIO"]): UsuarioDos(),
     );
   }
 
   toJson() {
     return{
-      'USUARIOS': USUARIOS,
+      'USUARIO': USUARIO,
     };
   }
 
@@ -85,17 +86,14 @@ class UsuarioDos{
 
   factory UsuarioDos.fromJson(Map<dynamic, dynamic> data){
     return UsuarioDos(
+        uid: data['uid'],
         apellidoPaterno: data['apellidoPaterno'],
-        usuariosWrfl: data['usuariosWrfl'],
         numeroEmpleado: data['numeroEmpleado'],
-        correosElectronicos: data["correosElectronicos"] != null ? CorreoUsuario.fromJson(data["correosElectronicos"]): CorreoUsuario(),
-        roles:   data["roles"] != null ? RolesUsuarioModel.fromJson(data["roles"]): RolesUsuarioModel(),
         codigosIntermediarios: data['codigosIntermediarios'],
         nombre: data['nombre'],
         rfc: data['rfc'],
         apellidoMaterno: data['apellidoMaterno'],
         perfil: data['perfil'],
-        uid: data['uid'],
         telParticular: data['telParticular'],
         gnpPermiso: data['gnpPermiso'],
         migrado: data['migrado'],

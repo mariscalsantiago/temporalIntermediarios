@@ -1,11 +1,8 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
-import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
-import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
-import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
-import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -347,7 +344,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
               _saving = true;
             });
 
-            ReestablecerContrasenaModel restablecerContrasena = await reestablecerContrasenaServicio(context, datosUsuario.idparticipante, controllerNuevaContrasena.text);
+            ReestablecerContrasenaModel restablecerContrasena = await reestablecerContrasenaServicio(context, idParticipanteValidaPorCorre, controllerNuevaContrasena.text);
 
             print("restablecerContrasena     ${restablecerContrasena}");
 

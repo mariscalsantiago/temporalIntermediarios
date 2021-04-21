@@ -276,9 +276,15 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
         ),
         onPressed: (){
           if(_formKey.currentState.validate()){
-            print("Validar flujo");
-            prefs.setBool("flujoCompletoLogin", true);
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage(responsive: responsive,)));
+            if( prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
+              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
+            } else {
+              print("Validar flujo");
+              prefs.setBool("flujoCompletoLogin", true);
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      HomePage(responsive: responsive,)));
+            }
           }
           //Navigator.pop(context,true);
           //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: responsive,)));
