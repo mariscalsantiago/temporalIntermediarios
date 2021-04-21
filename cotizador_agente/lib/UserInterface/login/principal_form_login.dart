@@ -336,7 +336,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(top:tamano),
+            /*margin: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: responsive.hp(15)
+
+            ),*/
+            margin: EdgeInsets.only(top: focusCorreoCambio.hasFocus ?
+            MediaQuery.of(context).size.height / 2 - 250 // adjust values according to your need
+                : MediaQuery.of(context).size.height / 2 + 15 ),
             height: responsive.hp(44),
             width: responsive.width,
             child: Card(
@@ -348,6 +355,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                   Container(
                     margin:
                     EdgeInsets.only(top: responsive.height * 0.03),
+
                     child: Center(
                       child: Text(
                         "Olvide contraseña",
