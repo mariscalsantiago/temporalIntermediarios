@@ -417,9 +417,8 @@ class DatosFisicosPersonalesModel {
       rfc: data['rfc'],
       curp:data["curp"],
       talla:data["talla"],
-      pasaporte: DatosFisicosPersonalesVPModel.fromJson(data['pasaporte']),
-      polizaRC: DatosFisicosPolizaModel.fromJson(data["polizaRc"]),
-      visa: DatosFisicosPersonalesVPModel.fromJson(data['visa']),
+      polizaRC: data.containsKey('polizaRc') ? DatosFisicosPolizaModel.fromJson(data["polizaRc"]): DatosFisicosPolizaModel(),
+      visa: data.containsKey('visa') ? DatosFisicosPersonalesVPModel.fromJson(data['visa']): DatosFisicosPersonalesVPModel(),
     );
   }
   toJson() {

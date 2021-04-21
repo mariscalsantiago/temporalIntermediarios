@@ -1,4 +1,9 @@
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/login/SeleccionarPreguntas.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +20,8 @@ class PreguntasSecretas extends StatefulWidget {
   _PreguntasSecretasState createState() => _PreguntasSecretasState();
 }
 
-
+TextEditingController controllerPreguntaUno;
+TextEditingController controllerPreguntaDos;
 TextEditingController controllerRespuestaUno;
 TextEditingController controllerRespuestaDos;
 
@@ -25,8 +31,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
   bool respuestaUno;
   bool respuestaDos;
   final _formKey = GlobalKey<FormState>();
-  TextEditingController controllerPreguntaUno;
-  TextEditingController controllerPreguntaDos;
+
   FocusNode focusPreguntaUno;
   FocusNode focusRespuestaUno;
   FocusNode focusPreguntaDos;
@@ -81,26 +86,32 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
   List<Widget> builData(Responsive responsive){
     Widget data = Container();
     Form form;
-    data = SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5)),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                separacion(responsive, 5),
-                PreguntaSeguridadUno(responsive),
-                separacion(responsive, 5),
-                RespuestaSeguridadUno(responsive),
-                separacion(responsive, 5),
-                PreguntaSeguridadDos(responsive),
-                separacion(responsive, 5),
-                RespuestaSeguridadDos(responsive)
-              ]
-          ),
-        )
+    data = new Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+          child: Container(
+            margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5)),
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  separacion(responsive, 5),
+                  PreguntaSeguridadUno(responsive),
+                  separacion(responsive, 5),
+                  RespuestaSeguridadUno(responsive),
+                  separacion(responsive, 5),
+                  PreguntaSeguridadDos(responsive),
+                  separacion(responsive, 5),
+                  RespuestaSeguridadDos(responsive),
+                  separacion(responsive, 5),
+                  enviar(responsive)
+                ]
+            ),
+          )
+      ),
     );
 
     var l = new List<Widget>();
+
     l.add(data);
     if (_saving) {
       var modal = Stack(
@@ -115,10 +126,11 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
     return l;
   }
 
+
   Widget PreguntaSeguridadUno(Responsive responsive){
     return CupertinoButton(
       onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => SeleccionarPreguntas(responsive: widget.responsive)),);
+        //Navigator.push(context, MaterialPageRoute(builder: (context) => SeleccionarPreguntas(responsive: widget.responsive, )),);
       },
       padding: EdgeInsets.zero,
       child: Container(
@@ -154,6 +166,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
               )
           ),
           validator: (value) {
+            print("PreguntaSeguridadUno ${value}");
             if (value.isEmpty) {
               return 'Este campo es requerido';
             } else {
@@ -203,6 +216,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
           )
       ),
       validator: (value) {
+        print("RespuestaSeguridadUno ${value}");
         if (value.isEmpty) {
           return 'Este campo es requerido';
         }
@@ -247,6 +261,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
           )
       ),
       validator: (value) {
+        print("PreguntaSeguridadDos ${value}");
         if (value.isEmpty) {
           return 'Este campo es requerido';
         } else {
@@ -294,6 +309,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
           )
       ),
       validator: (value) {
+        print("ResouestaSeguridadDos ${value}");
         if (value.isEmpty) {
           return 'Este campo es requerido';
         }
@@ -306,6 +322,58 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
         });
       },
     );
+  }
+
+  Widget enviar(Responsive responsive){
+    return CupertinoButton(
+        padding: EdgeInsets.zero,
+        child: Container(
+          color: controllerPreguntaUno .text != "" && controllerPreguntaDos.text != "" && controllerRespuestaUno.text != "" && controllerRespuestaDos.text != "" ?
+          Tema.Colors.GNP : Tema.Colors.botonlogin,
+          margin: EdgeInsets.only(top: responsive.hp(12), bottom: responsive.hp(3)),
+          width: responsive.width,
+          child: Container(
+            margin: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
+            child: Text( "ACTUALIZAR", style: TextStyle(
+                color: controllerPreguntaUno .text != "" && controllerPreguntaDos.text != "" && controllerRespuestaUno.text != "" && controllerRespuestaDos.text != ""
+                    ? Tema.Colors.backgroud : Tema.Colors.botonletra,
+                fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        onPressed: () async {
+          if(_formKey.currentState.validate()){
+            setState(() {
+              _saving = true;
+            });
+            consultaPreguntasSecretasModel  actualizarPreguntas = await actualizarPreguntaSecretaServicio(context, datosUsuario.idparticipante, prefs.getString("contrasenaUsuario"), controllerPreguntaUno.text,controllerRespuestaUno.text ,controllerPreguntaDos.text, controllerRespuestaDos.text);
+
+            if(actualizarPreguntas != null){
+
+              setState(() {
+                _saving = false;
+              });
+              if(actualizarPreguntas.requestStatus == "SUCCEEDED" ){
+
+                customAlert(AlertDialogType.preguntasSecretasActualizadas, context, "",  "", responsive, funcionAlerta);
+              } else {
+                //customAlert(AlertDialogType.contrasena_actualiza_correctamente,context,"","", responsive, funcionAlerta);
+              }
+            } else {
+
+              setState(() {
+                _saving = false;
+              });
+
+            }
+          }
+        }
+    );
+  }
+
+  void funcionAlerta(){
+
   }
 
   Widget separacion( Responsive responsive, double tamano ){

@@ -13,7 +13,7 @@ class consultaPreguntasSecretasModel{
       requestStatus: data['requestStatus'],
       uid: data.containsKey('uid') && data['uid'] != null ? data['uid'] : "",
       error: data.containsKey('error') && data['error'] != null ? data['error'] : "",
-      listaPreguntas: list.length > 0 ? list.map((value) => new preguntaRespuestaModel.fromJson(value)).toList() : preguntaRespuestaModel()
+      listaPreguntas: list.length > 0 ? list.map((value) => new preguntaRespuestaModel.fromJson(value)).toList() : null
     );
   }
 

@@ -8,7 +8,6 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 
 List <String> preguntas = [
   "¿Cuál es el apodo de tu mejor amigo?",
-  "¿Cuál es el apodo de tu mejor amigo?",
   "¿Cuál fue el nombre de tu primera mascota?",
   "¿Cuál es el nombre de tu escuela primaria?",
   "¿De qué marca fue tu primer auto?",
@@ -167,6 +166,7 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
       ),
     );
   }
+
   Widget separacion( Responsive responsive, double tamano ){
     return SizedBox(
       height: responsive.hp(tamano),
@@ -192,7 +192,14 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
               textAlign: TextAlign.center),
         ),
         onPressed: () async {
-          print(_saving);
+          if(_character != 99999){
+            if( widget.typeResponse == tipoDePregunta.respuestaUno ){
+              controllerPreguntaUno.text = preguntas[_character];
+            } else{
+              controllerPreguntaDos.text = preguntas[_character];
+            }
+            Navigator.pop(context);
+          }
         //  Navigator.push(context, MaterialPageRoute(builder: (context) => SeleccionarPreguntas(responsive: responsive,)),);
         }
     );

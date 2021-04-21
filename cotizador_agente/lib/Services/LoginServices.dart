@@ -81,7 +81,7 @@ import '../main.dart';
 
     print("Datos fisicos");
     datosFisicos = await getPersonaFisica(context, datosUsuario.idparticipante, false);
-    print("Datos fisicos ${datosFisicos}");
+    print("Datos fisicos --- ${datosFisicos}");
 
     if (datosFisicos == null) {
       bool responseImporta = await getImporta(datosUsuario.idparticipante);
@@ -624,6 +624,7 @@ import '../main.dart';
         _response = await http.get(config.serviceBCA + '/app/datos-perfil/' + idParticipante,
             headers: {"x-api-key": config.apikeyBCA});
 
+        print("getPersonaFisica  ${_response.body}");
         if (_response != null) {
           if (_response.statusCode == 200) {
             if (_response.body != null && _response.body.isNotEmpty) {

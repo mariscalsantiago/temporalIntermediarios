@@ -600,7 +600,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
             cambioContrasenaModel  cambiocontrasena = await cambioContrasenaServicio(context, controllerActualContrasena.text, controllerNuevaContrasena.text, datosUsuario.idparticipante);
 
             if(cambiocontrasena != null){
-              prefs.setBool("esPerfil", true);
+
               setState(() {
                 _saving = false;
               });

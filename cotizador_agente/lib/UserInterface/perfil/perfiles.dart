@@ -7,6 +7,7 @@ import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/Models/DeasModel.dart';
+import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
@@ -44,8 +45,9 @@ bool internet;
 var _image;
 bool isSwitchedPerfill;
 class PerfilPage extends StatefulWidget {
+  Function callback;
   Responsive responsive;
-  PerfilPage({Key key, this.responsive}) : super(key: key);
+  PerfilPage({Key key, this.responsive,this.callback}) : super(key: key);
   @override
   _PerfilPageState createState() => _PerfilPageState();
 }
@@ -77,7 +79,6 @@ class _PerfilPageState extends State<PerfilPage> {
     print(datosPerfilador.daList);
     print(datosUsuario.idparticipante);
     for(int i =0; i < datosPerfilador.daList.length; i++ ){
-      
       listadoDA.add("${datosPerfilador.daList.elementAt(i).cveDa}");
       print(listadoDA.elementAt(i));
     }
@@ -135,6 +136,7 @@ class _PerfilPageState extends State<PerfilPage> {
               icon: Icon(Icons.arrow_back, color: Theme.Colors.GNP),
               onPressed: () {
                 Navigator.pop(context,true);
+                widget.callback();
               },
             ),
           ),
@@ -160,7 +162,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => VerFotoPage()));
+                                            builder: (context) => VerFotoPage(callback: updateFoto)));
                                   },
                                   child: Container(
                                       width: widget.responsive.wp(13),
@@ -453,6 +455,7 @@ class _PerfilPageState extends State<PerfilPage> {
                     CupertinoButton(
                       padding: EdgeInsets.zero,
                       onPressed: () {
+                        prefs.setBool("esPerfil", true);
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -687,6 +690,7 @@ class _PerfilPageState extends State<PerfilPage> {
                     ),
                     onTap: () {
                       _imgFromCamera();
+                      updateFoto();
                       Navigator.of(context).pop();
                     },
                   ),
@@ -700,14 +704,17 @@ class _PerfilPageState extends State<PerfilPage> {
   _imgFromCamera() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
+    fetchFoto(context, image);
     setState(() {
       _image = image;
+      updateFoto();
     });
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => SimpleCropRoute(
                 image: _image,
+            callback: updateFoto,
               )),
     );
   }
@@ -715,14 +722,17 @@ class _PerfilPageState extends State<PerfilPage> {
   _imgFromGallery() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
+    fetchFoto(context, image);
     setState(() {
       _image = image;
+      updateFoto();
     });
     Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => SimpleCropRoute(
                 image: _image,
+            callback: updateFoto,
               )),
     );
   }
@@ -737,5 +747,11 @@ class _PerfilPageState extends State<PerfilPage> {
     setState(() {
       isSwitchedPerfill = biometricosActivos;
     });
+  }
+  void updateFoto(){setState(() {
+    fotoPerfil;
+    datosFisicos.personales.foto;
+    widget.callback();
+  });
   }
 }

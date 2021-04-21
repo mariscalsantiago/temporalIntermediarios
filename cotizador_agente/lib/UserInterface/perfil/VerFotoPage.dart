@@ -15,7 +15,10 @@ File image;
 String urlImagen;
 
 class VerFotoPage extends StatefulWidget {
-  VerFotoPage({Key key}) : super(key: key);
+
+  Function callback;
+  VerFotoPage({Key key, this.callback}) : super(key: key);
+
 
   @override
   _VerFotoPageState createState() => _VerFotoPageState();
@@ -44,11 +47,13 @@ class _VerFotoPageState extends State<VerFotoPage> {
       setState(() {
         image = file;
         urlImagen = datosFisicos.personales.foto;
+        widget.callback();
       });
 
     } else{
       setState(() {
         image = null;
+        widget.callback();
       });
 
     }
@@ -72,6 +77,10 @@ class _VerFotoPageState extends State<VerFotoPage> {
             icon: Icon(Icons.arrow_back, color: Tema.Colors.GNP),
             onPressed: () {
               Navigator.pop(context,true);
+              setState(() {
+                datosFisicos.personales.foto;
+                widget.callback();
+              });
             },
           ),
         ),
@@ -90,10 +99,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
           width: responsive.width,
           child:  datosFisicos != null && datosFisicos.personales.foto != null &&
               datosFisicos.personales.foto != "" ?
-          CachedNetworkImage(
-            imageUrl: urlImagen,
-            fit: BoxFit.cover,
-          ) : Image(image: NetworkImage("https://blog.altabel.com/wp-content/uploads/2019/12/1-768x446.png"),),
+              Image(image:NetworkImage(datosFisicos.personales.foto,) ): Image(image: NetworkImage("https://blog.altabel.com/wp-content/uploads/2019/12/1-768x446.png"),),
         ),
         Container(
           margin:EdgeInsets.only(top: responsive.hp(9.4)),
@@ -105,31 +111,30 @@ class _VerFotoPageState extends State<VerFotoPage> {
                     print("image ${image}");
                     if(image != null){
                       print("image ${image}");
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(image: image)),);
+                      widget.callback();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(image: image, callback: widget.callback,)),);
                     } else{
-
+                      widget.callback();
                     }
                   },
                   child: Icon(Tema.Icons.edit, color: Tema.Colors.GNP,)),
               GestureDetector(
                   onTap: (){
                     _showPicker(context);
+                    widget.callback();
                   },
                   child: Icon(Tema.Icons.camera_alt_24px, color: Tema.Colors.GNP,)),
               GestureDetector(
                   onTap: () async{
                     bool resp = await fetchFotoDelete(context);
+                    print("resp");
+                    print(resp);
 
-                    if (resp) {
-                      setState(() {
+                    if (resp!= null && resp) {
                         //_saving = false;
                         datosFisicos.personales.foto = null;
-                      });
+                        widget.callback();
                     } else {
-                      setState(() {
-                        //_saving = false;
-                      });
-
                     }
                   },
                   child: Icon(Tema.Icons.delete_24px, color: Tema.Colors.GNP,)),
@@ -174,6 +179,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                       ),
                       onTap: () {
                         _imgFromGallery();
+                        widget.callback();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
@@ -183,7 +189,9 @@ class _VerFotoPageState extends State<VerFotoPage> {
                     ),
                     onTap: () {
                       _imgFromCamera();
+                      widget.callback();
                       Navigator.of(context).pop();
+
                     },
                   ),
                 ],
@@ -201,6 +209,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
     setState(() {
       _saving = true;
       urlImagen = "";
+      widget.callback();
     });
     print(urlImagen);
     fetchFoto(context, image);
@@ -208,6 +217,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
       urlImagen = datosFisicos.personales.foto;
       print(urlImagen);
       image = image;
+      widget.callback();
       _saving = false;
     });
   }
@@ -221,6 +231,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
     setState(() {
       _saving = true;
       urlImagen = "";
+      widget.callback();
     });
     print("urlImagen");
     print(urlImagen);
@@ -231,6 +242,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
       print(urlImagen);
       image = image;
       _saving = false;
+      widget.callback();
     });
   }
 }

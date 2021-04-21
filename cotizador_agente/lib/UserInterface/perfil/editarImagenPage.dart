@@ -12,8 +12,9 @@ import '../../main.dart';
 
 
 class SimpleCropRoute extends StatefulWidget {
+  final Function callback;
   final File image;
-  const SimpleCropRoute({Key key, this.image}) : super(key: key);
+  const SimpleCropRoute({Key key, this.image, this.callback}) : super(key: key);
   @override
   _SimpleCropRouteState createState() => _SimpleCropRouteState();
 }
@@ -58,7 +59,12 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
           leading: new IconButton(
             icon:
             new Icon(Icons.navigate_before, color: Theme.Colors.gnpOrange, size: 40),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: (){ Navigator.of(context).pop();
+            setState(() {
+              datosFisicos.personales.foto;
+              widget.callback();
+            });
+            },
           ),
         ),
         body: Center(
@@ -76,15 +82,23 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
         ),
         floatingActionButton:GestureDetector(
             onTap: () async {
+              widget.callback();
               final crop = cropKey.currentState;
               File fotoPerfil;
               fotoPerfil =  await crop.cropCompleted(widget.image, pictureQuality: 900);
-              fetchFoto(context, fotoPerfil);
+              try{
+              await fetchFoto(context, fotoPerfil);
               Navigator.of(context).pop();
               setState(() {
                 urlImagen = datosFisicos.personales.foto;
                 image = fotoPerfil;
+                widget.callback();
               });
+              }catch(e){
+                widget.callback();
+                print(e);
+              }
+
             },
             child: Container(
               color: Theme.Colors.White,

@@ -1,5 +1,6 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -275,11 +276,12 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
         ),
         onPressed: (){
           if(_formKey.currentState.validate()){
-            //customAlert(AlertDialogType.Numero_de_celular_verificado, context, "",  "", responsive);
-
+            print("Validar flujo");
+            prefs.setBool("flujoCompletoLogin", true);
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage(responsive: responsive,)));
           }
-          Navigator.pop(context,true);
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: responsive,)));
+          //Navigator.pop(context,true);
+          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: responsive,)));
         }
 
     );

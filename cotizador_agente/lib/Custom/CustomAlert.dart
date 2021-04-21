@@ -5,7 +5,9 @@ import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
+import 'package:cotizador_agente/UserInterface/login/loginPreguntasSecretas.dart';
 import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/login/subsecuente_biometricos.dart';
@@ -66,7 +68,8 @@ enum AlertDialogType {
   Sin_acceso_herramientas_cotizacion,
   menu_home,
   errorServicio,
-  contrasena_actualiza_correctamente
+  contrasena_actualiza_correctamente,
+  preguntasSecretasActualizadas
 }
 
 void customAlert(AlertDialogType type, BuildContext context, String title, String message, Responsive responsive,  Function callback) {
@@ -790,7 +793,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   bottom: responsive.hp(3)),
                               child: Center(
                                 child: Text(
-                                  "Activación Exitosa de huella digital",
+                                  "Activación exitosa de huella digital",
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
                                       fontSize: responsive.ip(2.3)),
@@ -819,12 +822,18 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   onTap: () {
                                     print("-----------Exito----------------------");
                                     if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin") ){
-                                      if (deviceType == ScreenType.phone) {
-                                        customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
+
+                                      if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
+                                      } else{
+                                        if (deviceType == ScreenType.phone) {
+                                          customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
+                                        }
+                                        else{
+                                          customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
+                                        }
                                       }
-                                      else{
-                                        customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
-                                      }
+
                                     } else {
                                       if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") ){
                                         Navigator.pop(context,true);
@@ -1424,12 +1433,16 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    if(prefs.getBool("primeraVez") == true){
-                                      if (deviceType == ScreenType.phone) {
-                                        customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
-                                      }
-                                      else{
-                                        customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
+                                    if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin")){
+                                      if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
+                                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
+                                      } else{
+                                        if (deviceType == ScreenType.phone) {
+                                          customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
+                                        }
+                                        else{
+                                          customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
+                                        }
                                       }
                                     } else {
                                       if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") ){
@@ -2226,7 +2239,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                       Navigator.pop(context);
                                     } else{
                                       Navigator.pop(context);
-                                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => HomePage(responsive: responsive)));
+                                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PreguntasSecretas(responsive: responsive)));
                                     }
 
                                   },
@@ -3807,7 +3820,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.03),
-                              child: Text("Al desactivar esta funcionalidad iniciarás sólo\n con contraseña.\n\n ¿Deseas desactivarla?",
+                              child: Text("Al desactivar esta funcionalidad iniciarás sesión solo con contraseña.\n\n ¿Deseas desactivarla?",
                                 style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
                                   fontSize: responsive.ip(2),
@@ -3906,7 +3919,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             ),
                             Container(
                               margin: EdgeInsets.only(top: responsive.hp(3.5), left: responsive.width * 0.03),
-                              child: Text("Al desactivar esta funcionalidad iniciarás sólo\n con contraseña.\n\n ¿Deseas desactivarla?",
+                               child: Text("Al desactivar esta funcionalidad iniciarás sesión solo con contraseña.\n \n  ¿Deseas desactivarla?",
+                              //child: Text("Al desactivar esta funcionalidad iniciarás sólo\n con contraseña.\n\n ¿Deseas desactivarla?",
                                 style: TextStyle(
                                   color: Theme.Colors.Funcional_Textos_Body,
                                   fontSize: responsive.ip(2),
@@ -3971,94 +3985,101 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
+            return WillPopScope(
+              onWillPop: (){
+                callback();
+                Navigator.pop(context,true);
+              },
+              child:Stack(
+                children: [
+                  GestureDetector(
+                    onTap: (){
+                      callback();
+                      Navigator.pop(context,true);
+                    },
+                    child: Opacity(
+                      opacity: 0.6,
+                      child: Container(
+                        height: responsive.height,
+                        width: responsive.width,
+                        color: Theme.Colors.Azul_gnp,
+                      ),
+                    ),
                   ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
-                      width: responsive.width,
-                      child: Card(
-                        color: Theme.Colors.White,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.03),
-                              child: Center(
-                                child: Icon(
-                                  Icons.wifi_off_outlined,
-                                  color: Colors.blueAccent,
-                                  size: 57,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.05),
-                              child: Center(
-                                child: Text(
-                                  "Datos móviles activados",
-                                  style: TextStyle(
-                                      color: Theme.Colors.Encabezados,
-                                      fontSize: responsive.ip(2.3)),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: responsive.height * 0.05,
-                                left: responsive.width * 0.03,
-                              ),
-                              child: Text(
-                                "Tu dispositivo no está conetado a una red wifi.",
-                                style: TextStyle(
-                                    color: Theme.Colors.Funcional_Textos_Body,
-                                    fontSize: responsive.ip(2.0)),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.06,
-                                  bottom: responsive.height * 0.05),
-                              child: Center(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context,true);
-                                    customAlert(
-                                        AlertDialogType.DatosMoviles_Activados_comprueba,
-                                        context,
-                                        "",
-                                        "",
-                                        responsive, FuncionAlerta);
-                                  },
-                                  child: Text(
-                                    "CERRAR",
-                                    style: TextStyle(
-                                        color: Theme.Colors.GNP,
-                                        fontSize: responsive.ip(2.2)),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        width: responsive.width,
+                        child: Card(
+                          color: Theme.Colors.White,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.03),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.wifi_off_outlined,
+                                    color: Colors.blueAccent,
+                                    size: 57,
                                   ),
                                 ),
                               ),
-                            )
-                          ],
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.05),
+                                child: Center(
+                                  child: Text(
+                                    "Datos móviles activados",
+                                    style: TextStyle(
+                                        color: Theme.Colors.Encabezados,
+                                        fontSize: responsive.ip(2.3)),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: responsive.height * 0.05,
+                                  left: responsive.width * 0.03,
+                                ),
+                                child: Text(
+                                  "Tu dispositivo no está conetado a una red wifi.",
+                                  style: TextStyle(
+                                      color: Theme.Colors.Funcional_Textos_Body,
+                                      fontSize: responsive.ip(2.0)),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.06,
+                                    bottom: responsive.height * 0.05),
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      callback();
+                                      Navigator.pop(context,true);
+                                    },
+                                    child: Text(
+                                      "CERRAR",
+                                      style: TextStyle(
+                                          color: Theme.Colors.GNP,
+                                          fontSize: responsive.ip(2.2)),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             );
           });
       break;
@@ -4068,89 +4089,94 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
-                  ),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Container(
+            return WillPopScope(
+              onWillPop: () async => false,
+              child: Stack(
+                children: [
+                  Opacity(
+                    opacity: 0.6,
+                    child: Container(
+                      height: responsive.height,
                       width: responsive.width,
-                      child: Card(
-                        color: Theme.Colors.White,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.03),
-                              child: Center(
-                                child: Icon(
-                                  Icons.wifi_off_outlined,
-                                  color: Theme.Colors.azul_apoyo,
-                                  size: 57,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.05),
-                              child: Center(
-                                child: Text(
-                                  "Sin conexión a internet",
-                                  style: TextStyle(
-                                      color: Theme.Colors.Encabezados,
-                                      fontSize: responsive.ip(2.3)),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                top: responsive.height * 0.05,
-                                left: responsive.width * 0.03,
-                              ),
-                              child: Text(
-                                "Comprueba que tienes acceso a una red Wi-Fi o que cuentes con el uso de datos móviles activado, se pueden aplicar cargos adicionales por el uso de datos móviles.",
-                                style: TextStyle(
-                                    color: Theme.Colors.Funcional_Textos_Body,
-                                    fontSize: responsive.ip(2.0)),
-                              ),
-                            ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.06,
-                                  bottom: responsive.height * 0.05),
-                              child: Center(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pop(context,true);
-
-                                  },
-                                  child: Text(
-                                    "CERRAR",
-                                    style: TextStyle(
-                                        color: Theme.Colors.GNP,
-                                        fontSize: responsive.ip(2.2)),
+                      color: Theme.Colors.Azul_gnp,
+                    ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        width: responsive.width,
+                        child: Card(
+                          color: Theme.Colors.White,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.03),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.wifi_off_outlined,
+                                    color: Theme.Colors.azul_apoyo,
+                                    size: 57,
                                   ),
                                 ),
                               ),
-                            )
-                          ],
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.05),
+                                child: Center(
+                                  child: Text(
+                                    "Sin conexión a internet",
+                                    style: TextStyle(
+                                        color: Theme.Colors.Encabezados,
+                                        fontSize: responsive.ip(2.3)),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: responsive.height * 0.05,
+                                  left: responsive.width * 0.04,
+                                  right: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.05,
+                                ),
+                                child: Text(
+                                  "Comprueba que tienes acceso a una red Wi-Fi o que cuentas con datos móviles activados.",
+                                  style: TextStyle(
+                                      color: Theme.Colors.Funcional_Textos_Body,
+                                      fontSize: responsive.ip(2.0)),
+                                ),
+                              ),
+                              /*Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.06,
+                                    bottom: responsive.height * 0.05),
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context,true);
+
+                                    },
+                                    child: Text(
+                                      "CERRAR",
+                                      style: TextStyle(
+                                          color: Theme.Colors.GNP,
+                                          fontSize: responsive.ip(2.2)),
+                                    ),
+                                  ),
+                                ),
+                              )*/
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             );
           });
       break;
@@ -4689,6 +4715,116 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                 ],
               )
             ]);
+          });
+      break;
+
+    case AlertDialogType.preguntasSecretasActualizadas:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Container(
+                                  margin: EdgeInsets.only(top: responsive.hp(3)),
+                                  child: Image.asset('assets/images/verifica.png',
+                                    fit:BoxFit.contain,
+                                    height: responsive.hp(5),
+                                    width: responsive.hp(4),
+                                  )
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text(
+                                  "Tus preguntas de seguridad se \nactualizaron correctamente",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  left: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.03),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  left: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.01,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Estas preguntas de seguridad son las mismas para todas las plataformas digitales disponibles para ti.",
+                                    style: TextStyle(
+                                        color:
+                                        Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only( bottom: responsive.height * 0.02,  top: responsive.height * 0.01),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    } else{
+                                      Navigator.pop(context);
+                                      customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
+                                    }
+
+                                  },
+                                  child: Text(
+                                    "CERRAR",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
           });
       break;
   }

@@ -276,7 +276,7 @@ void getInicialesName(){
       actions: [
         GestureDetector(
           onTap: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PerfilPage(responsive:responsive)),);
+            Navigator.push(context, MaterialPageRoute(builder: (context) => PerfilPage(responsive:responsive, callback: updateFoto,)),);
           },
           child:Container(
               width: responsive.wp(13),
@@ -340,4 +340,7 @@ void getInicialesName(){
     );
   }
 
+  void updateFoto(){setState(() {
+    datosFisicos.personales.foto;
+  });}
 }

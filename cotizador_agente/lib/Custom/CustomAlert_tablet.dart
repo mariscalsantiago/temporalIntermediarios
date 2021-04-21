@@ -730,7 +730,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                     top: responsive.height * 0.02),
                                 child: Center(
                                   child: Text(
-                                    "Activación Exitosa de huella digital",
+                                    "Activación exitosa de huella digital",
                                     style: TextStyle(
                                         color: Theme.Colors.Encabezados,
                                         fontSize: responsive.ip(1.6)),
@@ -744,7 +744,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                   right: responsive.width * 0.02,
                                 ),
                                 child: Text(
-                                  "Ya puedes iniciar sesión con tu huella digital.",
+                                  "Ya puedes iniciar sesión solo con tu huella digital.",
                                   style: TextStyle(
                                       color: Theme.Colors.Funcional_Textos_Body,
                                       fontSize: responsive.ip(1.2)),
@@ -3573,7 +3573,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                               ),
                               Container(
                                 margin: EdgeInsets.only(top: responsive.hp(2), left: responsive.wp(2), right: responsive.wp(2), bottom: responsive.hp(2)),
-                                child: Text("Al desactivar esta funcionalidad iniciarás sólo\n con contraseña.\n \n ¿Deseas desactivarla?",
+                                child: Text("Al desactivar esta funcionalidad iniciarás sesión solo con contraseña.\n \n ¿Deseas desactivarla?",
                                   style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(1.2),
@@ -3675,7 +3675,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                               ),
                               Container(
                                 margin: EdgeInsets.only(top: responsive.hp(2), left: responsive.width * 0.025, right: responsive.width * 0.025),
-                                child: Text("Al desactivar esta funcionalidad iniciarás sesión sólo con contraseña.\n \n ¿Deseas desactivarla?",
+                                child: Text("Al desactivar esta funcionalidad iniciarás sesión solo con contraseña.\n \n ¿Deseas desactivarla?",
                                   style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(1.2),

@@ -140,9 +140,9 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
       autofocus: true,
-      maxLength: 5,
+      maxLength: 24,
       autocorrect: true,
-      inputFormatters: [LengthLimitingTextInputFormatter(5)],
+      inputFormatters: [LengthLimitingTextInputFormatter(24)],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,
@@ -151,6 +151,9 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
       focusNuevaContrasena.nextFocus();
       focusNuevaContrasena.unfocus();},
       decoration: new InputDecoration(
+
+          counterText: '',
+          counterStyle: TextStyle(fontSize: 0),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Tema.Colors.inputlinea),
           ),
@@ -163,6 +166,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
+
           ),
           suffixIcon: IconButton(
             icon: !nuevaContrasena ? Image.asset("assets/login/vercontrasena.png")  : Image.asset("assets/login/novercontrasena.png"),
@@ -173,8 +177,11 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
               });
             },
           )
+
       ),
+
       validator: (value) {
+
         if(!lentPass){
           return 'Este campo es requerido';
         }
@@ -349,8 +356,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
                 _saving = false;
               });
               if(restablecerContrasena.cambioContrasenaResponse != null && restablecerContrasena.cambioContrasenaResponse.retorno == "SUCCEEDED"){
-                print("Validar flujo");
-                prefs.setBool("flujoCompletoLogin", true);
+
                 customAlert(AlertDialogType.contrasena_actualiza_correctamente,context,"","", responsive, funcionAlerta);
               } else {
                 customAlert(AlertDialogType.Sesionafinalizada_por_contrasena_debeserdiferente,context,"","", responsive, funcionAlerta);

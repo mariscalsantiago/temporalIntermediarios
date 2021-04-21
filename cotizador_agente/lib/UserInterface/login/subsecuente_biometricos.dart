@@ -228,7 +228,8 @@ class _BiometricosPage extends State<BiometricosPage> {
       });
 
       authenticated = await localAuth.authenticateWithBiometrics(
-        androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar"),
+        androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar", cancelButton: "CANCELAR"),
+          iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR"),
           localizedReason: ' ',
           useErrorDialogs: false,
           stickyAuth: true,

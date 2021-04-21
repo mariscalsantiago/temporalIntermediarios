@@ -1,3 +1,4 @@
+
 import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,16 +31,44 @@ bool validateNotEmptyBoolWhitDefault(dynamic _data, bool _default ){
   return _data;
 }
 
+bool isNone = false;
+bool isMobile = false;
 void validateIntenetstatus(BuildContext context, Responsive responsive){
+
   var subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-    if(result == ConnectivityResult.none){
-      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
+    print(result);
+
+    if (result == ConnectivityResult.mobile){
+      if(isNone){
+      Navigator.pop(context);
+      isNone = false;
+      }
+      if(!isMobile){
+      customAlert(AlertDialogType.DatosMoviles_Activados, context, "",
           "", responsive, funcionAlerta);
+      isMobile=true;
+      }
+    }else if(result == ConnectivityResult.none){
+      if(!isNone){
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
+          "", responsive, funcionAlertaNone);}
+      isNone = true;
+    }else if(result == ConnectivityResult.wifi){
+      if(isNone){
+        Navigator.pop(context);
+        isNone = false;
+      }
     }
   });
 }
 
 void funcionAlerta(){
+  isMobile = false;
+}
 
+void funcionAlertaNone(BuildContext context, ConnectivityResult result){
+if(result== ConnectivityResult.wifi || result== ConnectivityResult.mobile){
+  Navigator.pop(context);
+}
 }
 
