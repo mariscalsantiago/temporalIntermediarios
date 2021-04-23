@@ -13,6 +13,8 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		B3197BBC75011FA4AA327EFE /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A798EBFF2FF7C4ED08BE7A8A /* Pods_Runner.framework */; };
+		B391EE31263331CE005CC7DE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B391EE30263331CE005CC7DE /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
