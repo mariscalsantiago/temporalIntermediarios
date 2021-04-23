@@ -5,6 +5,7 @@ import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -171,12 +172,15 @@ Future<cambioContrasenaModel> cambioContrasenaServicio(BuildContext context, Str
     };
     String _loginJSON = json.encode(_loginBody);
 
+    print("cambioContrasenaServicio ${_loginJSON}");
+
     try {
       _response = await http.post(Uri.parse(_appEnvironmentConfig.cambioContrasenaPerfil+idIntermediario+"/cambiar"),
           body: _loginJSON,
           headers: {"Content-Type": "application/json", 'apiKey': _appEnvironmentConfig.apiKey}
       );
 
+      print("url ${_appEnvironmentConfig.cambioContrasenaPerfil+idIntermediario+"/cambiar"}");
       print("cambioContrasenaServicio ${_response.body}");
       print("cambioContrasenaServicio ${_response.statusCode}");
 
@@ -364,6 +368,145 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(BuildContext context, String  
       return null;
     } catch (e) {
       print("consultaUsuarioPorCorreo catch -- $e");
+      return null;
+    }
+  } else {
+    //errorConexion = true;
+    return null;
+  }
+}
+
+Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String  correo, String celular, bool esReestablcer) async {
+
+  print("orquestadorOTPServicio");
+  _appEnvironmentConfig = AppConfig.of(context);
+
+  ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
+
+  if(_connectivityStatus.available) {
+    http.Response _response;
+
+    Map _loginBody;
+
+    if(esReestablcer){
+      _loginBody = {
+        "correo": "fernando.herrera@qa.com"
+      };
+    } else {
+      _loginBody = {
+        "correo": "fernando.herrera@qa.com",
+        "celular": "5551993234"
+      };
+
+    }
+
+    String _loginJSON = json.encode(_loginBody);
+
+    try {
+      _response = await http.post(Uri.parse(_appEnvironmentConfig.orquestadorOTPSinSesion),
+          body: _loginJSON,
+          headers: {"Content-Type": "application/json"}
+      );
+
+      print("orquestadorOTPServicio ${_response.body}");
+      print("orquestadorOTPServicio ${_response.statusCode}");
+
+      if(_response != null){
+        if(_response.body != null){
+          if(_response.statusCode == 200){
+            Map<String, dynamic> map = json.decode(_response.body);
+            OrquestadorOTPModel _datosConsulta = OrquestadorOTPModel.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
+          } else if(_response.statusCode == 401){
+            print("StatusCode 401");
+            return null;
+          } else if(_response.statusCode == 404){
+            print("StatusCode 404");
+            return null;
+          } else {
+            print("StatusCode");
+            return null;
+          }
+        } else{
+          print("Body null");
+          return null;
+        }
+      } else {
+        print("response null");
+        return null;
+      }
+    }on TimeoutException{
+      //TODO time out test
+      print("orquestadorOTPServicio -- TimeOut");
+      //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
+      return null;
+    } catch (e) {
+      print("orquestadorOTPServicio catch -- $e");
+      return null;
+    }
+  } else {
+    //errorConexion = true;
+    return null;
+  }
+}
+
+Future<ValidarOTPModel> validaOrquestadorOTPServicio(BuildContext context, String  idOperacion, String OTP) async {
+
+  print("validaOrquestadorOTPServicio");
+  _appEnvironmentConfig = AppConfig.of(context);
+
+  ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
+
+  if(_connectivityStatus.available) {
+    http.Response _response;
+
+    try {
+      _response = await http.get(Uri.parse(_appEnvironmentConfig.validaOTP+idOperacion+"/"+OTP),
+          headers: {"Content-Type": "application/json",'apiKey': _appEnvironmentConfig.apiKey}
+      );
+
+      print("validaOrquestadorOTPServicio ${_response.body}");
+      print("validaOrquestadorOTPServicio ${_response.statusCode}");
+
+      if(_response != null){
+        if(_response.body != null){
+          if(_response.statusCode == 200){
+            Map<String, dynamic> map = json.decode(_response.body);
+            ValidarOTPModel _datosConsulta = ValidarOTPModel.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
+          } else if(_response.statusCode == 401){
+            print("StatusCode 401");
+            return null;
+          } else if(_response.statusCode == 404){
+            print("StatusCode 404");
+            return null;
+          } else {
+            print("StatusCode");
+            return null;
+          }
+        } else{
+          print("Body null");
+          return null;
+        }
+      } else {
+        print("response null");
+        return null;
+      }
+    }on TimeoutException{
+      //TODO time out test
+      print("validaOrquestadorOTPServicio -- TimeOut");
+      //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
+      return null;
+    } catch (e) {
+      print("validaOrquestadorOTPServicio catch -- $e");
       return null;
     }
   } else {

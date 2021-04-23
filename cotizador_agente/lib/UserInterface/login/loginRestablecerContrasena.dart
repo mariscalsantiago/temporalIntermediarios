@@ -272,7 +272,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.inputcorreo
+              color: focusConfirmarContrasena.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
           ),
           suffixIcon: IconButton(
             icon: !confirmarnuevaContrasena ? Image.asset("assets/login/vercontrasena.png")  : Image.asset("assets/login/novercontrasena.png"),

@@ -32,13 +32,13 @@ enum AlertDialogType {
   ajustes_sin_guardar,
   opciones_de_inicio_de_sesion,
   huella,
-  terminosYcondiciones_Huella,
+  //terminosYcondiciones_Huella,
   activacionExitosa_Huella,
   EnOtroMomento_Huella,
   verificaTuNumeroCelular,
   Reconocimiento_facial,
   activacionExitosa_Reconocimiento_facial,
-  terminosYcondiciones_reconocimiento_facial,
+  //terminosYcondiciones_reconocimiento_facial,
   EnOtroMomento_reconocimiento_facial,
   Sesionfinalizada_por_dispositivo,
   Sesionfinalizada_por_inactividad,
@@ -377,6 +377,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                             RaisedButton(
                               child: Text("Descartar"),
                               onPressed: () {
+                                callback();
+                                Navigator.pop(context,true);
                                 Navigator.pop(context,true);
                               },
                             ), // replace with your buttons
@@ -695,7 +697,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
           });
       break;
 
-    case AlertDialogType.terminosYcondiciones_Huella:
+    /*case AlertDialogType.terminosYcondiciones_Huella:
       showDialog(
           context: context,
           builder: (context) {
@@ -745,7 +747,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
               ),
             );
           });
-      break;
+      break;*/
 
     case AlertDialogType.activacionExitosa_Huella:
       showDialog(
@@ -1474,7 +1476,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
           });
       break;
 
-    case AlertDialogType.terminosYcondiciones_reconocimiento_facial:
+    /*case AlertDialogType.terminosYcondiciones_reconocimiento_facial:
       bool checkedValue = false;
       showDialog(
           context: context,
@@ -1636,7 +1638,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
               ),
             );
           });
-      break;
+      break;*/
 
     case AlertDialogType.EnOtroMomento_reconocimiento_facial:
       showDialog(
@@ -3871,6 +3873,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
+                                    prefs.setBool("activarBiometricos", true);
+                                    isSwitchedPerfill = true;
+                                    callback(true);
                                     Navigator.pop(context,true);
                                   },
                                   child: Text(

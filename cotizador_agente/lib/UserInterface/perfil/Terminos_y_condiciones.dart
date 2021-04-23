@@ -64,12 +64,13 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
               SingleChildScrollView(
                 child: Container(
                   child: Column(
-                    //mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Container(
-                        margin: EdgeInsets.only(left: responsive.wp(2.5), right: responsive.wp(2.5), top: responsive.hp(2)),
-                        child: Text("Terminos y condiciones de uso",
-                          style: TextStyle(fontSize: responsive.ip(1.8), fontWeight: FontWeight.bold, color: Theme.Colors.letragris),
+                        width: (responsive.width - 100),
+
+                        child: Text("Términos y condiciones de uso",
+                          style: TextStyle(fontSize: responsive.ip(3), color: Theme.Colors.Azul_2),
                         ),
                       ),
                       Image.asset("assets/icon/splash/logo.png", fit:BoxFit.contain,height:responsive.ip(15), width: responsive.ip(15),),
@@ -150,22 +151,27 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                             )
                         ),
                       ),
-                      CheckboxListTile(
-                        title: Text("Acepto los términos y condiciones de uso"),
-                        activeColor: Theme.Colors.GNP,
-                        value: checkedValue,
-                        onChanged: (bool value) {
-                          setState(() {
-                            checkedValue = value;
-                          });
-                          prefs.setBool("aceptoTerminos", checkedValue);
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+                      Container(
+                        //color: Theme.Colors.Azul_2,
+                        //margin: EdgeInsets.only(left: responsive.wp(40), right: responsive.wp(4), top: responsive.hp(2)),
+                        child: CheckboxListTile(
+                          contentPadding: EdgeInsets.all(0.0) ,
+                          title: Text("Acepto los términos y condiciones de uso", style:TextStyle(color: Theme.Colors.Azul_2),),
+                          activeColor: Theme.Colors.GNP,
+                          value: checkedValue,
+                          onChanged: (bool value) {
+                            setState(() {
+                              checkedValue = value;
+                            });
+                            prefs.setBool("aceptoTerminos", checkedValue);
+                          },
+                          controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+                        ),
                       ),
                       CupertinoButton(
                           padding: EdgeInsets.zero,
                           child: Container(
-                            margin: EdgeInsets.only(top: responsive.hp(4), bottom: responsive.hp(3)),
+                            margin: EdgeInsets.only(top: responsive.hp(4), bottom: responsive.hp(3), right: responsive.wp(2.5), left: responsive.wp(2.5)),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(3),
                               color: (checkedValue) ?

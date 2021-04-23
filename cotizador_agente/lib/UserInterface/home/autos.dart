@@ -1,4 +1,5 @@
 
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
@@ -39,6 +40,7 @@ class _AutosPageState extends State<AutosPage> {
   //PullToRefreshController pullToRefreshController;
   ContextMenu contextMenu;
   String url = "";
+  String codigoIntermediario = prefs.getString("currentCUA");
   double progress = 0;
   final urlController = TextEditingController();
 
@@ -66,8 +68,10 @@ class _AutosPageState extends State<AutosPage> {
     });
 
     print(datosUsuario.idparticipante);
-    print(datosPerfilador.intermediarios[0]);
-    print('https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",);
+    print(codigoIntermediario);
+    //print(datosPerfilador.intermediarios[0]);
+    print('https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}",);
+    //print('https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",);
     super.initState();
   }
 
@@ -79,7 +83,8 @@ class _AutosPageState extends State<AutosPage> {
         child: InAppWebView(
           key: webViewKey,
           // contextMenu: contextMenu,
-          initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}", // initialFile: "assets/index.html",
+         // initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}", // initialFile: "assets/index.html",
+          initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}", // initialFile: "assets/index.html",
           initialOptions: options,
           onWebViewCreated: (controller) {
             webViewController = controller;

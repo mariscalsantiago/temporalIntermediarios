@@ -31,6 +31,9 @@ class AppConfig extends InheritedWidget {
     @required this.cambioContrasenaPerfil,
     @required this.consultaUsuarioPorCorreo,
     @required this.reestablecerContrasena,
+    @required this.orquestadorOTPSinSesion,
+    @required this.validaOTP,
+    @required this.consultarMedioContactosAgentes,
 
   }) : super(child: child);
 
@@ -55,6 +58,9 @@ class AppConfig extends InheritedWidget {
   final String cambioContrasenaPerfil;
   final String consultaUsuarioPorCorreo;
   final String reestablecerContrasena;
+  final String orquestadorOTPSinSesion;
+  final String validaOTP;
+  final String consultarMedioContactosAgentes;
 
   static AppConfig of(BuildContext context) {
     return context.inheritFromWidgetOfExactType(AppConfig);

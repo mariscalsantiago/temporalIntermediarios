@@ -8,7 +8,6 @@ class cambioContrasenaModel{
   cambioContrasenaModel({this.requestId, this.requestStatus, this.uid, this.error});
 
   factory cambioContrasenaModel.fromJson(Map<dynamic, dynamic> data){
-
     return cambioContrasenaModel(
         requestId: data.containsKey('requestId') && data['requestId'] != null ? data['requestId'] : "",
         requestStatus: data['requestStatus'],

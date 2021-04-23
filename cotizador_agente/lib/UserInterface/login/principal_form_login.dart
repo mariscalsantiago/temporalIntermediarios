@@ -218,7 +218,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.inputcorreo
+              color: focusCorreo.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
           )
       ),
       validator: (value) {
@@ -277,7 +277,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.inputcorreo
+              color: focusContrasena.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
           ),
           suffixIcon: IconButton(
             icon: contrasena == false || controllerContrasena.text == "" ? Image.asset("assets/login/vercontrasena.png") : Image.asset("assets/login/novercontrasena.png"),
@@ -811,6 +811,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               prefs.setBool("seHizoLogin", true);
               prefs.setBool("regitroDatosLoginExito", true);
               prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
+              prefs.setString("currentDA", datosPerfilador.daList.elementAt(0).cveDa);
+              prefs.setString("currentCUA",  datosPerfilador.daList.elementAt(0).codIntermediario[0]);
+
               ultimaSesion = fechaPrototipo(DateTime.now().toString());
               //ultimoAcceso();
               redirect(responsive);
@@ -850,8 +853,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                 customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
               }
             } else{
-              is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive, funcionAlerta)
-              : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, funcionAlerta);
+              is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive, funcionAlertaHullaLogin)
+              : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, funcionAlertaHullaLogin);
             }
 
           } else{

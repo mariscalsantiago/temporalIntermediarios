@@ -174,7 +174,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.inputcorreo
+              color: focusCodigo.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
           )
       ),
       validator: (value) {

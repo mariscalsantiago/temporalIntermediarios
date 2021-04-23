@@ -61,6 +61,10 @@ class _PerfilPageState extends State<PerfilPage> {
     listadoDA= [];
     listadoCUA= [];
     isSwitchedPerfill = prefs.getBool("activarBiometricos");
+    dropdownValue = prefs.getString("currentDA");
+    valorDA = prefs.getString("currentDA");
+    dropdownValue2 = prefs.getString("currentCUA");
+    valorCUA = prefs.getString("currentCUA");
     print("state isSwitchedPerfill ${isSwitchedPerfill}");
     getDeasCuas(context);
     posicionCUA = 0;
@@ -73,8 +77,6 @@ class _PerfilPageState extends State<PerfilPage> {
     listadoCUA = [];
 
     print("Da Y Cua");
-    valorDA = datosPerfilador.daList.elementAt(0).cveDa;
-    dropdownValue = datosPerfilador.daList.elementAt(0).cveDa;
     print(valorDA);
     print(datosPerfilador.daList);
     print(datosUsuario.idparticipante);
@@ -90,10 +92,7 @@ class _PerfilPageState extends State<PerfilPage> {
     }
 
    // valorCUA = datosPerfilador.intermediarios[0];
-    valorCUA = datosPerfilador.daList.elementAt(posicionDA).codIntermediario[0];
-    dropdownValue2 =  datosPerfilador.daList.elementAt(posicionDA).codIntermediario[0];
     //dropdownValue2 = datosPerfilador.intermediarios[0];
-
     for(int j =0; j <  datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++ ){
       //listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${ datosPerfilador.agenteInteresadoList.elementAt(j).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(j).apellidoPaterno}");
       listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
@@ -104,18 +103,6 @@ class _PerfilPageState extends State<PerfilPage> {
     }else{
       showCua =  false;
     }
-  }
-  void setDACua(String pos, bool isDea){
-    if(isDea){
-      valorDA = pos;
-      dropdownValue = pos;
-      getDeasCuas(context);
-    }else{
-      valorCUA = pos;
-      dropdownValue2 = pos;
-    }
-    setState(() {
-    });
   }
 
   @override
@@ -329,7 +316,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                             responsive: widget.responsive,
                                             list: listadoDA,
                                             isDA: true,
-                                            callback: setDACua,
+                                            callback: updateDeaCUA,
                                           )));
                                 },
                                 onLongPressStart: (p){
@@ -349,7 +336,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                             responsive: widget.responsive,
                                             list: listadoDA,
                                             isDA: true,
-                                            callback: setDACua,
+                                            callback: updateDeaCUA,
                                           )));
                                 },
                                 child:  Row(
@@ -398,7 +385,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                             responsive: widget.responsive,
                                             list: listadoCUA,
                                             isDA: false,
-                                            callback: setDACua,
+                                            callback: updateDeaCUA,
                                           )));
                                 },
                                 onLongPressStart: (p){
@@ -419,7 +406,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                             responsive: widget.responsive,
                                             list: listadoCUA,
                                             isDA: false,
-                                            callback: setDACua,
+                                            callback: updateDeaCUA,
                                           )));
                                 },
                                 child: Row(
@@ -748,6 +735,15 @@ class _PerfilPageState extends State<PerfilPage> {
       isSwitchedPerfill = biometricosActivos;
     });
   }
+
+  void updateDeaCUA(){setState(() {
+    dropdownValue = prefs.getString("currentDA");
+    valorDA = prefs.getString("currentDA");
+    dropdownValue2 = prefs.getString("currentCUA");
+    valorCUA = prefs.getString("currentCUA");
+  });
+  }
+
   void updateFoto(){setState(() {
     fotoPerfil;
     datosFisicos.personales.foto;

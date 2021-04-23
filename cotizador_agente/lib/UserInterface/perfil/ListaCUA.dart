@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
@@ -190,10 +191,12 @@ class _listaCUAState extends State<listaCUA> {
             if(widget.isDA){
               valorDA = widget.list.elementAt(_character);
               widget.callback(valorDA,widget.isDA);
+              prefs.setString("currentDA", widget.list.elementAt(_character));
             } else {
               posicionCUA = _character;
               valorCUA = datosPerfilador.intermediarios[_character];
               widget.callback(valorCUA,widget.isDA);
+              prefs.setString("currentCUA",  widget.list.elementAt(_character));
             }
             setState(() {
             });

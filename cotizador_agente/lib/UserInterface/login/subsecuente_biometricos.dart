@@ -8,6 +8,7 @@ import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController_2.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
@@ -87,7 +88,7 @@ class _BiometricosPage extends State<BiometricosPage> {
           separacion(widget.responsive, 8),
           Center(
               child: Text(
-                "¡Hola${prefs.getString("nombreUsuario")}!",
+                "¡Hola ${prefs.getString("nombreUsuario")}!",
                 style: TextStyle(color: Tema.Colors.Encabezados, fontSize: widget.responsive.ip(3)),
               )),
           separacion(widget.responsive, 8),
@@ -152,7 +153,7 @@ class _BiometricosPage extends State<BiometricosPage> {
                     textAlign: TextAlign.center),
               ),
               onPressed: () async {
-                prefs.setBool("activarBiometricos", false);
+                //prefs.setBool("activarBiometricos", false);
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
               }
           ),
@@ -203,8 +204,21 @@ class _BiometricosPage extends State<BiometricosPage> {
     if (_saving) {
       var modal = Stack(
         children: [
-          LoadingController(
-
+          Opacity(
+            opacity: 0.6,
+            child: Container(
+              height: responsive.height,
+              width: responsive.width,
+              color: Tema.Colors.Azul_gnp,
+            ),
+          ),
+          Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only( top: responsive.hp(76.5)),
+                child: LoadingController_2(),
+              ),
+            ],
           )
         ],
       );
@@ -253,7 +267,7 @@ class _BiometricosPage extends State<BiometricosPage> {
           Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
         }else{
           setState(() {
-            prefs.setBool("activarBiometricos", false);
+            //prefs.setBool("activarBiometricos", false);
           });
           customAlert(face?AlertDialogType.Rostro_no_reconocido:
               AlertDialogType.Huella_no_reconocida,
@@ -269,7 +283,7 @@ class _BiometricosPage extends State<BiometricosPage> {
     } on PlatformException catch (e) {
       print("eeeeeee ${e}");
       setState(() {
-        prefs.setBool("activarBiometricos", false);
+        //prefs.setBool("activarBiometricos", false);
       });
       face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
                        customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);

@@ -49,7 +49,6 @@ class _VerFotoPageState extends State<VerFotoPage> {
         urlImagen = datosFisicos.personales.foto;
         widget.callback();
       });
-
     } else{
       setState(() {
         image = null;

@@ -32,6 +32,9 @@ void main() {
     cambioContrasenaPerfil: 'https://api-qa.oscp.gnp.com.mx/aprAprovisionamientoProvee/intermediario/password/',
     reestablecerContrasena: 'https://api-qa.oscp.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
     consultaUsuarioPorCorreo: 'https://api-qa.oscp.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
+    orquestadorOTPSinSesion:'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/intermediario/enviarOtp/sinSesion',
+    validaOTP: 'https://api-qa.oscp.gnp.com.mx/apr/otpLocalService/validateOtp/',
+    consultarMedioContactosAgentes :'https://api-qa.oscp.gnp.com.mx/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
 
     child: new MyApp(),
 

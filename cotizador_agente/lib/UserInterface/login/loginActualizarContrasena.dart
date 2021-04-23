@@ -156,7 +156,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.inputcorreo
+              color: focusActualContrasena.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
           ),
           suffixIcon: IconButton(
             icon: !actualContrasena ? Image.asset("assets/login/vercontrasena.png")  : Image.asset("assets/login/novercontrasena.png"),
@@ -252,7 +252,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.inputcorreo
+              color: focusNuevaContrasena.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
           ),
           suffixIcon: IconButton(
             icon: !nuevaContrasena ? Image.asset("assets/login/vercontrasena.png")  : Image.asset("assets/login/novercontrasena.png"),
@@ -337,6 +337,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
 
   Widget inputTextConfirmarContrasena(Responsive responsive){
     return TextFormField(
+
       inputFormatters: [
         //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
@@ -357,7 +358,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.inputcorreo
+              color: focusConfirmarContrasena.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
           ),
           suffixIcon: IconButton(
             icon: !confirmarnuevaContrasena ? Image.asset("assets/login/vercontrasena.png")  : Image.asset("assets/login/novercontrasena.png"),
