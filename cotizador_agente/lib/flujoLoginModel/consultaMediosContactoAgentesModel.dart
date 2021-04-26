@@ -56,15 +56,17 @@ class telefonosModel{
   String extension;
   int posicion;
   String cveLadaInternacional;
+  List<propositosContactoTelefonoModel> propositosContacto;
   List<sistemaOrigenModel> sistemaOrigen;
   consolidacionModel consolidacion;
   bool banConexionAgente;
 
   telefonosModel({this.idMedioContacto, this.principal, this.tipoContacto, this.valor, this.lada, this.extension, this.posicion, this.cveLadaInternacional, this.sistemaOrigen,
-                  this.consolidacion, this.banConexionAgente});
+                  this.propositosContacto ,this.consolidacion, this.banConexionAgente});
 
   factory telefonosModel.fromJson(Map<dynamic, dynamic> data){
     var listDos = data.containsKey('sistemaOrigen') && data['sistemaOrigen'] != null ? data['sistemaOrigen'] as List : [];
+    var list = data.containsKey('propositosContacto') && data['propositosContacto'] != null ? data['propositosContacto'] as List : [];
     return telefonosModel(
         idMedioContacto: data['idMedioContacto'],
         principal: data['principal'],
@@ -74,8 +76,9 @@ class telefonosModel{
         extension: data['extension'],
         posicion: data['posicion'],
         cveLadaInternacional: data['cveLadaInternacional'],
+        propositosContacto: list.length > 0 ? list.map((value) => new propositosContactoTelefonoModel.fromJson(value)).toList() : null,
         sistemaOrigen: listDos.length > 0 ? listDos.map((value) => new sistemaOrigenModel.fromJson(value)).toList() : null,
-        consolidacion: data['consolidacion'],
+        consolidacion: data.containsKey('consolidacion') && data["consolidacion"] != null ? consolidacionModel.fromJson(data["consolidacion"]): consolidacionModel(),
         banConexionAgente:data['banConexionAgente']
     );
   }
@@ -96,6 +99,27 @@ class telefonosModel{
     };
   }
 
+}
+
+class propositosContactoTelefonoModel{
+  String id;
+  String descripcion;
+  propositosContactoTelefonoModel({this.id, this.descripcion});
+
+  factory propositosContactoTelefonoModel.fromJson(Map<dynamic, dynamic> data){
+
+    return propositosContactoTelefonoModel(
+        id: data['id'],
+        descripcion:  data['descripcion']
+    );
+  }
+
+  toJson() {
+    return{
+      'id': id,
+      'descripcion':descripcion,
+    };
+  }
 }
 
 class consolidacionModel{
@@ -356,6 +380,33 @@ class consolidacionCorreoModel{
 
     };
   }
+}
 
+
+class AltaMedisoContactoAgentes{
+
+  String descripcion;
+  String codigoError;
+  String parametros;
+
+  AltaMedisoContactoAgentes({this.descripcion, this.codigoError, this.parametros});
+
+  factory AltaMedisoContactoAgentes.fromJson(Map<dynamic, dynamic> data){
+
+    return AltaMedisoContactoAgentes(
+        descripcion: data['descripcion'],
+        codigoError: data['codigoError'],
+        parametros: data['parametros']
+    );
+  }
+
+  toJson() {
+    return{
+      'descripcion': descripcion,
+      'codigoError': codigoError,
+      'parametros': parametros
+
+    };
+  }
 
 }

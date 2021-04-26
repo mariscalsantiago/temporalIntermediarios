@@ -34,6 +34,7 @@ class AppConfig extends InheritedWidget {
     @required this.orquestadorOTPSinSesion,
     @required this.validaOTP,
     @required this.consultarMedioContactosAgentes,
+    @required this.altaMediosContactoAgentes,
 
   }) : super(child: child);
 
@@ -61,6 +62,7 @@ class AppConfig extends InheritedWidget {
   final String orquestadorOTPSinSesion;
   final String validaOTP;
   final String consultarMedioContactosAgentes;
+  final String altaMediosContactoAgentes;
 
   static AppConfig of(BuildContext context) {
     return context.inheritFromWidgetOfExactType(AppConfig);

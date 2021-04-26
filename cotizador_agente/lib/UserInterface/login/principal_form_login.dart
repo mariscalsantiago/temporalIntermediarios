@@ -11,8 +11,10 @@ import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.d
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
+import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -28,6 +30,7 @@ import 'logoEncabezadoLogin.dart';
 
 double tamano;
 String idParticipanteValidaPorCorre;
+consultaMediosContactoAgentesModel mediosContacto;
 
 class PrincipalFormLogin extends StatefulWidget {
   final Responsive responsive;
@@ -44,7 +47,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController controllerContrasena;
   TextEditingController controllerCorreo;
-  TextEditingController controllerCorreoCambio;
+  TextEditingController controllerCorreoCambioContrasena;
   FocusNode focusCorreo;
   FocusNode focusContrasena;
   FocusNode focusCorreoCambio;
@@ -67,7 +70,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     focusCorreoCambio = new FocusNode();
     controllerContrasena = new TextEditingController();
     controllerCorreo = new TextEditingController();
-    controllerCorreoCambio = new TextEditingController();
+    controllerCorreoCambioContrasena = new TextEditingController();
 
 
     if(prefs.getBool("onBoardingVisible") != null && prefs.getBool("onBoardingVisible")){}
@@ -313,7 +316,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           fontSize: responsive.ip(2.3),
         )),
         onPressed: (){
-          controllerCorreoCambio.text = "";
+          controllerCorreoCambioContrasena.text = "";
           dialogo(context, responsive);
 
         }
@@ -389,7 +392,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                           inputFormatters: [
                             FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
                           ],
-                          controller: controllerCorreoCambio,
+                          controller: controllerCorreoCambioContrasena,
                           focusNode: focusCorreoCambio,
                           onEditingComplete: (){
                             setState(() {
@@ -462,39 +465,49 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6.0),
                       ),
-                      color: controllerCorreoCambio.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
+                      color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
                       onPressed: () async {
-                        UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, controllerCorreoCambio.text);
-                        print("respuesta correo ${respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre}");
-                        if(respuesta != null){
+                        if(controllerCorreoCambioContrasena.text != ""){
+                          prefs.setString("correoCambioContrasena", controllerCorreoCambioContrasena.text);
+                          UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, prefs.getString("correoCambioContrasena"));
+                          print("respuesta correo ${respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre}");
+                          if(respuesta != null){
                             if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.idParticipante != ""){
                               idParticipanteValidaPorCorre = respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid;
-                              print("respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIOS.idParticipante ${respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid}");
-                              prefs.setBool('flujoOlvideContrasena', true);
-                              Navigator.pop(context,true);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (BuildContext context) =>
-                                          LoginCodigoVerificaion(responsive: responsive,)
-                                  )
-                              );
 
+                              prefs.setBool('flujoOlvideContrasena', true);
+                              OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoCambioContrasena"), "", prefs.getBool('flujoOlvideContrasena'));
+
+                              print("optRespuesta  ${optRespuesta}");
+                              if(optRespuesta != null){
+
+                                if(optRespuesta.error == "" && optRespuesta.idError == ""){
+                                  Navigator.pop(context,true);
+                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
+                                } else{
+
+                                }
+
+                              } else{
+
+                              }
                             } else {
                               Navigator.pop(context,true);
                               customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
 
                             }
-                        } else {
-                          Navigator.pop(context,true);
-                          customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
-
+                          } else {
+                            Navigator.pop(context,true);
+                            customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
+                          }
                         }
+
                       },
                       child: Text(
                         "ACEPTAR",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: controllerCorreoCambio.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
+                          color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
                           fontSize: responsive.ip(2.0),
                         ),
                       ),
@@ -509,170 +522,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     );
   }
 
-  /*
-  Future<dynamic> dialogo(BuildContext context, Responsive responsive){
-    tamano = responsive.hp(57);
-    print( " tamano ------ ${tamano}");
-    return  showDialog(
-        context: context,
-        builder: (context) => KeyboardAwareDialog(
-
-      // This line
-      child: Container(
-          //margin: EdgeInsets.only(top:tamano),
-          height: responsive.hp(42),
-          width: responsive.width,
-          child: Card(
-            color: Tema.Colors.White,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  margin:EdgeInsets.only(top: responsive.height * 0.03),
-                  child: Center(
-                    child: Text(
-                      "Olvide contraseña",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Tema.Colors.Encabezados,
-                          fontSize: responsive.ip(2.3)),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.only(
-                      top: responsive.height * 0.04,
-                      bottom: responsive.height * 0.01,
-                      right: responsive.wp(1),
-                      left: responsive.wp(5)),
-                  child: Text(
-                    "Por tu seguridad es necesario que ingreses nuevamente tu correo electrónico.",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        color: Tema.Colors.Funcional_Textos_Body,
-                        fontSize: responsive.ip(2.0)),
-                  ),
-                ),
-                Container(
-                    margin: EdgeInsets.only(left: responsive.wp(4), right: responsive.wp(4)),
-                    child: //inputTextCorreoCambio(responsive)
-                    TextFormField(
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
-                        ],
-                        controller: controllerCorreoCambio,
-                        focusNode: focusCorreoCambio,
-                        onEditingComplete: (){
-                          setState(() {
-                            tamano = responsive.hp(57);
-                            focusCorreoCambio.unfocus();
-                          });
-                        },
-                        onFieldSubmitted: (S) {
-                          setState(() {
-                            tamano = responsive.hp(57);
-                            focusCorreoCambio.unfocus();
-                          });
-                        },
-                        obscureText: false,
-                        enabled: _enable,
-                        autofocus: true,
-                        cursorColor: Tema.Colors.GNP,
-                        decoration: new InputDecoration(
-                            focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Tema.Colors.inputlinea),
-                            ),
-                            enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Tema.Colors.inputlinea),
-                            ),
-                            labelText: "Correo electrónico",
-                            labelStyle: TextStyle(
-                                fontFamily: "Roboto",
-                                fontWeight: FontWeight.normal,
-                                fontSize: responsive.ip(1.7),
-                                color: Tema.Colors.inputcorreo
-                            )
-                        ),
-                        validator: (value) {
-                          String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
-                          RegExp regExp = new RegExp(p);
-                          if (value.isEmpty) {
-                            _validEmail  = false;
-                            return 'Este campo es requerido';
-                          } else if (regExp.hasMatch(value)) {
-                            _validEmail  = true;
-                            return null;
-                          } else {
-                            _validEmail  = false;
-                            return 'Este campo es inválido';
-                          }
-                          return null;
-                        },
-                        onTap: (){
-                          print("Focusssssssssssss");
-                          print("Focusssssssssssss");
-                          setState(() {
-                            tamano = responsive.hp(30);
-                          });
-                          setState(() {
-                            tamano;
-                            print("tamano ${tamano}");
-                          });
-
-
-                        }
-                    )
-                ),
-                Container(
-                  height: responsive.hp(6.25),
-                  width: responsive.wp(90),
-                  margin: EdgeInsets.only( top: responsive.height * 0.03,  left: responsive.wp(4.4),  right: responsive.wp(4.4), bottom: responsive.hp(4)),
-                  child: RaisedButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6.0),
-                    ),
-                    color: controllerCorreo.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
-                    onPressed: () async {
-                      UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, controllerCorreoCambio.text);
-
-                      if(respuesta != null){
-                        if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIOS.idParticipante != ""){
-                          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
-                        } else {
-
-                        }
-                      } else {
-
-                      }
-                    },
-                    child: Text(
-                      "ACEPTAR",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: controllerCorreo.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
-                        fontSize: responsive.ip(2.0),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-    ),
-    );
-
-  }
-  */
-
   Widget inputTextCorreoCambio(Responsive responsive){
 
     return TextFormField(
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
         ],
-        controller: controllerCorreoCambio,
+        controller: controllerCorreoCambioContrasena,
         focusNode: focusCorreoCambio,
         onFieldSubmitted: (S) {
           tamano = responsive.hp(57);
@@ -778,8 +634,26 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
 
             if(datosUsuario != null){
-              if(!existeUsuario){
 
+              mediosContacto = await  consultaMediosContactoServicio(context, datosUsuario.idparticipante);
+              print("mediosContacto ${mediosContacto}");
+
+              if(mediosContacto != null){
+                List<telefonosModel> teledonosLista = [];
+                teledonosLista = obtenerMedioContacto(mediosContacto);
+                if(teledonosLista.length > 0){
+                  prefs.setString("medioContactoTelefono", teledonosLista[0].lada+teledonosLista[0].valor);
+                  print("telefono ${teledonosLista[0].lada+teledonosLista[0].valor}");
+                } else {
+                  prefs.setString("medioContactoTelefono", "");
+                }
+
+              } else{
+                prefs.setString("medioContactoTelefono", "");
+
+              }
+
+              if(!existeUsuario){
                 consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante);
 
                 print("preguntas ${preguntas.requestStatus}");
@@ -836,6 +710,38 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           } else{} }
         }
     );
+  }
+
+  List<telefonosModel> obtenerMedioContacto(consultaMediosContactoAgentesModel mediosContacto){
+
+    List<telefonosModel> teledonosLista = [];
+    telefonosModel telefono;
+
+    for(int i = 0 ; i < mediosContacto.mediosContacto.telefonos.length; i++){
+
+      telefono = mediosContacto.mediosContacto.telefonos[i];
+
+      if(telefono.tipoContacto.id=="TLCL"){
+
+        for(int i =0 ; i < telefono.propositosContacto.length; i++){
+            if(telefono.propositosContacto[i].id == "CAA"){
+              teledonosLista.add(telefono);
+            }
+        }
+
+      }
+    }
+
+    if(teledonosLista.length>0){
+        if(teledonosLista.length > 1){
+          teledonosLista.sort((b, a){
+            return a.idMedioContacto.compareTo(b.idMedioContacto);
+          });
+        }
+    }
+
+    return teledonosLista;
+
   }
 
   redirect( Responsive responsive) async {

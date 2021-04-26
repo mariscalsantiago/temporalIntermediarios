@@ -1,4 +1,6 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
+import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
@@ -247,9 +249,32 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
             ),
           ),
         ),
-        onPressed: (){
+        onPressed: () async{
           if(_formKey.currentState.validate()){
-            customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAlerta);
+
+            setState(() {
+              _saving = true;
+            });
+
+            AltaMedisoContactoAgentes actualizarNumero = await  altaMediosContactoServicio(context);
+
+            if(actualizarNumero != null){
+              setState(() {
+                _saving = false;
+              });
+
+              if(actualizarNumero.codigoError == ""){
+                customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAlerta);
+              } else{
+
+              }
+
+            } else{
+              setState(() {
+                _saving = false;
+              });
+
+            }
           }
         }
     );

@@ -1044,8 +1044,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   left: responsive.width * 0.04,
                                   bottom: responsive.height * 0.03,
                                   right: responsive.width * 0.04),
-                              child: Text(
-                                "Te enviamos un código de verificación por SMS al número ****1234.",
+                              child: Text("Te enviamos un código de verificación por SMS al número "+numero(),
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontWeight: FontWeight.normal,
@@ -4850,4 +4849,12 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
 
 void FuncionAlerta(bool abc){
 
+}
+
+String numero(){
+  if(prefs.getString("medioContactoTelefono") != null  && prefs.getString("medioContactoTelefono") != ""){
+    return "******"+ prefs.getString("medioContactoTelefono").substring(6, 10);
+  }else{
+    return "**********";
+  }
 }

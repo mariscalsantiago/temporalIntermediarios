@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:flutter/material.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -390,12 +393,12 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
 
     if(esReestablcer){
       _loginBody = {
-        "correo": "fernando.herrera@qa.com"
+        "correo": correo
       };
     } else {
       _loginBody = {
-        "correo": "fernando.herrera@qa.com",
-        "celular": "5551993234"
+        "correo": correo,
+        "celular": celular
       };
 
     }
@@ -514,6 +517,152 @@ Future<ValidarOTPModel> validaOrquestadorOTPServicio(BuildContext context, Strin
     return null;
   }
 }
+
+Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(BuildContext context, String  idParticipante) async {
+
+  print("consultaMediosContactoServicio");
+  _appEnvironmentConfig = AppConfig.of(context);
+
+  ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
+
+  if(_connectivityStatus.available) {
+    http.Response _response;
+
+    try {
+      _response = await http.get(Uri.parse(_appEnvironmentConfig.consultarMedioContactosAgentes+idParticipante),
+          headers: {"Content-Type": "application/json",'apiKey': _appEnvironmentConfig.apiKey}
+      );
+
+      print("consultaMediosContactoServicio ${_response.body}");
+      print("consultaMediosContactoServicio ${_response.statusCode}");
+
+      if(_response != null){
+        if(_response.body != null){
+          if(_response.statusCode == 200){
+            Map<String, dynamic> map = json.decode(_response.body);
+            consultaMediosContactoAgentesModel _datosConsulta = consultaMediosContactoAgentesModel.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
+          } else if(_response.statusCode == 401){
+            print("StatusCode 401");
+            return null;
+          } else if(_response.statusCode == 404){
+            print("StatusCode 404");
+            return null;
+          } else {
+            print("StatusCode");
+            return null;
+          }
+        } else{
+          print("Body null");
+          return null;
+        }
+      } else {
+        print("response null");
+        return null;
+      }
+    }on TimeoutException{
+      //TODO time out test
+      print("consultaMediosContactoServicio -- TimeOut");
+      //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
+      return null;
+    } catch (e) {
+      print("consultaMediosContactoServicio catch -- $e");
+      return null;
+    }
+  } else {
+    //errorConexion = true;
+    return null;
+  }
+}
+
+Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext context) async {
+
+  print("altaMediosContactoServicio");
+  _appEnvironmentConfig = AppConfig.of(context);
+
+  ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
+
+  if(_connectivityStatus.available) {
+    http.Response _response;
+
+    Map _loginBody = {
+      "idParticipante": datosUsuario.idparticipante,
+      "codFiliacion": mediosContacto.codigoFiliacion,
+      "tipoMedioContacto": "TLCL",
+      "propositosContacto": [
+        {
+          "id": "CAA",
+          "operacion": "AL"
+        }
+      ],
+      "telefono": {
+        "lada": "55",
+        "ladaInternacional": "52",
+        "numExtension": "",
+        "numTelefono": "32249042"
+      },
+      "banPrincipal": "true",
+      "usuarioAudit": "CRM_PRUEBA"
+    };
+
+    String _loginJSON = json.encode(_loginBody);
+
+    try {
+      _response = await http.post(Uri.parse(_appEnvironmentConfig.altaMediosContactoAgentes),
+          body: _loginJSON,
+          headers: {"Content-Type": "application/json",'apiKey': _appEnvironmentConfig.apikeyAppAgentes}
+      );
+
+      print("altaMediosContactoServicio ${_response.body}");
+      print("altaMediosContactoServicio ${_response.statusCode}");
+
+      if(_response != null){
+        if(_response.body != null){
+          if(_response.statusCode == 200){
+            Map<String, dynamic> map = json.decode(_response.body);
+            AltaMedisoContactoAgentes _datosConsulta = AltaMedisoContactoAgentes.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
+          } else if(_response.statusCode == 401){
+            print("StatusCode 401");
+            return null;
+          } else if(_response.statusCode == 404){
+            print("StatusCode 404");
+            return null;
+          } else {
+            print("StatusCode");
+            return null;
+          }
+        } else{
+          print("Body null");
+          return null;
+        }
+      } else {
+        print("response null");
+        return null;
+      }
+    }on TimeoutException{
+      //TODO time out test
+      print("altaMediosContactoServicio -- TimeOut");
+      //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
+      return null;
+    } catch (e) {
+      print("altaMediosContactoServicio catch -- $e");
+      return null;
+    }
+  } else {
+    //errorConexion = true;
+    return null;
+  }
+}
+
 
 
 
