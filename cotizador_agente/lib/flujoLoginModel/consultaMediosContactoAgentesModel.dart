@@ -388,15 +388,17 @@ class AltaMedisoContactoAgentes{
   String descripcion;
   String codigoError;
   String parametros;
+  String idMedioContacto;
+  String secuencial;
 
   AltaMedisoContactoAgentes({this.descripcion, this.codigoError, this.parametros});
 
   factory AltaMedisoContactoAgentes.fromJson(Map<dynamic, dynamic> data){
 
     return AltaMedisoContactoAgentes(
-        descripcion: data['descripcion'],
-        codigoError: data['codigoError'],
-        parametros: data['parametros']
+        descripcion: data.containsKey("descripcion") ? data['descripcion'] : "",
+        codigoError: data.containsKey("codigoError") ?  data['codigoError'] : "",
+        parametros: data.containsKey("parametros") ?   data['parametros'] : "",
     );
   }
 

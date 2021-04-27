@@ -1,8 +1,10 @@
-
+import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
+import '../main.dart';
 import 'CustomAlert.dart';
 
 String validateNotEmptyToString(dynamic data, String defaultData){
@@ -33,6 +35,9 @@ bool validateNotEmptyBoolWhitDefault(dynamic _data, bool _default ){
 
 bool isNone = false;
 bool isMobile = false;
+List<BiometricType> _availableBiometrics;
+final LocalAuthentication auth = LocalAuthentication();
+
 void validateIntenetstatus(BuildContext context, Responsive responsive){
 
   var subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
@@ -62,6 +67,43 @@ void validateIntenetstatus(BuildContext context, Responsive responsive){
   });
 }
 
+void validateBiometricstatus( Function callback) {
+  _getAvailableBiometrics(callback);
+}
+
+Future<void> _getAvailableBiometrics(Function callback ) async {
+  bool canCheckBiometrics;
+  try {
+    canCheckBiometrics = await auth.canCheckBiometrics;
+  } on PlatformException catch (e) {
+    print(e);
+    callback();
+  }
+  List<BiometricType> availableBiometrics;
+  try {
+    availableBiometrics = await auth.getAvailableBiometrics();
+  } on PlatformException catch (e) {
+    print(e);
+    callback();
+  }
+  if (Platform.isIOS) {
+    if(availableBiometrics.contains(BiometricType.fingerprint)){
+      is_available_finger = true;
+    } else if(availableBiometrics.contains(BiometricType.face)){
+      is_available_face = true;
+    }
+  } else {
+    if(availableBiometrics.contains(BiometricType.fingerprint)){
+      is_available_finger = true;
+    }else{
+      callback();
+    }
+  }
+  print("ValidateBiometrics");
+  print(is_available_finger);
+  print(is_available_face);
+  _availableBiometrics = availableBiometrics;
+}
 void funcionAlerta(){
   isMobile = false;
 }

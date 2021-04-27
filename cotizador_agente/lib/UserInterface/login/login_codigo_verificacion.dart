@@ -6,12 +6,15 @@ import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart'
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:flutter/services.dart';
 
 import 'loginRestablecerContrasena.dart';
+
+bool timerEnd = false;
 
 class LoginCodigoVerificaion extends StatefulWidget {
   final Responsive responsive;
@@ -23,9 +26,11 @@ class LoginCodigoVerificaion extends StatefulWidget {
 class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
 
   bool _saving;
+  bool _validCode=true;
   final _formKey = GlobalKey<FormState>();
   TextEditingController controllerCodigo;
   FocusNode focusCodigo;
+  String codigoValidacion;
 
   @override
   void initState() {
@@ -51,7 +56,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             ),),
             centerTitle: true,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_outlined,
+              icon: Icon(Icons.close,
                 color: Tema.Colors.GNP,),
               onPressed: () {
                 Navigator.pop(context,true);
@@ -88,7 +93,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   Container(
                     margin: EdgeInsets.only(top: responsive.hp(4)),
                     child: Text( prefs.getBool('flujoOlvideContrasena') ? "Ingrese el código de verificación que enviamos a tu correo electrónico y por SMS a tu número celular."
-                        : "Ingresa el código de verificación que te enviamos por SMS al número:  ${prefs.getString("medioContactoTelefono") != "" ? prefs.getString("medioContactoTelefono") : ""}" ,
+                        : "Ingresa el código de verificación que te enviamos por SMS al número: " ,
                       style: TextStyle(
                         color: Tema.Colors.letragris,
                         letterSpacing: 0.5,
@@ -98,7 +103,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: responsive.hp(2.3)),
-                    child: Text("(+52) 55 2465 8737", style: TextStyle(
+                    child: Text("(+52) ${prefs.getString("medioContactoTelefono") != "" ? prefs.getString("medioContactoTelefono") : "" }", style: TextStyle(
                       color: Tema.Colors.GNP,
                       fontWeight: FontWeight.normal,
                       fontSize: responsive.ip(2.5)
@@ -181,9 +186,12 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
           )
       ),
       validator: (value) {
-
+        if(_validCode){
         if (value.isEmpty) {
           return 'Este campo es requerido';
+        }
+        }else{
+          return"El código no coincide";
         }
         return null;
       },
@@ -199,7 +207,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   Widget validacionCodigo(Responsive responsive){
     return Container(
       width: responsive.width,
-      color: Tema.Colors.dialogoExpiro,
+      color: ! timerEnd ? Tema.Colors.dialogoExpiro :Tema.Colors.dialogoExpiradoBG,
       margin: EdgeInsets.only(top: responsive.hp(6.5)),
       child: Container(
         margin: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
@@ -207,25 +215,45 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
           children: [
             Container(
                 margin: EdgeInsets.only(left: responsive.wp(6), right: responsive.wp(3)),
-                child: Image.asset("assets/login/alertVerificaNumero.png")
+                //Todo cambiar icono y tamaño
+                child:  ! timerEnd ?Image.asset("assets/login/alertVerificaNumero.png"):Image.asset("assets/login/errorCodigo.png")
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   child: Text("Código de verificación", style: TextStyle(
-                    color: Tema.Colors.textoExpiro,
+                    color:  ! timerEnd ? Tema.Colors.textoExpiro : Tema.Colors.validarCampo,
                     fontWeight: FontWeight.w500,
                     fontSize: responsive.ip(1.5),
-                  ),),
+                  ),
+                  ),
                 ),
-                Container(
-                  child: Text("Válido por 3:00 minutos", style: TextStyle(
+                ! timerEnd ? new CountdownFormatted(
+                  duration: Duration(minutes: 3),
+                  onFinish: (){
+                    setState(() {
+                      timerEnd = true;
+                    });
+                  },
+                  builder: (BuildContext ctx, String remaining) {
+                    return Text(
+                      "Válido por ${remaining} minutos",
+                      style: TextStyle(
+                        color: Tema.Colors.Azul_2,
+                        fontWeight: FontWeight.normal,
+                        fontSize: responsive.ip(2)
+                    ),
+                    ); // 01:00:00
+                  },
+                ) : Container(
+                  child: Text("Expirado", style: TextStyle(
                     color: Tema.Colors.Azul_2,
                     fontWeight: FontWeight.normal,
                     fontSize: responsive.ip(2)
                   ),),
                 )
+
               ],
             )
           ],
@@ -256,7 +284,10 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
           ],
         ),
         onPressed: () async {
-
+          if(timerEnd){
+            setState(() {
+              timerEnd = false;
+            });
           if(prefs.getBool('flujoOlvideContrasena')){
             setState(() {
               _saving = true;
@@ -269,8 +300,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             if(optRespuesta != null){
 
               if(optRespuesta.error == "" && optRespuesta.idError == ""){
-                prefs.setBool('flujoOlvideContrasena', true);
-                Navigator.pop(context,true);
+                prefs.setString("idOperacion", optRespuesta.idOperacion);
+                //prefs.setBool('flujoOlvideContrasena', true);
+                //Navigator.pop(context,true);
                 //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
               } else{
 
@@ -280,7 +312,23 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
 
             }
 
-          }
+          } else{
+            setState(() {
+              _saving = true;
+            });
+            OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
+            setState(() {
+              _saving = false;
+            });
+            if(optRespuesta != null){
+
+              if(optRespuesta.error == "" && optRespuesta.idError == ""){
+                prefs.setString("idOperacion", optRespuesta.idOperacion);
+              }
+
+            }
+
+          }}
         }
 
     );
@@ -302,16 +350,43 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             ),
           ),
         ),
-        onPressed: (){
+        onPressed: () async {
+          _validCode = true;
           if(_formKey.currentState.validate()){
-            if( prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
-              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
-            } else {
-              print("Validar flujo");
-              prefs.setBool("flujoCompletoLogin", true);
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (BuildContext context) =>
-                      HomePage(responsive: responsive,)));
+            setState(() {
+              _saving = true;
+
+            });
+
+            ValidarOTPModel validarOTP = await validaOrquestadorOTPServicio(context,prefs.getString("idOperacion"), controllerCodigo.text);
+
+            setState(() {
+              _saving = false;
+            });
+
+            print("validarOTP ${validarOTP.resultado}");
+
+            if(validarOTP != null){
+              if(validarOTP.resultado){
+                if( prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
+                } else {
+                  print("Validar flujo");
+                  prefs.setBool("flujoCompletoLogin", true);
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          HomePage(responsive: responsive,)));
+                }
+              } else{
+                setState(() {
+                  _validCode = false;
+                  codigoValidacion = "El código no coincide";
+                  _formKey.currentState.validate();
+                });
+              }
+
+            } else{
+
             }
           }
           //Navigator.pop(context,true);

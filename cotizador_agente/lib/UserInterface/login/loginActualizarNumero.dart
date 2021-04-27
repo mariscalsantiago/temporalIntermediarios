@@ -1,5 +1,6 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -155,7 +156,10 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         RegExp regExp = new RegExp(p);
         if (value.isEmpty) {
           return 'Este campo es requerido';
-        } else if (regExp.hasMatch(value)) {
+        } else if (value.length<10) {
+          print("Tu número de celular debe tener 10 dígitos");
+          return "Tu número de celular debe tener 10 dígitos";
+        }else if (regExp.hasMatch(value)) {
           print("value ${value}");
           return null;
         } else {
@@ -256,14 +260,21 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               _saving = true;
             });
 
-            AltaMedisoContactoAgentes actualizarNumero = await  altaMediosContactoServicio(context);
+            String lada = controllerCodigo.text.substring(0,2);
+            String numero = controllerCodigo.text.substring(2,10);
+
+            print("lada   ${lada}");
+            print("numero ${numero}");
+
+            AltaMedisoContactoAgentes actualizarNumero = await  altaMediosContactoServicio(context, lada,  numero);
 
             if(actualizarNumero != null){
               setState(() {
                 _saving = false;
               });
 
-              if(actualizarNumero.codigoError == ""){
+              if(actualizarNumero.idMedioContacto != "" && actualizarNumero.secuencial != ""){
+                prefs.setString("medioContactoTelefono", controllerCodigo.text);
                 customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAlerta);
               } else{
 

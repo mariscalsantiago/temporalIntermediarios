@@ -32,7 +32,7 @@ class BiometricosPage extends StatefulWidget {
   _BiometricosPage createState() => _BiometricosPage();
 }
 
-class _BiometricosPage extends State<BiometricosPage> {
+class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserver  {
   bool face = false;
   bool showBio = true;
   var localAuth = new LocalAuthentication();
@@ -42,6 +42,8 @@ class _BiometricosPage extends State<BiometricosPage> {
     _saving = false;
     // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
     if(is_available_finger != false  ){
       face = false;
       if(is_available_face != false){
@@ -61,6 +63,16 @@ class _BiometricosPage extends State<BiometricosPage> {
     }
     validateIntenetstatus(context, widget.responsive);
   }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("didChangeAppLifecycleState");
+    if(state == AppLifecycleState.resumed){
+      print(state);
+      validateBiometricstatus(funcionCanselBiometrics);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -241,11 +253,12 @@ class _BiometricosPage extends State<BiometricosPage> {
         _authorized = 'Authenticating';
       });
 
+
       authenticated = await localAuth.authenticateWithBiometrics(
-        androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar", cancelButton: "CANCELAR"),
+        androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar", cancelButton: "CANCELAR",fingerprintRequiredTitle:"Solicitud de huella digital",goToSettingsDescription:"Tu huella digital no está configurada en el dispositivo, ve a configuraciones para añadirla.",goToSettingsButton:"Ir a configuraciones"),
           iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR"),
           localizedReason: ' ',
-          useErrorDialogs: false,
+          useErrorDialogs: true,
           stickyAuth: true,
 
       );
@@ -285,6 +298,7 @@ class _BiometricosPage extends State<BiometricosPage> {
       setState(() {
         //prefs.setBool("activarBiometricos", false);
       });
+
       face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
                        customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
 
@@ -300,7 +314,12 @@ class _BiometricosPage extends State<BiometricosPage> {
 
   void funcionAlerta(){
     Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
-
+  }
+  void funcionCanselBiometrics(){
+    setState(() {
+      prefs.setBool("activarBiometricos", false);
+    });
+    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
   }
 
 }

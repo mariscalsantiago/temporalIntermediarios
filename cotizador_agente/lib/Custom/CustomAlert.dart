@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
@@ -12,7 +13,9 @@ import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.d
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/login/subsecuente_biometricos.dart';
 import 'package:cotizador_agente/UserInterface/perfil/Terminos_y_condiciones.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/main.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
@@ -495,7 +498,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                       context,
                                       "",
                                       "",
-                                      responsive, FuncionAlerta);
+                                      responsive, callback);
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -826,10 +829,13 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                     if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin") ){
 
                                       if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
+                                        Navigator.pop(context,true);
                                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
                                       } else{
                                         if (deviceType == ScreenType.phone) {
-                                          customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
+                                          print("Verifica codigo celular");
+                                          Navigator.pop(context,true);
+                                          customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
                                         }
                                         else{
                                           customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
@@ -939,8 +945,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                       callback(false);
                                       Navigator.pop(context,true);
                                     } else {
+                                      Navigator.pop(context,true);
                                       prefs.setBool("activarBiometricos", false);
-                                      callback(false);
+                                      callback(false, responsive);
                                       customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
 
                                     }
@@ -1080,16 +1087,19 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                                   .ip(responsive.ip(0.2))),
                                           textAlign: TextAlign.center,
                                         ))),
-                                onPressed: () {
-                                  Navigator.pop(context,true);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              LoginCodigoVerificaion(
-                                                responsive: responsive,
-                                              )));
-                                }),
+                                        onPressed: () async {
+                                          if(prefs.getBool("esFlujoBiometricos") != null && prefs.getBool("esFlujoBiometricos")){
+                                            print("flujo biomertricos");
+                                            callback(true,responsive);
+                                            Navigator.pop(context,true);
+                                          } else{
+                                            print("sin biomertricos");
+                                            callback(responsive);
+                                            Navigator.pop(context,true);
+                                          }
+
+                                        }
+                           ),
                             CupertinoButton(
                                 padding: EdgeInsets.zero,
                                 child: Container(
@@ -1226,7 +1236,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                         context,
                                         "",
                                         "",
-                                        responsive, FuncionAlerta);
+                                        responsive, callback);
                                   },
                                   child: Text(
                                     "EN OTRO MOMENTO",
@@ -1439,7 +1449,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
                                       } else{
                                         if (deviceType == ScreenType.phone) {
-                                          customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, FuncionAlerta);
+                                          customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
                                         }
                                         else{
                                           customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
@@ -1709,12 +1719,13 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
                                     if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
-                                      prefs.setBool("activarBiometricos", false);
-                                      callback(false);
                                       Navigator.pop(context,true);
-                                    } else {
                                       prefs.setBool("activarBiometricos", false);
-                                      callback(false);
+                                      callback(false, responsive);
+                                    } else {
+                                      Navigator.pop(context,true);
+                                      prefs.setBool("activarBiometricos", false);
+                                      callback(false, responsive);
                                       customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
 
                                     }
@@ -3465,9 +3476,31 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 child: RaisedButton(
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
-                                    Navigator.pop(context,true);
-                                    Navigator.pop(context,true);
+                                  onPressed: () async {
+                                    OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), prefs.getBool('flujoOlvideContrasena'));
+
+                                    print("optRespuesta ${optRespuesta}");
+                                    if(optRespuesta != null){
+                                      if(optRespuesta.error == "" && optRespuesta.idError == "") {
+                                        prefs.setString("idOperacion", optRespuesta.idOperacion);
+                                        Navigator.pop(context,true);
+                                        Navigator.pop(context,true);
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (BuildContext context) =>
+                                                    LoginCodigoVerificaion(
+                                                      responsive: responsive,
+                                                    )
+                                            )
+                                        );
+                                      } else{
+
+                                      }
+                                    } else{
+
+                                    }
+
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -4858,3 +4891,4 @@ String numero(){
     return "**********";
   }
 }
+

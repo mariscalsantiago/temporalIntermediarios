@@ -189,8 +189,8 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                             if(checkedValue){
                               Navigator.pop(context,true);
                               is_available_finger != false ?
-                                customAlert(AlertDialogType.activacionExitosa_Huella, context, "", "", responsive, funcionAlerta) :
-                                customAlert(AlertDialogType.activacionExitosa_Reconocimiento_facial, context, "", "", responsive, funcionAlerta);
+                                customAlert(AlertDialogType.activacionExitosa_Huella, context, "", "", responsive, widget.callback) :
+                                customAlert(AlertDialogType.activacionExitosa_Reconocimiento_facial, context, "", "", responsive, widget.callback);
                                 setState(() {
                                   checkedValue = false;
                                 });

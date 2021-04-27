@@ -104,6 +104,7 @@ class Colors {
   static const Color biometrico = Color(0xffFFEBB3);
   static const Color validarCampo = Color(0xff9A4443);
   static const Color dialogoExpiro = Color(0xffFBF5C6);
+  static const Color dialogoExpiradoBG = Color(0xffF8EBED);
   static const Color textoExpiro = Color(0xffB18931);
   static const Color borderInput = Color(0xff9DAEC8);
   static const Color rellenodialogo = Color(0xffE7F2FC);

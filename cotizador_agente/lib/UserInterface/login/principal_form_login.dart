@@ -39,7 +39,7 @@ class PrincipalFormLogin extends StatefulWidget {
   _PrincipalFormLoginState createState() => _PrincipalFormLoginState();
 }
 
-class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
+class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBindingObserver{
 
   bool _saving;
   bool _enable = true;
@@ -72,6 +72,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     controllerCorreo = new TextEditingController();
     controllerCorreoCambioContrasena = new TextEditingController();
 
+    WidgetsBinding.instance.addObserver(this);
 
     if(prefs.getBool("onBoardingVisible") != null && prefs.getBool("onBoardingVisible")){}
     else{
@@ -106,6 +107,15 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
     }
     validateIntenetstatus(context, widget.responsive);
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("didChangeAppLifecycleState");
+    if(state == AppLifecycleState.resumed){
+      print(state);
+      validateBiometricstatus(funcionCanselBiometrics);
+    }
   }
 
   @override
@@ -339,13 +349,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             ),
           ),
           Container(
-            /*margin: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-
-                top: responsive.hp(15)),
-            top: responsive.hp(15)
-
-            ),*/
             margin: EdgeInsets.only(top: focusCorreoCambio.hasFocus ?
             MediaQuery.of(context).size.height / 2 - 250 // adjust values according to your need
                 : MediaQuery.of(context).size.height / 2 + 15 ),
@@ -450,12 +453,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                               tamano;
                               print("tamano ${tamano}");
                             });
-
-
                           }
                       )
-
-
                   ),
                   Container(
                     height: responsive.hp(6.25),
@@ -468,38 +467,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
                       color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
                       onPressed: () async {
                         if(controllerCorreoCambioContrasena.text != ""){
-                          prefs.setString("correoCambioContrasena", controllerCorreoCambioContrasena.text);
-                          UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, prefs.getString("correoCambioContrasena"));
-                          print("respuesta correo ${respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre}");
-                          if(respuesta != null){
-                            if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.idParticipante != ""){
-                              idParticipanteValidaPorCorre = respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid;
+                          Navigator.pop(context);
+                          setState(() {
+                            _saving = true;
+                          });
 
-                              prefs.setBool('flujoOlvideContrasena', true);
-                              OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoCambioContrasena"), "", prefs.getBool('flujoOlvideContrasena'));
+                          validarCodigoVerificacion(responsive);
 
-                              print("optRespuesta  ${optRespuesta}");
-                              if(optRespuesta != null){
-
-                                if(optRespuesta.error == "" && optRespuesta.idError == ""){
-                                  Navigator.pop(context,true);
-                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
-                                } else{
-
-                                }
-
-                              } else{
-
-                              }
-                            } else {
-                              Navigator.pop(context,true);
-                              customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
-
-                            }
-                          } else {
-                            Navigator.pop(context,true);
-                            customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
-                          }
                         }
 
                       },
@@ -520,6 +494,45 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         ]);
       },
     );
+  }
+
+  validarCodigoVerificacion(Responsive responsive) async{
+
+    prefs.setString("correoCambioContrasena", controllerCorreoCambioContrasena.text);
+    UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, prefs.getString("correoCambioContrasena"));
+    print("UsuarioPorCorreo ${respuesta}" );
+    if(respuesta != null){
+      if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.idParticipante != ""){
+        idParticipanteValidaPorCorre = respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid;
+
+        prefs.setBool('flujoOlvideContrasena', true);
+        OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoCambioContrasena"), "", prefs.getBool('flujoOlvideContrasena'));
+        setState(() {
+          _saving = false;
+        });
+        print("optRespuesta  ${optRespuesta}");
+        if(optRespuesta != null){
+          if(optRespuesta.error == "" && optRespuesta.idError == ""){
+            prefs.setString("idOperacion", optRespuesta.idOperacion);
+            Navigator.pop(context,true);
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
+          } else{
+
+          }
+
+        } else{
+
+        }
+      } else {
+        Navigator.pop(context,true);
+        customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
+
+      }
+    } else {
+      Navigator.pop(context,true);
+      customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
+    }
+
   }
 
   Widget inputTextCorreoCambio(Responsive responsive){
@@ -582,7 +595,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         }
     );
   }
-
 
   Widget botonInicioSesion(Responsive responsive){
     return CupertinoButton(
@@ -722,7 +734,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
       telefono = mediosContacto.mediosContacto.telefonos[i];
 
       if(telefono.tipoContacto.id=="TLCL"){
-
+        //TODO validar nulos maria@bonos.com mexico.18
         for(int i =0 ; i < telefono.propositosContacto.length; i++){
             if(telefono.propositosContacto[i].id == "CAA"){
               teledonosLista.add(telefono);
@@ -753,12 +765,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           if(_biometricos){
             if(is_available_finger != false && is_available_face != false){
               if (deviceType == ScreenType.phone) {
-                customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlerta);
+                customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
               }
               else{
                 customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
               }
             } else{
+              prefs.setBool("esFlujoBiometricos", true);
               is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive, funcionAlertaHullaLogin)
               : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, funcionAlertaHullaLogin);
             }
@@ -767,6 +780,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
             if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
               Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
             } else{
+
               if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
 
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
@@ -774,12 +788,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
               } else{
 
                 if (deviceType == ScreenType.phone) {
-                  customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlerta);
+                  prefs.setBool("esFlujoBiometricos", false);
+                  customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlertaCodVerificacion);
                 }
                 else{
                   customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
                 }
-
               }
             }
 
@@ -791,12 +805,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
         if(_biometricos) {
           if(is_available_finger != false && is_available_face != false){
             if (deviceType == ScreenType.phone) {
-              customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlerta);
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
             }
             else{
               customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
             }
           } else{
+            prefs.setBool("esFlujoBiometricos", true);
             is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive, funcionAlertaHullaLogin)
                 : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, funcionAlertaHullaLogin);
           }
@@ -809,7 +824,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
           } else{
 
             if (deviceType == ScreenType.phone) {
-              customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlerta);
+              prefs.setBool("esFlujoBiometricos", false);
+              customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlertaCodVerificacion);
             }
             else{
               customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
@@ -924,14 +940,88 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin> {
   }
 
   void funcionAlerta( bool abc){
-    setState(() {});
+
+  }
+  void funcionAlertaCodVerificacion (Responsive responsive) async{
+
+    setState(() {
+      _saving=true;
+    });
+    OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), prefs.getBool('flujoOlvideContrasena'));
+
+    setState(() {
+      _saving = false;
+    });
+
+    if(optRespuesta != null){
+      if(optRespuesta.error == "" && optRespuesta.idError == "") {
+        prefs.setString("idOperacion", optRespuesta.idOperacion);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    LoginCodigoVerificaion(
+                      responsive: responsive,
+                    )
+            )
+        );
+      } else{
+
+      }
+    } else{
+
+    }
+
   }
 
-  void funcionAlertaHullaLogin(bool activar){
+  void funcionAlertaHullaLogin(bool activarBiometricos, Responsive responsive) async{
+    print("funcionAlertaHullaLogin");
+
+    if(!activarBiometricos){
       setState(() {
-        _biometricos = activar;
+        _biometricos = activarBiometricos;
       });
       prefs.setBool("activarBiometricos", _biometricos);
+    } else{
+      if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin")){
+        setState(() {
+          _saving=true;
+        });
+        OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), prefs.getBool('flujoOlvideContrasena'));
+
+        setState(() {
+          _saving = false;
+        });
+
+        if(optRespuesta != null){
+          if(optRespuesta.error == "" && optRespuesta.idError == "") {
+            prefs.setString("idOperacion", optRespuesta.idOperacion);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        LoginCodigoVerificaion(
+                          responsive: responsive,
+                        )
+                )
+            );
+          } else{
+
+          }
+        } else{
+
+        }
+
+      }
+
+    }
+  }
+
+  void funcionCanselBiometrics(){
+    setState(() {
+      prefs.setBool("activarBiometricos", false);
+    });
+//    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
   }
 }
 

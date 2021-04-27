@@ -405,6 +405,8 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
 
     String _loginJSON = json.encode(_loginBody);
 
+    print("_loginJSON ${_loginJSON}");
+
     try {
       _response = await http.post(Uri.parse(_appEnvironmentConfig.orquestadorOTPSinSesion),
           body: _loginJSON,
@@ -460,6 +462,8 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
 Future<ValidarOTPModel> validaOrquestadorOTPServicio(BuildContext context, String  idOperacion, String OTP) async {
 
   print("validaOrquestadorOTPServicio");
+  print("idOperacion ${idOperacion}");
+  print("OTP ${OTP}");
   _appEnvironmentConfig = AppConfig.of(context);
 
   ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
@@ -472,6 +476,7 @@ Future<ValidarOTPModel> validaOrquestadorOTPServicio(BuildContext context, Strin
           headers: {"Content-Type": "application/json",'apiKey': _appEnvironmentConfig.apiKey}
       );
 
+      print("url ${_appEnvironmentConfig.validaOTP+idOperacion+"/"+OTP}");
       print("validaOrquestadorOTPServicio ${_response.body}");
       print("validaOrquestadorOTPServicio ${_response.statusCode}");
 
@@ -493,7 +498,13 @@ Future<ValidarOTPModel> validaOrquestadorOTPServicio(BuildContext context, Strin
             return null;
           } else {
             print("StatusCode");
-            return null;
+            Map<String, dynamic> map = json.decode(_response.body);
+            ValidarOTPModel _datosConsulta = ValidarOTPModel.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
           }
         } else{
           print("Body null");
@@ -579,7 +590,7 @@ Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(BuildC
   }
 }
 
-Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext context) async {
+Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext context, String lada, String numero) async {
 
   print("altaMediosContactoServicio");
   _appEnvironmentConfig = AppConfig.of(context);
@@ -600,10 +611,10 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext contex
         }
       ],
       "telefono": {
-        "lada": "55",
+        "lada": lada,
         "ladaInternacional": "52",
         "numExtension": "",
-        "numTelefono": "32249042"
+        "numTelefono": numero
       },
       "banPrincipal": "true",
       "usuarioAudit": "CRM_PRUEBA"
