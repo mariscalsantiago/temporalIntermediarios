@@ -1,7 +1,9 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
@@ -275,7 +277,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
               if(actualizarNumero.idMedioContacto != "" && actualizarNumero.secuencial != ""){
                 prefs.setString("medioContactoTelefono", controllerCodigo.text);
-                customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAlerta);
+                customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAceptar);
               } else{
 
               }
@@ -284,6 +286,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               setState(() {
                 _saving = false;
               });
+              customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
 
             }
           }
@@ -293,5 +296,38 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
   void funcionAlerta(){
 
+  }
+
+  void funcionAceptar(Responsive responsive) async{
+    setState(() {
+      _saving = true;
+    });
+    OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), prefs.getBool('flujoOlvideContrasena'));
+
+    setState(() {
+      _saving = false;
+    });
+
+    print("optRespuesta ${optRespuesta}");
+    if(optRespuesta != null){
+      if(optRespuesta.error == "" && optRespuesta.idError == "") {
+        prefs.setString("idOperacion", optRespuesta.idOperacion);
+        Navigator.pop(context,true);
+        Navigator.pop(context,true);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    LoginCodigoVerificaion(
+                      responsive: responsive,
+                    )
+            )
+        );
+      } else{
+
+      }
+    } else{
+
+    }
   }
 }

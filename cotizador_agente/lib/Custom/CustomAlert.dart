@@ -3477,29 +3477,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () async {
-                                    OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), prefs.getBool('flujoOlvideContrasena'));
-
-                                    print("optRespuesta ${optRespuesta}");
-                                    if(optRespuesta != null){
-                                      if(optRespuesta.error == "" && optRespuesta.idError == "") {
-                                        prefs.setString("idOperacion", optRespuesta.idOperacion);
-                                        Navigator.pop(context,true);
-                                        Navigator.pop(context,true);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (BuildContext context) =>
-                                                    LoginCodigoVerificaion(
-                                                      responsive: responsive,
-                                                    )
-                                            )
-                                        );
-                                      } else{
-
-                                      }
-                                    } else{
-
-                                    }
+                                    Navigator.pop(context);
+                                    callback(responsive);
 
                                   },
                                   child: Text(

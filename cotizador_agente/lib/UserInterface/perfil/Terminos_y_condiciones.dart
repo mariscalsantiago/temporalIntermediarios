@@ -7,8 +7,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
+import 'package:flutter/services.dart';
+import 'package:local_auth/auth_strings.dart';
+import 'package:local_auth/local_auth.dart';
 
 bool checkedValue = false;
+var localAuth = new LocalAuthentication();
 
 class TerminosYCondicionesPage extends StatefulWidget {
   Function callback;
@@ -187,13 +191,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                           ),
                           onPressed: () async {
                             if(checkedValue){
-                              Navigator.pop(context,true);
-                              is_available_finger != false ?
-                                customAlert(AlertDialogType.activacionExitosa_Huella, context, "", "", responsive, widget.callback) :
-                                customAlert(AlertDialogType.activacionExitosa_Reconocimiento_facial, context, "", "", responsive, widget.callback);
-                                setState(() {
-                                  checkedValue = false;
-                                });
+                              _authenticateHuella(responsive);
                             }
                           }
                       )
@@ -206,6 +204,37 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _authenticateHuella(Responsive responsive) async {
+    bool authenticated = false;
+    try {
+      authenticated = await localAuth.authenticateWithBiometrics(
+        androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar", cancelButton: "CANCELAR",fingerprintRequiredTitle:"Solicitud de huella digital",goToSettingsDescription:"Tu huella digital no está configurada en el dispositivo, ve a configuraciones para añadirla.",goToSettingsButton:"Ir a configuraciones"),
+        iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR"),
+        localizedReason: ' ',
+        useErrorDialogs: true,
+        stickyAuth: true,
+      );
+
+      if(authenticated){
+        Navigator.pop(context,true);
+        is_available_finger != false ?
+        customAlert(AlertDialogType.activacionExitosa_Huella, context, "", "", responsive, widget.callback) :
+        customAlert(AlertDialogType.activacionExitosa_Reconocimiento_facial, context, "", "", responsive, widget.callback);
+        setState(() {
+          checkedValue = false;
+        });
+      }else {
+      }
+    } on PlatformException catch (e) {
+      print("eeeeeee ${e}");
+      setState(() {});
+      Navigator.pop(context,true);
+      is_available_face!= false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
+      customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
+    }
+
   }
 
   void funcionAlerta(){

@@ -43,24 +43,6 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-
-    if(is_available_finger != false  ){
-      face = false;
-      if(is_available_face != false){
-        showBio = true;
-      }
-      else{
-        showBio = false;
-      }
-    }else if(is_available_face != false){
-      face = true;
-      if(is_available_finger != false){
-        showBio = true;
-      }
-      else{
-        showBio = false;
-      }
-    }
     validateIntenetstatus(context, widget.responsive);
   }
 

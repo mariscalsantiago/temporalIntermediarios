@@ -216,7 +216,8 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             Container(
                 margin: EdgeInsets.only(left: responsive.wp(6), right: responsive.wp(3)),
                 //Todo cambiar icono y tamaño
-                child:  ! timerEnd ?Image.asset("assets/login/alertVerificaNumero.png"):Image.asset("assets/login/errorCodigo.png")
+                child:  ! timerEnd ?Image.asset("assets/login/alertVerificaNumero.png", height: 20,width: 20)
+                    : Image.asset("assets/login/errorCodigo.png", height: 20,width: 20)
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -309,6 +310,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               }
 
             } else{
+              customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
 
             }
 
@@ -332,6 +334,10 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
         }
 
     );
+  }
+
+  void funcion(){
+
   }
 
   Widget validarCodigo(Responsive responsive){
@@ -386,7 +392,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               }
 
             } else{
-
+              customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
             }
           }
           //Navigator.pop(context,true);
