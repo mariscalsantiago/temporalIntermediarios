@@ -689,10 +689,7 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, St
   if(_connectivityStatus.available) {
     http.Response _response;
 
-    Map _loginBody;
-
-    _loginBody = {
-      "celular": celular
+    Map _loginBody = {
     };
 
     String _loginJSON = json.encode(_loginBody);
@@ -702,7 +699,7 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, St
     try {
       _response = await http.post(Uri.parse(_appEnvironmentConfig.orquestadorOtpJwt),
           body: _loginJSON,
-          headers: {"Authorization": "application/json"}
+          headers: {"Authorization": "Bearer ${loginData.jwt}", "Content-Type": "application/json"}
       );
 
       print("orquestadorOTPJwtServicio ${_response.body}");

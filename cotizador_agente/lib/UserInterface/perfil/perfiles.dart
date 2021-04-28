@@ -20,6 +20,7 @@ import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/perfil/ListaCUA.dart';
 import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
@@ -266,7 +267,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         child: Row(
                           children: [
                             Container(
-                              margin: EdgeInsets.only(bottom: widget.responsive.hp(1.3)),
+                              margin: EdgeInsets.only(bottom: widget.responsive.hp(2.2)),
                               child: Text(
                                 "DA",
                                 style: TextStyle(
@@ -295,7 +296,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         child: Row(
                           children: [
                             Container(
-                              margin: EdgeInsets.only(bottom: widget.responsive.hp(1.3)),
+                              margin: EdgeInsets.only(bottom: widget.responsive.hp(2.2)),
                               child: Text(
                                 "CUA",
                                 style: TextStyle(
@@ -468,23 +469,23 @@ class _PerfilPageState extends State<PerfilPage> {
                   setState(() {
                     _saving=true;
                   });
-                  OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
+
+                  OrquetadorOtpJwtModel optRespuesta = await  orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"));
 
                   setState(() {
                     _saving = false;
                   });
-                  if(optRespuesta != null){
+                  /*if(optRespuesta != null){
                     if(optRespuesta.error == "" && optRespuesta.idError == "") {
                       prefs.setString("idOperacion", optRespuesta.idOperacion);
-                      Navigator.push(context, MaterialPageRoute(
-                              builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,))
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,))
                       );
                     } else{
                       customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
                     }
                   } else{
                     customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
-                  }
+                  }*/
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginActualizarContrasena(responsive: widget.responsive)));
                 },
                 child: Container(
@@ -501,12 +502,12 @@ class _PerfilPageState extends State<PerfilPage> {
                         "Actualizar contraseña",
                         style: TextStyle(
                             color: Theme.Colors.Encabezados,
-                            fontSize: widget.responsive.ip(1.8)),
+                            fontSize: widget.responsive.ip(2.2)),
                       ),
                       Icon(
                         Icons.arrow_forward_ios,
                         color: Theme.Colors.GNP,
-                        size: widget.responsive.ip(1.6),
+                        size: widget.responsive.ip(2),
                       )
                     ],
                   ),
@@ -535,11 +536,11 @@ class _PerfilPageState extends State<PerfilPage> {
                         "Actualizar número de celular",
                         style: TextStyle(
                             color: Theme.Colors.Encabezados,
-                            fontSize: widget.responsive.ip(1.8)),
+                            fontSize: widget.responsive.ip(2.2)),
                       ),
                       Icon(Icons.arrow_forward_ios,
                           color: Theme.Colors.GNP,
-                          size: widget.responsive.ip(1.6)),
+                          size: widget.responsive.ip(2)),
                     ],
                   ),
                 ),
@@ -566,12 +567,12 @@ class _PerfilPageState extends State<PerfilPage> {
                         "Ver tutorial",
                         style: TextStyle(
                             color: Theme.Colors.Encabezados,
-                            fontSize: widget.responsive.ip(1.8)),
+                            fontSize: widget.responsive.ip(2.2)),
                       ),
                       Icon(
                         Icons.arrow_forward_ios,
                         color: Theme.Colors.GNP,
-                        size: widget.responsive.ip(1.6),
+                        size: widget.responsive.ip(2),
                       )
                     ],
                   ),
@@ -632,7 +633,7 @@ class _PerfilPageState extends State<PerfilPage> {
                   ),
                   Expanded(
                     child: Container(
-                        margin: EdgeInsets.only(left: 20),
+                        margin: EdgeInsets.only(left: responsive.wp(1)),
                         child: Text(
                           "Inicio de sesión con datos biométricos",
                           style: TextStyle(

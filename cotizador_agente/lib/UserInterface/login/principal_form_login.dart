@@ -706,7 +706,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 teledonosLista = obtenerMedioContacto(mediosContacto);
                 if(teledonosLista.length > 0){
                   prefs.setString("medioContactoTelefono", teledonosLista[0].lada+teledonosLista[0].valor);
-                  print("telefono ${teledonosLista[0].lada+teledonosLista[0].valor}");
                 } else {
                   prefs.setString("medioContactoTelefono", "");
                 }
@@ -781,18 +780,18 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
     List<telefonosModel> teledonosLista = [];
     telefonosModel telefono;
 
-    for(int i = 0 ; i < mediosContacto.mediosContacto.telefonos.length; i++){
+    if(mediosContacto != null && mediosContacto.mediosContacto != null && mediosContacto.mediosContacto.telefonos != null) {
+      for (int i = 0; i < mediosContacto.mediosContacto.telefonos.length; i++) {
+        telefono = mediosContacto.mediosContacto.telefonos[i];
 
-      telefono = mediosContacto.mediosContacto.telefonos[i];
-
-      if(telefono.tipoContacto.id=="TLCL"){
-        //TODO validar nulos maria@bonos.com mexico.18
-        for(int i =0 ; i < telefono.propositosContacto.length; i++){
-            if(telefono.propositosContacto[i].id == "CAA"){
+        if (telefono.propositosContacto != null && telefono.tipoContacto.id == "TLCL") {
+          //TODO validar nulos maria@bonos.com mexico.18
+          for (int i = 0; i < telefono.propositosContacto.length; i++) {
+            if (telefono.propositosContacto[i].id == "CAA") {
               teledonosLista.add(telefono);
             }
+          }
         }
-
       }
     }
 

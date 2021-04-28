@@ -4874,7 +4874,8 @@ void FuncionAlerta(bool abc){
 
 String numero(){
   if(prefs.getString("medioContactoTelefono") != null  && prefs.getString("medioContactoTelefono") != ""){
-    return "******"+ prefs.getString("medioContactoTelefono").substring(6, 10);
+    int numero = prefs.getString("medioContactoTelefono").length;
+    return "******"+ prefs.getString("medioContactoTelefono").substring(numero-4, numero);
   }else{
     return "**********";
   }
