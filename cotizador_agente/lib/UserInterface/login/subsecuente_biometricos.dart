@@ -33,6 +33,7 @@ class BiometricosPage extends StatefulWidget {
 }
 
 class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserver  {
+  bool finger = false;
   bool face = false;
   bool showBio = true;
   var localAuth = new LocalAuthentication();
@@ -44,6 +45,9 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     validateIntenetstatus(context, widget.responsive);
+    validateBiometricstatus(funcionCanselBiometrics);
+    face = is_available_face;
+    finger = is_available_finger;
   }
 
   @override
@@ -57,13 +61,22 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
   @override
   Widget build(BuildContext context) {
+    if(!face && !finger){
+      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+    }else{
+      if(face){
+        showBio = finger;
+      }else{
+        showBio=face;
+      }
+    }
     return WillPopScope(
       onWillPop: () async => false,
       child:Scaffold(
         body: SingleChildScrollView(
-          child:  Stack(
-              children: builData(widget.responsive)
-          )
+            child:  Stack(
+                children: builData(widget.responsive)
+            )
         ),
       ),
     );
@@ -238,10 +251,10 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
       authenticated = await localAuth.authenticateWithBiometrics(
         androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar", cancelButton: "CANCELAR",fingerprintRequiredTitle:"Solicitud de huella digital",goToSettingsDescription:"Tu huella digital no está configurada en el dispositivo, ve a configuraciones para añadirla.",goToSettingsButton:"Ir a configuraciones"),
-          iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR"),
-          localizedReason: ' ',
-          useErrorDialogs: true,
-          stickyAuth: true,
+        iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR"),
+        localizedReason: ' ',
+        useErrorDialogs: true,
+        stickyAuth: true,
 
       );
       setState(() {
@@ -265,7 +278,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
             //prefs.setBool("activarBiometricos", false);
           });
           customAlert(face?AlertDialogType.Rostro_no_reconocido:
-              AlertDialogType.Huella_no_reconocida,
+          AlertDialogType.Huella_no_reconocida,
               context,
               "",
               "",
@@ -282,7 +295,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
       });
 
       face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
-                       customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
+      customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
 
 
     }

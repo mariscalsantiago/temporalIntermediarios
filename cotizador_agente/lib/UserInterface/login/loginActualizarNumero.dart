@@ -24,14 +24,14 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
   bool _saving;
   final _formKey = GlobalKey<FormState>();
-  TextEditingController controllerCodigo;
+  TextEditingController controllerNumero;
   FocusNode focusCodigo;
 
   @override
   void initState() {
     _saving = false;
     focusCodigo = new FocusNode();
-    controllerCodigo = new TextEditingController();
+    controllerNumero = new TextEditingController();
     super.initState();
   }
 
@@ -119,8 +119,11 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
   }
 
   Widget inputTextCodigo(Responsive responsive){
+    RegExp reConsecutive = RegExp('(.)\\1{2}'); // 111 aaa
+    RegExp reConsecutive2 = RegExp('(123|234|345|456|567|678|789|987|876|654|543|432|321|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mnñ|nño|ñop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)');// 123 abcd;// 123 abcd
+
     return TextFormField(
-      controller: controllerCodigo,
+      controller: controllerNumero,
       focusNode: focusCodigo,
       obscureText: false,
       keyboardType: TextInputType.number,
@@ -161,6 +164,10 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         } else if (value.length<10) {
           print("Tu número de celular debe tener 10 dígitos");
           return "Tu número de celular debe tener 10 dígitos";
+        }else if(reConsecutive2.hasMatch(value) ){
+          return 'No debe contener más de dos caracteres consecutivos (123).';
+        } else if(reConsecutive.hasMatch(value)){
+          return 'No debe contener más de dos caracteres consecutivos iguales';
         }else if (regExp.hasMatch(value)) {
           print("value ${value}");
           return null;
@@ -172,21 +179,25 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       onChanged: (value){
         setState(() {
           focusCodigo.hasFocus;
-          controllerCodigo.text;
+          controllerNumero.text;
         });
       },
     );
   }
 
   Widget inputTextCodigoTablet(Responsive responsive){
+    RegExp reConsecutive = RegExp('(.)\\1{2}'); // 111 aaa
+    RegExp reConsecutive2 = RegExp('(123|234|345|456|567|678|789|987|876|654|543|432|321|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mnñ|nño|ñop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz)');// 123 abcd;// 123 abcd
+
     return Container(
       height: responsive.hp(60),
       width: responsive.wp(60),
       child: Center(
         child: TextFormField(
-          controller: controllerCodigo,
+          controller: controllerNumero,
           focusNode: focusCodigo,
           obscureText: false,
+          inputFormatters: [LengthLimitingTextInputFormatter(10)],
           keyboardType: TextInputType.number,
           cursorColor: Tema.Colors.GNP,
           decoration: new InputDecoration(
@@ -221,17 +232,20 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
             RegExp regExp = new RegExp(p);
             if (value.isEmpty) {
               return 'Este campo es requerido';
-            } else if (regExp.hasMatch(value)) {
+            } else if(reConsecutive2.hasMatch(value) ){
+              return 'No debe contener más de dos caracteres consecutivos (123).';
+            } else if(reConsecutive.hasMatch(value)){
+              return 'No debe contener más de dos caracteres consecutivos iguales (222)';
+            }else if (regExp.hasMatch(value)) {
               return null;
             } else {
               return 'Introduzca un correo válido';
             }
-            return null;
           },
           onChanged: (value){
             setState(() {
               focusCodigo.hasFocus;
-              controllerCodigo.text;
+              controllerNumero.text;
             });
           },
         ),
@@ -243,13 +257,13 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
     return CupertinoButton(
         padding: EdgeInsets.zero,
         child: Container(
-          color: controllerCodigo.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
+          color: controllerNumero.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
           margin: EdgeInsets.only(bottom: responsive.hp(3)),
           width: responsive.width,
           child: Container(
             margin: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
             child: Text( "ACTUALIZAR", style: TextStyle(
-                color: controllerCodigo.text != "" ? Tema.Colors.backgroud : Tema.Colors.botonletra,
+                color: controllerNumero.text != "" ? Tema.Colors.backgroud : Tema.Colors.botonletra,
                 fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
@@ -262,8 +276,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               _saving = true;
             });
 
-            String lada = controllerCodigo.text.substring(0,2);
-            String numero = controllerCodigo.text.substring(2,10);
+            String lada = controllerNumero.text.substring(0,2);
+            String numero = controllerNumero.text.substring(2,10);
 
             print("lada   ${lada}");
             print("numero ${numero}");
@@ -276,8 +290,11 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               });
 
               if(actualizarNumero.idMedioContacto != "" && actualizarNumero.secuencial != ""){
-                prefs.setString("medioContactoTelefono", controllerCodigo.text);
-                customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAceptar);
+                prefs.setString("medioContactoTelefono", controllerNumero.text);
+
+                  customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAceptar);
+
+
               } else{
 
               }
@@ -312,16 +329,31 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
     if(optRespuesta != null){
       if(optRespuesta.error == "" && optRespuesta.idError == "") {
         prefs.setString("idOperacion", optRespuesta.idOperacion);
-        Navigator.pop(context);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    LoginCodigoVerificaion(
-                      responsive: responsive,
-                    )
-            )
-        );
+        if(prefs.getBool("actulizarNumeroDesdeCodigo") != null && prefs.getBool("actulizarNumeroDesdeCodigo")){
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      LoginCodigoVerificaion(
+                        responsive: responsive,
+                      )
+              )
+          );
+        } else{
+          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      LoginCodigoVerificaion(
+                        responsive: responsive,
+                      )
+              )
+          );
+        }
+
       } else{
 
       }

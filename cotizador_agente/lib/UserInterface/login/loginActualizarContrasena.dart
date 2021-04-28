@@ -135,7 +135,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   Widget inputTextActualContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerActualContrasena,
@@ -207,7 +207,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           }else{
             hasEspacePass=false;
           }
-          /*
+
           // aaaa 1111
 
           if(reConsecutive.hasMatch(value) ){
@@ -220,7 +220,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           } else {
             hasConsecutivosPass =true;
           }
-*/
+
         });
       },
     );
@@ -229,7 +229,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   Widget inputTextNuevaContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerNuevaContrasena,
@@ -339,7 +339,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     return TextFormField(
 
       inputFormatters: [
-        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerConfirmarContrasena,
@@ -609,6 +609,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
 
                   customAlert(AlertDialogType.Sesionafinalizada_por_contrasena_debeserdiferente,context,"","", responsive, funcionAlerta);
                 } else if(cambiocontrasena.error == ""){
+                  prefs.setString("contraenaActualizada", controllerNuevaContrasena.text);
                   customAlert(AlertDialogType.contrasena_actualiza_correctamente,context,"","", responsive, funcionAlerta);
                 }
             } else {

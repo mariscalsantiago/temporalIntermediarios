@@ -2,7 +2,9 @@ import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/login/SeleccionarPreguntas.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:flutter/cupertino.dart';
@@ -51,6 +53,17 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
     focusRespuestaDos = new FocusNode();
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    focusPreguntaUno.dispose();
+    focusRespuestaUno.dispose();
+    focusPreguntaDos.dispose();
+    focusRespuestaDos.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -134,36 +147,43 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
       },
       padding: EdgeInsets.zero,
       child: Container(
-
         child: TextFormField(
           enableInteractiveSelection: false,
           controller: controllerPreguntaUno,
           focusNode: focusPreguntaUno,
           obscureText: false,
           cursorColor: Tema.Colors.GNP,
-
           decoration: new InputDecoration(
               focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Tema.Colors.inputlinea),
+                borderSide: BorderSide(color: Tema.Colors.Rectangle_PA),
               ),
               enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Tema.Colors.inputlinea),
+                borderSide: controllerPreguntaUno.text != "" ? BorderSide(color: Tema.Colors.Rectangle_PA) :
+                BorderSide(color: Tema.Colors.inputlinea),
               ),
               labelText: "Pregunta de seguridad",
-              labelStyle: TextStyle(
+              labelStyle: focusPreguntaUno.hasFocus || controllerPreguntaUno.text != "" ?
+              TextStyle(
                   fontFamily: "Roboto",
                   fontWeight: FontWeight.normal,
                   fontSize: responsive.ip(2),
-                  color: Tema.Colors.Azul_2,
+                  color:  Tema.Colors.Rectangle_PA,
+                  letterSpacing: 0.16
+              ):
+              TextStyle(
+                  fontFamily: "Roboto",
+                  fontWeight: FontWeight.normal,
+                  fontSize: responsive.ip(2),
+                  color:  Tema.Colors.Azul_2,
                   letterSpacing: 0.16
               ),
               suffixIcon: IconButton(
-                icon: Image.asset("assets/login/preguntasIconoFlecha.png"),
-                color: Tema.Colors.VLMX_Navy_40,
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SeleccionarPreguntas(responsive: widget.responsive, typeResponse: tipoDePregunta.respuestaUno,)),);
-                },
-              )
+                  icon: focusPreguntaUno.hasFocus || controllerPreguntaUno.text != "" ? Image.asset("assets/login/preguntasIconoFlecha.png", color: Tema.Colors.Rectangle_PA,):  Image.asset("assets/login/preguntasIconoFlecha.png"),
+                  color:  Tema.Colors.VLMX_Navy_40,
+                  onPressed: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SeleccionarPreguntas(responsive: widget.responsive, typeResponse: tipoDePregunta.respuestaUno,)),);
+                  },
+              ),
           ),
           validator: (value) {
             print("PreguntaSeguridadUno ${value}");
@@ -206,7 +226,8 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
               letterSpacing: 0.16
           ),
           suffixIcon: IconButton(
-            icon: respuestaUno == false || controllerRespuestaUno.text == "" ? Image.asset("assets/login/novercontrasena.png") : Image.asset("assets/login/vercontrasena.png"),
+            icon: respuestaUno == false || controllerRespuestaUno.text == "" ?
+            Image.asset("assets/login/vercontrasena.png") : Image.asset("assets/login/novercontrasena.png"),
             color: Tema.Colors.VLMX_Navy_40,
             onPressed: (){
               setState(() {
@@ -239,21 +260,31 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
       cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Tema.Colors.inputlinea),
+            borderSide: BorderSide(color: Tema.Colors.Rectangle_PA),
           ),
           enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Tema.Colors.inputlinea),
+            borderSide: controllerPreguntaDos.text != "" ? BorderSide(color: Tema.Colors.Rectangle_PA) :
+            BorderSide(color: Tema.Colors.inputlinea),
           ),
           labelText: "Pregunta de seguridad",
-          labelStyle: TextStyle(
+          labelStyle: focusPreguntaDos.hasFocus || controllerPreguntaDos.text != "" ?
+          TextStyle(
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: Tema.Colors.Azul_2,
+              color:  Tema.Colors.Rectangle_PA,
+              letterSpacing: 0.16
+          ):
+          TextStyle(
+              fontFamily: "Roboto",
+              fontWeight: FontWeight.normal,
+              fontSize: responsive.ip(2),
+              color:  Tema.Colors.Azul_2,
               letterSpacing: 0.16
           ),
           suffixIcon: IconButton(
-            icon: Image.asset("assets/login/preguntasIconoFlecha.png"),
+            icon: focusPreguntaDos.hasFocus || controllerPreguntaDos.text != "" ?
+            Image.asset("assets/login/preguntasIconoFlecha.png", color: Tema.Colors.Rectangle_PA,):  Image.asset("assets/login/preguntasIconoFlecha.png"),
             color: Tema.Colors.VLMX_Navy_40,
             onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => SeleccionarPreguntas(responsive: widget.responsive, typeResponse: tipoDePregunta.respuestaDos,)),);
@@ -272,6 +303,11 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
         setState(() {
           focusPreguntaDos.hasFocus;
           controllerPreguntaDos.text;
+        });
+      },
+      onTap: (){
+        setState(() {
+          focusPreguntaDos.hasFocus;
         });
       },
     );
@@ -299,7 +335,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
               letterSpacing: 0.16
           ),
           suffixIcon: IconButton(
-            icon: respuestaDos == false || controllerRespuestaDos.text == "" ? Image.asset("assets/login/novercontrasena.png") : Image.asset("assets/login/vercontrasena.png"),
+            icon: respuestaDos == false || controllerRespuestaDos.text == "" ? Image.asset("assets/login/vercontrasena.png") : Image.asset("assets/login/novercontrasena.png") ,
             color: Tema.Colors.VLMX_Navy_40,
             onPressed: (){
               setState(() {
@@ -347,7 +383,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
             setState(() {
               _saving = true;
             });
-            consultaPreguntasSecretasModel  actualizarPreguntas = await actualizarPreguntaSecretaServicio(context, datosUsuario.idparticipante, prefs.getString("contrasenaUsuario"), controllerPreguntaUno.text,controllerRespuestaUno.text ,controllerPreguntaDos.text, controllerRespuestaDos.text);
+            consultaPreguntasSecretasModel  actualizarPreguntas = await actualizarPreguntaSecretaServicio(context, datosUsuario.idparticipante, prefs.getString("contraenaActualizada"), controllerPreguntaUno.text,controllerRespuestaUno.text ,controllerPreguntaDos.text, controllerRespuestaDos.text);
 
             if(actualizarPreguntas != null){
 
@@ -356,9 +392,9 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
               });
               if(actualizarPreguntas.requestStatus == "SUCCEEDED" ){
 
-                customAlert(AlertDialogType.preguntasSecretasActualizadas, context, "",  "", responsive, funcionAlerta);
+                customAlert(AlertDialogType.preguntasSecretasActualizadas, context, "",  "", responsive, funcionAlertaCodVerificacion);
               } else {
-                //customAlert(AlertDialogType.contrasena_actualiza_correctamente,context,"","", responsive, funcionAlerta);
+                customAlert(AlertDialogType.errorServicio, context, "",  "", responsive, funcionAlerta);
               }
             } else {
 
@@ -373,6 +409,39 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
   }
 
   void funcionAlerta(){
+
+  }
+
+  void funcionAlertaCodVerificacion (Responsive responsive) async{
+
+    setState(() {
+      _saving=true;
+    });
+    OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
+
+    setState(() {
+      _saving = false;
+    });
+
+    if(optRespuesta != null){
+      if(optRespuesta.error == "" && optRespuesta.idError == "") {
+        prefs.setString("idOperacion", optRespuesta.idOperacion);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    LoginCodigoVerificaion(
+                      responsive: responsive,
+                    )
+            )
+        );
+      } else{
+
+        customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
+      }
+    } else{
+      customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
+    }
 
   }
 

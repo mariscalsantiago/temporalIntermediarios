@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
 File image;
+var _image;
 String urlImagen;
 
 class VerFotoPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class VerFotoPage extends StatefulWidget {
 
 
 class _VerFotoPageState extends State<VerFotoPage> {
+  File fotoPerfil;
   double width = 300.0;
   double height = 150.0;
   bool _saving;
@@ -33,7 +35,8 @@ class _VerFotoPageState extends State<VerFotoPage> {
   @override
   void initState() {
     _saving = false;
-    obtenerImagen();
+    //updateFoto();
+    //obtenerImagen();
     super.initState();
   }
 
@@ -161,9 +164,6 @@ class _VerFotoPageState extends State<VerFotoPage> {
     return l;
   }
 
-
-
-
   void _showPicker(context) {
     Responsive responsive = Responsive.of(context);
     showModalBottomSheet(
@@ -203,6 +203,49 @@ class _VerFotoPageState extends State<VerFotoPage> {
         });
   }
 
+  _imgFromCamera() async {
+    File image = await ImagePicker.pickImage(
+        source: ImageSource.camera, imageQuality: 50);
+    fetchFoto(context, image);
+    setState(() {
+      _image = image;
+      updateFoto();
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => SimpleCropRoute(
+            image: _image,
+            callback: updateFoto,
+          )),
+    );
+  }
+
+  _imgFromGallery() async {
+    File image = await ImagePicker.pickImage(
+        source: ImageSource.gallery, imageQuality: 50);
+    fetchFoto(context, image);
+    setState(() {
+      _image = image;
+      updateFoto();
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => SimpleCropRoute(
+            image: _image,
+            callback: updateFoto,
+          )),
+    );
+  }
+  void updateFoto(){
+    setState(() {
+      fotoPerfil;
+      datosFisicos.personales.foto;
+      widget.callback();
+    });
+  }
+/*
   _imgFromCamera() async {
     print(urlImagen);
     File image = await ImagePicker.pickImage(
@@ -247,4 +290,6 @@ class _VerFotoPageState extends State<VerFotoPage> {
       widget.callback();
     });
   }
+
+  */
 }

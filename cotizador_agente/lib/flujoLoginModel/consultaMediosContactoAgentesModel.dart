@@ -1,12 +1,16 @@
 class consultaMediosContactoAgentesModel{
   String codigoFiliacion;
   mediosContactoModel mediosContacto;
+  String descripcion;
+  String codigoError;
 
-  consultaMediosContactoAgentesModel({this.codigoFiliacion, this.mediosContacto});
+  consultaMediosContactoAgentesModel({this.codigoFiliacion, this.mediosContacto, this.descripcion, this.codigoError});
 
   factory consultaMediosContactoAgentesModel.fromJson(Map<dynamic, dynamic> data){
     return consultaMediosContactoAgentesModel(
-        codigoFiliacion:data['codigoFiliacion'],
+        codigoError: data.containsKey("codigoError") ? data['codigoError'] : "",
+        descripcion: data.containsKey("descripcion") ? data["descripcion"] : "",
+        codigoFiliacion: data.containsKey("codigoFiliacion") ? data['codigoFiliacion']: "",
         mediosContacto :data.containsKey('mediosContacto') && data["mediosContacto"] != null ? mediosContactoModel.fromJson(data["mediosContacto"]): mediosContactoModel(),
 
     );
@@ -14,6 +18,8 @@ class consultaMediosContactoAgentesModel{
 
   toJson() {
     return{
+      'codigoError': codigoError,
+      'descripcion': descripcion,
       'codigoFiliacion': codigoFiliacion,
       'mediosContacto':mediosContacto,
     };

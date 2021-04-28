@@ -84,7 +84,7 @@ import '../main.dart';
     print("Datos fisicos --- ${datosFisicos}");
 
     if (datosFisicos == null) {
-      bool responseImporta = await getImporta(datosUsuario.idparticipante);
+      bool responseImporta = await getImporta(context,datosUsuario.idparticipante);
       if (responseImporta) {
         datosFisicos = await getPersonaFisica(context, datosUsuario.idparticipante, true);
         if (datosFisicos == null) {
@@ -659,12 +659,12 @@ import '../main.dart';
 
 }
 
-  Future<bool> getImporta(String idParticipante) async {
+  Future<bool> getImporta(BuildContext context,String idParticipante) async {
   String _service = "Importar Persona Fisica";
   String _serviceID = "S4";
+  var config = AppConfig.of(context);
   print("Getting $_service");
-  ConnectivityStatus _connectivityStatus =
-  await ConnectivityServices().getConnectivityStatus(false);
+  ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
   if (_connectivityStatus.available) {
     http.Response _response;
     try {

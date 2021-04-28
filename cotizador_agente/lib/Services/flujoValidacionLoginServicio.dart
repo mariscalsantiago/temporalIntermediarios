@@ -624,6 +624,8 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext contex
 
     String _loginJSON = json.encode(_loginBody);
 
+    print("_loginJSON  ${_loginJSON}");
+
     try {
       _response = await http.post(Uri.parse(_appEnvironmentConfig.altaMediosContactoAgentes),
           body: _loginJSON,

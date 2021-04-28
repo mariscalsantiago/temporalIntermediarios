@@ -253,7 +253,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
   Widget inputTextConfirmarContrasena(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-        //FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
+        FilteringTextInputFormatter.deny(RegExp(r'[/\\ ]')),
         LengthLimitingTextInputFormatter(24),
       ],
       controller: controllerConfirmarContrasena,

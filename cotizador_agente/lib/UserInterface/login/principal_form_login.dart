@@ -213,6 +213,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
       inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
       ],
+      autofocus: true,
       controller: controllerCorreo,
       focusNode: focusCorreo,
       onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusContrasena);},
@@ -334,7 +335,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   }
 
   Future<dynamic> dialogo(BuildContext context, Responsive responsive){
-    tamano = responsive.hp(57);
+    Responsive _generalResponsive = Responsive.of(context);
+    tamano = _generalResponsive.hp(57);
     print( " tamano ------ ${tamano}");
 
     return  showDialog(
@@ -345,7 +347,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
           onWillPop: (){
             setState(() {
               //Navigator.pop(context);
-              tamano = responsive.hp(57);
+              tamano = _generalResponsive.hp(57);
               focusCorreoCambio.unfocus();
               FocusScope.of(context).requestFocus(new FocusNode());
             });
@@ -358,32 +360,18 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
               child: Opacity(
                 opacity: 0.6,
                 child: Container(
-                  height: responsive.height,
-                  width: responsive.width,
+                  height: _generalResponsive.height,
+                  width: _generalResponsive.width,
                   color: Tema.Colors.Azul_gnp,
                 ),
               ),
             ),
             Container(
-                    margin: EdgeInsets.only(
-                        top: responsive.height * 0.04,
-                        bottom: responsive.height * 0.01,
-                        right: responsive.wp(1),
-                        left: responsive.wp(5)),
-                    child: Text(
-                      "Por tu seguridad es necesario que ingreses nuevamente tu correo electrónico.",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                          color: Tema.Colors.Funcional_Textos_Body,
-                          fontSize: responsive.ip(2.0)),
-                    ),
-                  ),
-                  Container(
               margin: EdgeInsets.only(top: focusCorreoCambio.hasFocus ?
               MediaQuery.of(context).size.height / 2 - 250 // adjust values according to your need
                   : MediaQuery.of(context).size.height / 2 + 15 ),
-              height: responsive.hp(44),
-              width: responsive.width,
+              height: _generalResponsive.hp(44),
+              width: _generalResponsive.width,
               child: Card(
                 color: Tema.Colors.White,
                 child: Column(
@@ -392,7 +380,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                   children: [
                     Container(
                       margin:
-                      EdgeInsets.only(top: responsive.height * 0.03),
+                      EdgeInsets.only(top: _generalResponsive.height * 0.03),
 
                       child: Center(
                         child: Text(
@@ -400,27 +388,27 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               color: Tema.Colors.Encabezados,
-                              fontSize: responsive.ip(2.3)),
+                              fontSize: _generalResponsive.ip(2.3)),
                         ),
                       ),
                     ),
                     Container(
                       margin: EdgeInsets.only(
-                          top: responsive.height * 0.04,
-                          bottom: responsive.height * 0.01,
-                          right: responsive.wp(1),
-                          left: responsive.wp(5)),
+                          top: _generalResponsive.height * 0.04,
+                          bottom: _generalResponsive.height * 0.01,
+                          right: _generalResponsive.wp(1),
+                          left: _generalResponsive.wp(5)),
                       child: Text(
                         "Por tu seguridad es necesario que ingreses nuevamente tu correo electrónico.",
                         textAlign: TextAlign.left,
                         style: TextStyle(
                             color: Tema.Colors.Funcional_Textos_Body,
-                            fontSize: responsive.ip(2.0)),
+                            fontSize: _generalResponsive.ip(2.0)),
                       ),
                     ),
 
                   Container(
-                      margin: EdgeInsets.only(left: responsive.wp(4), right: responsive.wp(4)),
+                      margin: EdgeInsets.only(left: _generalResponsive.wp(4), right: _generalResponsive.wp(4)),
                       child: //inputTextCorreoCambio(responsive)
                       Form(
                         key: _formKeyOlvideContrasena,
@@ -433,20 +421,20 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
 
                             onSaved: (vc){
                               setState(() {
-                                tamano = responsive.hp(57);
+                                tamano = _generalResponsive.hp(57);
                                 focusCorreoCambio.unfocus();
                               });
                             },
 
                             onEditingComplete: (){
                               setState(() {
-                                tamano = responsive.hp(57);
+                                tamano = _generalResponsive.hp(57);
                                 focusCorreoCambio.unfocus();
                               });
                             },
                             onFieldSubmitted: (S) {
                               setState(() {
-                                tamano = responsive.hp(57);
+                                tamano = _generalResponsive.hp(57);
                                 focusCorreoCambio.unfocus();
                               });
                             },
@@ -466,7 +454,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                                 labelStyle: TextStyle(
                                     fontFamily: "Roboto",
                                     fontWeight: FontWeight.normal,
-                                    fontSize: responsive.ip(1.7),
+                                    fontSize: _generalResponsive.ip(1.7),
                                     color: Tema.Colors.inputcorreo
                                 )
                             ),
@@ -489,7 +477,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                               print("Focusssssssssssss");
                               print("Focusssssssssssss");
                               setState(() {
-                                tamano = responsive.hp(30);
+                                tamano = _generalResponsive.hp(30);
                               });
                               setState(() {
                                 tamano;
@@ -500,9 +488,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                       )
                   ),
                   Container(
-                    height: responsive.hp(6.25),
-                    width: responsive.wp(90),
-                    margin: EdgeInsets.only( top: responsive.height * 0.03,  left: responsive.wp(4.4),  right: responsive.wp(4.4), bottom: responsive.hp(4)),
+                    height: _generalResponsive.hp(6.25),
+                    width: _generalResponsive.wp(90),
+                    margin: EdgeInsets.only( top: _generalResponsive.height * 0.03,  left: _generalResponsive.wp(4.4),  right: _generalResponsive.wp(4.4), bottom: _generalResponsive.hp(4)),
                     child: RaisedButton(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6.0),
@@ -515,7 +503,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                             _saving = true;
                           });
 
-                            validarCodigoVerificacion(responsive);
+                            validarCodigoVerificacion(_generalResponsive);
 
                           }
 
@@ -525,7 +513,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
-                            fontSize: responsive.ip(2.0),
+                            fontSize: _generalResponsive.ip(2.0),
                           ),
                         ),
                       ),
@@ -575,14 +563,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
             prefs.setString("idOperacion", optRespuesta.idOperacion);
             Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
           } else{
-
           }
-
         } else{
-
         }
-
-
       } else {
         setState(() {
           _saving = false;
@@ -766,7 +749,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
 
               ultimaSesion = fechaPrototipo(DateTime.now().toString());
               //ultimoAcceso();
-              redirect(responsive);
+              Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+              //redirect(responsive);
             } else {
               print("else datosUsuario ${datosUsuario}");
               if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
@@ -1030,10 +1014,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
             )
         );
       } else{
-
+        customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
       }
     } else{
-
+      customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
     }
 
   }

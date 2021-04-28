@@ -420,6 +420,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
         fontSize: responsive.ip(2)
       ),),
       onPressed: (){
+        prefs.setBool("actulizarNumeroDesdeCodigo", true);
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarNumero(responsive: responsive)));
       },
     );

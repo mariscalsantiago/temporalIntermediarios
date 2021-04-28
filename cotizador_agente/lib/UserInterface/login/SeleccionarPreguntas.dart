@@ -87,9 +87,21 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
     data = SingleChildScrollView(
         controller: scrollController,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5)),
+              margin: EdgeInsets.only(left: responsive.wp(8), top: responsive.hp(4), bottom: responsive.hp(2)),
+              child: Text("Selecciona una opción", style: TextStyle(
+                 fontWeight: FontWeight.normal,
+                 fontSize: responsive.ip(2.4),
+                 color:  Tema.Colors.fecha_1,
+                 letterSpacing: 0.5
+                ),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: responsive.wp(2), right: responsive.wp(5)),
               child: ListView.separated(
                 controller:scrollController,
                 scrollDirection:  Axis.vertical,
@@ -131,41 +143,26 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
         style: TextStyle(
             letterSpacing: 0.16,
             fontWeight: FontWeight.normal,
-            color: Tema.Colors.Azul_2
+            color: Tema.Colors.Azul_2,
+            fontSize: responsive.ip(2)
         ),
       ),
-      leading: Radio<int>(
-        value: posicion,
-        groupValue: _character,
-        onChanged: (int value) {
-          setState(() {
-            _character = value;
-          });
-        },
+      leading: Transform.scale(
+        scale: 1.5,
+        child: Radio<int>(
+          value: posicion,
+          activeColor: Tema.Colors.Rectangle_PA,
+          groupValue: _character,
+          onChanged: (int value) {
+            setState(() {
+              _character = value;
+            });
+          },
+        ),
       ),
     );
   }
 
-  Widget PreguntaDos(Responsive responsive){
-    return  ListTile(
-      title: const Text('¿Cuál fue el nombre de tu primera mascota?',
-        style: TextStyle(
-          letterSpacing: 0.16,
-          fontWeight: FontWeight.normal,
-          color: Tema.Colors.Azul_2
-        ),
-      ),
-      leading: Radio<int>(
-        value: 1,
-        groupValue: _character,
-        onChanged: (int value) {
-          setState(() {
-            _character = value;
-          });
-        },
-      ),
-    );
-  }
 
   Widget separacion( Responsive responsive, double tamano ){
     return SizedBox(
