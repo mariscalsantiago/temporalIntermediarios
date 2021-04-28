@@ -211,7 +211,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   Widget inputTextCorreo(Responsive responsive){
     return TextFormField(
       inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
+          FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.ñ]")),
       ],
       autofocus: true,
       controller: controllerCorreo,
