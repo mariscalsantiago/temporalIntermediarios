@@ -330,6 +330,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       if(optRespuesta.error == "" && optRespuesta.idError == "") {
         prefs.setString("idOperacion", optRespuesta.idOperacion);
         if(prefs.getBool("actulizarNumeroDesdeCodigo") != null && prefs.getBool("actulizarNumeroDesdeCodigo")){
+          print("actulizarNumeroDesdeCodigo");
+          prefs.setBool("actulizarNumeroDesdeCodigo", false);
           Navigator.pop(context);
           Navigator.pop(context);
           Navigator.push(
@@ -342,6 +344,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               )
           );
         } else{
+          print("actulizarNumeroDesdeCodigo no");
           Navigator.pop(context);
           Navigator.push(
               context,
@@ -355,10 +358,10 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         }
 
       } else{
-
+        customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
       }
     } else{
-
+      customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
     }
   }
 }

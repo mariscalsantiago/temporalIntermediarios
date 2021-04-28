@@ -8,15 +8,18 @@ import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/Models/DeasModel.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
+import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
+import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/perfil/ListaCUA.dart';
 import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
@@ -460,9 +463,29 @@ class _PerfilPageState extends State<PerfilPage> {
               ),
               CupertinoButton(
                 padding: EdgeInsets.zero,
-                onPressed: () {
+                onPressed: ()  async{
                   prefs.setBool("esPerfil", true);
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginActualizarContrasena(responsive: widget.responsive)));
+                  setState(() {
+                    _saving=true;
+                  });
+                  OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
+
+                  setState(() {
+                    _saving = false;
+                  });
+                  if(optRespuesta != null){
+                    if(optRespuesta.error == "" && optRespuesta.idError == "") {
+                      prefs.setString("idOperacion", optRespuesta.idOperacion);
+                      Navigator.push(context, MaterialPageRoute(
+                              builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,))
+                      );
+                    } else{
+                      customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+                    }
+                  } else{
+                    customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+                  }
+                  //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginActualizarContrasena(responsive: widget.responsive)));
                 },
                 child: Container(
                   margin: EdgeInsets.only(

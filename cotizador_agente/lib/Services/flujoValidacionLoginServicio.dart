@@ -8,6 +8,7 @@ import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesMo
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
@@ -677,6 +678,80 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext contex
     return null;
   }
 }
+
+Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, String celular) async {
+
+  print("orquestadorOTPJwtServicio");
+  _appEnvironmentConfig = AppConfig.of(context);
+
+  ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
+
+  if(_connectivityStatus.available) {
+    http.Response _response;
+
+    Map _loginBody;
+
+    _loginBody = {
+      "celular": celular
+    };
+
+    String _loginJSON = json.encode(_loginBody);
+
+    print("_loginJSON ${_loginJSON}");
+
+    try {
+      _response = await http.post(Uri.parse(_appEnvironmentConfig.orquestadorOtpJwt),
+          body: _loginJSON,
+          headers: {"Authorization": "application/json"}
+      );
+
+      print("orquestadorOTPJwtServicio ${_response.body}");
+      print("orquestadorOTPJwtServicio ${_response.statusCode}");
+
+      if(_response != null){
+        if(_response.body != null){
+          if(_response.statusCode == 200){
+            Map<String, dynamic> map = json.decode(_response.body);
+            OrquetadorOtpJwtModel _datosConsulta = OrquetadorOtpJwtModel.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
+          } else if(_response.statusCode == 401){
+            print("StatusCode 401");
+            return null;
+          } else if(_response.statusCode == 404){
+            print("StatusCode 404");
+            return null;
+          } else {
+            print("StatusCode");
+            return null;
+          }
+        } else{
+          print("Body null");
+          return null;
+        }
+      } else {
+        print("response null");
+        return null;
+      }
+    }on TimeoutException{
+      //TODO time out test
+      print("orquestadorOTPServicio -- TimeOut");
+      //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
+      return null;
+    } catch (e) {
+      print("orquestadorOTPServicio catch -- $e");
+      return null;
+    }
+  } else {
+    //errorConexion = true;
+    return null;
+  }
+}
+
+
 
 
 

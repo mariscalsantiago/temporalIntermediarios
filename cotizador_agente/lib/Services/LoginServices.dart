@@ -95,6 +95,8 @@ import '../main.dart';
       }
     }
 
+    print("loginData.jwt ${loginData.jwt}");
+
     return datosUsuario;
   }
 

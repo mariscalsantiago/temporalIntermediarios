@@ -557,14 +557,18 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         setState(() {
           _saving = false;
         });
+
         print("optRespuesta  ${optRespuesta}");
+
         if(optRespuesta != null){
           if(optRespuesta.error == "" && optRespuesta.idError == ""){
             prefs.setString("idOperacion", optRespuesta.idOperacion);
             Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
           } else{
+            customAlert(AlertDialogType.errorServicio,context,"","", responsive, funcionAlerta);
           }
         } else{
+          customAlert(AlertDialogType.errorServicio,context,"","", responsive, funcionAlerta);
         }
       } else {
         setState(() {
@@ -749,8 +753,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
 
               ultimaSesion = fechaPrototipo(DateTime.now().toString());
               //ultimoAcceso();
-              Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
-              //redirect(responsive);
+              //Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+              redirect(responsive);
             } else {
               print("else datosUsuario ${datosUsuario}");
               if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {

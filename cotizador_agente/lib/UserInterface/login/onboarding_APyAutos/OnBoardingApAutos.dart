@@ -332,7 +332,6 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                     "CONTINUAR",
                     textAlign: TextAlign.center,
                     style: TextStyle(
-                      decoration: TextDecoration.underline,
                       color: Theme.Colors.White,
                       fontSize: responsive.ip(2.0),
                     ),
