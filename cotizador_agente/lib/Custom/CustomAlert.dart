@@ -920,7 +920,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   right: responsive.wp(4),
                                   bottom: responsive.hp(1)),
                               child: Text(
-                                "¿Desea cancelar la configuración?",
+                                "¿Deseas cancelar la configuración?",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
@@ -1307,7 +1307,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                     right: responsive.wp(1),
                                     bottom: responsive.hp(1)),
                                 child: Text(
-                                  "¿Desea cancelar la configuración?",
+                                  "¿Deseas cancelar la configuración?",
                                   style: TextStyle(
                                       color: Theme.Colors.Funcional_Textos_Body,
                                       fontSize: responsive.ip(2.0)),
@@ -1698,7 +1698,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   right: responsive.wp(4),
                                   bottom: responsive.hp(1)),
                               child: Text(
-                                "¿Desea cancelar la configuración?",
+                                "¿Deseas cancelar la configuración?",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
@@ -2133,7 +2133,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "Tu nueva contraseña debe ser diferente a las 3 contraseñas anteriores.",
+                                    "Tu nueva contraseña debe ser diferente a la actual.",
                                     style: TextStyle(
                                         color:
                                             Theme.Colors.Funcional_Textos_Body,
@@ -2208,13 +2208,13 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                     margin: EdgeInsets.only(top: responsive.hp(3)),
                                     child: Image.asset('assets/images/verifica.png',
                                         fit:BoxFit.contain,
-                                        height: responsive.hp(5),
-                                        width: responsive.hp(4),
+                                        height: responsive.hp(7),
+                                        width: responsive.hp(6),
                                     )
                                 ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              margin: EdgeInsets.only(top: responsive.hp(4)),
                               child: Center(
                                 child: Text(
                                   "Tu contraseña se actualizó \ncorrectamente",
@@ -2232,8 +2232,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   bottom: responsive.height * 0.03),
                               child: Container(
                                 margin: EdgeInsets.only(
-                                  top: responsive.height * 0.04,
                                   left: responsive.width * 0.04,
+                                  right: responsive.width * 0.04,
                                   bottom: responsive.height * 0.01,
                                 ),
                                 child: Center(
@@ -3434,7 +3434,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               margin: EdgeInsets.only(top: responsive.hp(5)),
                               child: Center(
                                 child: Text(
-                                  "Tu número de celular se actualizó correctamente",
+                                  "Número de celular actualizado exitosamente",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
@@ -3456,7 +3456,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "A partir de ahora, te enviaremos las notificaciones al número de celular proporcionado.",
+                                    "Ahora recibirás notificaciones en este número.",
                                     style: TextStyle(
                                         color:
                                         Theme.Colors.Funcional_Textos_Body,

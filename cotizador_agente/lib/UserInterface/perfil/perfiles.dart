@@ -249,12 +249,15 @@ class _PerfilPageState extends State<PerfilPage> {
                               ),
                               child: Row(
                                 children: [
-                                  Text(
-                                    "DA",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Theme.Colors.Azul_gnp,
-                                        fontSize: widget.responsive.ip(2)),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: widget.responsive.hp(1.3)),
+                                    child: Text(
+                                      "DA",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Theme.Colors.Azul_gnp,
+                                          fontSize: widget.responsive.ip(2)),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -275,12 +278,15 @@ class _PerfilPageState extends State<PerfilPage> {
                               ),
                               child: Row(
                                 children: [
-                                  Text(
-                                    "CUA",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Theme.Colors.Azul_gnp,
-                                        fontSize: widget.responsive.ip(2)),
+                                  Container(
+                                    margin: EdgeInsets.only(bottom: widget.responsive.hp(1.3)),
+                                    child: Text(
+                                      "CUA",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Theme.Colors.Azul_gnp,
+                                          fontSize: widget.responsive.ip(2)),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -619,11 +625,14 @@ class _PerfilPageState extends State<PerfilPage> {
                             widget.responsive,
                             funcionAlerta);
                       },
-                      child: Text(
-                        "CERRAR SESIÓN",
-                        style: TextStyle(
-                            fontSize: widget.responsive.ip(2),
-                            color: Theme.Colors.GNP),
+                      child: Container(
+                        margin: EdgeInsets.only(bottom: widget.responsive.hp(3),top: widget.responsive.hp(3)),
+                        child: Text(
+                          "CERRAR SESIÓN",
+                          style: TextStyle(
+                              fontSize: widget.responsive.ip(2),
+                              color: Theme.Colors.GNP),
+                        ),
                       ),
                     ),
                     Divider(
@@ -631,7 +640,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       thickness: widget.responsive.hp(0.15),
                     ),
                     Container(
-                      margin: EdgeInsets.symmetric(vertical: widget.responsive.hp(1)),
+                      margin: EdgeInsets.symmetric(vertical: widget.responsive.hp(1),),
                       child: Center(
                           child: Text(
                         ""
@@ -670,7 +679,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
-                    leading: new Icon(Icons.photo_camera),
+                    leading: new Icon(Icons.camera_alt_outlined),
                     title: new Text(
                       'Cámara',
                       style: TextStyle(fontSize: responsive.ip(1.5)),

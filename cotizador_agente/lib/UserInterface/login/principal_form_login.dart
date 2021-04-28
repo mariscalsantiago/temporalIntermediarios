@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
@@ -45,6 +44,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   bool _enable = true;
   bool _validEmail = false;
   final _formKey = GlobalKey<FormState>();
+  final _formKeyOlvideContrasena = GlobalKey<FormState>();
   TextEditingController controllerContrasena;
   TextEditingController controllerCorreo;
   TextEditingController controllerCorreoCambioContrasena;
@@ -336,45 +336,35 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   Future<dynamic> dialogo(BuildContext context, Responsive responsive){
     tamano = responsive.hp(57);
     print( " tamano ------ ${tamano}");
+
     return  showDialog(
+      barrierDismissible: true,
       context: context,
       builder: (context)  {
-        return Stack(children: [
-          Opacity(
-            opacity: 0.6,
-            child: Container(
-              height: responsive.height,
-              width: responsive.width,
-              color: Tema.Colors.Azul_gnp,
+        return WillPopScope(
+          onWillPop: (){
+            setState(() {
+              //Navigator.pop(context);
+              tamano = responsive.hp(57);
+              focusCorreoCambio.unfocus();
+              FocusScope.of(context).requestFocus(new FocusNode());
+            });
+          },
+          child: Stack(children: [
+            GestureDetector(
+              onTap: (){
+                Navigator.pop(context);
+              },
+              child: Opacity(
+                opacity: 0.6,
+                child: Container(
+                  height: responsive.height,
+                  width: responsive.width,
+                  color: Tema.Colors.Azul_gnp,
+                ),
+              ),
             ),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: focusCorreoCambio.hasFocus ?
-            MediaQuery.of(context).size.height / 2 - 250 // adjust values according to your need
-                : MediaQuery.of(context).size.height / 2 + 15 ),
-            height: responsive.hp(44),
-            width: responsive.width,
-            child: Card(
-              color: Tema.Colors.White,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin:
-                    EdgeInsets.only(top: responsive.height * 0.03),
-
-                    child: Center(
-                      child: Text(
-                        "Olvide contraseña",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: Tema.Colors.Encabezados,
-                            fontSize: responsive.ip(2.3)),
-                      ),
-                    ),
-                  ),
-                  Container(
+            Container(
                     margin: EdgeInsets.only(
                         top: responsive.height * 0.04,
                         bottom: responsive.height * 0.01,
@@ -389,71 +379,124 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                     ),
                   ),
                   Container(
+              margin: EdgeInsets.only(top: focusCorreoCambio.hasFocus ?
+              MediaQuery.of(context).size.height / 2 - 250 // adjust values according to your need
+                  : MediaQuery.of(context).size.height / 2 + 15 ),
+              height: responsive.hp(44),
+              width: responsive.width,
+              child: Card(
+                color: Tema.Colors.White,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin:
+                      EdgeInsets.only(top: responsive.height * 0.03),
+
+                      child: Center(
+                        child: Text(
+                          "Olvidé contraseña",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Tema.Colors.Encabezados,
+                              fontSize: responsive.ip(2.3)),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                          top: responsive.height * 0.04,
+                          bottom: responsive.height * 0.01,
+                          right: responsive.wp(1),
+                          left: responsive.wp(5)),
+                      child: Text(
+                        "Por tu seguridad es necesario que ingreses nuevamente tu correo electrónico.",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            color: Tema.Colors.Funcional_Textos_Body,
+                            fontSize: responsive.ip(2.0)),
+                      ),
+                    ),
+
+                  Container(
                       margin: EdgeInsets.only(left: responsive.wp(4), right: responsive.wp(4)),
                       child: //inputTextCorreoCambio(responsive)
-                      TextFormField(
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
-                          ],
-                          controller: controllerCorreoCambioContrasena,
-                          focusNode: focusCorreoCambio,
-                          onEditingComplete: (){
-                            setState(() {
-                              tamano = responsive.hp(57);
-                              focusCorreoCambio.unfocus();
-                            });
-                          },
-                          onFieldSubmitted: (S) {
-                            setState(() {
-                              tamano = responsive.hp(57);
-                              focusCorreoCambio.unfocus();
-                            });
-                          },
-                          obscureText: false,
-                          enabled: _enable,
-                          autofocus: true,
-                          cursorColor: Tema.Colors.GNP,
-                          decoration: new InputDecoration(
-                              focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Tema.Colors.inputlinea),
-                              ),
-                              enabledBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Tema.Colors.inputlinea),
-                              ),
-                              labelText: "Correo electrónico",
-                              labelStyle: TextStyle(
-                                  fontFamily: "Roboto",
-                                  fontWeight: FontWeight.normal,
-                                  fontSize: responsive.ip(1.7),
-                                  color: Tema.Colors.inputcorreo
-                              )
-                          ),
-                          validator: (value) {
-                            String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
-                            RegExp regExp = new RegExp(p);
-                            if (value.isEmpty) {
-                              _validEmail  = false;
-                              return 'Este campo es requerido';
-                            } else if (regExp.hasMatch(value)) {
-                              _validEmail  = true;
+                      Form(
+                        key: _formKeyOlvideContrasena,
+                        child: TextFormField(
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
+                            ],
+                            controller: controllerCorreoCambioContrasena,
+                            focusNode: focusCorreoCambio,
+
+                            onSaved: (vc){
+                              setState(() {
+                                tamano = responsive.hp(57);
+                                focusCorreoCambio.unfocus();
+                              });
+                            },
+
+                            onEditingComplete: (){
+                              setState(() {
+                                tamano = responsive.hp(57);
+                                focusCorreoCambio.unfocus();
+                              });
+                            },
+                            onFieldSubmitted: (S) {
+                              setState(() {
+                                tamano = responsive.hp(57);
+                                focusCorreoCambio.unfocus();
+                              });
+                            },
+                            obscureText: false,
+                            enabled: _enable,
+
+                            autofocus: true,
+                            cursorColor: Tema.Colors.GNP,
+                            decoration: new InputDecoration(
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Tema.Colors.inputlinea),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Tema.Colors.inputlinea),
+                                ),
+                                labelText: "Correo electrónico",
+                                labelStyle: TextStyle(
+                                    fontFamily: "Roboto",
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: responsive.ip(1.7),
+                                    color: Tema.Colors.inputcorreo
+                                )
+                            ),
+                            validator: (value) {
+                              String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+                              RegExp regExp = new RegExp(p);
+                              if (value.isEmpty) {
+                                _validEmail  = false;
+                                return 'Este campo es requerido';
+                              } else if (regExp.hasMatch(value)) {
+                                _validEmail  = true;
+                                return null;
+                              } else {
+                                _validEmail  = false;
+                                return 'Este campo es inválido';
+                              }
                               return null;
-                            } else {
-                              _validEmail  = false;
-                              return 'Este campo es inválido';
+                            },
+                            onTap: (){
+                              print("Focusssssssssssss");
+                              print("Focusssssssssssss");
+                              setState(() {
+                                tamano = responsive.hp(30);
+                              });
+                              setState(() {
+                                tamano;
+                                print("tamano ${tamano}");
+                              });
                             }
-                            return null;
-                          },
-                          onTap: (){
-                            print("Focusssssssssssss");
-                            print("Focusssssssssssss");
-                            setState(() {
-                              tamano = responsive.hp(30);
-                            });
-                            setState(() {
-                              tamano;
-                              print("tamano ${tamano}");
-                            });
-                          }
+                        ),
                       )
                   ),
                   Container(
@@ -466,47 +509,63 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                       ),
                       color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
                       onPressed: () async {
-                        if(controllerCorreoCambioContrasena.text != ""){
+                        if(_formKeyOlvideContrasena.currentState.validate()){
                           Navigator.pop(context);
                           setState(() {
                             _saving = true;
                           });
 
-                          validarCodigoVerificacion(responsive);
+                            validarCodigoVerificacion(responsive);
 
-                        }
+                          }
 
-                      },
-                      child: Text(
-                        "ACEPTAR",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
-                          fontSize: responsive.ip(2.0),
+                        },
+                        child: Text(
+                          "ACEPTAR",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
+                            fontSize: responsive.ip(2.0),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ]);
+          ]),
+        );
       },
     );
   }
 
   validarCodigoVerificacion(Responsive responsive) async{
-
+    prefs.setBool('flujoOlvideContrasena', true);
     prefs.setString("correoCambioContrasena", controllerCorreoCambioContrasena.text);
     UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, prefs.getString("correoCambioContrasena"));
+
     print("UsuarioPorCorreo ${respuesta}" );
     if(respuesta != null){
       if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.idParticipante != ""){
         idParticipanteValidaPorCorre = respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid;
 
-        prefs.setBool('flujoOlvideContrasena', true);
+        mediosContacto = await  consultaMediosContactoServicio(context, idParticipanteValidaPorCorre);
+
+        if(mediosContacto != null){
+          List<telefonosModel> teledonosLista = [];
+          teledonosLista = obtenerMedioContacto(mediosContacto);
+          if(teledonosLista.length > 0){
+            prefs.setString("medioContactoTelefono", teledonosLista[0].lada+teledonosLista[0].valor);
+          } else {
+            prefs.setString("medioContactoTelefono", "");
+          }
+        } else{
+          prefs.setString("medioContactoTelefono", "");
+        }
+
         OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoCambioContrasena"), "", prefs.getBool('flujoOlvideContrasena'));
+
         setState(() {
           _saving = false;
         });
@@ -514,7 +573,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         if(optRespuesta != null){
           if(optRespuesta.error == "" && optRespuesta.idError == ""){
             prefs.setString("idOperacion", optRespuesta.idOperacion);
-            Navigator.pop(context,true);
             Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
           } else{
 
@@ -523,13 +581,19 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         } else{
 
         }
+
+
       } else {
-        Navigator.pop(context,true);
+        setState(() {
+          _saving = false;
+        });
         customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
 
       }
     } else {
-      Navigator.pop(context,true);
+      setState(() {
+        _saving = false;
+      });
       customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
     }
 
@@ -1006,7 +1070,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 )
             );
           } else{
-
+            customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
           }
         } else{
           customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);

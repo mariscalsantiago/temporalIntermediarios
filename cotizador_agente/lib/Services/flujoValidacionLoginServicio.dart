@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
@@ -593,6 +594,7 @@ Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(BuildC
 Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext context, String lada, String numero) async {
 
   print("altaMediosContactoServicio");
+  String idParticipante = prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena') ? idParticipanteValidaPorCorre : datosUsuario.idparticipante ;
   _appEnvironmentConfig = AppConfig.of(context);
 
   ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
@@ -601,7 +603,7 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext contex
     http.Response _response;
 
     Map _loginBody = {
-      "idParticipante": datosUsuario.idparticipante,
+      "idParticipante": idParticipante,
       "codFiliacion": mediosContacto.codigoFiliacion,
       "tipoMedioContacto": "TLCL",
       "propositosContacto": [

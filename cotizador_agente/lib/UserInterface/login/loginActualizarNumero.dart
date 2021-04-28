@@ -312,8 +312,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
     if(optRespuesta != null){
       if(optRespuesta.error == "" && optRespuesta.idError == "") {
         prefs.setString("idOperacion", optRespuesta.idOperacion);
-        Navigator.pop(context,true);
-        Navigator.pop(context,true);
+        Navigator.pop(context);
         Navigator.push(
             context,
             MaterialPageRoute(

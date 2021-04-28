@@ -828,7 +828,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                     right: responsive.wp(2),
                                     bottom: responsive.hp(3)),
                                 child: Text(
-                                  "¿Desea cancelar la configuración?",
+                                  "¿Deseas cancelar la configuración?",
                                   style: TextStyle(
                                       color: Theme.Colors.Funcional_Textos_Body,
                                       fontSize: responsive.ip(1.2)),
@@ -1199,7 +1199,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                   left: responsive.width * 0.04,
                                   bottom: responsive.height * 0.03),
                               child: Text(
-                                "¿Desea cancelar la configuración?",
+                                "¿Deseas cancelar la configuración?",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(2.0)),
@@ -1541,7 +1541,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                     top: responsive.height * 0.02,
                                     bottom: responsive.height * 0.03),
                                 child: Text(
-                                  "¿Desea cancelar la configuración?",
+                                  "¿Deseas cancelar la configuración?",
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                       color: Theme.Colors.Funcional_Textos_Body,
@@ -3160,7 +3160,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                               margin: EdgeInsets.only(top: responsive.hp(5)),
                               child: Center(
                                 child: Text(
-                                  "Tu número de celular se actualizó correctamente",
+                                  "Número de celular actualizado exitosamente",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
@@ -3182,7 +3182,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "A partir de ahora, te enviaremos las notificaciones al número de celular proporcionado.",
+                                    "Ahora recibirás notificaciones en este número.",
                                     style: TextStyle(
                                         color:
                                         Theme.Colors.Funcional_Textos_Body,

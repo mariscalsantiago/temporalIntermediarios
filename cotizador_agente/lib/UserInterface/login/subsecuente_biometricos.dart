@@ -209,7 +209,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           Column(
             children: [
               Container(
-                margin: EdgeInsets.only( top: responsive.hp(76.5)),
+                margin: EdgeInsets.only( top: responsive.hp(78)),
                 child: LoadingController_2(),
               ),
             ],

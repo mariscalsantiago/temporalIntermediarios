@@ -11,7 +11,7 @@ class OrquestadorOTPModel{
   factory OrquestadorOTPModel.fromJson(Map<dynamic, dynamic> data){
     return OrquestadorOTPModel(
       uid: data.containsKey('uid') && data['uid'] != null ? data['uid'] : "",
-      timestamp: data.containsKey('timestamp') && data['timestamp'] != null ? data['timestamp'] : "",
+      timestamp: data.containsKey('timestamp') && data['timestamp'] != null ? data['timestamp'] : 0,
       idOperacion: data.containsKey('idOperacion') && data['idOperacion'] != null ? data['idOperacion'] : "",
       idError: data.containsKey('idError') && data['idError'] != null ? data['idError'] : "",
       error: data.containsKey('error') && data['error'] != null ? data['error'] : "",

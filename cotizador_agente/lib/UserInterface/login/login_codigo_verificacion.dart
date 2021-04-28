@@ -35,6 +35,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   @override
   void initState() {
     _saving = false;
+    timerEnd = false;
     focusCodigo = new FocusNode();
     controllerCodigo = new TextEditingController();
     super.initState();
@@ -92,8 +93,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: responsive.hp(4)),
-                    child: Text( prefs.getBool('flujoOlvideContrasena') ? "Ingrese el código de verificación que enviamos a tu correo electrónico y por SMS a tu número celular."
-                        : "Ingresa el código de verificación que te enviamos por SMS al número: " ,
+                    child: Text(  "Ingresa el código de verificación que te enviamos por SMS al número: " ,
                       style: TextStyle(
                         color: Tema.Colors.letragris,
                         letterSpacing: 0.5,
@@ -103,7 +103,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: responsive.hp(2.3)),
-                    child: Text("(+52) ${prefs.getString("medioContactoTelefono") != "" ? prefs.getString("medioContactoTelefono") : "" }", style: TextStyle(
+                    child: Text("${ "(+52)" + prefs.getString("medioContactoTelefono") }", style: TextStyle(
                       color: Tema.Colors.GNP,
                       fontWeight: FontWeight.normal,
                       fontSize: responsive.ip(2.5)
@@ -154,9 +154,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       focusNode: focusCodigo,
       obscureText: false,
       keyboardType: TextInputType.number,
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-      ],
+      inputFormatters: [LengthLimitingTextInputFormatter(8)],
       cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
@@ -186,10 +184,17 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
           )
       ),
       validator: (value) {
+        String p = "/^[0-9]/";
+        RegExp regExp = new RegExp(p);
         if(_validCode){
-        if (value.isEmpty) {
-          return 'Este campo es requerido';
-        }
+          if (value.isEmpty) {
+            return 'Este campo es requerido';
+          }  else if (value.length<8 || value.length>8) {
+            return "Tu código debe tener 8 dígitos";
+          }
+           else if (regExp.hasMatch(value)) {
+            return null;
+          }
         }else{
           return"El código no coincide";
         }
@@ -264,75 +269,77 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   }
 
   Widget reenviarCodigo(Responsive responsive){
-    return CupertinoButton(
-        padding: EdgeInsets.zero,
-        child: Row(
-          children: [
-            Container(
-              child: Text("¿Tienes problemas?", style: TextStyle(
-                color: Tema.Colors.Azul_2,
-                fontWeight: FontWeight.normal,
-                fontSize: responsive.ip(2)
-              ),),
-            ),
-            Container(
-              child: Text("   Reenviar código", style: TextStyle(
-                  color: Tema.Colors.GNP,
+    return Container(
+      child: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Row(
+            children: [
+              Container(
+                child: Text("¿Tienes problemas?", style: TextStyle(
+                  color: Tema.Colors.Azul_2,
                   fontWeight: FontWeight.normal,
                   fontSize: responsive.ip(2)
-              ),),
-            ),
-          ],
-        ),
-        onPressed: () async {
-          if(timerEnd){
-            setState(() {
-              timerEnd = false;
-            });
-          if(prefs.getBool('flujoOlvideContrasena')){
-            setState(() {
-              _saving = true;
-            });
-            OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoCambioContrasena"), "", prefs.getBool('flujoOlvideContrasena'));
-            setState(() {
-              _saving = false;
-            });
-            print("optRespuesta  ${optRespuesta}");
-            if(optRespuesta != null){
+                ),),
+              ),
+              Container(
+                child: Text("   Reenviar código", style: TextStyle(
+                    color: Tema.Colors.GNP,
+                    fontWeight: FontWeight.normal,
+                    fontSize: responsive.ip(2)
+                ),),
+              ),
+            ],
+          ),
+          onPressed: () async {
+            if(timerEnd){
+              setState(() {
+                timerEnd = false;
+              });
+            if(prefs.getBool('flujoOlvideContrasena')){
+              setState(() {
+                _saving = true;
+              });
+              OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoCambioContrasena"), "", prefs.getBool('flujoOlvideContrasena'));
+              setState(() {
+                _saving = false;
+              });
+              print("optRespuesta  ${optRespuesta}");
+              if(optRespuesta != null){
 
-              if(optRespuesta.error == "" && optRespuesta.idError == ""){
-                prefs.setString("idOperacion", optRespuesta.idOperacion);
-                //prefs.setBool('flujoOlvideContrasena', true);
-                //Navigator.pop(context,true);
-                //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
+                if(optRespuesta.error == "" && optRespuesta.idError == ""){
+                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  //prefs.setBool('flujoOlvideContrasena', true);
+                  //Navigator.pop(context,true);
+                  //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
+                } else{
+
+                }
+
               } else{
+                customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
 
               }
 
             } else{
-              customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+              setState(() {
+                _saving = true;
+              });
+              OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
+              setState(() {
+                _saving = false;
+              });
+              if(optRespuesta != null){
 
-            }
+                if(optRespuesta.error == "" && optRespuesta.idError == ""){
+                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+                }
 
-          } else{
-            setState(() {
-              _saving = true;
-            });
-            OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
-            setState(() {
-              _saving = false;
-            });
-            if(optRespuesta != null){
-
-              if(optRespuesta.error == "" && optRespuesta.idError == ""){
-                prefs.setString("idOperacion", optRespuesta.idOperacion);
               }
 
-            }
+            }}
+          }
 
-          }}
-        }
-
+      ),
     );
   }
 
@@ -341,64 +348,66 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   }
 
   Widget validarCodigo(Responsive responsive){
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-        child: Container(
-          color: controllerCodigo.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
-          margin: EdgeInsets.only(top: responsive.hp(12), bottom: responsive.hp(3)),
-          width: responsive.width,
+    return Container(
+      margin: EdgeInsets.only(top: responsive.hp(12), bottom: responsive.hp(3)),
+      child: CupertinoButton(
+        padding: EdgeInsets.zero,
           child: Container(
-            margin: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
-            child: Text( "VALIDAR", style: TextStyle(
-              color: controllerCodigo.text != "" ? Tema.Colors.backgroud : Tema.Colors.botonletra,
-              fontWeight: FontWeight.w500),
-              textAlign: TextAlign.center,
+            color: controllerCodigo.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
+
+            width: responsive.width,
+            child: Container(
+              margin: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
+              child: Text( "VALIDAR", style: TextStyle(
+                color: controllerCodigo.text != "" ? Tema.Colors.backgroud : Tema.Colors.botonletra,
+                fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
-        ),
-        onPressed: () async {
-          _validCode = true;
-          if(_formKey.currentState.validate()){
-            setState(() {
-              _saving = true;
+          onPressed: () async {
+            _validCode = true;
+            if(_formKey.currentState.validate()){
+              setState(() {
+                _saving = true;
 
-            });
+              });
 
-            ValidarOTPModel validarOTP = await validaOrquestadorOTPServicio(context,prefs.getString("idOperacion"), controllerCodigo.text);
+              ValidarOTPModel validarOTP = await validaOrquestadorOTPServicio(context,prefs.getString("idOperacion"), controllerCodigo.text);
 
-            setState(() {
-              _saving = false;
-            });
+              setState(() {
+                _saving = false;
+              });
 
-            print("validarOTP ${validarOTP.resultado}");
+              print("validarOTP ${validarOTP.resultado}");
 
-            if(validarOTP != null){
-              if(validarOTP.resultado){
-                if( prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
-                } else {
-                  print("Validar flujo");
-                  prefs.setBool("flujoCompletoLogin", true);
-                  Navigator.push(context, MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          HomePage(responsive: responsive,)));
+              if(validarOTP != null){
+                if(validarOTP.resultado){
+                  if( prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
+                  } else {
+                    print("Validar flujo");
+                    prefs.setBool("flujoCompletoLogin", true);
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            HomePage(responsive: responsive,)));
+                  }
+                } else{
+                  setState(() {
+                    _validCode = false;
+                    codigoValidacion = "El código no coincide";
+                    _formKey.currentState.validate();
+                  });
                 }
+
               } else{
-                setState(() {
-                  _validCode = false;
-                  codigoValidacion = "El código no coincide";
-                  _formKey.currentState.validate();
-                });
+                customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
               }
-
-            } else{
-              customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
             }
+            //Navigator.pop(context,true);
+            //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: responsive,)));
           }
-          //Navigator.pop(context,true);
-          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: responsive,)));
-        }
-
+      ),
     );
   }
 

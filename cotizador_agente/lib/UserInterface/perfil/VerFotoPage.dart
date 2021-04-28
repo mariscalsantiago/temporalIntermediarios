@@ -69,7 +69,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
           backgroundColor: Colors.white,
           centerTitle: false,
           title: Text(
-            "Mi Perfil",
+            "Mi perfil",
             style: TextStyle(color: Tema.Colors.Azul_2),
           ),
           leading: IconButton(
@@ -83,8 +83,11 @@ class _VerFotoPageState extends State<VerFotoPage> {
             },
           ),
         ),
-        body:  Stack(
-            children: builData(responsive)
+        body:  Container(
+          color: Tema.Colors.White,
+          child: Stack(
+              children: builData(responsive)
+          ),
         ));
   }
 
@@ -116,13 +119,13 @@ class _VerFotoPageState extends State<VerFotoPage> {
                       widget.callback();
                     }
                   },
-                  child: Icon(Tema.Icons.edit, color: Tema.Colors.GNP,)),
+                  child: Icon(Icons.create_outlined, color: Tema.Colors.GNP,)),
               GestureDetector(
                   onTap: (){
                     _showPicker(context);
                     widget.callback();
                   },
-                  child: Icon(Tema.Icons.camera_alt_24px, color: Tema.Colors.GNP,)),
+                  child: Icon(Icons.camera_alt_outlined, color: Tema.Colors.GNP,)),
               GestureDetector(
                   onTap: () async{
                     bool resp = await fetchFotoDelete(context);
@@ -136,7 +139,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                     } else {
                     }
                   },
-                  child: Icon(Tema.Icons.delete_24px, color: Tema.Colors.GNP,)),
+                  child: Icon(Icons.delete_outlined, color: Tema.Colors.GNP,)),
             ],
           ),
         )
@@ -182,7 +185,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
-                    leading: new Icon(Icons.photo_camera),
+                    leading: new Icon(Icons.camera_alt_outlined),
                     title: new Text('Cámara',
                       style: TextStyle(fontSize: responsive.ip(1.5)),
                     ),
