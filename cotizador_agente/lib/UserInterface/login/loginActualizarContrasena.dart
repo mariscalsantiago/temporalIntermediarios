@@ -170,9 +170,12 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
       ),
       validator: (value) {
 
-        if (value.isEmpty) {
+        if (value.isEmpty || value.isEmpty) {
           return 'Este campo es requerido';
+        }else if( value.contains(" ")){
+          return 'No debe contener espacion en blanco';
         }
+        
         return null;
       },
       onChanged: (value){

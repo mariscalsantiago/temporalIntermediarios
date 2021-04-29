@@ -278,6 +278,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
 
   Widget inputTextContrasena(Responsive responsive){
     return TextFormField(
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp("[ ]")),
+      ],
       controller: controllerContrasena,
       focusNode: focusContrasena,
       obscureText: contrasena,

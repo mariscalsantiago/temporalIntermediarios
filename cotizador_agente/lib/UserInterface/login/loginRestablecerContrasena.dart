@@ -139,7 +139,9 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
       autofocus: true,
       maxLength: 24,
       autocorrect: true,
-      inputFormatters: [LengthLimitingTextInputFormatter(24)],
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp("[ ]")),
+        LengthLimitingTextInputFormatter(24)],
       controller: controllerNuevaContrasena,
       focusNode: focusNuevaContrasena,
       obscureText: nuevaContrasena,

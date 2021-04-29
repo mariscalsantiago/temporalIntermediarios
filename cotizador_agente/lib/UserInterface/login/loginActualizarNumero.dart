@@ -127,7 +127,10 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       focusNode: focusCodigo,
       obscureText: false,
       keyboardType: TextInputType.number,
-      inputFormatters: [LengthLimitingTextInputFormatter(10)],
+      inputFormatters: [
+        FilteringTextInputFormatter.deny(RegExp("[ ]")),
+        LengthLimitingTextInputFormatter(10)
+      ],
       cursorColor: Tema.Colors.GNP,
       decoration: new InputDecoration(
           focusedBorder: UnderlineInputBorder(
@@ -197,7 +200,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           controller: controllerNumero,
           focusNode: focusCodigo,
           obscureText: false,
-          inputFormatters: [LengthLimitingTextInputFormatter(10)],
+          inputFormatters: [FilteringTextInputFormatter.deny(RegExp("[ ]")),LengthLimitingTextInputFormatter(10)],
           keyboardType: TextInputType.number,
           cursorColor: Tema.Colors.GNP,
           decoration: new InputDecoration(
