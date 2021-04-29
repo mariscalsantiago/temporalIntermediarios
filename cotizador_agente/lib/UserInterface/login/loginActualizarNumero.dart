@@ -340,6 +340,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                   builder: (BuildContext context) =>
                       LoginCodigoVerificaion(
                         responsive: responsive,
+                        isNumero:false,
                       )
               )
           );
@@ -352,6 +353,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                   builder: (BuildContext context) =>
                       LoginCodigoVerificaion(
                         responsive: responsive,
+                        isNumero: false,
                       )
               )
           );

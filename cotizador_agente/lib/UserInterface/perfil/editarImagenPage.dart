@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
@@ -58,8 +59,9 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
           backgroundColor: Colors.white,
           leading: new IconButton(
             icon:
-            new Icon(Icons.navigate_before, color: Theme.Colors.gnpOrange, size: 40),
-            onPressed: (){ Navigator.of(context).pop();
+            new Icon(Icons.arrow_back, color: Theme.Colors.Rectangle_PA, size: 24),
+            onPressed: (){
+              customAlert(AlertDialogType.AjustesSinGuardar_camara, context, "",  "", responsive,widget.callback);
             setState(() {
               datosFisicos.personales.foto;
               widget.callback();
@@ -68,52 +70,60 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
           ),
         ),
         body: Center(
-          child: Container(
-            color: Theme.Colors.Azul_gnp,
-            child: ImgCrop(
-              key: cropKey,
-              chipRadius: 150,
-              chipShape: 'circle',
-              maximumScale: 3,
-              image: FileImage(widget.image),
-              // handleSize: 0.0,
+          child: Stack(
+            children:[ Container(
+              color: Theme.Colors.Azul_gnp,
+              child: ImgCrop(
+                key: cropKey,
+                chipRadius: 150,
+                chipShape: 'circle',
+                maximumScale: 3,
+                image: FileImage(widget.image),
+                // handleSize: 0.0,
+              ),
             ),
+              new Positioned(
+                bottom: 0.0,
+                child: GestureDetector(
+                    onTap: () async {
+                      widget.callback();
+                      final crop = cropKey.currentState;
+                      File fotoPerfil;
+                      fotoPerfil =  await crop.cropCompleted(widget.image, pictureQuality: 900);
+                      try{
+                        await fetchFoto(context, fotoPerfil,widget.callback);
+                        Navigator.of(context).pop();
+                        setState(() {
+                          urlImagen = datosFisicos.personales.foto;
+                          image = fotoPerfil;
+                          widget.callback();
+                        });
+                      }catch(e){
+                        widget.callback();
+                        print(e);
+                      }
+
+                    },
+                    child: Container(
+                      color: Theme.Colors.White,
+                      height: responsive.hp(10),
+                      width: responsive.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                              margin: EdgeInsets.only( right: responsive.height * 0.02, ),
+                              child: Icon(Icons.save_outlined, color: Theme.Colors.GNP,)),
+                          Container(child: Text("GUARDAR AJUSTES", style: TextStyle(color: Theme.Colors.GNP, fontSize: responsive.ip(2)),))
+                        ],
+                      ),
+                    )
+                ),
+              )
+            ]
           ),
         ),
-        floatingActionButton:GestureDetector(
-            onTap: () async {
-              widget.callback();
-              final crop = cropKey.currentState;
-              File fotoPerfil;
-              fotoPerfil =  await crop.cropCompleted(widget.image, pictureQuality: 900);
-              try{
-              await fetchFoto(context, fotoPerfil);
-              Navigator.of(context).pop();
-              setState(() {
-                urlImagen = datosFisicos.personales.foto;
-                image = fotoPerfil;
-                widget.callback();
-              });
-              }catch(e){
-                widget.callback();
-                print(e);
-              }
-
-            },
-            child: Container(
-              color: Theme.Colors.White,
-              height: responsive.hp(10),
-              width: responsive.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                Icon(Icons.save_outlined, color: Theme.Colors.GNP,),
-                Text("GUARDAR AJUSTES", style: TextStyle(color: Theme.Colors.GNP, fontSize: responsive.ip(2)),)
-              ],
-              ),
-           )
-        )
     );
 
         /*

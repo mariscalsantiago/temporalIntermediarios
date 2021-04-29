@@ -53,6 +53,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   FocusNode focusCorreoCambio;
   bool contrasena;
   bool _biometricos;
+  //TODO 238
+  bool _subSecuentaIngresoCorreo;
   bool existeUsuario;
   String correoUsuario;
   String contrasenaUsuario;
@@ -85,6 +87,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         prefs.setBool("esPerfil", false);
         existeUsuario = true;
         _biometricos =  prefs.getBool("activarBiometricos");
+        //TODO 238
+        _subSecuentaIngresoCorreo =  prefs.getBool("subSecuentaIngresoCorreo");
         prefs.setBool("primeraVez", false);
       } else{
         prefs.setBool("seHizoLogin", false);
@@ -813,7 +817,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
       if (existeUsuario) {
           controllerContrasena.clear();
           controllerCorreo.clear();
-          if(_biometricos){
+          //TODO 238
+          if(_biometricos && !_subSecuentaIngresoCorreo ){
             if(is_available_finger != false && is_available_face != false){
               if (deviceType == ScreenType.phone) {
                 customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
@@ -1013,6 +1018,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 builder: (BuildContext context) =>
                     LoginCodigoVerificaion(
                       responsive: responsive,
+                      isNumero: false,
                     )
             )
         );
@@ -1053,6 +1059,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                     builder: (BuildContext context) =>
                         LoginCodigoVerificaion(
                           responsive: responsive,
+                          isNumero: false,
                         )
                 )
             );

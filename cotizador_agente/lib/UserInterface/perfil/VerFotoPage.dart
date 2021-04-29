@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/perfil/editarImagenPage.dart';
@@ -36,30 +37,39 @@ class _VerFotoPageState extends State<VerFotoPage> {
   void initState() {
     _saving = false;
     //updateFoto();
-    //obtenerImagen();
+    obtenerImagen();
     super.initState();
   }
 
   void obtenerImagen() async {
     urlImagen = "";
     if( datosFisicos != null && datosFisicos.personales.foto != null && datosFisicos.personales.foto != "" ) {
-      final response = await http.get(datosFisicos.personales.foto);
-      final documentDirectory = await getApplicationDocumentsDirectory();
-      final file = File(documentDirectory.path+ 'imagetest.png');
-      file.writeAsBytesSync(response.bodyBytes);
+      await urlToFile(datosFisicos.personales.foto);
       setState(() {
-        image = file;
         urlImagen = datosFisicos.personales.foto;
         widget.callback();
       });
     } else{
       setState(() {
         image = null;
-        widget.callback();
+      widget.callback();
       });
 
     }
     return null;
+  }
+
+  Future<File> urlToFile(String imageUrl) async {
+    var rng = new Random();
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File file = new File('$tempPath'+ (rng.nextInt(100)).toString() +'.png');
+    http.Response response = await http.get(imageUrl);
+    await file.writeAsBytes(response.bodyBytes);
+    setState(() {
+      image = file;
+    });
+    return file;
   }
 
   @override
@@ -81,7 +91,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
               Navigator.pop(context,true);
               setState(() {
                 datosFisicos.personales.foto;
-                widget.callback();
+                updateFoto();
               });
             },
           ),
@@ -116,17 +126,17 @@ class _VerFotoPageState extends State<VerFotoPage> {
                     print("image ${image}");
                     if(image != null){
                       print("image ${image}");
-                      widget.callback();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(image: image, callback: widget.callback,)),);
+                      updateFoto();
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(image: image, callback: updateFoto,)),);
                     } else{
-                      widget.callback();
+                      updateFoto();
                     }
                   },
                   child: Icon(Icons.create_outlined, color: Tema.Colors.GNP,)),
               GestureDetector(
                   onTap: (){
                     _showPicker(context);
-                    widget.callback();
+                    updateFoto();
                   },
                   child: Icon(Icons.camera_alt_outlined, color: Tema.Colors.GNP,)),
               GestureDetector(
@@ -138,7 +148,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                     if (resp!= null && resp) {
                         //_saving = false;
                         datosFisicos.personales.foto = null;
-                        widget.callback();
+                        updateFoto();
                     } else {
                     }
                   },
@@ -181,7 +191,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                       ),
                       onTap: () {
                         _imgFromGallery();
-                        widget.callback();
+                        updateFoto();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
@@ -191,7 +201,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                     ),
                     onTap: () {
                       _imgFromCamera();
-                      widget.callback();
+                     updateFoto();
                       Navigator.of(context).pop();
 
                     },
@@ -206,7 +216,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
   _imgFromCamera() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
-    fetchFoto(context, image);
+    fetchFoto(context, image,widget.callback);
     setState(() {
       _image = image;
       updateFoto();
@@ -224,7 +234,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
   _imgFromGallery() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
-    fetchFoto(context, image);
+    fetchFoto(context, image,updateFoto);
     setState(() {
       _image = image;
       updateFoto();
@@ -242,54 +252,8 @@ class _VerFotoPageState extends State<VerFotoPage> {
     setState(() {
       fotoPerfil;
       datosFisicos.personales.foto;
+      obtenerImagen();
       widget.callback();
     });
   }
-/*
-  _imgFromCamera() async {
-    print(urlImagen);
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.camera, imageQuality: 50
-    );
-    setState(() {
-      _saving = true;
-      urlImagen = "";
-      widget.callback();
-    });
-    print(urlImagen);
-    fetchFoto(context, image);
-    setState(() {
-      urlImagen = datosFisicos.personales.foto;
-      print(urlImagen);
-      image = image;
-      widget.callback();
-      _saving = false;
-    });
-  }
-
-  _imgFromGallery() async {
-    print("urlImagen");
-    print(urlImagen);
-    File image = await  ImagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 50
-    );
-    setState(() {
-      _saving = true;
-      urlImagen = "";
-      widget.callback();
-    });
-    print("urlImagen");
-    print(urlImagen);
-    fetchFoto(context, image);
-    setState(() {
-      urlImagen = datosFisicos.personales.foto;
-      print("urlImagen");
-      print(urlImagen);
-      image = image;
-      _saving = false;
-      widget.callback();
-    });
-  }
-
-  */
 }

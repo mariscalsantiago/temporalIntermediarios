@@ -590,17 +590,14 @@ class _PerfilPageState extends State<PerfilPage> {
                     child: Switch(
                       value: isSwitchedPerfill,
                       onChanged: (on) {
-                        setState(() {
-                          isSwitchedPerfill;
-                        });
                         prefs.setBool("primeraVez", false);
                         prefs.setBool("esPerfil", true);
                         if(is_available_finger != false && is_available_face != false && isSwitchedPerfill == false){
                           if (deviceType == ScreenType.phone && isSwitchedPerfill == false ) {
                             customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context, "", "", widget.responsive, funcionAlerta);
                           }else if(on == false){
-                            is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive, funcionAlerta)
-                                :customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive, funcionAlerta);
+                            is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive, funcionAlertaBiometricos)
+                                :customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive, funcionAlertaBiometricos);
                           } else {
                             if( isSwitchedPerfill == false){
                               customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion, context, "", "", widget.responsive);
@@ -612,16 +609,13 @@ class _PerfilPageState extends State<PerfilPage> {
                             is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", widget.responsive, funcionAlertaBiometricos)
                                 : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", widget.responsive, funcionAlertaBiometricos);
                           }else if(on == false){
-                            is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive, funcionAlerta)
-                                :customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive, funcionAlerta);
+                            is_available_finger != false ? customAlert(AlertDialogType.Desactivar_huella_digital, context, "", "", widget.responsive, funcionAlertaBiometricos)
+                                :customAlert(AlertDialogType.Desactivar_recoFacial, context, "", "", widget.responsive, funcionAlertaBiometricos);
                           }
 
                         }
-
                         setState(() {
-                          isSwitchedPerfill = on;
-                          print("isSwitched ${isSwitchedPerfill} ");
-                          prefs.setBool("activarBiometricos", isSwitchedPerfill);
+                          isSwitchedPerfill = prefs.getBool("activarBiometricos");
                         });
 
                       },
@@ -649,6 +643,8 @@ class _PerfilPageState extends State<PerfilPage> {
               ),
               TextButton(
                 onPressed: () {
+                  //TODO 238
+                  prefs.setBool("subSecuentaIngresoCorreo", false);
                   customAlert(
                       AlertDialogType.CerrarSesion,
                       context,
@@ -744,7 +740,7 @@ class _PerfilPageState extends State<PerfilPage> {
   _imgFromCamera() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.camera, imageQuality: 50);
-    fetchFoto(context, image);
+    fetchFoto(context, image, widget.callback);
     setState(() {
       _image = image;
       updateFoto();
@@ -762,7 +758,7 @@ class _PerfilPageState extends State<PerfilPage> {
   _imgFromGallery() async {
     File image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
-    fetchFoto(context, image);
+    fetchFoto(context, image, widget.callback);
     setState(() {
       _image = image;
       updateFoto();
@@ -783,9 +779,11 @@ class _PerfilPageState extends State<PerfilPage> {
       });
   }
 
-  void funcionAlertaBiometricos(bool biometricosActivos){
+  void funcionAlertaBiometricos(){
+    print("funcionAlertaBiometricos perfiles");
+    print(prefs.getBool("activarBiometricos"));
     setState(() {
-      isSwitchedPerfill = biometricosActivos;
+      isSwitchedPerfill = prefs.getBool("activarBiometricos");
     });
   }
 

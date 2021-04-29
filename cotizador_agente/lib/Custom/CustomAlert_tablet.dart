@@ -989,6 +989,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                             builder: (BuildContext context) =>
                                                 LoginCodigoVerificaion(
                                                   responsive: responsive,
+                                                  isNumero: false,
                                                 )));
                                   }),
                               CupertinoButton(

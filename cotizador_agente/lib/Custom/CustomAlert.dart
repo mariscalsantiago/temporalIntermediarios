@@ -545,7 +545,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   Navigator.pop(context,true);
                                   if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
                                     prefs.setBool("activarBiometricos", false);
-                                    callback(false);
+                                    callback();
                                     Navigator.pop(context,true);
                                   } else {
                                     prefs.setBool("activarBiometricos", false);
@@ -852,6 +852,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(responsive: responsive,)));
                                       }
                                     }
+                                    prefs.setBool("aceptoTerminos", checkedValue);
+                                    callback();
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -943,7 +945,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   onPressed: () {
                                     if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
                                       prefs.setBool("activarBiometricos", false);
-                                      callback(false);
+                                      callback();
                                       Navigator.pop(context,true);
                                     } else {
                                       Navigator.pop(context,true);
@@ -1445,6 +1447,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
+                                    callback();
                                     if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin")){
                                       if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
                                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
@@ -1722,9 +1725,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
                                     if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
-                                      Navigator.pop(context,true);
                                       prefs.setBool("activarBiometricos", false);
-                                      callback(false, responsive);
+                                      callback();
+                                      Navigator.pop(context,true);
                                     } else {
                                       Navigator.pop(context,true);
                                       prefs.setBool("activarBiometricos", false);
@@ -3562,6 +3565,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 color: Theme.Colors.GNP,
                                 onPressed: () {
                                   Navigator.pop(context,true);
+                                  Navigator.pop(context,true);
                                   },
                                 child: Text(
                                   "DESCARTAR",
@@ -3870,6 +3874,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                     onPressed: () {
                                       prefs.setBool("activarBiometricos", false);
                                       isSwitchedPerfill = false;
+                                      callback();
                                       Navigator.pop(context,false);
                                     },
                                     child: Text(
@@ -3891,7 +3896,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                     onTap: () {
                                       prefs.setBool("activarBiometricos", true);
                                       isSwitchedPerfill = true;
-                                      callback(true);
+                                      callback();
                                       Navigator.pop(context,true);
                                     },
                                     child: Text(
@@ -3976,6 +3981,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                     onPressed: () {
                                       prefs.setBool("activarBiometricos", false);
                                       isSwitchedPerfill = false;
+                                      callback();
                                       Navigator.pop(context,false);
                                     },
                                     child: Text(

@@ -509,7 +509,7 @@ import '../main.dart';
     return null;
   }
 
-  Future<String> fetchFoto(BuildContext context, File url) async {
+  Future<String> fetchFoto(BuildContext context, File url, Function callback) async {
     print("fetchFoto");
     _appEnvironmentConfig = AppConfig.of(context);
 
@@ -536,18 +536,23 @@ import '../main.dart';
               // print("${postMap["url"]}");
               mensajeStatus = ErrorLoginMessageModel.fromJson(mensaje);
               datosFisicos.personales.foto = postMap["url"];
+              callback();
               return postMap["url"];
             } else {
+              callback();
               throw Exception('Failed to load post response');
             }
           }, onError: (error) {
+            callback();
             throw Exception('Failed to load post response');
           });
         } else {
+          callback();
           throw Exception('Failed to load post response');
         }
       }).catchError((error) => throw Exception('Failed to load post response'));
     } catch (e) {
+      callback();
       return null;
     }
   }

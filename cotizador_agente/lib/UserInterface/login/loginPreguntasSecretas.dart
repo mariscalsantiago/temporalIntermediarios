@@ -432,6 +432,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
                 builder: (BuildContext context) =>
                     LoginCodigoVerificaion(
                       responsive: responsive,
+                      isNumero: false,
                     )
             )
         );

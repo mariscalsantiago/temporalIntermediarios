@@ -46,7 +46,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
             onPressed: (){
               if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
                 prefs.setBool("activarBiometricos", false);
-                widget.callback(false);
+                widget.callback();
                 Navigator.pop(context,true);
               } else {
                 prefs.setBool("activarBiometricos", false);
@@ -166,8 +166,8 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                           onChanged: (bool value) {
                             setState(() {
                               checkedValue = value;
+                              prefs.setBool("aceptoTerminos", checkedValue);
                             });
-                            prefs.setBool("aceptoTerminos", checkedValue);
                           },
                           controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
                         ),
@@ -211,7 +211,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
     try {
       authenticated = await localAuth.authenticateWithBiometrics(
         androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar", cancelButton: "CANCELAR",fingerprintRequiredTitle:"Solicitud de huella digital",goToSettingsDescription:"Tu huella digital no está configurada en el dispositivo, ve a configuraciones para añadirla.",goToSettingsButton:"Ir a configuraciones"),
-        iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR"),
+        iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR", goToSettingsButton:"Ir a configuraciones" ),
         localizedReason: ' ',
         useErrorDialogs: true,
         stickyAuth: true,
@@ -224,6 +224,8 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
         customAlert(AlertDialogType.activacionExitosa_Reconocimiento_facial, context, "", "", responsive, widget.callback);
         setState(() {
           checkedValue = false;
+          prefs.setBool("aceptoTerminos", checkedValue);
+          prefs.setBool("activarBiometricos", true);
         });
       }else {
       }

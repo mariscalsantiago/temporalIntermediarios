@@ -160,7 +160,8 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
                     textAlign: TextAlign.center),
               ),
               onPressed: () async {
-                //prefs.setBool("activarBiometricos", false);
+                //TODO 238
+                prefs.setBool("subSecuentaIngresoCorreo", true);
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
               }
           ),

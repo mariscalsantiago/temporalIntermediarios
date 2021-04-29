@@ -17,8 +17,9 @@ import 'loginRestablecerContrasena.dart';
 bool timerEnd = false;
 
 class LoginCodigoVerificaion extends StatefulWidget {
+  final isNumero;
   final Responsive responsive;
-  const LoginCodigoVerificaion({Key key, this.responsive}) : super(key: key);
+  const LoginCodigoVerificaion({Key key, this.responsive,this.isNumero}) : super(key: key);
   @override
   _LoginCodigoVerificaionState createState() => _LoginCodigoVerificaionState();
 }
@@ -93,7 +94,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   ),
                   Container(
                     margin: EdgeInsets.only(top: responsive.hp(4)),
-                    child: Text(  "Ingresa el código de verificación que te enviamos por SMS al número: " ,
+                    child: Text(  "Ingresa el código de verificación que enviamos a tu correo electrónico y por SMS tu número celular. " ,
                       style: TextStyle(
                         color: Tema.Colors.letragris,
                         letterSpacing: 0.5,
@@ -122,7 +123,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                           validacionCodigo(responsive),
                           reenviarCodigo(responsive),
                           validarCodigo(responsive),
-                          noEsNumero(responsive),
+                          widget.isNumero ?Container():noEsNumero(responsive),
                         ],
                       ),
                     ),
@@ -240,6 +241,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   onFinish: (){
                     setState(() {
                       timerEnd = true;
+                      controllerCodigo.text="";
                     });
                   },
                   builder: (BuildContext ctx, String remaining) {
@@ -283,7 +285,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               ),
               Container(
                 child: Text("   Reenviar código", style: TextStyle(
-                    color: Tema.Colors.GNP,
+                    color:!timerEnd? Tema.Colors.botonletra : Tema.Colors.GNP,
                     fontWeight: FontWeight.normal,
                     fontSize: responsive.ip(2)
                 ),),
@@ -396,11 +398,14 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   setState(() {
                     _validCode = false;
                     codigoValidacion = "El código no coincide";
+                    // todo limpiar codiggo
+                    controllerCodigo.text="";
                     _formKey.currentState.validate();
                   });
                 }
 
               } else{
+                controllerCodigo.text="";
                 customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
               }
             }
