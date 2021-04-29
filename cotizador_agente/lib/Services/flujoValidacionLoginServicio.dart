@@ -697,10 +697,14 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, St
 
     if(esActualizarNumero){
       _loginBody = {
-        "celular": celular
+        "celular": celular,
+        "enviarSms": true,
+        "enviarMail": true
       };
     } else{
       _loginBody = {
+        "enviarSms": true,
+        "enviarMail": true
       };
     }
 
