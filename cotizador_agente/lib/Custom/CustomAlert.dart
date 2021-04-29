@@ -2265,6 +2265,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                     if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
                                       Navigator.pop(context);
                                       Navigator.pop(context);
+                                      Navigator.pop(context);
                                     } else if(prefs.getBool("flujoOlvideContrasena") != null && prefs.getBool("flujoOlvideContrasena")) {
                                       Navigator.pop(context);
                                       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: responsive)));
@@ -3483,9 +3484,13 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () async {
-                                    Navigator.pop(context);
-                                    callback(responsive);
-
+                                    if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") &&  prefs.getBool("esActualizarNumero")){
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    } else{
+                                      Navigator.pop(context);
+                                      callback(responsive);
+                                    }
                                   },
                                   child: Text(
                                     "CERRAR",

@@ -16,6 +16,8 @@ class OrquetadorOtpJwtModel{
       error: data.containsKey('error') && data['error'] != null ? data['error'] : "",
       message: data.containsKey('message') && data['message'] != null ? data['message'] : "",
       path: data.containsKey('path') && data['path'] != null ? data['path'] : "",
+      uid: data.containsKey('uid') && data['uid'] != null ? data['uid'] : "",
+      idOperacion: data.containsKey('idOperacion') && data['idOperacion'] != null ? data['idOperacion'] : "",
 
     );
   }

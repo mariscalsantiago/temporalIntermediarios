@@ -466,26 +466,27 @@ class _PerfilPageState extends State<PerfilPage> {
                 padding: EdgeInsets.zero,
                 onPressed: ()  async{
                   prefs.setBool("esPerfil", true);
+                  prefs.setBool("actualizarContrasenaPerfil", true);
+                  prefs.setBool("esActualizarNumero", false);
                   setState(() {
                     _saving=true;
                   });
 
-                  OrquetadorOtpJwtModel optRespuesta = await  orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"));
+                  OrquetadorOtpJwtModel optRespuesta = await  orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"), false);
 
                   setState(() {
                     _saving = false;
                   });
-                  /*if(optRespuesta != null){
-                    if(optRespuesta.error == "" && optRespuesta.idError == "") {
+                  if(optRespuesta != null){
+                    if(optRespuesta.error == "" ) {
                       prefs.setString("idOperacion", optRespuesta.idOperacion);
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,))
-                      );
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,isNumero: false,)));
                     } else{
                       customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
                     }
                   } else{
                     customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
-                  }*/
+                  }
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginActualizarContrasena(responsive: widget.responsive)));
                 },
                 child: Container(
@@ -516,6 +517,9 @@ class _PerfilPageState extends State<PerfilPage> {
               CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: () {
+                  prefs.setBool("esPerfil", true);
+                  prefs.setBool("esActualizarNumero", true);
+                  prefs.setBool("actualizarContrasenaPerfil", false);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

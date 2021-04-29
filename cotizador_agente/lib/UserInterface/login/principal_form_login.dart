@@ -344,7 +344,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   Future<dynamic> dialogo(BuildContext context, Responsive responsive){
     Responsive _generalResponsive = Responsive.of(context);
     tamano = _generalResponsive.hp(57);
-    print( " tamano ------ ${tamano}");
 
     return  showDialog(
       barrierDismissible: true,
@@ -570,7 +569,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         if(optRespuesta != null){
           if(optRespuesta.error == "" && optRespuesta.idError == ""){
             prefs.setString("idOperacion", optRespuesta.idOperacion);
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
+            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,isNumero: false,)));
           } else{
             customAlert(AlertDialogType.errorServicio,context,"","", responsive, funcionAlerta);
           }
@@ -672,112 +671,120 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
           textAlign: TextAlign.center),
         ),
         onPressed: () async {
-          print(_saving);
-          //Navigator.push(context, MaterialPageRoute(builder: (context) => PreguntasSecretas(responsive: responsive,)),);
+
           if(!_saving){
-          if(_formKey.currentState.validate()){
-           setState(() {
-              _saving = true;
-              _enable = false;
-            });
+            if(_formKey.currentState.validate()){
+             setState(() {
+                _saving = true;
+                _enable = false;
+              });
 
-            if(prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "" ){
-               correoUsuario = prefs.getString("correoUsuario");
-               if(controllerContrasena.text != prefs.getString("contrasenaUsuario")){
-                 contrasenaUsuario = controllerContrasena.text;
-                 prefs.setString("contrasenaUsuario", contrasenaUsuario);
-               } else{
-                 contrasenaUsuario = prefs.getString("contrasenaUsuario");
-               }
+              if(prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "" ){
+                 correoUsuario = prefs.getString("correoUsuario");
+                 if(controllerContrasena.text != prefs.getString("contrasenaUsuario")){
+                   contrasenaUsuario = controllerContrasena.text;
+                   prefs.setString("contrasenaUsuario", contrasenaUsuario);
+                 } else{
+                   contrasenaUsuario = prefs.getString("contrasenaUsuario");
+                 }
 
-               print("correoUsuario ${correoUsuario}");
-               print("contrasenaUsuario ${contrasenaUsuario}");
-
-            } else {
-              prefs.setString("correoUsuario", controllerCorreo.text);
-              correoUsuario = controllerCorreo.text;
-              prefs.setString("contrasenaUsuario", controllerContrasena.text);
-              contrasenaUsuario = controllerContrasena.text;
-              print("ELSE correoUsuario ${correoUsuario}");
-              print("contrasenaUsuario ${contrasenaUsuario}");
-            }
-            datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
-
-            if(datosUsuario != null){
-
-              mediosContacto = await  consultaMediosContactoServicio(context, datosUsuario.idparticipante);
-              print("mediosContacto ${mediosContacto}");
-
-              if(mediosContacto != null){
-                List<telefonosModel> teledonosLista = [];
-                teledonosLista = obtenerMedioContacto(mediosContacto);
-                if(teledonosLista.length > 0){
-                  prefs.setString("medioContactoTelefono", teledonosLista[0].lada+teledonosLista[0].valor);
-                } else {
-                  prefs.setString("medioContactoTelefono", "");
-                }
-
-              } else{
-                prefs.setString("medioContactoTelefono", "");
-
+              } else {
+                prefs.setString("correoUsuario", controllerCorreo.text);
+                correoUsuario = controllerCorreo.text;
+                prefs.setString("contrasenaUsuario", controllerContrasena.text);
+                contrasenaUsuario = controllerContrasena.text;
+                print("ELSE correoUsuario ${correoUsuario}");
+                print("contrasenaUsuario ${contrasenaUsuario}");
               }
+              datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
+              UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, correoUsuario);
 
-              if(!existeUsuario){
-                consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante);
+              print("UsuarioPorCorreo  ${respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario}");
 
-                print("preguntas ${preguntas.requestStatus}");
+              if(datosUsuario != null && respuesta != null && respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario == "ACTIVO"){
 
-                setState(() {
-                  _saving = false;
-                  _enable = true;
-                });
+                mediosContacto = await  consultaMediosContactoServicio(context, datosUsuario.idparticipante);
+                print("mediosContacto ${mediosContacto}");
 
-                if(preguntas != null){
-                  if(preguntas.requestStatus == "FAILED" && preguntas.error != ""){
-                      prefs.setBool('primeraVezIntermediario', true);
-                  } else{
-                      prefs.setBool('primeraVezIntermediario', false);
+                if(mediosContacto != null){
+                  List<telefonosModel> teledonosLista = [];
+                  teledonosLista = obtenerMedioContacto(mediosContacto);
+                  if(teledonosLista.length > 0){
+                    prefs.setString("medioContactoTelefono", teledonosLista[0].lada+teledonosLista[0].valor);
+                  } else {
+                    prefs.setString("medioContactoTelefono", "");
                   }
+
                 } else{
+                  prefs.setString("medioContactoTelefono", "");
 
                 }
 
-              } else{
-                setState(() {
-                  _saving = false;
-                  _enable = true;
-                });
+                if(!existeUsuario){
+                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante);
 
+                  print("preguntas ${preguntas.requestStatus}");
+
+                  setState(() {
+                    _saving = false;
+                    _enable = true;
+                  });
+
+                  if(preguntas != null){
+                    if(preguntas.requestStatus == "FAILED" && preguntas.error != ""){
+                        prefs.setBool('primeraVezIntermediario', true);
+                    } else{
+                        prefs.setBool('primeraVezIntermediario', false);
+                    }
+                  } else{
+
+                  }
+
+                } else{
+                  setState(() {
+                    _saving = false;
+                    _enable = true;
+                  });
+
+                }
+
+                prefs.setBool("seHizoLogin", true);
+                prefs.setBool("regitroDatosLoginExito", true);
+                prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
+                prefs.setString("currentDA", datosPerfilador.daList.elementAt(0).cveDa);
+                prefs.setString("currentCUA",  datosPerfilador.daList.elementAt(0).codIntermediario[0]);
+
+                ultimaSesion = fechaPrototipo(DateTime.now().toString());
+                //ultimoAcceso();
+                //Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+                redirect(responsive);
               }
-              print("if datosUsuario ${datosUsuario}");
-              print("idparticipante--- ${datosUsuario.idparticipante}");
-              prefs.setBool("seHizoLogin", true);
-              prefs.setBool("regitroDatosLoginExito", true);
-              prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
-              prefs.setString("currentDA", datosPerfilador.daList.elementAt(0).cveDa);
-              prefs.setString("currentCUA",  datosPerfilador.daList.elementAt(0).codIntermediario[0]);
+              else {
+                print("else datosUsuario ${datosUsuario}");
+                if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
 
-              ultimaSesion = fechaPrototipo(DateTime.now().toString());
-              //ultimoAcceso();
-              //Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
-              redirect(responsive);
-            } else {
-              print("else datosUsuario ${datosUsuario}");
-              if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
+                } else if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario != "ACTIVO"){
 
-              } else{
-                prefs.setBool("regitroDatosLoginExito", false);
-                prefs.setString("nombreUsuario", "");
-                prefs.setString("correoUsuario", "");
-                prefs.setString("contrasenaUsuario", "");
+                  customAlert(AlertDialogType.Cuenta_inactiva,context,"","", responsive, funcionAlertaHullaLogin);
+                  prefs.setBool("regitroDatosLoginExito", false);
+                  prefs.setString("nombreUsuario", "");
+                  prefs.setString("correoUsuario", "");
+                  prefs.setString("contrasenaUsuario", "");
+
+                } else{
+                  prefs.setBool("regitroDatosLoginExito", false);
+                  prefs.setString("nombreUsuario", "");
+                  prefs.setString("correoUsuario", "");
+                  prefs.setString("contrasenaUsuario", "");
+                }
               }
-            }
-            setState(() {
-              _saving = false;
-              _enable = true;
-            });
+              setState(() {
+                _saving = false;
+                _enable = true;
+              });
 
-          } else{} }
+            } else{}
+          }
         }
     );
   }

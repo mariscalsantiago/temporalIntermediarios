@@ -4,6 +4,7 @@ import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
@@ -275,39 +276,111 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         onPressed: () async{
           if(_formKey.currentState.validate()){
 
-            setState(() {
-              _saving = true;
-            });
+            if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("esActualizarNumero")){
 
-            String lada = controllerNumero.text.substring(0,2);
-            String numero = controllerNumero.text.substring(2,10);
+              print("esPerfil esActualizarNumero");
 
-            print("lada   ${lada}");
-            print("numero ${numero}");
+              String lada = controllerNumero.text.substring(0,2);
+              String numero = controllerNumero.text.substring(2,10);
 
-            AltaMedisoContactoAgentes actualizarNumero = await  altaMediosContactoServicio(context, lada,  numero);
+              prefs.setString("lada", lada);
+              prefs.setString("numero", numero);
+              prefs.setString("medioContactoTelefono", controllerNumero.text);
+              setState(() {
+                _saving = true;
+              });
 
-            if(actualizarNumero != null){
+              OrquetadorOtpJwtModel optRespuesta = await  orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"), true);
+
               setState(() {
                 _saving = false;
               });
 
-              if(actualizarNumero.idMedioContacto != "" && actualizarNumero.secuencial != ""){
-                prefs.setString("medioContactoTelefono", controllerNumero.text);
+              if(optRespuesta != null){
+                if(optRespuesta.error == "") {
+                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,isNumero: false)));
+                } else{
+                  customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
+                  return;
+                }
+              } else{
+                customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
+                return;
+              }
 
+            }
+            if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")){
+
+              print("esPerfil actualizarContrasenaPerfil");
+
+              String lada = controllerNumero.text.substring(0,2);
+              String numero = controllerNumero.text.substring(2,10);
+
+              prefs.setString("lada", lada);
+              prefs.setString("numero", numero);
+              prefs.setString("medioContactoTelefono", controllerNumero.text);
+              setState(() {
+                _saving = true;
+              });
+
+              OrquetadorOtpJwtModel optRespuesta = await  orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"), true);
+
+              setState(() {
+                _saving = false;
+              });
+
+              if(optRespuesta != null){
+                if(optRespuesta.error == "") {
+                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive, isNumero: false,)));
+                } else{
+                  customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
+                }
+              } else{
+                customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
+              }
+
+            }
+            else {
+              setState(() {
+                _saving = true;
+              });
+
+              String lada = controllerNumero.text.substring(0,2);
+              String numero = controllerNumero.text.substring(2,10);
+
+              print("lada   ${lada}");
+              print("numero ${numero}");
+
+              AltaMedisoContactoAgentes actualizarNumero = await  altaMediosContactoServicio(context, lada,  numero);
+
+              if(actualizarNumero != null) {
+                if(actualizarNumero.idMedioContacto != "" && actualizarNumero.secuencial != ""){
+                  prefs.setString("medioContactoTelefono", controllerNumero.text);
+
+                  setState(() {
+                    _saving = false;
+                  });
                   customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive,funcionAceptar);
 
 
+                } else{
+                  setState(() {
+                    _saving = false;
+                  });
+                  customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
+                }
+
               } else{
+                setState(() {
+                  _saving = false;
+                });
+                customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
 
               }
-
-            } else{
-              setState(() {
-                _saving = false;
-              });
-              customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
-
             }
           }
         }
@@ -333,7 +406,6 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       if(optRespuesta.error == "" && optRespuesta.idError == "") {
         prefs.setString("idOperacion", optRespuesta.idOperacion);
         if(prefs.getBool("actulizarNumeroDesdeCodigo") != null && prefs.getBool("actulizarNumeroDesdeCodigo")){
-          print("actulizarNumeroDesdeCodigo");
           prefs.setBool("actulizarNumeroDesdeCodigo", false);
           Navigator.pop(context);
           Navigator.pop(context);
@@ -348,7 +420,6 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               )
           );
         } else{
-          print("actulizarNumeroDesdeCodigo no");
           Navigator.pop(context);
           Navigator.push(
               context,

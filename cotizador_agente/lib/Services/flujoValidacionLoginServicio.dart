@@ -395,12 +395,16 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
 
     if(esReestablcer){
       _loginBody = {
-        "correo": correo
+        "correo": correo,
+        "enviarSms": true,
+        "enviarMail": true
       };
     } else {
       _loginBody = {
         "correo": correo,
-        "celular": celular
+        "celular": celular,
+        "enviarSms": true,
+        "enviarMail": true
       };
 
     }
@@ -605,7 +609,7 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext contex
 
     Map _loginBody = {
       "idParticipante": idParticipante,
-      "codFiliacion": mediosContacto.codigoFiliacion,
+      "codFiliacion": mediosContacto.codigoFiliacion != null && mediosContacto.codigoFiliacion != "" ? mediosContacto.codigoFiliacion : "",
       "tipoMedioContacto": "TLCL",
       "propositosContacto": [
         {
@@ -679,7 +683,7 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext contex
   }
 }
 
-Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, String celular) async {
+Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, String celular, bool esActualizarNumero) async {
 
   print("orquestadorOTPJwtServicio");
   _appEnvironmentConfig = AppConfig.of(context);
@@ -689,8 +693,16 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, St
   if(_connectivityStatus.available) {
     http.Response _response;
 
-    Map _loginBody = {
-    };
+    Map _loginBody;
+
+    if(esActualizarNumero){
+      _loginBody = {
+        "celular": celular
+      };
+    } else{
+      _loginBody = {
+      };
+    }
 
     String _loginJSON = json.encode(_loginBody);
 

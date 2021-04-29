@@ -2,8 +2,11 @@ import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
+import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:countdown_flutter/countdown_flutter.dart';
@@ -315,6 +318,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
                 } else{
 
+                  customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
                 }
 
               } else{
@@ -323,23 +327,54 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               }
 
             } else{
-              setState(() {
-                _saving = true;
-              });
-              OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
-              setState(() {
-                _saving = false;
-              });
-              if(optRespuesta != null){
 
-                if(optRespuesta.error == "" && optRespuesta.idError == ""){
-                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+              if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+
+                setState(() {
+                  _saving = true;
+                });
+                OrquetadorOtpJwtModel optRespuesta;
+                if(prefs.getBool("esActualizarNumero")){
+                  optRespuesta = await  orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"), true);
+                } else{
+                  optRespuesta = await  orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"), false);
                 }
 
-              }
+                setState(() {
+                  _saving = false;
+                });
+                if(optRespuesta != null){
 
-            }}
+                  if(optRespuesta.error == "" ){
+                    prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  } else{
+                    customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+                  }
+                } else{
+                  customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+                }
+
+              } else{
+                setState(() {
+                  _saving = true;
+                });
+                OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
+                setState(() {
+                  _saving = false;
+                });
+                if(optRespuesta != null){
+                  if(optRespuesta.error == "" && optRespuesta.idError == ""){
+                    prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  } else{
+                    customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+                  }
+                } else{
+                  customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+                }
+              }
+            }
           }
+        }
 
       ),
     );
@@ -355,13 +390,13 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       child: CupertinoButton(
         padding: EdgeInsets.zero,
           child: Container(
-            color: controllerCodigo.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
+            color: !timerEnd && controllerCodigo.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
 
             width: responsive.width,
             child: Container(
               margin: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
               child: Text( "VALIDAR", style: TextStyle(
-                color: controllerCodigo.text != "" ? Tema.Colors.backgroud : Tema.Colors.botonletra,
+                color: !timerEnd &&  controllerCodigo.text != "" ? Tema.Colors.backgroud : Tema.Colors.botonletra,
                 fontWeight: FontWeight.w500),
                 textAlign: TextAlign.center,
               ),
@@ -369,32 +404,78 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
           ),
           onPressed: () async {
             _validCode = true;
-            if(_formKey.currentState.validate()){
-              setState(() {
-                _saving = true;
+            if(!timerEnd){
+              if(_formKey.currentState.validate()){
+                setState(() {
+                  _saving = true;
 
-              });
+                });
 
-              ValidarOTPModel validarOTP = await validaOrquestadorOTPServicio(context,prefs.getString("idOperacion"), controllerCodigo.text);
+                ValidarOTPModel validarOTP = await validaOrquestadorOTPServicio(context,prefs.getString("idOperacion"), controllerCodigo.text);
 
-              setState(() {
-                _saving = false;
-              });
+                print("validarOTP ${validarOTP}");
 
-              print("validarOTP ${validarOTP.resultado}");
+                if(validarOTP != null){
+                  if(validarOTP.resultado){
+                    if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("esActualizarNumero")){
 
-              if(validarOTP != null){
-                if(validarOTP.resultado){
-                  if( prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
-                  } else {
-                    print("Validar flujo");
-                    prefs.setBool("flujoCompletoLogin", true);
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            HomePage(responsive: responsive,)));
+                      AltaMedisoContactoAgentes actualizarNumero = await  altaMediosContactoServicio(context, prefs.getString("lada"),  prefs.getString("numero"));
+
+                      setState(() {
+                        _saving = false;
+                      });
+
+                      if(actualizarNumero != null) {
+                        if (actualizarNumero.idMedioContacto != "" && actualizarNumero.secuencial != "") {
+
+                          prefs.setString("medioContactoTelefono", prefs.getString("lada")+prefs.getString("numero"));
+                          customAlert(AlertDialogType.Numero_de_celular_actualizado_correctamente, context, "",  "", responsive, funcionAlerta);
+
+                        } else{
+
+                          customAlert(AlertDialogType.errorServicio, context, "",  "", responsive, funcionAlerta);
+
+                        }
+                      } else{
+
+                        customAlert(AlertDialogType.errorServicio, context, "",  "", responsive, funcionAlerta);
+
+                      }
+
+                    }  else if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")){
+                      setState(() {
+                        _saving = false;
+                      });
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginActualizarContrasena(responsive: widget.responsive)));
+
+                    } else{
+
+                      setState(() {
+                        _saving = false;
+                      });
+
+                      if( prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
+                        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
+                      } else {
+                        prefs.setBool("flujoCompletoLogin", true);
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                HomePage(responsive: responsive,)));
+                      }
+                    }
+
+                  } else{
+                    setState(() {
+                      _saving = false;
+                      _validCode = false;
+                      codigoValidacion = "El código no coincide";
+                      _formKey.currentState.validate();
+                    });
                   }
+
                 } else{
+
                   setState(() {
                     _validCode = false;
                     codigoValidacion = "El código no coincide";
@@ -402,16 +483,11 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     controllerCodigo.text="";
                     _formKey.currentState.validate();
                   });
-                }
 
-              } else{
-                controllerCodigo.text="";
-                customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
               }
+            } else{
             }
-            //Navigator.pop(context,true);
-            //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: responsive,)));
-          }
+          }}
       ),
     );
   }
@@ -425,9 +501,22 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
         fontSize: responsive.ip(2)
       ),),
       onPressed: (){
-        prefs.setBool("actulizarNumeroDesdeCodigo", true);
-        Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarNumero(responsive: responsive)));
+        if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("esActualizarNumero")){
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarNumero(responsive: responsive)));
+        } else if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")){
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarNumero(responsive: responsive)));
+        } else{
+          prefs.setBool("actulizarNumeroDesdeCodigo", true);
+          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarNumero(responsive: responsive)));
+        }
+
       },
     );
+  }
+
+  void funcionAlerta(){
+
   }
 }

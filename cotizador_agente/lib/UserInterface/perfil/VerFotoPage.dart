@@ -141,7 +141,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                   child: Icon(Icons.camera_alt_outlined, color: Tema.Colors.GNP,)),
               GestureDetector(
                   onTap: () async{
-                    bool resp = await fetchFotoDelete(context);
+                    bool resp = await fetchFotoDelete(context, updateFoto);
                     print("resp");
                     print(resp);
 

@@ -557,11 +557,11 @@ import '../main.dart';
     }
   }
 
-  Future<bool> fetchFotoDelete(BuildContext context) async {
+  Future<bool> fetchFotoDelete(BuildContext context, Function callback) async {
     print("fetchFotoDelete");
 
     _appEnvironmentConfig = AppConfig.of(context);
-    Navigator.of(context).pop();
+    //Navigator.of(context).pop();
 
     try {
       final responsePost = await http.delete(
@@ -576,6 +576,7 @@ import '../main.dart';
       if (responsePost != null) {
         //   print("response : ${responsePost.body}");
         if (responsePost.statusCode == 200) {
+          callback();
           Map postMap = json.decode(responsePost.body);
           //   print("response : ${postMap}");
           if (postMap['success'] == true) {
