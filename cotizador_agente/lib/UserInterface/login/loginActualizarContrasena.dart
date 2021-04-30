@@ -581,49 +581,52 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   }
 
   Widget enviar(Responsive responsive){
-    return CupertinoButton(
-        padding: EdgeInsets.zero,
-        child: Container(
-          color: controllerActualContrasena.text != "" && controllerNuevaContrasena.text != "" && controllerConfirmarContrasena.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
-          margin: EdgeInsets.only(top: responsive.hp(12), bottom: responsive.hp(3)),
-          width: responsive.width,
+    return Container(
+      margin: EdgeInsets.only(top: responsive.hp(9), bottom: responsive.hp(8)),
+      child: CupertinoButton(
+        color: Colors.amber,
+          padding: EdgeInsets.zero,
           child: Container(
-            margin: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
-            child: Text( "ACTUALIZAR", style: TextStyle(
-                color: controllerActualContrasena.text != "" && controllerNuevaContrasena.text != "" && controllerConfirmarContrasena.text != "" ? Tema.Colors.backgroud : Tema.Colors.botonletra,
-                fontWeight: FontWeight.w500),
-              textAlign: TextAlign.center,
+            color: controllerActualContrasena.text != "" && controllerNuevaContrasena.text != "" && controllerConfirmarContrasena.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
+            width: responsive.width,
+            child: Container(
+              margin: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
+              child: Text( "ACTUALIZAR", style: TextStyle(
+                  color: controllerActualContrasena.text != "" && controllerNuevaContrasena.text != "" && controllerConfirmarContrasena.text != "" ? Tema.Colors.backgroud : Tema.Colors.botonletra,
+                  fontWeight: FontWeight.w500),
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
-        ),
-        onPressed: () async {
-          if(_formKey.currentState.validate()){
-            setState(() {
-              _saving = true;
-            });
-            cambioContrasenaModel  cambiocontrasena = await cambioContrasenaServicio(context, controllerActualContrasena.text, controllerNuevaContrasena.text, datosUsuario.idparticipante);
-
-            if(cambiocontrasena != null){
-
+          onPressed: () async {
+            if(_formKey.currentState.validate()){
               setState(() {
-                _saving = false;
+                _saving = true;
               });
-                if(cambiocontrasena.requestStatus == "FAILED" && cambiocontrasena.error != ""){
+              cambioContrasenaModel  cambiocontrasena = await cambioContrasenaServicio(context, controllerActualContrasena.text, controllerNuevaContrasena.text, datosUsuario.idparticipante);
 
-                  customAlert(AlertDialogType.Sesionafinalizada_por_contrasena_debeserdiferente,context,"","", responsive, funcionAlerta);
-                } else if(cambiocontrasena.error == ""){
-                  prefs.setString("contraenaActualizada", controllerNuevaContrasena.text);
-                  customAlert(AlertDialogType.contrasena_actualiza_correctamente,context,"","", responsive, funcionAlerta);
-                }
-            } else {
+              if(cambiocontrasena != null){
 
-              setState(() {
-                _saving = false;
-              });
+                setState(() {
+                  _saving = false;
+                });
+                  if(cambiocontrasena.requestStatus == "FAILED" && cambiocontrasena.error != ""){
 
+                    customAlert(AlertDialogType.Sesionafinalizada_por_contrasena_debeserdiferente,context,"","", responsive, funcionAlerta);
+                  } else if(cambiocontrasena.error == ""){
+                    prefs.setString("contraenaActualizada", controllerNuevaContrasena.text);
+                    customAlert(AlertDialogType.contrasena_actualiza_correctamente,context,"","", responsive, funcionAlerta);
+                  }
+              } else {
+
+                setState(() {
+                  _saving = false;
+                });
+
+              }
             }
           }
-        }
+      ),
     );
   }
 

@@ -705,7 +705,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 print("contrasenaUsuario ${contrasenaUsuario}");
               }
               datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
-             UsuarioPorCorreo respuesta;
+              UsuarioPorCorreo respuesta;
               if(datosUsuario != null){
                  respuesta = await  consultaUsuarioPorCorreo(context, correoUsuario);
                  print("respuesta  ${respuesta}");
@@ -778,6 +778,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 redirect(responsive);
               }
               else {
+                setState(() {
+                  _saving = false;
+                });
                 print("else datosUsuario ${datosUsuario}");
                 if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
 
