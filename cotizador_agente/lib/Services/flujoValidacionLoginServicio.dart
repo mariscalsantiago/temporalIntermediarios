@@ -5,6 +5,7 @@ import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/consultaPersonaIdParticipante.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
@@ -381,7 +382,7 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(BuildContext context, String  
   }
 }
 
-Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String  correo, String celular, bool esReestablcer) async {
+Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String  correo, String celular, bool esReestablecer) async {
 
   print("orquestadorOTPServicio");
   _appEnvironmentConfig = AppConfig.of(context);
@@ -393,7 +394,7 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
 
     Map _loginBody;
 
-    if(esReestablcer){
+    if(esReestablecer){
       _loginBody = {
         "correo": correo,
         "enviarSms": true,
@@ -404,7 +405,7 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
         "correo": correo,
         "celular": celular,
         "enviarSms": true,
-        "enviarMail": true
+        "enviarMail": false
       };
 
     }
@@ -609,7 +610,7 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext contex
 
     Map _loginBody = {
       "idParticipante": idParticipante,
-      "codFiliacion": mediosContacto.codigoFiliacion != null && mediosContacto.codigoFiliacion != "" ? mediosContacto.codigoFiliacion : "",
+      "codFiliacion": prefs.getString("codigoAfiliacion") != null && prefs.getString("codigoAfiliacion") != "" ? prefs.getString("codigoAfiliacion") : "",
       "tipoMedioContacto": "TLCL",
       "propositosContacto": [
         {
@@ -699,7 +700,7 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, St
       _loginBody = {
         "celular": celular,
         "enviarSms": true,
-        "enviarMail": true
+        "enviarMail": false
       };
     } else{
       _loginBody = {
@@ -756,6 +757,76 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, St
       return null;
     } catch (e) {
       print("orquestadorOTPServicio catch -- $e");
+      return null;
+    }
+  } else {
+    //errorConexion = true;
+    return null;
+  }
+}
+
+Future<ConsultarPorIdParticipanteConsolidado> ConsultarPorIdParticipanteServicio(BuildContext context, String idParticipante) async {
+
+  print("ConsultarPorIdParticipanteServicio");
+  _appEnvironmentConfig = AppConfig.of(context);
+
+  ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
+
+  if(_connectivityStatus.available) {
+    http.Response _response;
+
+    Map _loginBody = {
+        "idParticipante": idParticipante
+    };
+
+    String _loginJSON = json.encode(_loginBody);
+
+    print("_loginJSON ${_loginJSON}");
+
+    try {
+      _response = await http.post(Uri.parse(_appEnvironmentConfig.consultaPersonaIdParticipante),
+          body: _loginJSON,
+          headers: {'apiKey': _appEnvironmentConfig.apiKey}
+      );
+
+      print("ConsultarPorIdParticipanteServicio ${_response.body}");
+      print("ConsultarPorIdParticipanteServicio ${_response.statusCode}");
+
+      if(_response != null){
+        if(_response.body != null){
+          if(_response.statusCode == 200){
+            Map<String, dynamic> map = json.decode(_response.body);
+            ConsultarPorIdParticipanteConsolidado _datosConsulta = ConsultarPorIdParticipanteConsolidado.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
+          } else if(_response.statusCode == 401){
+            print("StatusCode 401");
+            return null;
+          } else if(_response.statusCode == 404){
+            print("StatusCode 404");
+            return null;
+          } else {
+            print("StatusCode");
+            return null;
+          }
+        } else{
+          print("Body null");
+          return null;
+        }
+      } else {
+        print("response null");
+        return null;
+      }
+    }on TimeoutException{
+      //TODO time out test
+      print("ConsultarPorIdParticipanteServicio -- TimeOut");
+      //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
+      return null;
+    } catch (e) {
+      print("ConsultarPorIdParticipanteServicio catch -- $e");
       return null;
     }
   } else {

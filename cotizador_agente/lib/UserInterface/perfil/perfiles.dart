@@ -791,7 +791,8 @@ class _PerfilPageState extends State<PerfilPage> {
     });
   }
 
-  void updateDeaCUA(){setState(() {
+  void updateDeaCUA(){
+    setState(() {
     dropdownValue = prefs.getString("currentDA");
     valorDA = prefs.getString("currentDA");
     dropdownValue2 = prefs.getString("currentCUA");

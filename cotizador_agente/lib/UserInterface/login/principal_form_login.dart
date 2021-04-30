@@ -11,6 +11,7 @@ import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
+import 'package:cotizador_agente/flujoLoginModel/consultaPersonaIdParticipante.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
@@ -547,6 +548,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         mediosContacto = await  consultaMediosContactoServicio(context, idParticipanteValidaPorCorre);
 
         if(mediosContacto != null){
+          prefs.setString("codigoAfiliacion", mediosContacto.codigoFiliacion);
           List<telefonosModel> teledonosLista = [];
           teledonosLista = obtenerMedioContacto(mediosContacto);
           if(teledonosLista.length > 0){
@@ -556,6 +558,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
           }
         } else{
           prefs.setString("medioContactoTelefono", "");
+          ConsultarPorIdParticipanteConsolidado consulta =  await ConsultarPorIdParticipanteServicio(context, datosUsuario.idparticipante);
+          if(consulta != null){
+            prefs.setString("codigoAfiliacion", consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado);
+          } else{
+
+          }
         }
 
         OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoCambioContrasena"), "", prefs.getBool('flujoOlvideContrasena'));
@@ -697,9 +705,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 print("contrasenaUsuario ${contrasenaUsuario}");
               }
               datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
-              UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, correoUsuario);
-
-              print("UsuarioPorCorreo  ${respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario}");
+             UsuarioPorCorreo respuesta;
+              if(datosUsuario != null){
+                 respuesta = await  consultaUsuarioPorCorreo(context, correoUsuario);
+                 print("respuesta  ${respuesta}");
+              }
 
               if(datosUsuario != null && respuesta != null && respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario == "ACTIVO"){
 
@@ -707,6 +717,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 print("mediosContacto ${mediosContacto}");
 
                 if(mediosContacto != null){
+                  prefs.setString("codigoAfiliacion", mediosContacto.codigoFiliacion);
                   List<telefonosModel> teledonosLista = [];
                   teledonosLista = obtenerMedioContacto(mediosContacto);
                   if(teledonosLista.length > 0){
@@ -717,6 +728,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
 
                 } else{
                   prefs.setString("medioContactoTelefono", "");
+                  ConsultarPorIdParticipanteConsolidado consulta =  await ConsultarPorIdParticipanteServicio(context, datosUsuario.idparticipante);
+                  if(consulta != null){
+                    print("afiliacion ${consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado} ");
+                    prefs.setString("codigoAfiliacion", consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado);
+                  } else{
+
+                  }
 
                 }
 

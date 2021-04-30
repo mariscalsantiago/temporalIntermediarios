@@ -187,18 +187,18 @@ class _listaCUAState extends State<listaCUA> {
         onPressed: () async {
           if(_character != 99999){
             setState(() {
-            });
+              widget.callback();
             if(widget.isDA){
               valorDA = widget.list.elementAt(_character);
-              widget.callback(valorDA,widget.isDA);
+              widget.callback();
               prefs.setString("currentDA", widget.list.elementAt(_character));
             } else {
               posicionCUA = _character;
               valorCUA = datosPerfilador.intermediarios[_character];
-              widget.callback(valorCUA,widget.isDA);
+              widget.callback();
               prefs.setString("currentCUA",  widget.list.elementAt(_character));
             }
-            setState(() {
+              widget.callback();
             });
 
             Navigator.pop(context,true);

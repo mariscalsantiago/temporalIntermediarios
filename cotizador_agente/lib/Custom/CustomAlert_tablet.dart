@@ -53,6 +53,7 @@ enum AlertDialogTypeTablet {
   En_mantenimiento_cel,
   En_mantenimiento_llave,
   Sin_acceso_herramientas_cotizacion,
+  inicio_de_sesion_inactivo_contador,
 }
 
 void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String title,
@@ -2123,87 +2124,84 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                   ),
                 ),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Center(
-                      child: Container(
-                        width: responsive.wp(50),
-                        height: responsive.hp(30),
-                        child: Card(
-                          color: Theme.Colors.White,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Center(
-                                  child: Container(
-                                      margin:
-                                          EdgeInsets.only(top: responsive.hp(3)),
-                                      child: Icon(
-                                        Icons.warning_amber_outlined,
-                                        color: Colors.red,
-                                        size: responsive.ip(4),
-                                      ))),
-                              Container(
-                                margin: EdgeInsets.only(top: responsive.hp(2), right: responsive.wp(2), left: responsive.wp(2)),
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                                child: Container(
+                                    margin:
+                                    EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Icon(
+                                      Icons.warning_amber_outlined,
+                                      color: Colors.red,
+                                      size: responsive.ip(5),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text(
+                                  "No se puede iniciar sesión",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: responsive.height * 0.04,
+                                left: responsive.width * 0.04,
+                                right: responsive.width * 0.04,
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  left: responsive.width * 0.04,
+                                ),
                                 child: Center(
                                   child: Text(
                                     "Correo electrónico o contraseña no coinciden",
+                                    style: TextStyle(
+                                        color:
+                                        Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    Navigator.pop(context,true);
+                                  },
+                                  child: Text(
+                                    "CERRAR",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        color: Theme.Colors.Encabezados,
-                                        fontSize: responsive.ip(1.4)),
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
                                   ),
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    top: responsive.height * 0.02,
-                                    bottom: responsive.height * 0.01),
-                                child: Container(
-                                  margin: EdgeInsets.only(
-                                    left: responsive.wp(2.5),
-                                    right: responsive.wp(2.5),
-                                    bottom: responsive.height * 0.015,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Por seguridad, tu cuenta se bloqueará después de 3 intentos.",
-                                      style: TextStyle(
-                                          color:
-                                              Theme.Colors.Funcional_Textos_Body,
-                                          fontSize: responsive.ip(1.2)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Center(
-                                child: Container(
-                                  height: responsive.hp(3),
-                                  width: responsive.wp(50),
-                                  margin: EdgeInsets.only(
-                                    bottom: responsive.height * 0.02,
-                                    top: responsive.height * 0.01,
-                                  ),
-                                  child: RaisedButton(
-                                    elevation: 0,
-                                    color: Theme.Colors.White,
-                                    onPressed: () {
-                                      Navigator.pop(context,true);
-                                    },
-                                    child: Text(
-                                      "CERRAR",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Theme.Colors.GNP,
-                                          fontSize: responsive.ip(1.6)),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -4300,6 +4298,110 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context, String 
                                 ),
                               ),
                             )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });
+      break;
+
+    case AlertDialogTypeTablet.inicio_de_sesion_inactivo_contador:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                                child: Container(
+                                    margin:
+                                    EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Icon(
+                                      Icons.warning_amber_outlined,
+                                      color: Colors.red,
+                                      size: responsive.ip(5),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text(
+                                  "Inicio de sesión inactivo",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: responsive.height * 0.04,
+                                left: responsive.width * 0.04,
+                                right: responsive.width * 0.04,
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  left: responsive.width * 0.04,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Has superado el número permitido de intentos para iniciar sesión, en un momento podrás intentarlo de nuevo.",
+                                    style: TextStyle(
+                                        color:
+                                        Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    Navigator.pop(context,true);
+                                  },
+                                  child: Text(
+                                    "CERRAR",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       ),

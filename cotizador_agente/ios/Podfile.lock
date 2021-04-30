@@ -7,6 +7,8 @@ PODS:
   - connectivity (0.0.1):
     - Flutter
     - Reachability
+  - countdown_flutter (0.0.1):
+    - Flutter
   - device_info (0.0.1):
     - Flutter
   - Firebase/Analytics (7.3.0):
@@ -170,6 +172,7 @@ PODS:
 
 DEPENDENCIES:
   - connectivity (from `.symlinks/plugins/connectivity/ios`)
+  - countdown_flutter (from `.symlinks/plugins/countdown_flutter/ios`)
   - device_info (from `.symlinks/plugins/device_info/ios`)
   - firebase_analytics (from `.symlinks/plugins/firebase_analytics/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
@@ -221,6 +224,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   connectivity:
     :path: ".symlinks/plugins/connectivity/ios"
+  countdown_flutter:
+    :path: ".symlinks/plugins/countdown_flutter/ios"
   device_info:
     :path: ".symlinks/plugins/device_info/ios"
   firebase_analytics:
@@ -269,6 +274,7 @@ SPEC CHECKSUMS:
   BSImagePicker: 07404254f2fcdaf5a2eb403c0f8c337267ce8738
   BSImageView: a149459433a2687157d034c78e059d30ac7f2544
   connectivity: c4130b2985d4ef6fd26f9702e886bd5260681467
+  countdown_flutter: 423a4cc24614ccb078c2ce4ac6739b1d85cbe98b
   device_info: d7d233b645a32c40dfdc212de5cf646ca482f175
   Firebase: 26223c695fe322633274198cb19dca8cb7e54416
   firebase_analytics: 41043f6e14fc9bc27c3f05217ab7f2b0ad9b41eb

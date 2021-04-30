@@ -252,7 +252,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
       authenticated = await localAuth.authenticateWithBiometrics(
         androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar", cancelButton: "CANCELAR",fingerprintRequiredTitle:"Solicitud de huella digital",goToSettingsDescription:"Tu huella digital no está configurada en el dispositivo, ve a configuraciones para añadirla.",goToSettingsButton:"Ir a configuraciones"),
-        iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR"),
+        iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR",goToSettingsButton:"Ir a configuraciones"),
         localizedReason: ' ',
         useErrorDialogs: true,
         stickyAuth: true,

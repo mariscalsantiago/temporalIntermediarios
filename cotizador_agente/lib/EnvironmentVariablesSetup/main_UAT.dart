@@ -35,6 +35,7 @@ void main() {
     consultarMedioContactosAgentes :'https://api-qa.oscp.gnp.com.mx/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
     altaMediosContactoAgentes:'https://api-qa.oscp.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
     orquestadorOtpJwt:'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/intermediario/enviarOtp/me',
+    consultaPersonaIdParticipante:"https://api-qa.oscp.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
 
     child: new MyApp(),
 

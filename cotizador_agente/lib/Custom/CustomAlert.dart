@@ -72,7 +72,8 @@ enum AlertDialogType {
   menu_home,
   errorServicio,
   contrasena_actualiza_correctamente,
-  preguntasSecretasActualizadas
+  preguntasSecretasActualizadas,
+  inicio_de_sesion_inactivo_contador,
 }
 
 void customAlert(AlertDialogType type, BuildContext context, String title, String message, Responsive responsive,  Function callback) {
@@ -947,12 +948,14 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                       prefs.setBool("activarBiometricos", false);
                                       callback();
                                       Navigator.pop(context,true);
+                                    } else if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
+                                      Navigator.pop(context,true);
+                                      callback(false, responsive);
                                     } else {
                                       Navigator.pop(context,true);
                                       prefs.setBool("activarBiometricos", false);
                                       callback(false, responsive);
                                       customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
-
                                     }
 
                                   },
@@ -966,24 +969,24 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 ),
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.01,
-                                  bottom: responsive.height * 0.04),
-                              child: Center(
-                                child: GestureDetector(
-                                  onTap: () {
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
                                     Navigator.pop(context,true);
-                                    customAlert(
-                                        AlertDialogType.huella,
-                                        context,
-                                        "",
-                                        "",
-                                        responsive,
-                                        callback);
+                                    customAlert(AlertDialogType.huella, context, "", "", responsive, callback);
                                   },
                                   child: Text(
                                     "NO",
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Theme.Colors.GNP,
                                         fontSize: responsive.ip(1.8)),
@@ -2435,7 +2438,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               margin: EdgeInsets.only(top: responsive.hp(5)),
                               child: Center(
                                 child: Text(
-                                  "Correo electrónico o contraseña no coinciden",
+                                  "No se puede iniciar sesión",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
@@ -2448,16 +2451,14 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   top: responsive.height * 0.04,
                                   left: responsive.width * 0.04,
                                   right: responsive.width * 0.04,
-                                  bottom: responsive.height * 0.03),
+                                  ),
                               child: Container(
                                 margin: EdgeInsets.only(
-                                  top: responsive.height * 0.04,
                                   left: responsive.width * 0.04,
-                                  bottom: responsive.height * 0.03,
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "Por seguridad, tu cuenta se bloqueará después de 3 intentos.",
+                                    "Correo electrónico o contraseña no coinciden",
                                     style: TextStyle(
                                         color:
                                             Theme.Colors.Funcional_Textos_Body,
@@ -4855,6 +4856,110 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                       customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
                                     }
 
+                                  },
+                                  child: Text(
+                                    "CERRAR",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });
+      break;
+
+    case AlertDialogType.inicio_de_sesion_inactivo_contador:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                                child: Container(
+                                    margin:
+                                    EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Icon(
+                                      Icons.warning_amber_outlined,
+                                      color: Colors.red,
+                                      size: responsive.ip(5),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text(
+                                  "Inicio de sesión inactivo",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: responsive.height * 0.04,
+                                left: responsive.width * 0.04,
+                                right: responsive.width * 0.04,
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  left: responsive.width * 0.04,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Has superado el número permitido de intentos para iniciar sesión, en un momento podrás intentarlo de nuevo.",
+                                    style: TextStyle(
+                                        color:
+                                        Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    Navigator.pop(context,true);
                                   },
                                   child: Text(
                                     "CERRAR",

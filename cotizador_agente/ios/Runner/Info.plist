@@ -51,7 +51,7 @@
 	<key>NSContactsUsageDescription</key>
 	<string>This app requires Contacts access to function properly.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Why is my app authenticating using face id?</string>
+	<string>¿Por qué mi aplicación se autentica con Face ID?</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Intermediarios GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
 	<key>NSLocationAlwaysUsageDescription</key>
