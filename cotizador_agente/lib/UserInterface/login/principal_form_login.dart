@@ -19,6 +19,7 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
+import 'package:device_info/device_info.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,10 +28,13 @@ import '../../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_codigo_verificacion.dart';
 import 'logoEncabezadoLogin.dart';
+import 'package:intl/intl.dart';
 
 double tamano;
 String idParticipanteValidaPorCorre;
 consultaMediosContactoAgentesModel mediosContacto;
+DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+Map<String, dynamic> deviceData = <String, dynamic>{};
 
 class PrincipalFormLogin extends StatefulWidget {
   final Responsive responsive;
@@ -55,7 +59,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   bool contrasena;
   bool _biometricos;
   //TODO 238
-  bool _subSecuentaIngresoCorreo;
+  bool _subSecuentaIngresoCorreo=false;
   bool existeUsuario;
   String correoUsuario;
   String contrasenaUsuario;
@@ -111,6 +115,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
       prefs.setBool("primeraVez", true);
     }
     validateIntenetstatus(context, widget.responsive);
+    initPlatformState(updateDeviceData);
     super.initState();
   }
 
@@ -327,6 +332,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   }
 
   Widget olvidasteContrasena(Responsive responsive){
+    controllerCorreoCambioContrasena.text = prefs.getString("correoUsuario");
     return CupertinoButton(
         padding: EdgeInsets.zero,
         child: Text("¿Olvidaste tu contraseña?", style: TextStyle(
@@ -336,6 +342,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         )),
         onPressed: (){
           controllerCorreoCambioContrasena.text = "";
+          focusContrasena.unfocus();
+          focusCorreo.unfocus();
+          focusCorreoCambio.requestFocus();
           dialogo(context, responsive);
 
         }
@@ -696,7 +705,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                    contrasenaUsuario = prefs.getString("contrasenaUsuario");
                  }
 
-              } else {
+              }
+              else {
                 prefs.setString("correoUsuario", controllerCorreo.text);
                 correoUsuario = controllerCorreo.text;
                 prefs.setString("contrasenaUsuario", controllerContrasena.text);
@@ -726,7 +736,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                     prefs.setString("medioContactoTelefono", "");
                   }
 
-                } else{
+                }
+                else{
                   prefs.setString("medioContactoTelefono", "");
                   ConsultarPorIdParticipanteConsolidado consulta =  await ConsultarPorIdParticipanteServicio(context, datosUsuario.idparticipante);
                   if(consulta != null){
@@ -772,14 +783,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 prefs.setString("currentDA", datosPerfilador.daList.elementAt(0).cveDa);
                 prefs.setString("currentCUA",  datosPerfilador.daList.elementAt(0).codIntermediario[0]);
 
-                ultimaSesion = fechaPrototipo(DateTime.now().toString());
-                //ultimoAcceso();
-                //Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
                 redirect(responsive);
               }
               else {
                 setState(() {
                   _saving = false;
+                  _enable = true;
                 });
                 print("else datosUsuario ${datosUsuario}");
                 if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
@@ -867,13 +876,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
             if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
               Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
             } else{
-
               if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
 
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
 
               } else{
-
                 if (deviceType == ScreenType.phone) {
                   prefs.setBool("esFlujoBiometricos", false);
                   customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlertaCodVerificacion);
@@ -883,7 +890,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 }
               }
             }
-
           }
 
       }
@@ -925,7 +931,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
     }
   }
 
-  ingresarConOtroUsuario(){
+  Widget ingresarConOtroUsuario(){
 
     return CupertinoButton(
         padding: EdgeInsets.zero,
@@ -1008,13 +1014,19 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
     return Center(
       child: Container(
         //margin: EdgeInsets.only( top: responsive.hp(0.5), bottom: responsive.hp(0.5)),
-        child: Text("Versión 2.0",
-          style: TextStyle(
-            color: Tema.Colors.Azul_2,
-            fontSize: responsive.ip(1.5),
-            fontWeight: FontWeight.normal
+        child: GestureDetector(
+          onLongPress: (){
+              initPlatformState(updateDeviceData);
+            customAlert(AlertDialogType.versionTag, context, "",  "", responsive,funcion);
+          },
+          child: Text("Versión 2.0",
+            style: TextStyle(
+              color: Tema.Colors.Azul_2,
+              fontSize: responsive.ip(1.5),
+              fontWeight: FontWeight.normal
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -1029,6 +1041,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   void funcionAlerta( bool abc){
 
   }
+  void updateDeviceData(  Map<String, dynamic> deviceDato){
+    setState(() {
+      deviceData = deviceDato;
+    });
+  }
+
   void funcionAlertaCodVerificacion (Responsive responsive) async{
 
     setState(() {
@@ -1114,109 +1132,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   }
 }
 
-
-
-String fechaPrototipo(String fecha){
-  String ano = fecha.substring(0, 4);
-  String mes = fecha.substring(5,7);
-  String dia = fecha.substring(8,10);
-  String hora = fecha.substring(11,13);
-  String minutos = fecha.substring(14,16);
-  String anoDosDigitos = ano.substring(2,4);
-  print("fecha: ${fecha}");
-  print("ano: ${ano}");
-  print("mes: ${mes}");
-  print("dia: ${dia}");
-  print("hora: ${hora}");
-  print("minutos: ${minutos}");
-  print("anoDosDigitos: ${anoDosDigitos}");
-
-  String valorMes = "";
-  String valorHora = "";
-  switch(mes) {
-    case "01":
-      valorMes = "Ene";
-      break;
-    case "02":
-      valorMes = "Feb";
-      break;
-    case "03":
-      valorMes = "Mar";
-      break;
-    case "04":
-      valorMes = "Abr";
-      break;
-    case "05":
-      valorMes = "May";
-      break;
-    case "06":
-      valorMes = "Jun";
-      break;
-    case "07":
-      valorMes = "Jul";
-      break;
-    case "08":
-      valorMes = "Ago";
-      break;
-    case "09":
-      valorMes = "Sep";
-      break;
-    case "10":
-      valorMes = "Oct";
-      break;
-    case "11":
-      valorMes = "Nov";
-      break;
-    case "12":
-      valorMes = "Dic";
-      break;
-  }
-  switch(hora) {
-    case "01": case "02": case "03": case "04": case "05": case "06":case "07": case "08": case "09": case "10": case "11": case "12":
-    valorHora = "${hora}:${minutos}am";
-    break;
-
-    case "13":
-      valorHora = "01:${minutos}pm";
-      break;
-    case "14":
-      valorHora = "02:${minutos}pm";
-      break;
-    case "15":
-      valorHora = "03:${minutos}pm";
-      break;
-    case "16":
-      valorHora = "04:${minutos}pm";
-      break;
-    case "17":
-      valorHora = "05:${minutos}pm";
-      break;
-    case "18":
-      valorHora = "06:${minutos}pm";
-      break;
-    case "19":
-      valorHora = "07:${minutos}pm";
-      break;
-    case "20":
-      valorHora = "08:${minutos}pm";
-      break;
-    case "21":
-      valorHora = "09:${minutos}pm";
-      break;
-    case "22":
-      valorHora = "10:${minutos}pm";
-      break;
-    case "23":
-      valorHora = "11:${minutos}pm";
-      break;
-    default :
-      valorHora = "${hora}:${minutos}";
-  }
-
-
-  return "${dia}/${valorMes}/${ano} ${valorHora}";
-}
-
 void ultimoAcceso() async {
   print("== Firebase ==");
   DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
@@ -1224,20 +1139,64 @@ void ultimoAcceso() async {
     var jsoonn = json.encode(_snapshot.value);
     Map response = json.decode(jsoonn);
 
-
-    List<Map<String, String>> user = [];
-    response.forEach((key, value) {
-      //user.add(key: value['accesoUser']);
-    });
-
     if(response!= null && response.isNotEmpty){
-    String dateFirebase = response["ultimoAcceso"]!= null ? response["ultimoAcceso"]:"";
+      String dateFirebase = response["ultimoAcceso"]!= null ? response["ultimoAcceso"]:"";
+      print("if dateFirebase  ${dateFirebase}");
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('dd/MM/yyyy hh:mm:ss').format(now);
+      validacionAcceso(dateFirebase, formattedDate);
+      print("formattedDate  ${formattedDate}");
+      Map<String, dynamic> mapa = {
+        '${datosUsuario.idparticipante}': {
+          'ultimoAcceso' : formattedDate
+        }
+      };
+      _dataBaseReference.child("accesoUsuarios").update(mapa);
+
     }else{
-      _dataBaseReference.child("accesoUsuarios").set("");
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('dd/MM/yyyy hh:mm:ss').format(now);
+      print("else formattedDate  ${formattedDate}");
+      prefs.setString("ultimoAcceso", formattedDate);
+      prefs.setBool("primerAccesoFecha", true);
+      Map<String, dynamic> mapa = {
+        '${datosUsuario.idparticipante}': {
+          'ultimoAcceso' : formattedDate
+        }
+      };
+
+      _dataBaseReference.child("accesoUsuarios").update(mapa);
+
     }
-    print("Data --- ${_snapshot.value}");
-    //print("Environment: " + validateNotEmptyToString(_snapshot.value, ""));
   });
+}
+
+void validacionAcceso(String dataFirebase, String dateNow){
+
+  prefs.setBool("primerAccesoFecha", false);
+
+  String diaFirebase = dataFirebase.substring(0,2);
+  String mesFirebase = dataFirebase.substring(3,5);
+  String anioFirebase = dataFirebase.substring(6,10);
+
+  String diaPrefs = dateNow.substring(0,2);
+  String mesPrefs = dateNow.substring(3,5);
+  String anioPrefs = dateNow.substring(6,10);
+
+  if((diaFirebase == diaPrefs) && (mesFirebase == mesPrefs) && (anioFirebase == anioPrefs)) {
+    print("Fechaa now");
+    prefs.setBool("ultimoAccesoHoy", true);
+    prefs.setBool("ultimoAccesoAyer", false);
+  } else if((mesFirebase == mesPrefs) && (anioFirebase == anioPrefs) && (int.parse(diaPrefs) +1 == int.parse(diaFirebase))){
+    print("Fehca ayer");
+    prefs.setBool("ultimoAccesoHoy", false);
+    prefs.setBool("ultimoAccesoAyer", true);
+  } else{
+    print("Fehca otro dia");
+    prefs.setBool("ultimoAccesoHoy", false);
+    prefs.setBool("ultimoAccesoAyer", false);
+  }
+  prefs.setString("ultimoAcceso", dataFirebase);
 
 }
 

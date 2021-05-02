@@ -3,6 +3,7 @@ import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     dropdownValue = "Autos";
+    ultimoAcceso();
     //validateIntenetstatus(context, widget.responsive);
     super.initState();
   }
@@ -227,9 +229,8 @@ void getInicialesName(){
                       ),
                     ),
                   ): Container(),
-
                 ],
-              )
+              ),
               /*Container(
                 child: WebView(
                   javascriptMode: JavascriptMode.unrestricted,

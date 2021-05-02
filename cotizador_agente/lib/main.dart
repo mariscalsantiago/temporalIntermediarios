@@ -22,8 +22,6 @@ enum Vistas { login, home, perfil, biometricos }
 enum ScreenType {phone,tabletLan, tabletPor}
 bool is_available_face=false;
 bool is_available_finger=false;
-String ultimaSesion="";
-
 
 ScreenType deviceType = ScreenType.phone;
 

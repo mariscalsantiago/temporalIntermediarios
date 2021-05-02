@@ -18,6 +18,7 @@ import 'package:flutter/services.dart';
 import 'loginRestablecerContrasena.dart';
 
 bool timerEnd = false;
+Widget timer;
 
 class LoginCodigoVerificaion extends StatefulWidget {
   final isNumero;
@@ -42,6 +43,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
     timerEnd = false;
     focusCodigo = new FocusNode();
     controllerCodigo = new TextEditingController();
+    timerWidget();
     super.initState();
   }
 
@@ -257,13 +259,11 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     ),
                     ); // 01:00:00
                   },
-                ) : Container(
-                  child: Text("Expirado", style: TextStyle(
+                ) : Container(child: Text("Expirado", style: TextStyle(
                     color: Tema.Colors.Azul_2,
                     fontWeight: FontWeight.normal,
                     fontSize: responsive.ip(2)
-                  ),),
-                )
+                  ),),)
 
               ],
             )
@@ -288,7 +288,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               ),
               Container(
                 child: Text("   Reenviar código", style: TextStyle(
-                    color:!timerEnd? Tema.Colors.botonletra : Tema.Colors.GNP,
+                    color: Tema.Colors.GNP,
                     fontWeight: FontWeight.normal,
                     fontSize: responsive.ip(2)
                 ),),
@@ -296,10 +296,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             ],
           ),
           onPressed: () async {
-            if(timerEnd){
-              setState(() {
-                timerEnd = false;
-              });
+            setState(() {
+              timerEnd = true;
+            });
             if(prefs.getBool('flujoOlvideContrasena')){
               setState(() {
                 _saving = true;
@@ -310,6 +309,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               });
               print("optRespuesta  ${optRespuesta}");
               if(optRespuesta != null){
+                setState(() {
+                  timerEnd = false;
+                });
 
                 if(optRespuesta.error == "" && optRespuesta.idError == ""){
                   prefs.setString("idOperacion", optRespuesta.idOperacion);
@@ -360,6 +362,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                 });
                 OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), false);
                 setState(() {
+                  timerEnd = false;
                   _saving = false;
                 });
                 if(optRespuesta != null){
@@ -374,12 +377,22 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               }
             }
           }
-        }
-
       ),
     );
   }
 
+  void timerWidget(){
+    setState(() {
+    timer = new Container(
+      child: Text("Código de verificación", style: TextStyle(
+        color:  ! timerEnd ? Tema.Colors.textoExpiro : Tema.Colors.validarCampo,
+        fontWeight: FontWeight.w500,
+        fontSize: widget.responsive.ip(1.5),
+      ),
+      ),
+    );
+  });
+  }
   void funcion(){
 
   }
@@ -469,6 +482,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     setState(() {
                       _saving = false;
                       _validCode = false;
+                      controllerCodigo.text="";
                       codigoValidacion = "El código no coincide";
                       _formKey.currentState.validate();
                     });

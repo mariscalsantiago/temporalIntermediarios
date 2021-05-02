@@ -674,10 +674,7 @@ class _PerfilPageState extends State<PerfilPage> {
               Container(
                 margin: EdgeInsets.symmetric(vertical: widget.responsive.hp(1),),
                 child: Center(
-                    child: Text(
-                      ""
-                          "Última sesión: " +
-                          ultimaSesion,
+                    child: Text("Última sesión: ${ultimaSesion()}",
                       style: TextStyle(
                           fontSize: widget.responsive.ip(1.8),
                           color: Theme.Colors.fecha_1),
@@ -701,6 +698,35 @@ class _PerfilPageState extends State<PerfilPage> {
     }
 
     return l;
+  }
+
+  String ultimaSesion(){
+
+    if(prefs.getString("ultimoAcceso") != null && prefs.getString("ultimoAcceso") != ""){
+        if(prefs.getBool("primerAccesoFecha")){
+            String date =  prefs.getString("ultimoAcceso").substring(11,prefs.getString("ultimoAcceso").length);
+            print("date perimer aacceso  ${date}");
+            return "Hoy a las"+ date;
+        } else{
+          if(prefs.getBool("ultimoAccesoHoy")){
+            String date =  prefs.getString("ultimoAcceso").substring(11,prefs.getString("ultimoAcceso").length);
+            print("date hoy ${date}");
+            return "Hoy a las "+ date;
+          } else if(prefs.getBool("ultimoAccesoAyer")){
+            String date =  prefs.getString("ultimoAcceso").substring(11,prefs.getString("ultimoAcceso").length);
+            print("date ayer ${date}");
+            return "Ayer a las "+ date;
+          } else{
+            String date =  prefs.getString("ultimoAcceso");
+            print("date  otro dia  ${date}");
+            return date;
+          }
+
+        }
+    } else{
+      return "";
+    }
+
   }
 
   void _showPicker(context) {
@@ -760,6 +786,8 @@ class _PerfilPageState extends State<PerfilPage> {
   }
 
   _imgFromGallery() async {
+    //TODO revisar doble intento y validacion de null
+    try{
     File image = await ImagePicker.pickImage(
         source: ImageSource.gallery, imageQuality: 50);
     fetchFoto(context, image, widget.callback);
@@ -767,14 +795,35 @@ class _PerfilPageState extends State<PerfilPage> {
       _image = image;
       updateFoto();
     });
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => SimpleCropRoute(
-                image: _image,
-            callback: updateFoto,
-              )),
-    );
+    if(_image!= null){
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SimpleCropRoute(
+              image: _image,
+              callback: updateFoto,
+            )),
+      );
+    }else{
+      File image = await ImagePicker.pickImage(
+          source: ImageSource.gallery, imageQuality: 50);
+      fetchFoto(context, image, widget.callback);
+      setState(() {
+        _image = image;
+        updateFoto();
+      });
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => SimpleCropRoute(
+              image: _image,
+              callback: updateFoto,
+            )),
+      );
+    }}catch(e){
+      print(e);
+    }
+
   }
 
   void funcionAlerta(bool biometricosActivos){

@@ -50,7 +50,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                 Navigator.pop(context,true);
               } else {
                 prefs.setBool("activarBiometricos", false);
-                widget.callback(false);
+                widget.callback(false, responsive);
                 Navigator.pop(context,true);
                 if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
                 }else{
@@ -215,6 +215,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
         localizedReason: ' ',
         useErrorDialogs: true,
         stickyAuth: true,
+
       );
 
       if(authenticated){
@@ -231,7 +232,11 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
       }
     } on PlatformException catch (e) {
       print("eeeeeee ${e}");
+      print("code ${e.code}");
+      print("message ${e.message}");
+      print("stacktrace ${e.stacktrace}");
       setState(() {});
+      //if(){}
       Navigator.pop(context,true);
       is_available_face!= false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
       customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);

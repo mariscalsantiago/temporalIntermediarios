@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
@@ -22,6 +23,8 @@ import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
+import 'package:device_info/device_info.dart';
+
 
 var isShowAlert = false;
 
@@ -74,6 +77,7 @@ enum AlertDialogType {
   contrasena_actualiza_correctamente,
   preguntasSecretasActualizadas,
   inicio_de_sesion_inactivo_contador,
+  versionTag
 }
 
 void customAlert(AlertDialogType type, BuildContext context, String title, String message, Responsive responsive,  Function callback) {
@@ -1089,8 +1093,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                           "ACEPTAR",
                                           style: TextStyle(
                                               color: Theme.Colors.backgroud,
-                                              fontSize: responsive
-                                                  .ip(responsive.ip(0.2))),
+                                              fontSize: responsive.ip(2.1)),
                                           textAlign: TextAlign.center,
                                         ))),
                                         onPressed: () async {
@@ -1113,7 +1116,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                         bottom: responsive.hp(2)),
                                     child: Text("NO ES MI NÚMERO ACTUAL",
                                         style:
-                                            TextStyle(color: Theme.Colors.GNP),
+                                            TextStyle(color: Theme.Colors.GNP,
+                                            fontSize: responsive.ip(2.1)
+                                            ),
                                         textAlign: TextAlign.center)),
                                 onPressed: () {
                                   Navigator.pop(context,true);
@@ -1450,12 +1455,15 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    callback();
-                                    if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin")){
+                                    print("-----------Exito----------------------");
+                                    if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin") ){
+
                                       if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
+                                        Navigator.pop(context,true);
                                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
                                       } else{
                                         if (deviceType == ScreenType.phone) {
+                                          print("Verifica codigo celular");
                                           Navigator.pop(context,true);
                                           customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, callback);
                                         }
@@ -1464,15 +1472,18 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                           customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
                                         }
                                       }
+
                                     } else {
                                       if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") ){
                                         Navigator.pop(context,true);
                                       } else{
+                                        print("Exito----------------------");
                                         Navigator.pop(context,true);
                                         Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage(responsive: responsive,)));
                                       }
                                     }
-
+                                    prefs.setBool("aceptoTerminos", checkedValue);
+                                    callback();
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -4970,6 +4981,103 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                   ),
                                 ),
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });
+      break;
+      case AlertDialogType.versionTag:
+      showDialog(
+
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Opacity(
+                    opacity: 0.6,
+                    child: Container(
+                      height: responsive.height,
+                      width: responsive.width,
+                      color: Theme.Colors.Azul_gnp,
+                    ),
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      height: responsive.hp(80),
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                                child: Container(
+                                    margin:
+                                    EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Icon(
+                                      Icons.tag_faces_outlined,
+                                      color: Colors.green,
+                                      size: responsive.ip(5),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text(
+                                  "Tag : 2.2.0",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              height: responsive.hp(60),
+                              child: SingleChildScrollView(
+                                child: ListView(
+                                        shrinkWrap: true,
+                                        children: deviceData.keys.map((String property) {
+                                          return Row(
+                                            children: <Widget>[
+                                              Container(
+                                                padding: const EdgeInsets.all(10.0),
+                                                child: Text(
+                                                  property,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                  child: Container(
+                                                    padding: const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+                                                    child: Text(
+                                                      '${deviceData[property]}',
+                                                      maxLines: 10,
+                                                      overflow: TextOverflow.ellipsis,
+                                                    ),
+                                                  )),
+                                            ],
+                                          );
+                                        }).toList(),
+                                      ),
+                                  ),
                             ),
                           ],
                         ),

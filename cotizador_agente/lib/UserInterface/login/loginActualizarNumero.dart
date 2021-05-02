@@ -26,7 +26,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
   bool _saving;
   final _formKey = GlobalKey<FormState>();
   TextEditingController controllerNumero;
-  FocusNode focusCodigo;
+  FocusNode focusCodigo = FocusNode();
 
   @override
   void initState() {
@@ -48,7 +48,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           title: Text('Actualizar número de celular', style: TextStyle(
               color: Tema.Colors.Azul_2,
               fontWeight: FontWeight.normal,
-              fontSize: widget.responsive.ip(2.5)
+              fontSize: widget.responsive.ip(2.3)
           ),),
           centerTitle: true,
           leading: IconButton(
