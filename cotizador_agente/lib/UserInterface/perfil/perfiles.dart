@@ -15,7 +15,6 @@ import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart'
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
-import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/perfil/ListaCUA.dart';
 import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
@@ -703,21 +702,21 @@ class _PerfilPageState extends State<PerfilPage> {
   String ultimaSesion(){
 
     if(prefs.getString("ultimoAcceso") != null && prefs.getString("ultimoAcceso") != ""){
-        if(prefs.getBool("primerAccesoFecha")){
+        if(prefs.getBool("primerAccesoFecha") != null && prefs.getBool("primerAccesoFecha")){
             String date =  prefs.getString("ultimoAcceso").substring(11,prefs.getString("ultimoAcceso").length);
             print("date perimer aacceso  ${date}");
             return "Hoy a las"+ date;
         } else{
-          if(prefs.getBool("ultimoAccesoHoy")){
+          if(prefs.getBool("ultimoAccesoHoy") != null && prefs.getBool("ultimoAccesoHoy")){
             String date =  prefs.getString("ultimoAcceso").substring(11,prefs.getString("ultimoAcceso").length);
             print("date hoy ${date}");
             return "Hoy a las "+ date;
-          } else if(prefs.getBool("ultimoAccesoAyer")){
+          } else if(prefs.getBool("ultimoAccesoAyer") != null && prefs.getBool("ultimoAccesoAyer")){
             String date =  prefs.getString("ultimoAcceso").substring(11,prefs.getString("ultimoAcceso").length);
             print("date ayer ${date}");
             return "Ayer a las "+ date;
           } else{
-            String date =  prefs.getString("ultimoAcceso");
+            String date = prefs.getString("ultimoAcceso") != null ?  prefs.getString("ultimoAcceso"): "";
             print("date  otro dia  ${date}");
             return date;
           }

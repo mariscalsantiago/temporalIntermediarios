@@ -61,7 +61,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
           appBar: AppBar(
             backgroundColor: Tema.Colors.backgroud,
             elevation: 0,
-            title: Text('Reestablecer contraseña', style: TextStyle(
+            title: Text('Restablecer contraseña', style: TextStyle(
                 color: Tema.Colors.Azul_2,
                 fontWeight: FontWeight.normal,
                 fontSize: widget.responsive.ip(2.5)
@@ -341,7 +341,10 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
           ),
         ),
         onPressed: () async {
+          focusNuevaContrasena.unfocus();
+          focusConfirmarContrasena.unfocus();
           if(_formKey.currentState.validate()) {
+
             setState(() {
               _saving = true;
             });

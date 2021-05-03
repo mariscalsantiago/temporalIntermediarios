@@ -107,7 +107,11 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               child: GestureDetector(
                   onTap: (){
                     //if(face){}else{
+                    if( prefs.getInt("localAuthCount")<6){
                     _authenticateHuella(widget.responsive);
+                    }else{
+                      customAlert(face?AlertDialogType.inicio_de_sesion_con_facial_bloqueado:AlertDialogType.inicio_de_sesion_con_huella_bloqueado,context,"","", responsive, funcionAlerta);
+                    }
                     // }
                   },
                   child: Icon(face != false ? Tema.Icons.facial : Icons.fingerprint, size: widget.responsive.ip(9), color: Tema.Colors.GNP,))),
@@ -248,8 +252,6 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
         _isAuthenticating = true;
         _authorized = 'Authenticating';
       });
-
-
       authenticated = await localAuth.authenticateWithBiometrics(
         androidAuthStrings:new AndroidAuthMessages(signInTitle: "Inicio de sesión", fingerprintHint: "Coloca tu dedo para continuar", cancelButton: "CANCELAR",fingerprintRequiredTitle:"Solicitud de huella digital",goToSettingsDescription:"Tu huella digital no está configurada en el dispositivo, ve a configuraciones para añadirla.",goToSettingsButton:"Ir a configuraciones"),
         iOSAuthStrings: new IOSAuthMessages (cancelButton: "CANCELAR",goToSettingsButton:"Ir a configuraciones"),
@@ -287,18 +289,19 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               funcionAlerta);
         }
       } else {
-
+        int count = prefs.getInt("localAuthCount");
+        localAuth.stopAuthentication();
+        prefs.setInt("localAuthCount", count++);
+        face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
+        customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
       }
     } on PlatformException catch (e) {
       print("eeeeeee ${e}");
       setState(() {
         //prefs.setBool("activarBiometricos", false);
       });
-
-      face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
-      customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
-
-
+      localAuth.stopAuthentication();
+      customAlert(face?AlertDialogType.inicio_de_sesion_con_facial_bloqueado:AlertDialogType.inicio_de_sesion_con_huella_bloqueado,context,"","", responsive, funcionAlerta);
     }
     if (!mounted) return;
 

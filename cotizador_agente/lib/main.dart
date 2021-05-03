@@ -9,12 +9,6 @@ import 'CotizadorUnico/FormularioPaso1.dart';
 import 'CotizadorUnico/SeleccionaCotizadorAP.dart';
 import 'EnvironmentVariablesSetup/app_config.dart';
 import 'UserInterface/login/Splash/Splash.dart';
-
-import 'UserInterface/login/onboarding_APyAutos/ActualizaTuPerfil_Onboard.dart';
-import 'UserInterface/login/onboarding_APyAutos/ComparteCotizaciones.dart';
-import 'UserInterface/login/onboarding_APyAutos/ConoceHerramientas_ventas.dart';
-import 'UserInterface/login/onboarding_APyAutos/CotizaTusNegocios.dart';
-import 'UserInterface/login/onboarding_APyAutos/ap_autos.dart';
 import 'UserInterface/login/principal_form_login.dart';
 
 

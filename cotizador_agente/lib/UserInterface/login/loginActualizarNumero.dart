@@ -285,6 +285,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
               prefs.setString("lada", lada);
               prefs.setString("numero", numero);
+              prefs.setString("medioContactoTelefonoServicio", prefs.getString("medioContactoTelefono"));
+              print("Telefono -- ${prefs.getString("medioContactoTelefono")}");
               prefs.setString("medioContactoTelefono", controllerNumero.text);
               setState(() {
                 _saving = true;
@@ -309,9 +311,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                 customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
                 return;
               }
-
             }
-            if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")){
+            else if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")){
 
               print("esPerfil actualizarContrasenaPerfil");
 
@@ -342,9 +343,10 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               } else{
                 customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcionAlerta);
               }
-
             }
             else {
+
+              print("----- else Aceptar ------");
               setState(() {
                 _saving = true;
               });

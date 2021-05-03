@@ -77,7 +77,9 @@ enum AlertDialogType {
   contrasena_actualiza_correctamente,
   preguntasSecretasActualizadas,
   inicio_de_sesion_inactivo_contador,
-  versionTag
+  versionTag,
+  inicio_de_sesion_con_huella_bloqueado,
+  inicio_de_sesion_con_facial_bloqueado,
 }
 
 void customAlert(AlertDialogType type, BuildContext context, String title, String message, Responsive responsive,  Function callback) {
@@ -1742,6 +1744,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                       prefs.setBool("activarBiometricos", false);
                                       callback();
                                       Navigator.pop(context,true);
+                                    } else if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
+                                      Navigator.pop(context,true);
+                                      callback(false, responsive);
                                     } else {
                                       Navigator.pop(context,true);
                                       prefs.setBool("activarBiometricos", false);
@@ -1761,24 +1766,24 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                 ),
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: responsive.height * 0.01,
-                                  bottom: responsive.height * 0.04),
-                              child: Center(
-                                child: GestureDetector(
-                                  onTap: () {
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
                                     Navigator.pop(context,true);
-                                    customAlert(
-                                        AlertDialogType.Reconocimiento_facial,
-                                        context,
-                                        "",
-                                        "",
-                                        responsive,
-                                        callback);
+                                    customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, callback);
                                   },
                                   child: Text(
                                     "NO",
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Theme.Colors.GNP,
                                         fontSize: responsive.ip(1.8)),
@@ -4992,6 +4997,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
             );
           });
       break;
+
       case AlertDialogType.versionTag:
       showDialog(
 
@@ -5039,7 +5045,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               margin: EdgeInsets.only(top: responsive.hp(5)),
                               child: Center(
                                 child: Text(
-                                  "Tag : 2.2.0",
+                                  "Tag : 2.2.1",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
@@ -5078,6 +5084,217 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                                         }).toList(),
                                       ),
                                   ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });
+      break;
+
+
+    case AlertDialogType.inicio_de_sesion_con_huella_bloqueado:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                                child: Container(
+                                    margin:
+                                    EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Icon(
+                                      Icons.warning_amber_outlined,
+                                      color: Colors.red,
+                                      size: responsive.ip(5),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text(
+                                  "Inicio de sesión con huella digital bloqueado",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: responsive.height * 0.04,
+                                left: responsive.width * 0.04,
+                                right: responsive.width * 0.04,
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  left: responsive.width * 0.04,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Por seguridad deberás iniciar sesión con tu contraseña.\n\nPara continuar utilizando el inicio de sesión con huella digital, deberás bloquear y desbloquear tu dispositivo.",
+                                    style: TextStyle(
+                                        color:
+                                        Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    Navigator.pop(context,true);
+                                    callback();
+                                  },
+                                  child: Text(
+                                    "CERRAR",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });
+      break;
+
+    case AlertDialogType.inicio_de_sesion_con_facial_bloqueado:
+      showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                                child: Container(
+                                    margin:
+                                    EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Icon(
+                                      Icons.warning_amber_outlined,
+                                      color: Colors.red,
+                                      size: responsive.ip(5),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text(
+                                  "Inicio de sesión con reconocimiento facial bloqueado",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: responsive.height * 0.04,
+                                left: responsive.width * 0.04,
+                                right: responsive.width * 0.04,
+                              ),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  left: responsive.width * 0.04,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    "Por seguridad deberás iniciar sesión con tu contraseña.\n\nPara continuar utilizando el inicio de sesión con reconocimiento facial, deberás bloquear y desbloquear tu dispositivo.",
+                                    style: TextStyle(
+                                        color:
+                                        Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    Navigator.pop(context,true);
+                                    callback();
+                                  },
+                                  child: Text(
+                                    "CERRAR",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

@@ -49,30 +49,39 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Scaffold(
-        backgroundColor:Tema.Colors.backgroud,
-          appBar: AppBar(
-            backgroundColor: Tema.Colors.backgroud,
-            elevation: 0,
-            title: Text('Código de verificación', style: TextStyle(
-              color: Tema.Colors.Azul_2,
-              fontWeight: FontWeight.normal,
-              fontSize: widget.responsive.ip(2.5)
-            ),),
-            centerTitle: true,
-            leading: IconButton(
-              icon: Icon(Icons.close,
-                color: Tema.Colors.GNP,),
-              onPressed: () {
-                Navigator.pop(context,true);
-              },
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: SafeArea(
+        bottom: false,
+        child: Scaffold(
+          backgroundColor:Tema.Colors.backgroud,
+            appBar: AppBar(
+              backgroundColor: Tema.Colors.backgroud,
+              elevation: 0,
+              title: Text('Código de verificación', style: TextStyle(
+                color: Tema.Colors.Azul_2,
+                fontWeight: FontWeight.normal,
+                fontSize: widget.responsive.ip(2.5)
+              ),),
+              centerTitle: true,
+              leading: IconButton(
+                icon: Icon(Icons.close,
+                  color: Tema.Colors.GNP,),
+                onPressed: () {
+                  if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("esActualizarNumero")){
+                    prefs.setString("medioContactoTelefono", prefs.getString("medioContactoTelefonoServicio"));
+                    Navigator.pop(context,true);
+                  } else{
+                    Navigator.pop(context,true);
+                  }
+
+                },
+              ),
             ),
-          ),
-          body: Stack(
-              children: builData(widget.responsive)
-          )
+            body: Stack(
+                children: builData(widget.responsive)
+            )
+        ),
       ),
     );
   }
@@ -296,6 +305,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             ],
           ),
           onPressed: () async {
+            focusCodigo.unfocus();
             setState(() {
               timerEnd = true;
             });
@@ -328,8 +338,8 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
 
               }
 
-            } else{
-
+            }
+            else{
               if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
 
                 setState(() {
@@ -346,6 +356,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   _saving = false;
                 });
                 if(optRespuesta != null){
+                  setState(() {
+                    timerEnd = false;
+                  });
 
                   if(optRespuesta.error == "" ){
                     prefs.setString("idOperacion", optRespuesta.idOperacion);
@@ -356,7 +369,8 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
                 }
 
-              } else{
+              }
+              else{
                 setState(() {
                   _saving = true;
                 });
@@ -416,6 +430,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             ),
           ),
           onPressed: () async {
+            focusCodigo.unfocus();
             _validCode = true;
             if(!timerEnd){
               if(_formKey.currentState.validate()){
@@ -455,7 +470,8 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
 
                       }
 
-                    }  else if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")){
+                    }
+                    else if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")){
                       setState(() {
                         _saving = false;
                       });

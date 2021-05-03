@@ -77,7 +77,13 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
               icon: Icon(Icons.arrow_back,
                 color: Tema.Colors.GNP,),
               onPressed: () {
-                Navigator.pop(context,true);
+                if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")){
+                  Navigator.pop(context,true);
+                  Navigator.pop(context,true);
+                } else{
+                  Navigator.pop(context,true);
+                }
+
               },
             ),
           ),

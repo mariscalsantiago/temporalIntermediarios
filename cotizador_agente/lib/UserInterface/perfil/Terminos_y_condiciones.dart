@@ -24,11 +24,15 @@ class TerminosYCondicionesPage extends StatefulWidget {
 }
 
 class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
-
+  bool face = false;
+  bool finger = false;
 
   @override
   void initState() {
     checkedValue = false;
+    face = is_available_face;
+    finger = is_available_finger;
+
   }
 
   double width = 300.0;
@@ -190,8 +194,11 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                                 textAlign: TextAlign.center),
                           ),
                           onPressed: () async {
-                            if(checkedValue){
+                            if(checkedValue && prefs.getInt("localAuthCount")<6){
                               _authenticateHuella(responsive);
+                            }
+                            else if( checkedValue && prefs.getInt("localAuthCount")>=5){
+                              customAlert(face?AlertDialogType.inicio_de_sesion_con_facial_bloqueado:AlertDialogType.inicio_de_sesion_con_huella_bloqueado,context,"","", responsive, funcionAlerta);
                             }
                           }
                       )
@@ -229,6 +236,11 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
           prefs.setBool("activarBiometricos", true);
         });
       }else {
+        int count = prefs.getInt("localAuthCount");
+        localAuth.stopAuthentication();
+        prefs.setInt("localAuthCount", count++);
+        face != false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
+        customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
       }
     } on PlatformException catch (e) {
       print("eeeeeee ${e}");
@@ -237,9 +249,9 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
       print("stacktrace ${e.stacktrace}");
       setState(() {});
       //if(){}
+      localAuth.stopAuthentication();
       Navigator.pop(context,true);
-      is_available_face!= false ?  customAlert(AlertDialogType.Rostro_no_reconocido,context,"","", responsive, funcionAlerta):
-      customAlert(AlertDialogType.Huella_no_reconocida,context,"","", responsive, funcionAlerta);
+      customAlert(face?AlertDialogType.inicio_de_sesion_con_facial_bloqueado:AlertDialogType.inicio_de_sesion_con_huella_bloqueado,context,"","", responsive, funcionAlerta);
     }
 
   }

@@ -11,13 +11,27 @@ class OnBoardingAppAutos extends StatefulWidget {
 class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTickerProviderStateMixin {
 
   TabController _controller;
+  int _selectedIndex;
 
   @override
   void initState() {
     _controller = TabController(vsync: this, initialIndex: 0, length: 5);
+    _controller.addListener(() {
+      setState(() {
+        _selectedIndex = _controller.index;
+      });
+      print("Selected Index: " + _controller.index.toString());
+    });
     // TODO: implement initState
     super.initState();
   }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,32 +39,165 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        backgroundColor: Theme.Colors.White,
         body: SingleChildScrollView(
-          child: Container(
-              height: responsive.height,
-              color: Theme.Colors.None,
-              child: DefaultTabController(
-                length: 5,
-                child: TabBarView(
-                    controller: _controller,
-                    children: [
-                      APyAutosOnboarding(responsive),
-                      HerramientasVentas(responsive),
-                      CoparteCotizaciones_Onboarding(responsive),
-                      ActualizaTuPerfil_Onboarding(responsive),
-                      CotizaTusNegocios_Onboarding(responsive)
-                    ]
-                ),
-              )
-          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                height: _selectedIndex == 4 ? responsive.hp(95): responsive.hp(85),
+                  color: Theme.Colors.White,
+                  child: DefaultTabController(
+                    length: 5,
+                    child: TabBarView(
+                        controller: _controller,
+                        children: [
+                          APyAutosOnboarding(responsive),
+                          HerramientasVentas(responsive),
+                          CoparteCotizaciones_Onboarding(responsive),
+                          ActualizaTuPerfil_Onboarding(responsive),
+                          CotizaTusNegocios_Onboarding(responsive)
+                        ]
+                    ),
+                  )
+              ),
+              _selectedIndex != 4 ?  tabulador(responsive): Container(),
+            ],
+          )
         ),
       ),
     );
   }
 
+  Widget tabulador(Responsive responsive){
+    if(_controller.index==0){
+      return Container(
+        margin: EdgeInsets.only( left: responsive.wp(8), right: responsive.wp(8)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset('assets/images/primero.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),),
+            Container(
+              child: GestureDetector(
+                onTap: () {
+                  _controller.animateTo((4) );
+                  setState(() {
+                    _controller.index;
+                  });
+
+                },
+                child: Text(
+                  "Omitir",
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Theme.Colors.GNP,
+                      fontWeight: FontWeight.normal,
+                      fontSize: responsive.ip(2.5)),
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+    else if(_controller.index==1){
+      return Container(
+        margin: EdgeInsets.only(left: responsive.wp(8), right: responsive.wp(8)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+                child: Image.asset('assets/images/segundo.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
+            Container(
+              child: GestureDetector(
+                onTap: () {
+                  _controller.animateTo((4) );
+                  setState(() {
+                    _controller.index;
+                  });
+                },
+                child: Text(
+                  "Omitir",
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Theme.Colors.GNP,
+                      fontWeight: FontWeight.normal,
+                      fontSize: responsive.ip(2.5)),
+                ),
+              ),
+
+            )
+          ],
+        ),
+      );
+    }
+    else if(_controller.index==2){
+      return Container(
+        margin: EdgeInsets.only(left: responsive.wp(8), right: responsive.wp(8)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+                child: Image.asset('assets/images/tercero.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
+            Container(
+              child: GestureDetector(
+                onTap: () {
+                  _controller.animateTo((4) );
+                  setState(() {
+                    _controller.index;
+                  });
+                },
+                child: Text(
+                  "Omitir",
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Theme.Colors.GNP,
+                      fontWeight: FontWeight.normal,
+                      fontSize: responsive.ip(2.5)),
+                ),
+              ),
+
+            )
+          ],
+        ),
+      );
+    }
+    else if(_controller.index==3){
+      return Container(
+        margin: EdgeInsets.only(left: responsive.wp(8), right: responsive.wp(8)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+                child: Image.asset('assets/images/cuarto.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
+            Container(
+              child: GestureDetector(
+                onTap: () {
+                  _controller.animateTo((4) );
+                  setState(() {
+                    _controller.index;
+                  });
+                },
+                child: Text(
+                  "Omitir",
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      color: Theme.Colors.GNP,
+                      fontWeight: FontWeight.normal,
+                      fontSize: responsive.ip(2.5)),
+                ),
+              ),
+
+            )
+          ],
+        ),
+      );
+    }
+  }
+
   Widget APyAutosOnboarding(Responsive responsive){
-    return  Scaffold(
-      body: Center(
+    return  Container(
+      child: Center(
         child: Padding(
           padding: EdgeInsets.all(8.0),
           child: Column(
@@ -72,34 +219,6 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                   style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.0) ),
                   textAlign: TextAlign.center,),
               ),
-              Container(
-                margin: EdgeInsets.only(top: responsive.hp(9), left: responsive.wp(8), right: responsive.wp(8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Image.asset('assets/images/primero.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),),
-                    Container(
-                      child: GestureDetector(
-                        onTap: () {
-                          _controller.animateTo((4) );
-                          setState(() {
-                            _controller.index;
-                          });
-
-                        },
-                        child: Text(
-                          "Omitir",
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Theme.Colors.GNP,
-                              fontWeight: FontWeight.normal,
-                              fontSize: responsive.ip(2.5)),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              )
             ],
           ),
         ),
@@ -108,10 +227,12 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
   }
 
   Widget HerramientasVentas(Responsive responsive){
-    return Scaffold(
-      body: Center(
+
+    return Container(
+      color: Theme.Colors.White,
+      child: Center(
         child: Padding(
-          padding: EdgeInsets.all(0.00),
+          padding: EdgeInsets.all(8.0),
           child: Column(
             children: [
               Container(
@@ -131,35 +252,6 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                   style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.2) ),
                   textAlign: TextAlign.center,),
               ),
-              Container(
-                margin: EdgeInsets.only(top: responsive.hp(9), left: responsive.wp(8), right: responsive.wp(8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                        child: Image.asset('assets/images/segundo.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
-                    Container(
-                      child: GestureDetector(
-                        onTap: () {
-                          _controller.animateTo((4) );
-                          setState(() {
-                            _controller.index;
-                          });
-                        },
-                        child: Text(
-                          "Omitir",
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Theme.Colors.GNP,
-                              fontWeight: FontWeight.normal,
-                              fontSize: responsive.ip(2.5)),
-                        ),
-                      ),
-
-                    )
-                  ],
-                ),
-              )
             ],
           ),
         ),
@@ -168,8 +260,9 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
   }
 
   Widget CoparteCotizaciones_Onboarding(Responsive responsive){
-    return Scaffold(
-      body: Center(
+
+    return Container(
+      child: Center(
         child: Padding(
           padding: EdgeInsets.all(0.00),
           child: Column(
@@ -191,35 +284,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                   style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.2) ),
                   textAlign: TextAlign.center,),
               ),
-              Container(
-                margin: EdgeInsets.only(top: responsive.hp(9), left: responsive.wp(8), right: responsive.wp(8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                        child: Image.asset('assets/images/tercero.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
-                    Container(
-                      child: GestureDetector(
-                        onTap: () {
-                          _controller.animateTo((4) );
-                          setState(() {
-                            _controller.index;
-                          });
-                        },
-                        child: Text(
-                          "Omitir",
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Theme.Colors.GNP,
-                              fontWeight: FontWeight.normal,
-                              fontSize: responsive.ip(2.5)),
-                        ),
-                      ),
 
-                    )
-                  ],
-                ),
-              )
             ],
           ),
         ),
@@ -228,8 +293,9 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
   }
 
   Widget ActualizaTuPerfil_Onboarding(Responsive responsive){
-    return Scaffold(
-      body: Center(
+
+    return Container(
+      child: Center(
         child: Padding(
           padding: EdgeInsets.all(0.00),
           child: Column(
@@ -251,36 +317,6 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                   style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.2) ),
                   textAlign: TextAlign.center,),
               ),
-              Container(
-                margin: EdgeInsets.only(top: responsive.hp(9), left: responsive.wp(8), right: responsive.wp(8)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                        child: Image.asset('assets/images/cuarto.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
-                    Container(
-                      child: GestureDetector(
-                        onTap: () {
-                          _controller.animateTo((4) );
-                          setState(() {
-                            _controller.index;
-                          });
-                        },
-                        child: Text(
-                          "Omitir",
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Theme.Colors.GNP,
-                              fontWeight: FontWeight.normal,
-                              fontSize: responsive.ip(2.5)),
-                        ),
-                      ),
-
-                    )
-                  ],
-                ),
-              )
-
             ],
           ),
         ),
@@ -289,8 +325,8 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
   }
 
   Widget CotizaTusNegocios_Onboarding (Responsive responsive){
-    return Scaffold(
-      body: Center(
+    return Container(
+      child: Center(
         child: Padding(
           padding: EdgeInsets.all(0.00),
           child: Column(
@@ -312,7 +348,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                   style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.2) ),
                   textAlign: TextAlign.center,),
               ),
-              Container(
+              _selectedIndex == 4 ? Container(
                 height: responsive.hp(6.25),
                 width: responsive.wp(90),
                 margin: EdgeInsets.only(
@@ -338,7 +374,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                   ),
                 ),
 
-              )
+              ): Container()
             ],
           ),
         ),

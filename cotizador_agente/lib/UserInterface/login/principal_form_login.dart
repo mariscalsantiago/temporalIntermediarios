@@ -9,7 +9,6 @@ import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
-import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnboardinPage.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPersonaIdParticipante.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
@@ -36,6 +35,7 @@ consultaMediosContactoAgentesModel mediosContacto;
 DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 Map<String, dynamic> deviceData = <String, dynamic>{};
 
+
 class PrincipalFormLogin extends StatefulWidget {
   final Responsive responsive;
   const PrincipalFormLogin({Key key, this.responsive}) : super(key: key);
@@ -59,7 +59,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   bool contrasena;
   bool _biometricos;
   //TODO 238
-  bool _subSecuentaIngresoCorreo=false;
+  bool _subSecuentaIngresoCorreo = false;
   bool existeUsuario;
   String correoUsuario;
   String contrasenaUsuario;
@@ -475,7 +475,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                                 )
                             ),
                             validator: (value) {
-                              String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+                              String p = "^[a-zA-Z0-9.!Ññ#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
                               RegExp regExp = new RegExp(p);
                               if (value.isEmpty) {
                                 _validEmail  = false;
@@ -640,7 +640,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
             )
         ),
         validator: (value) {
-          String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+          String p = "^[a-zA-Z0-9.!#ñÑ\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
           RegExp regExp = new RegExp(p);
           if (value.isEmpty) {
             _validEmail  = false;
@@ -793,7 +793,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 print("else datosUsuario ${datosUsuario}");
                 if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
 
-                } else if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario != "ACTIVO"){
+                } else if(respuesta != null && respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario != "ACTIVO"){
 
                   customAlert(AlertDialogType.Cuenta_inactiva,context,"","", responsive, funcionAlertaHullaLogin);
                   prefs.setBool("regitroDatosLoginExito", false);
@@ -858,7 +858,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
           controllerContrasena.clear();
           controllerCorreo.clear();
           //TODO 238
-          if(_biometricos && !_subSecuentaIngresoCorreo ){
+          if(_biometricos && _subSecuentaIngresoCorreo != null && !_subSecuentaIngresoCorreo ){
             if(is_available_finger != false && is_available_face != false){
               if (deviceType == ScreenType.phone) {
                 customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
@@ -1187,8 +1187,9 @@ void validacionAcceso(String dataFirebase, String dateNow){
     print("Fechaa now");
     prefs.setBool("ultimoAccesoHoy", true);
     prefs.setBool("ultimoAccesoAyer", false);
-  } else if((mesFirebase == mesPrefs) && (anioFirebase == anioPrefs) && (int.parse(diaPrefs) +1 == int.parse(diaFirebase))){
+  } else if((mesFirebase == mesPrefs) && (anioFirebase == anioPrefs) && (int.parse(diaFirebase) +1 == int.parse(diaPrefs))){
     print("Fehca ayer");
+    print("");
     prefs.setBool("ultimoAccesoHoy", false);
     prefs.setBool("ultimoAccesoAyer", true);
   } else{

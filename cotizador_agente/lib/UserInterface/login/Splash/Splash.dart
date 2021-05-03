@@ -244,6 +244,14 @@ class _SplashMainState extends State<SplashMain> {
     } else {
       prefs.setBool("activarBiometricos", false);
       tipoVista = Vistas.login;
+
+    }
+    try{
+      prefs.getInt("localAuthCount");
+      prefs.setInt("localAuthCount", 0);
+    }catch(e){
+      prefs.setInt("localAuthCount", 0);
+      print(e);
     }
     var shortestSide = MediaQuery.of(context).size.shortestSide;
     useMobileLayout = shortestSide < 600;
