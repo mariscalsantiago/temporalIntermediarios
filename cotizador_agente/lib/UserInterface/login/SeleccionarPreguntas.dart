@@ -53,7 +53,7 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      bottom: false,
+
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar: AppBar(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
@@ -23,6 +24,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import '../../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'login_codigo_verificacion.dart';
@@ -34,7 +37,10 @@ String idParticipanteValidaPorCorre;
 consultaMediosContactoAgentesModel mediosContacto;
 DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
 Map<String, dynamic> deviceData = <String, dynamic>{};
-
+Position userLocation;
+double latitude;
+double longitud;
+String _address = "";
 
 class PrincipalFormLogin extends StatefulWidget {
   final Responsive responsive;
@@ -105,7 +111,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         prefs.setBool("primeraVez", true);
         prefs.setString("nombreUsuario", "");
       }
-    } else {
+    }
+    else {
       prefs.setBool("seHizoLogin", false);
       _biometricos = false;
       aceptoTerminos = false;
@@ -116,6 +123,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
     }
     validateIntenetstatus(context, widget.responsive);
     initPlatformState(updateDeviceData);
+    /*_getLocation().then((position) {
+      userLocation = position;
+      latitude = userLocation.latitude;
+      longitud = userLocation.longitude;
+      _getPlace();
+    });*/
     super.initState();
   }
 
@@ -133,7 +146,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: SafeArea(
-        bottom: false,
         child: Scaffold(
             body: Stack(
                 children: builData(widget.responsive)
@@ -1016,7 +1028,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
         //margin: EdgeInsets.only( top: responsive.hp(0.5), bottom: responsive.hp(0.5)),
         child: GestureDetector(
           onLongPress: (){
-              initPlatformState(updateDeviceData);
+            initPlatformState(updateDeviceData);
             customAlert(AlertDialogType.versionTag, context, "",  "", responsive,funcion);
           },
           child: Text("Versión 2.0",
@@ -1130,6 +1142,35 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
     });
 //    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
   }
+  Future<Position> _getLocation() async {
+    var currentLocation;
+    try {
+      currentLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    } catch (e) {
+      print("e _getLocation ${e}");
+      currentLocation = null;
+    }
+    return currentLocation;
+  }
+
+  void _getPlace() async {
+
+    List<Placemark> newPlace = await placemarkFromCoordinates(userLocation.latitude, userLocation.longitude);
+    // this is all you need
+    Placemark placeMark  = newPlace[0];
+    String name = placeMark.name;
+    String subLocality = placeMark.subLocality;
+    String locality = placeMark.locality;
+    String administrativeArea = placeMark.administrativeArea;
+    String postalCode = placeMark.postalCode;
+    String country = placeMark.country;
+    String address = "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+    //String address = "${country}";
+
+    setState(() {
+      _address = address; // update _address
+    });
+  }
 }
 
 void ultimoAcceso() async {
@@ -1146,9 +1187,13 @@ void ultimoAcceso() async {
       String formattedDate = DateFormat('dd/MM/yyyy hh:mm:ss').format(now);
       validacionAcceso(dateFirebase, formattedDate);
       print("formattedDate  ${formattedDate}");
+      /*
+      "deviceID":Platform.isIOS ?deviceData["isPhysicalDevice"]:deviceData["androidId"],
+          "model":deviceData["model"],
+     */
       Map<String, dynamic> mapa = {
         '${datosUsuario.idparticipante}': {
-          'ultimoAcceso' : formattedDate
+          'ultimoAcceso' : formattedDate,
         }
       };
       _dataBaseReference.child("accesoUsuarios").update(mapa);
@@ -1161,7 +1206,7 @@ void ultimoAcceso() async {
       prefs.setBool("primerAccesoFecha", true);
       Map<String, dynamic> mapa = {
         '${datosUsuario.idparticipante}': {
-          'ultimoAcceso' : formattedDate
+          'ultimoAcceso' : formattedDate,
         }
       };
 

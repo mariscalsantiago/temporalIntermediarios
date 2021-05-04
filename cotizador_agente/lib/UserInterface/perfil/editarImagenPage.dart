@@ -62,10 +62,10 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
             new Icon(Icons.arrow_back, color: Theme.Colors.Rectangle_PA, size: 24),
             onPressed: (){
               customAlert(AlertDialogType.AjustesSinGuardar_camara, context, "",  "", responsive,widget.callback);
-            setState(() {
+           /* setState(() {
               datosFisicos.personales.foto;
               widget.callback();
-            });
+            });*/
             },
           ),
         ),

@@ -64,7 +64,6 @@ class GNPDialog extends StatelessWidget {
               topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
         child: SafeArea(
-            top: false,
             child: Container(
               child: Column(
                   mainAxisSize: MainAxisSize.min,

@@ -214,39 +214,49 @@ class _VerFotoPageState extends State<VerFotoPage> {
   }
 
   _imgFromCamera() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.camera, imageQuality: 50);
-    fetchFoto(context, image,widget.callback);
-    setState(() {
-      _image = image;
-      updateFoto();
-    });
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => SimpleCropRoute(
-            image: _image,
-            callback: updateFoto,
-          )),
-    );
+    File _image;
+    final picker = ImagePicker();
+    //TODO revisar doble intento y validacion de null
+    try{
+      final pickedFile = await picker.getImage(source: ImageSource.camera);
+      _image = File(pickedFile.path);
+      //fetchFoto(context, _image, widget.callback);
+      if(_image!= null){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => SimpleCropRoute(
+                image: _image,
+                callback: updateFoto,
+              )),
+        );
+      }}catch(e){
+      print(e);
+    }
+
   }
 
   _imgFromGallery() async {
-    File image = await ImagePicker.pickImage(
-        source: ImageSource.gallery, imageQuality: 50);
-    fetchFoto(context, image,updateFoto);
-    setState(() {
-      _image = image;
-      updateFoto();
-    });
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => SimpleCropRoute(
-            image: _image,
-            callback: updateFoto,
-          )),
-    );
+    File _image;
+    final picker = ImagePicker();
+    //TODO revisar doble intento y validacion de null
+    try{
+      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+      _image = File(pickedFile.path);
+      //fetchFoto(context, _image, widget.callback);
+      if(_image!= null){
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => SimpleCropRoute(
+                image: _image,
+                callback: updateFoto,
+              )),
+        );
+      }}catch(e){
+      print(e);
+    }
+
   }
   void updateFoto(){
     setState(() {

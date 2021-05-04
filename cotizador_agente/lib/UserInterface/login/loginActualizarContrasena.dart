@@ -61,7 +61,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      bottom: false,
+
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar: AppBar(
@@ -230,6 +230,16 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
             hasConsecutivosPass =true;
           }
 
+          try{
+            if(controllerActualContrasena.text.isNotEmpty && controllerActualContrasena.text.length >= 24){
+              String tem = controllerActualContrasena.text;
+              controllerActualContrasena.text = tem.substring(0,23);
+              FocusScope.of(context).requestFocus(focusNuevaContrasena);
+            }
+          }catch(e){
+            print(e);
+          }
+
         });
       },
     );
@@ -245,9 +255,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
       focusNode: focusNuevaContrasena,
       cursorColor: Tema.Colors.GNP,
       obscureText: nuevaContrasena,
-      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);
-      focusNuevaContrasena.nextFocus();
-      focusNuevaContrasena.unfocus();},
+      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusConfirmarContrasena);},
       decoration: new InputDecoration(
         focusColor: Tema.Colors.gnpOrange,
           focusedBorder: UnderlineInputBorder(
@@ -339,6 +347,16 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
             hasConsecutivosPass =false;
           }
 
+          try{
+            if(controllerNuevaContrasena.text.isNotEmpty && controllerNuevaContrasena.text.length >= 24){
+              String tem = controllerNuevaContrasena.text;
+              controllerNuevaContrasena.text = tem.substring(0,23);
+              FocusScope.of(context).requestFocus(focusConfirmarContrasena);
+            }
+          }catch(e){
+            print(e);
+          }
+
         });
       },
     );
@@ -410,6 +428,15 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
         setState(() {
           focusConfirmarContrasena.hasFocus;
           controllerConfirmarContrasena.text;
+          try{
+            if(controllerConfirmarContrasena.text.isNotEmpty && controllerConfirmarContrasena.text.length >= 24){
+              String tem = controllerConfirmarContrasena.text;
+              controllerConfirmarContrasena.text = tem.substring(0,23);
+              focusConfirmarContrasena.unfocus();
+            }
+          }catch(e){
+            print(e);
+          }
         });
       },
     );
@@ -605,6 +632,9 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
             ),
           ),
           onPressed: () async {
+            focusActualContrasena.unfocus();
+            focusNuevaContrasena.unfocus();
+            focusConfirmarContrasena.unfocus();
             if(_formKey.currentState.validate()){
               setState(() {
                 _saving = true;

@@ -52,7 +52,6 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
     return WillPopScope(
       onWillPop: () async => false,
       child: SafeArea(
-        bottom: false,
         child: Scaffold(
           backgroundColor:Tema.Colors.backgroud,
             appBar: AppBar(
@@ -106,16 +105,30 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                       fontSize: responsive.ip(2.3)
                     ),),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: responsive.hp(4)),
-                    child: Text(  "Ingresa el código de verificación que enviamos a tu correo electrónico y por SMS tu número celular. " ,
-                      style: TextStyle(
-                        color: Tema.Colors.letragris,
-                        letterSpacing: 0.5,
-                        fontWeight: FontWeight.normal,
-                        fontSize: responsive.ip(2.1)
-                    ),),
+                (prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')) ||
+                    (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil"))
+                    ? Container(
+                        margin: EdgeInsets.only(top: responsive.hp(4)),
+                        child: Text("Ingresa el código de verificación que enviamos a tu correo electrónico y por SMS tu número celular." ,
+                          style: TextStyle(
+                            color: Tema.Colors.letragris,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.normal,
+                            fontSize: responsive.ip(2.1))
+                        ),
+                      ): Container(
+                          margin: EdgeInsets.only(top: responsive.hp(4)),
+                          child: Text("Ingresa el código de verificación que te enviamos por SMS al número:" ,
+                              style: TextStyle(
+                                  color: Tema.Colors.letragris,
+                                  letterSpacing: 0.5,
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: responsive.ip(2.1))
+                          ),
                   ),
+                (prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')) ||
+                    (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil") && prefs.getBool("actualizarContrasenaPerfil")) ?
+                  Container():
                   Container(
                     margin: EdgeInsets.only(top: responsive.hp(2.3)),
                     child: Text("${ "(+52)" + prefs.getString("medioContactoTelefono") }", style: TextStyle(
@@ -219,6 +232,15 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
         setState(() {
           focusCodigo.hasFocus;
           controllerCodigo.text;
+          try{
+            if(controllerCodigo.text.isNotEmpty && controllerCodigo.text.length >= 8){
+              String tem = controllerCodigo.text;
+              controllerCodigo.text = tem.substring(0,7);
+              focusCodigo.unfocus();
+            }
+          }catch(e){
+            print(e);
+          }
         });
       },
     );
@@ -484,7 +506,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                         _saving = false;
                       });
 
-                      if( prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
+                      if(prefs.getBool('flujoOlvideContrasena') != null && prefs.getBool('flujoOlvideContrasena')){
                         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginRestablecerContrasena(responsive: widget.responsive)));
                       } else {
                         prefs.setBool("flujoCompletoLogin", true);

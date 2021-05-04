@@ -39,7 +39,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      bottom: false,
+
       child: Scaffold(
         backgroundColor:Tema.Colors.backgroud,
         appBar: AppBar(
@@ -129,7 +129,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       obscureText: false,
       keyboardType: TextInputType.number,
       inputFormatters: [
-        FilteringTextInputFormatter.deny(RegExp("[ ]")),
+        FilteringTextInputFormatter.allow(RegExp("[0-9]")),
         LengthLimitingTextInputFormatter(10)
       ],
       cursorColor: Tema.Colors.GNP,
@@ -166,17 +166,16 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         if (value.isEmpty) {
           return 'Este campo es requerido';
         } else if (value.length<10) {
-          print("Tu número de celular debe tener 10 dígitos");
-          return "Tu número de celular debe tener 10 dígitos";
+          return "Tu número de celular debe tener 10 dígitos.";
         }else if(reConsecutive2.hasMatch(value) ){
-          return 'No debe contener más de dos caracteres consecutivos (123).';
+          return 'El número que ingresaste, ¿es correcto? Verifícalo e\ninténtalo nuevamente.';
         } else if(reConsecutive.hasMatch(value)){
-          return 'No debe contener más de dos caracteres consecutivos iguales';
+          return 'El número que ingresaste, ¿es correcto? Verifícalo e\ninténtalo nuevamente.';
         }else if (regExp.hasMatch(value)) {
           print("value ${value}");
           return null;
         } else {
-          return 'Tu número de celular debe tener 10 dígitos';
+          return 'Tu número de celular debe tener 10 dígitos.';
         }
         return null;
       },
@@ -184,6 +183,15 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         setState(() {
           focusCodigo.hasFocus;
           controllerNumero.text;
+         try{
+            if(controllerNumero.text.isNotEmpty && controllerNumero.text.length >= 10){
+              String tem = controllerNumero.text;
+              controllerNumero.text = tem.substring(0,9);
+              focusCodigo.unfocus();
+            }
+          }catch(e){
+            print(e);
+          }
         });
       },
     );
@@ -202,6 +210,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           focusNode: focusCodigo,
           obscureText: false,
           inputFormatters: [FilteringTextInputFormatter.deny(RegExp("[ ]")),LengthLimitingTextInputFormatter(10)],
+          maxLength: 10,
           keyboardType: TextInputType.number,
           cursorColor: Tema.Colors.GNP,
           decoration: new InputDecoration(

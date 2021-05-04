@@ -55,7 +55,7 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      bottom: false,
+
       child: Scaffold(
           backgroundColor:Tema.Colors.backgroud,
           appBar: AppBar(
@@ -246,6 +246,8 @@ class _LoginRestablecerContrasenaState extends State<LoginRestablecerContrasena>
             print(reConsecutive2.hasMatch(value));
             hasConsecutivosPass =false;
           }
+
+
 
         });
       },

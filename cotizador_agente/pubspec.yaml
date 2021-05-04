@@ -64,9 +64,9 @@ dependencies:
   multi_image_picker: ^4.7.15
   flutter_keyboard_aware_dialog: ^1.0.1
   countdown_flutter: ^0.1.2
-
-
-
+  location: ^3.2.4
+  geolocator: ^6.2.1
+  geocoding: ^1.0.5
 
 
 

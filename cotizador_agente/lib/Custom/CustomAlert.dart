@@ -2254,6 +2254,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               margin: EdgeInsets.only(
                                   top: responsive.height * 0.04,
                                   left: responsive.width * 0.04,
+                                  right: responsive.width * 0.04,
                                   bottom: responsive.height * 0.03),
                               child: Container(
                                 margin: EdgeInsets.only(
@@ -5045,7 +5046,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title, Strin
                               margin: EdgeInsets.only(top: responsive.hp(5)),
                               child: Center(
                                 child: Text(
-                                  "Tag : 2.2.1",
+                                  "Tag : 2.2.2",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
