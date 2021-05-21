@@ -1,0 +1,10 @@
+{
+  "cotizadorAutos" : {
+    "Cotiza" : [ "Gte Comercial Autos", "Agente Empleado Autos", "AVE Autos", "Agente Operador Autos", "Promotor Junior Autos", "Promotor Senior Autos", "Administrador Negocio", "Vendedor Negocio", "Agregador", "Coordinador Administrativo Autos", "Coordinador Operativo Autos", "Agentes", "Heredado A", "Heredado B para Agentes", "Ejecutivo de ventas", "Funcionario de ventas", "Director ASAS", "Gerente Agencias", "Vendedor Agencias", "Titular Despachos", "Coordinador Despacho", "Heredado B Despachos", "Titular Corredores", "Coordinador Corredor", "Heredado B Corredores", "Heredado C" ],
+    "Emitir" : [ "Agregador", "Agente Empleado Autos", "AVE Autos", "Agente Operador Autos", "Coordinador Administrativo Autos", "Coordinador Operativo Autos", null, "Promotor Senior Autos", "Administrador Negocio", "Vendedor Negocio", "Agentes", "Heredero A", "Heredero B para Agentes", "Ejecutivo de ventas", "Funcionario de ventas", "Director ASAS", "Gerente Agencias", "Vendedor Agencias", "Titular Despachos", "Coordinador Despacho", "Heredado B Despachos", "Titular Corredores", "Coordinador Corredor", "Heredado B Corredores" ],
+    "Pagar" : [ "Agregador", "Agente Empleado Autos", "AVE Autos", "Agente Operador Autos", "Coordinador Administrativo Autos", "Coordinador Operativo Autos", "Promotor Senior Autos", "Administrador Negocio", "Vendedor Negocio", null, "Agentes", "Heredado A", "Heredado B para Agentes", "Ejecutivo ventas", "Funcionario de ventas", "Director ASAS", "Gerente Agencias", "Vendedor Agencias", "Titular Despachos", "Coordinador Despacho", "Heredado B Despachos", "Titular Corredores", "Coordinador Corredor", "Heredado B Corredores" ]
+  },
+  "cotizadorVida" : {
+    "roles" : [ "Agente", "Heredado A", "Director Agencia" ]
+  }
+}
