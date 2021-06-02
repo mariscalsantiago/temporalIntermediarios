@@ -1,0 +1,58 @@
+{
+  "TerminosYCondiciones" : {
+    "Contenido" : [ {
+      "accion" : "none",
+      "texto" : "Grupo Nacional Provincial, S.A.B.,",
+      "tipo" : 0
+    }, {
+      "accion" : "none",
+      "texto" : "con domicilio en Avenida Cerro de las Torres No. 395, Colonia Campestre Churubusco, Código Postal 04200, Alcaldía Coyoacán, Ciudad de México, tratará sus datos personales para que a través de su huella digital que previamente tenga configurada o disponible en el dispositivo electrónico que utilice, facilitar el acceso a determinadas aplicaciones o plataformas de GNP relacionadas con el desarrollo de sus actividades propias como agente, sin que esto implique el resguardo o almacenamiento de este dato por parte de GNP. Puede consultar la versión integral del Aviso de Privacidad en ",
+      "tipo" : 1
+    }, {
+      "accion" : "https://www.gnp.com.mx",
+      "texto" : "https://www.gnp.com.mx ",
+      "tipo" : 5
+    }, {
+      "accion" : "none",
+      "texto" : "o en el teléfono ",
+      "tipo" : 1
+    }, {
+      "accion" : "tel:5552279000",
+      "texto" : "(55) 5227 9000 ",
+      "tipo" : 5
+    }, {
+      "accion" : "none",
+      "texto" : "a nivel nacional. \n \n",
+      "tipo" : 1
+    }, {
+      "accion" : "none",
+      "texto" : "Al activar el uso de datos biométricos, reconozco que se ha puesto a mi disposición el ",
+      "tipo" : 1
+    }, {
+      "accion" : "https://www.gnp.com.mx¿aviso-de-privacidad-integral",
+      "texto" : "Aviso de Privacidad Integral de Grupo Nacional Provincial S. A. B. ",
+      "tipo" : 5
+    }, {
+      "accion" : "none",
+      "texto" : "(en adelante GNP), mismo que contiene y detalla las finalidades del tratamiento de los datos personales y aceptó su tratamiento por parte de GNP. Asimismo se me informó que puedo consultar dicho aviso y sus actualizaciones en cualquier momento en la página ",
+      "tipo" : 1
+    }, {
+      "accion" : "https://www.gnp.com.mx",
+      "texto" : "www.gnp.com.mx ",
+      "tipo" : 5
+    }, {
+      "accion" : "none",
+      "texto" : "o en el teléfono ",
+      "tipo" : 1
+    }, {
+      "accion" : "'tel:5552279000",
+      "texto" : "(55) 5227 9000 ",
+      "tipo" : 5
+    }, {
+      "accion" : "none",
+      "texto" : "a nivel nacional. En caso de haber proporcionado datos personales de otros titulares, reconozco haber cumplido con mi obligación de informarles sobre su entrega, haber obtenido de forma previa el consentimiento de éstos para su tratamiento, así como haberles informado los lugares en los que se encuentra disponible el Aviso de Privacidad para su consulta. ",
+      "tipo" : 1
+    } ],
+    "Titulo" : "Consentimiento para el tratamiento de uso de datos biométricos \n \n"
+  }
+}
