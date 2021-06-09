@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/Custom/Downloads.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
@@ -10,6 +13,8 @@ import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/onboarding_APyAutos/OnBoardingApAutos.dart';
+import 'package:cotizador_agente/UserInterface/perfil/Terminos_y_condiciones.dart';
+import 'package:cotizador_agente/UserInterface/perfil/condiciones_uso.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPersonaIdParticipante.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
@@ -24,13 +29,22 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'loginActualizarNumero.dart';
+import 'loginPreguntasSecretas.dart';
 import 'login_codigo_verificacion.dart';
 import 'logoEncabezadoLogin.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+/*
+import 'package:keyboard_visibility/keyboard_visibility.dart';
+*/
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 double tamano;
 String idParticipanteValidaPorCorre;
@@ -40,7 +54,13 @@ Map<String, dynamic> deviceData = <String, dynamic>{};
 Position userLocation;
 double latitude;
 double longitud;
+
+bool _validolvide = false;
 String _address = "";
+UsuarioPorCorreo respuestaServicioCorreo;
+Responsive _generalResponsive;
+
+final _formKeyOlvideContrasena = GlobalKey<FormState>();
 
 class PrincipalFormLogin extends StatefulWidget {
   final Responsive responsive;
@@ -49,70 +69,96 @@ class PrincipalFormLogin extends StatefulWidget {
   _PrincipalFormLoginState createState() => _PrincipalFormLoginState();
 }
 
-class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBindingObserver{
-
-  bool _saving;
-  bool _enable = true;
-  bool _validEmail = false;
+class _PrincipalFormLoginState extends State<PrincipalFormLogin>
+    with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
-  final _formKeyOlvideContrasena = GlobalKey<FormState>();
-  TextEditingController controllerContrasena;
-  TextEditingController controllerCorreo;
-  TextEditingController controllerCorreoCambioContrasena;
-  FocusNode focusCorreo;
-  FocusNode focusContrasena;
-  FocusNode focusCorreoCambio;
-  bool contrasena;
-  bool _biometricos;
+  final _formKeyPass = GlobalKey<FormState>();
+  bool contrasena = true;
+  bool _biometricos = false;
   //TODO 238
   bool _subSecuentaIngresoCorreo = false;
-  bool existeUsuario;
-  String correoUsuario;
-  String contrasenaUsuario;
+  bool existeUsuario = false;
+  String correoUsuario = "";
+  String contrasenaUsuario = "";
   bool aceptoTerminos;
+  Color colorCorreo = Tema.Colors.inputcorreo;
+  bool _validEmail = true;
+  bool _validPass = true;
+  bool _validEmailOlvide = true;
+  bool _saving = false;
+  bool _enable = true;
+
+  FocusNode focusCorreo = new FocusNode();
+  FocusNode focusContrasena = new FocusNode();
+  FocusNode focusCorreoCambio = new FocusNode();
+  TextEditingController controllerContrasena = new TextEditingController();
+  TextEditingController controllerCorreo = new TextEditingController();
+  TextEditingController controllerCorreoCambioContrasena =
+      new TextEditingController();
+
+  GlobalKey<ScaffoldState> _key;
+  //KeyboardVisibilityNotification _keyboardVisibility = new KeyboardVisibilityNotification();
+  int _keyboardVisibilitySubscriberId;
+  bool _keyboardState;
 
   @override
   void initState() {
-    correoUsuario = "";
-    contrasenaUsuario = "";
-    _saving = false;
-    _enable = true;
-    contrasena = true;
-    focusCorreo = new FocusNode();
-    focusContrasena = new FocusNode();
-    focusCorreoCambio = new FocusNode();
-    controllerContrasena = new TextEditingController();
-    controllerCorreo = new TextEditingController();
-    controllerCorreoCambioContrasena = new TextEditingController();
 
+    validateIntenetstatus(context, widget.responsive, CallbackInactividad);
+    initializeTimerWifi(context, widget.responsive, CallbackInactividad);
+    initPlatformState(updateDeviceData);
+
+    Future.delayed(Duration.zero, () {
+      arranque();
+    });
+    cancelTimers();
+
+    super.initState();
+  }
+
+  void arranque() async {
+    Platform.isIOS ? getVersionApp("24", "1") : getVersionApp("24", "2");
+    controllerCorreoCambioContrasena.text = prefs.getString("correoUsuario");
     WidgetsBinding.instance.addObserver(this);
+    prefs.setBool("esPerfil", false);
+    prefs.setBool("actualizarContrasenaPerfil", false);
+    prefs.setBool("esActualizarNumero", false);
 
-    if(prefs.getBool("onBoardingVisible") != null && prefs.getBool("onBoardingVisible")){}
-    else{
-      showOnboarding();
-      prefs.setBool("onBoardingVisible", true);
-    }
-    if(prefs != null && prefs.getBool("userRegister") != null){
-      if(prefs.getBool("userRegister")){
-        prefs.setBool("seHizoLogin", false);
-        prefs.setBool("esPerfil", false);
+    if (prefs != null && prefs.getBool("userRegister") != null) {
+      if (prefs.getBool("userRegister")) {
+        print("if userRegister");
+        prefs.setBool("seHizoLogin", true);
         existeUsuario = true;
-        _biometricos =  prefs.getBool("activarBiometricos");
+        if (prefs.getBool("bloqueoDespuesSubBio") != null &&
+            prefs.getBool("bloqueoDespuesSubBio")) {
+          print("1 activarBiometricos");
+          prefs.setBool("activarBiometricos", false);
+          _biometricos = false;
+        } else if (prefs.getBool("subSecuentaIngresoCorreo") != null &&
+            prefs.getBool("subSecuentaIngresoCorreo")) {
+          print("2 activarBiometricos");
+          prefs.setBool("activarBiometricos", true);
+          _biometricos = true;
+        } else {
+          print("3 activarBiometricos");
+          _biometricos = prefs.getBool("activarBiometricos");
+        }
         //TODO 238
-        _subSecuentaIngresoCorreo =  prefs.getBool("subSecuentaIngresoCorreo");
+        _subSecuentaIngresoCorreo = prefs.getBool("subSecuentaIngresoCorreo");
         prefs.setBool("primeraVez", false);
-      } else{
+      } else {
+        print("else userRegister");
         prefs.setBool("seHizoLogin", false);
         _biometricos = false;
         existeUsuario = false;
         prefs.setBool("activarBiometricos", _biometricos);
-        prefs.setString("contrasenaUsuario","");
+        prefs.setString("contrasenaUsuario", "");
         prefs.setString("correoUsuario", "");
         prefs.setBool("primeraVez", true);
         prefs.setString("nombreUsuario", "");
       }
-    }
-    else {
+    } else {
+      print("else - userRegister");
       prefs.setBool("seHizoLogin", false);
       _biometricos = false;
       aceptoTerminos = false;
@@ -121,23 +167,63 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
       existeUsuario = false;
       prefs.setBool("primeraVez", true);
     }
-    validateIntenetstatus(context, widget.responsive);
-    initPlatformState(updateDeviceData);
+
+
     /*_getLocation().then((position) {
       userLocation = position;
       latitude = userLocation.latitude;
       longitud = userLocation.longitude;
       _getPlace();
     });*/
-    super.initState();
+    //canceltimer();
+
+    focusCorreo.addListener(() {
+      setState(() {
+        if (controllerCorreo.text.contains(" ")) {
+          String email = controllerCorreo.text.trimRight();
+          String emailReplace = email.trimLeft();
+          controllerCorreo.text =
+              emailReplace.replaceAll(new RegExp(r"\s+"), "");
+          _validEmail = _formKey.currentState.validate();
+        }
+      });
+    });
+
+    focusContrasena.addListener(() {
+      if (controllerContrasena.text.contains(" ")) {
+        String password = controllerContrasena.text.trimRight();
+        String passwordReplace = password.trimLeft();
+        controllerContrasena.text =
+            passwordReplace.replaceAll(new RegExp(r"\s+"), "");
+        _validPass = _formKeyPass.currentState.validate();
+        setState(() {});
+      }
+    });
+
+    focusCorreoCambio.addListener(() {
+      setState(() {
+        if (controllerCorreoCambioContrasena.text.contains(" ")) {
+          String email = controllerCorreoCambioContrasena.text.trimRight();
+          String emailReplace = email.trimLeft();
+          controllerCorreoCambioContrasena.text =
+              emailReplace.replaceAll(new RegExp(r"\s+"), "");
+          _validEmailOlvide = _formKeyOlvideContrasena.currentState.validate();
+        }
+      });
+    });
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("didChangeAppLifecycleState");
-    if(state == AppLifecycleState.resumed){
-      print(state);
-      validateBiometricstatus(funcionCanselBiometrics);
+    print("didChangeAppLifecycleState_principal $state");
+    if (state == AppLifecycleState.inactive) {
+      print("didChangeAppLifecycleState $state");
+      validateBiometricstatus(funcion);
+      try {
+        setState(() {});
+      } catch (e) {
+        print("error set biometric");
+      }
     }
   }
 
@@ -147,673 +233,1056 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
       onWillPop: () => Future.value(false),
       child: SafeArea(
         child: Scaffold(
-            body: Stack(
-                children: builData(widget.responsive)
-            )
-        ),
+            key: _key, body: Stack(children: builData(widget.responsive))),
       ),
     );
   }
 
-  List<Widget> builData(Responsive responsive){
+  List<Widget> builData(Responsive responsive) {
     Widget data = Container();
-    Form form;
+
     data = SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            separacion(responsive, 8),
-            LoginEncabezadoLogin(responsive: responsive),
-            separacion(responsive, 4),
-            subtitulo(responsive),
-            form = new Form(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+          separacion(responsive, 8),
+          LoginEncabezadoLogin(responsive: responsive),
+          separacion(responsive, 4),
+          subtitulo(responsive),
+          Form(
               key: _formKey,
               child: SingleChildScrollView(
                   physics: NeverScrollableScrollPhysics(),
                   child: Container(
-                      margin: EdgeInsets.symmetric(horizontal:responsive.width * 0.05),
+                      margin: EdgeInsets.symmetric(
+                          horizontal: responsive.width * 0.05),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             separacion(responsive, 6),
-                            existeUsuario ? Container() : inputTextCorreo(responsive),
+                            existeUsuario
+                                ? Container()
+                                : inputTextCorreo(responsive),
                             separacion(responsive, 2),
-                            inputTextContrasena(responsive),
-                            separacion(responsive, 2),
-                            olvidasteContrasena(responsive),
-                            existeUsuario ? separacion(responsive, 6) : separacion(responsive, 2),
-                            botonInicioSesion(responsive),
-                            separacion(responsive, 1),
-                            is_available_finger|| is_available_face ? activarHuella(responsive) : Container(height: 10,width: 10,),
-                            separacion(responsive, 1),
-                            existeUsuario ? ingresarConOtroUsuario() : Container(),
-                            separacion(responsive, 1),
-                            version(responsive)
-                          ]
-                      )
-                  )
-              )
-            )
-        ]
-       )
-    );
+                          ])))),
+          Form(
+              key: _formKeyPass,
+              child: Container(
+                  margin:
+                      EdgeInsets.symmetric(horizontal: responsive.width * 0.05),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        inputTextContrasena(responsive),
+                        separacion(responsive, 2),
+                        olvidasteContrasena(responsive),
+                      ]))),
+          existeUsuario ? separacion(responsive, 6) : separacion(responsive, 2),
+          Container(
+              margin: EdgeInsets.symmetric(horizontal: responsive.width * 0.05),
+              child: botonInicioSesion(responsive)),
+          separacion(responsive, 1),
+          is_available_finger ||
+                  is_available_face ||
+                  (prefs != null && prefs.get("localAuthCount") == 100)
+              ? activarHuella(responsive)
+              : Container(
+                  height: 10,
+                  width: 10,
+                ),
+          separacion(responsive, 1),
+          existeUsuario ? ingresarConOtroUsuario() : Container(),
+          separacion(responsive, 1),
+          version(responsive)
+        ]));
 
     var l = new List<Widget>();
     l.add(data);
     if (_saving) {
       var modal = Stack(
-        children: [
-          LoadingController(
-
-          )
-        ],
+        children: [LoadingController()],
       );
       l.add(modal);
     }
     return l;
   }
 
-  Widget subtitulo(Responsive responsive){
-    return existeUsuario ?
-      Text( prefs.getString("nombreUsuario") != null &&  prefs.getString("nombreUsuario")  != "" ?
-      "¡Hola ${prefs.getString("nombreUsuario")}!"
-          : "¡Hola !", style: TextStyle(
-          color: Tema.Colors.Azul_gnp,
-          fontWeight: FontWeight.normal,
-          fontSize: responsive.ip(3.4)
-      ), textAlign: TextAlign.center,):
-      Text( "Intermediario GNP\n ¡Te damos la bienvenida!", style: TextStyle(
-          color: Tema.Colors.Azul_gnp,
-          fontWeight: FontWeight.normal,
-          fontSize: responsive.ip(3.4)
-      ), textAlign: TextAlign.center,)
-    ;
+  Widget subtitulo(Responsive responsive) {
+    return existeUsuario != null && existeUsuario
+        ? Text(
+            prefs.getString("nombreUsuario") != null &&
+                    prefs.getString("nombreUsuario") != ""
+                ? "¡Hola ${prefs.getString("nombreUsuario")}!"
+                : "¡Hola !",
+            style: TextStyle(
+                color: Tema.Colors.Azul_gnp,
+                fontWeight: FontWeight.normal,
+                fontSize: responsive.ip(3.4)),
+            textAlign: TextAlign.center,
+          )
+        : Text(
+            "Intermediario GNP\n ¡Te damos la bienvenida!",
+            style: TextStyle(
+                color: Tema.Colors.Azul_gnp,
+                fontWeight: FontWeight.normal,
+                fontSize: responsive.ip(3.4)),
+            textAlign: TextAlign.center,
+          );
   }
 
-  Widget inputTextCorreo(Responsive responsive){
-    return TextFormField(
-      inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.ñ]")),
-      ],
-      autofocus: true,
-      controller: controllerCorreo,
-      focusNode: focusCorreo,
-      onFieldSubmitted: (S){FocusScope.of(context).requestFocus(focusContrasena);},
-      obscureText: false,
-      enabled: _enable,
-      cursorColor: Tema.Colors.GNP,
-      decoration: new InputDecoration(
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Tema.Colors.inputlinea),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Tema.Colors.inputlinea),
-          ),
-          labelText: "Correo electrónico",
-          labelStyle: TextStyle(
-              fontFamily: "Roboto",
-              fontWeight: FontWeight.normal,
-              fontSize: responsive.ip(2),
-              color: focusCorreo.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
-          )
-      ),
-      validator: (value) {
-        String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
-        setState(() {});
-        RegExp regExp = new RegExp(p);
-        if (value.isEmpty) {
-          _validEmail  = false;
-          return 'Este campo es requerido';
-        } else if (regExp.hasMatch(value)) {
-          _validEmail  = true;
-          return null;
-        } else {
-          _validEmail  = false;
-          return 'Este campo es inválido';
-        }
-        return null;
-      },
-      onChanged: (value){
-        setState(() {
-          //Todo 116
-          prefs.setString("correoUsuario", controllerCorreo.text);
-          String p = "^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
-          RegExp regExp = new RegExp(p);
-          if (value.isEmpty) {
-            _validEmail  = false;
-          } else if (regExp.hasMatch(value)) {
-            _validEmail  = true;
-            return null;
-          } else {
-            _validEmail  = false;
+  Widget inputTextCorreo(Responsive responsive) {
+    return Focus(
+      child: TextFormField(
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(50),
+          FilteringTextInputFormatter.allow(RegExp("[A-Z a-z0-9-_@.ñÑ]")),
+          // FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.ñÑ]]")),
+        ],
+        keyboardType: TextInputType.emailAddress,
+        controller: controllerCorreo,
+        focusNode: focusCorreo,
+        onFieldSubmitted: (s) {
+          print("onFieldSubmitted $s $_validEmail $_validPass");
+          FocusScope.of(context).requestFocus(focusContrasena);
+          if (controllerCorreo.text.contains(" ")) {
+            String email = controllerCorreo.text.trimRight();
+            String emailReplace = email.trimLeft();
+            controllerCorreo.text =
+                emailReplace.replaceAll(new RegExp(r"\s+"), "");
           }
-          focusCorreo.hasFocus;
-          controllerCorreo.text;
-        });
-      },
-    );
-  }
-
-  Widget inputTextContrasena(Responsive responsive){
-    return TextFormField(
-      inputFormatters: [
-        FilteringTextInputFormatter.deny(RegExp("[ ]")),
-      ],
-      controller: controllerContrasena,
-      focusNode: focusContrasena,
-      obscureText: contrasena,
-      enabled: _enable,
-      cursorColor: Tema.Colors.GNP,
-      decoration: new InputDecoration(
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Tema.Colors.inputlinea),
-          ),
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Tema.Colors.inputlinea),
-          ),
-          labelText: "Contraseña",
-          labelStyle: TextStyle(
+        },
+        obscureText: false,
+        enabled: _enable,
+        cursorColor: _validEmail ? Tema.Colors.GNP : Tema.Colors.validarCampo,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: new InputDecoration(
+            errorStyle: TextStyle(
+              fontFamily: "Roboto",
+              fontWeight: FontWeight.normal,
+              fontSize: responsive.ip(1.2),
+              color: _validEmail
+                  ? Tema.Colors.inputcorreo
+                  : Tema.Colors.validarCampo,
+            ),
+            errorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Tema.Colors.validarCampo, width: 2),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Tema.Colors.inputlinea),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color:
+                      _validEmail ? Tema.Colors.GNP : Tema.Colors.validarCampo,
+                  width: 2),
+            ),
+            focusedErrorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color: _validEmail
+                      ? Tema.Colors.inputlinea
+                      : Tema.Colors.validarCampo,
+                  width: 2),
+            ),
+            labelText: "Correo electrónico",
+            labelStyle: TextStyle(
               fontFamily: "Roboto",
               fontWeight: FontWeight.normal,
               fontSize: responsive.ip(2),
-              color: focusContrasena.hasFocus ? Tema.Colors.GNP : Tema.Colors.inputcorreo,
-          ),
-          suffixIcon: IconButton(
-            icon: contrasena == false || controllerContrasena.text == "" ? Image.asset("assets/login/vercontrasena.png") : Image.asset("assets/login/novercontrasena.png"),
-            color: Tema.Colors.VLMX_Navy_40,
-            onPressed: (){
-              setState(() {
-                contrasena = !contrasena;
-              });
-            },
-          )
+              color: _validEmail
+                  ? focusCorreo.hasFocus
+                      ? Tema.Colors.GNP
+                      : Tema.Colors.inputcorreo
+                  : Tema.Colors.validarCampo,
+            )),
+        validator: (value) {
+          print("validator $value");
+          String result = value.trim();
+          String p =
+              //"^[ñÑa-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+              //"^[a-zA-Z0-9.!#\$%&ñÑ'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+              r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+          RegExp regExp = new RegExp(p);
+
+          String message;
+
+          if (result.isEmpty) {
+            message = 'Este campo es requerido';
+          } else if (regExp.hasMatch(result)) {
+            if (value.contains(" ")) {
+              return 'No debe tener espacios en blanco';
+            } else {
+              message = null;
+            }
+          } else if (value.contains(" ")) {
+            message = 'No debe tener espacios en blanco';
+          } else {
+            message = 'Este campo es inválido';
+          }
+
+          return message;
+        },
+        onChanged: (value) {
+          print("onChanged $value $_validEmail $_validPass");
+          _validEmail = _formKey.currentState.validate();
+          setState(() {});
+        },
       ),
-      validator: (value) {
-        if (value.isEmpty) {
-          return 'Este campo es requerido';
-        }
-        return null;
-      },
-      onChanged: (value){
-        setState(() {
-          focusContrasena.hasFocus;
-          controllerContrasena.text;
-        });
+      onFocusChange: (hasFocus) {
+        print("hasFocus $hasFocus $_validEmail $_validPass");
+        _validEmail = _formKey.currentState.validate();
+        focusCorreoCambio.unfocus();
+
+        setState(() {});
       },
     );
   }
 
-  Widget olvidasteContrasena(Responsive responsive){
-    controllerCorreoCambioContrasena.text = prefs.getString("correoUsuario");
+  Widget inputTextContrasena(Responsive responsive) {
+    return Focus(
+      child: TextFormField(
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(25),
+        ],
+        onFieldSubmitted: (s) {
+          print("onFieldSubmitted:contraseña $s $_validEmail $_validPass");
+          if (controllerContrasena.text.contains(" ")) {
+            String password = controllerContrasena.text.trimRight();
+            String passwordReplace = password.trimLeft();
+            controllerContrasena.text =
+                passwordReplace.replaceAll(new RegExp(r"\s+"), "");
+          }
+        },
+        controller: controllerContrasena,
+        focusNode: focusContrasena,
+        obscureText: contrasena,
+        keyboardType: TextInputType.visiblePassword,
+        enabled: true,
+        cursorColor: _validPass ? Tema.Colors.GNP : Tema.Colors.validarCampo,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        decoration: new InputDecoration(
+            errorStyle: TextStyle(
+              fontFamily: "Roboto",
+              fontWeight: FontWeight.normal,
+              fontSize: responsive.ip(1.2),
+              color: Tema.Colors.validarCampo,
+            ),
+            errorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Tema.Colors.validarCampo, width: 2),
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color: _validPass
+                      ? Tema.Colors.inputlinea
+                      : Tema.Colors.validarCampo),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color:
+                      _validPass ? Tema.Colors.GNP : Tema.Colors.validarCampo,
+                  width: 2),
+            ),
+            focusedErrorBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color: _validPass
+                      ? Tema.Colors.inputlinea
+                      : Tema.Colors.validarCampo,
+                  width: 2),
+            ),
+            labelText: "Contraseña",
+            labelStyle: TextStyle(
+              fontFamily: "Roboto",
+              fontWeight: FontWeight.normal,
+              fontSize: responsive.ip(2),
+              color: _validPass
+                  ? focusContrasena.hasFocus
+                      ? Tema.Colors.GNP
+                      : Tema.Colors.inputcorreo
+                  : Tema.Colors.validarCampo,
+            ),
+            suffixIcon: IconButton(
+              icon: contrasena
+                  ? _validPass
+                      ? Image.asset("assets/login/novercontrasena.png")
+                      : Image.asset("assets/login/_icon_error_contrasena.png")
+                  : _validPass ?Image.asset("assets/login/vercontrasena.png"):Image.asset("assets/login/_icono-withmask.png"),
+              color: Tema.Colors.validarCampo,
+              onPressed: () {
+                setState(() {
+                  contrasena = !contrasena;
+                });
+              },
+            )),
+        validator: (value) {
+          if (value.isEmpty) {
+            return 'Este campo es requerido';
+          } else if (value.contains(" ")) {
+            return 'No debe tener espacios en blanco';
+          } else {
+            return null;
+          }
+        },
+        onChanged: (value) {
+          _validPass = _formKeyPass.currentState.validate();
+          setState(() {});
+        },
+      ),
+      onFocusChange: (hasFocus) {
+        print("hasFocus $hasFocus $_validEmail $_validPass");
+      },
+    );
+  }
+
+  Widget olvidasteContrasena(Responsive responsive) {
     return CupertinoButton(
         padding: EdgeInsets.zero,
-        child: Text("¿Olvidaste tu contraseña?", style: TextStyle(
-          color: Tema.Colors.GNP ,
-          fontWeight: FontWeight.normal,
-          fontSize: responsive.ip(2.3),
-        )),
-        onPressed: (){
-          controllerCorreoCambioContrasena.text = "";
+        child: Text("¿Olvidaste tu contraseña?",
+            style: TextStyle(
+              color: Tema.Colors.GNP,
+              fontWeight: FontWeight.normal,
+              fontSize: responsive.ip(2.3),
+            )),
+        onPressed: () {
+          if (controllerCorreo.text != "") {
+            correoUsuario = controllerCorreo.text;
+            controllerCorreoCambioContrasena.text = correoUsuario;
+          } else {
+            controllerCorreoCambioContrasena.text =
+                prefs.getString("correoUsuario");
+          }
+
           focusContrasena.unfocus();
           focusCorreo.unfocus();
           focusCorreoCambio.requestFocus();
-          dialogo(context, responsive);
-
-        }
-    );
+          dialogo(context, responsive).then((value) {
+            _validEmailOlvide = true;
+            setState(() {});
+          });
+        });
   }
 
-  Future<dynamic> dialogo(BuildContext context, Responsive responsive){
-    Responsive _generalResponsive = Responsive.of(context);
-    tamano = _generalResponsive.hp(57);
+  Future<dynamic> dialogo(BuildContext context, Responsive responsive) {
+    _generalResponsive = Responsive.of(context);
+    if (Platform.isIOS) {
+      tamano = MediaQuery.of(context).viewInsets.bottom + 40;
+    } else {
+      tamano = MediaQuery.of(context).viewInsets.bottom + 20;
+    }
+    //tamano = _generalResponsive.hp(57);
 
-    return  showDialog(
+    return showDialog(
       barrierDismissible: true,
       context: context,
-      builder: (context)  {
-        return WillPopScope(
-          onWillPop: (){
-            setState(() {
-              //Navigator.pop(context);
-              tamano = _generalResponsive.hp(57);
-              focusCorreoCambio.unfocus();
-              FocusScope.of(context).requestFocus(new FocusNode());
-            });
-          },
-          child: Stack(children: [
-            GestureDetector(
-              onTap: (){
-                Navigator.pop(context);
-              },
-              child: Opacity(
-                opacity: 0.6,
-                child: Container(
-                  height: _generalResponsive.height,
-                  width: _generalResponsive.width,
-                  color: Tema.Colors.Azul_gnp,
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(top: focusCorreoCambio.hasFocus ?
-              MediaQuery.of(context).size.height / 2 - 250 // adjust values according to your need
-                  : MediaQuery.of(context).size.height / 2 + 15 ),
-              height: _generalResponsive.hp(44),
-              width: _generalResponsive.width,
-              child: Card(
-                color: Tema.Colors.White,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin:
-                      EdgeInsets.only(top: _generalResponsive.height * 0.03),
-
-                      child: Center(
-                        child: Text(
-                          "Olvidé contraseña",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Tema.Colors.Encabezados,
-                              fontSize: _generalResponsive.ip(2.3)),
-                        ),
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return WillPopScope(
+                onWillPop: () {
+                  setState(() {
+                    //Navigator.pop(context);
+                    if (Platform.isIOS) {
+                      tamano = MediaQuery.of(context).viewInsets.bottom + 40;
+                    } else {
+                      tamano = MediaQuery.of(context).viewInsets.bottom + 20;
+                    }
+                    focusCorreoCambio.unfocus();
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  });
+                },
+                child: Stack(children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Opacity(
+                      opacity: 0.6,
+                      child: Container(
+                        height: _generalResponsive.height,
+                        width: _generalResponsive.width,
+                        color: Tema.Colors.Azul_gnp,
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.only(
-                          top: _generalResponsive.height * 0.04,
-                          bottom: _generalResponsive.height * 0.01,
-                          right: _generalResponsive.wp(1),
-                          left: _generalResponsive.wp(5)),
-                      child: Text(
-                        "Por tu seguridad es necesario que ingreses nuevamente tu correo electrónico.",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            color: Tema.Colors.Funcional_Textos_Body,
-                            fontSize: _generalResponsive.ip(2.0)),
-                      ),
-                    ),
-
-                  Container(
-                      margin: EdgeInsets.only(left: _generalResponsive.wp(4), right: _generalResponsive.wp(4)),
-                      child: //inputTextCorreoCambio(responsive)
-                      Form(
-                        key: _formKeyOlvideContrasena,
-                        child: TextFormField(
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
-                            ],
-                            controller: controllerCorreoCambioContrasena,
-                            focusNode: focusCorreoCambio,
-
-                            onSaved: (vc){
-                              setState(() {
-                                tamano = _generalResponsive.hp(57);
-                                focusCorreoCambio.unfocus();
-                              });
-                            },
-
-                            onEditingComplete: (){
-                              setState(() {
-                                tamano = _generalResponsive.hp(57);
-                                focusCorreoCambio.unfocus();
-                              });
-                            },
-                            onFieldSubmitted: (S) {
-                              setState(() {
-                                tamano = _generalResponsive.hp(57);
-                                focusCorreoCambio.unfocus();
-                              });
-                            },
-                            obscureText: false,
-                            enabled: _enable,
-
-                            autofocus: true,
-                            cursorColor: Tema.Colors.GNP,
-                            decoration: new InputDecoration(
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Tema.Colors.inputlinea),
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Tema.Colors.inputlinea),
-                                ),
-                                labelText: "Correo electrónico",
-                                labelStyle: TextStyle(
-                                    fontFamily: "Roboto",
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: _generalResponsive.ip(1.7),
-                                    color: Tema.Colors.inputcorreo
-                                )
-                            ),
-                            validator: (value) {
-                              String p = "^[a-zA-Z0-9.!Ññ#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
-                              RegExp regExp = new RegExp(p);
-                              if (value.isEmpty) {
-                                _validEmail  = false;
-                                return 'Este campo es requerido';
-                              } else if (regExp.hasMatch(value)) {
-                                _validEmail  = true;
-                                return null;
-                              } else {
-                                _validEmail  = false;
-                                return 'Este campo es inválido';
-                              }
-                              return null;
-                            },
-                            onTap: (){
-                              print("Focusssssssssssss");
-                              print("Focusssssssssssss");
-                              setState(() {
-                                tamano = _generalResponsive.hp(30);
-                              });
-                              setState(() {
-                                tamano;
-                                print("tamano ${tamano}");
-                              });
-                            }
-                        ),
-                      )
                   ),
                   Container(
-                    height: _generalResponsive.hp(6.25),
-                    width: _generalResponsive.wp(90),
-                    margin: EdgeInsets.only( top: _generalResponsive.height * 0.03,  left: _generalResponsive.wp(4.4),  right: _generalResponsive.wp(4.4), bottom: _generalResponsive.hp(4)),
-                    child: RaisedButton(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6.0),
-                      ),
-                      color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.GNP : Tema.Colors.botonlogin,
-                      onPressed: () async {
-                        if(_formKeyOlvideContrasena.currentState.validate()){
-                          Navigator.pop(context);
-                          setState(() {
-                            _saving = true;
-                          });
-
-                            validarCodigoVerificacion(_generalResponsive);
-
-                          }
-
-                        },
-                        child: Text(
-                          "ACEPTAR",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: controllerCorreoCambioContrasena.text != "" ? Tema.Colors.White :  Tema.Colors.botonletra,
-                            fontSize: _generalResponsive.ip(2.0),
+                    margin: EdgeInsets.only(
+                        top: focusCorreoCambio.hasFocus
+                            ? MediaQuery.of(context).size.height / 2 -
+                                MediaQuery.of(context)
+                                    .viewInsets
+                                    .bottom // adjust values according to your need
+                            : MediaQuery.of(context).size.height / 2),
+                    height: _generalResponsive.hp(50),
+                    width: _generalResponsive.width,
+                    child: Card(
+                      color: Tema.Colors.White,
+                      child: SingleChildScrollView(
+                          child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(
+                                top: _generalResponsive.height * 0.03),
+                            child: Center(
+                              child: Text(
+                                "Olvidé contraseña",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Tema.Colors.Encabezados,
+                                    fontSize: _generalResponsive.ip(2.3)),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                          Container(
+                            margin: EdgeInsets.only(
+                                top: _generalResponsive.height * 0.05,
+                                bottom: _generalResponsive.height * 0.04,
+                                right: _generalResponsive.wp(1),
+                                left: _generalResponsive.wp(5)),
+                            child: Text(
+                              "Por tu seguridad es necesario que ingreses nuevamente tu correo electrónico.",
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: Tema.Colors.Funcional_Textos_Body,
+                                  fontSize: _generalResponsive.ip(2.0)),
+                            ),
+                          ),
+                          Container(
+                              margin: EdgeInsets.only(
+                                left: _generalResponsive.wp(4),
+                                right: _generalResponsive.wp(4),
+                                bottom: _generalResponsive.hp(2),
+                              ),
+                              child: Form(
+                                key: _formKeyOlvideContrasena,
+                                child: TextFormField(
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp("[A-Z a-z0-9-_@.ñÑ]")),
+                                    LengthLimitingTextInputFormatter(50),
+                                  ],
+                                  keyboardType: TextInputType.emailAddress,
+                                  controller: controllerCorreoCambioContrasena,
+                                  focusNode: focusCorreoCambio,
+                                  autovalidateMode:
+                                      AutovalidateMode.onUserInteraction,
+                                  onEditingComplete: () {
+                                    setState(() {
+                                      tamano = _generalResponsive.hp(57);
+                                      focusCorreoCambio.unfocus();
+                                    });
+                                  },
+                                  onFieldSubmitted: (value) {
+                                    setState(() {
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains(" ")) {
+                                        String email =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .trimRight();
+                                        String emailReplace = email.trimLeft();
+                                        controllerCorreoCambioContrasena.text =
+                                            emailReplace.replaceAll(
+                                                new RegExp(r"\s+"), "");
+                                        _validEmailOlvide =
+                                            _formKeyOlvideContrasena
+                                                .currentState
+                                                .validate();
+                                      }
+                                    });
+                                  },
+                                  obscureText: false,
+                                  enabled: _enable,
+                                  cursorColor: _validEmailOlvide
+                                      ? Tema.Colors.GNP
+                                      : Tema.Colors.validarCampo,
+                                  decoration: new InputDecoration(
+                                      errorStyle: TextStyle(
+                                        fontFamily: "Roboto",
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: responsive.ip(1.2),
+                                        color: Tema.Colors.validarCampo,
+                                      ),
+                                      errorBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Tema.Colors.validarCampo,
+                                            width: 2),
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: Tema.Colors.inputlinea),
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: _validEmailOlvide
+                                                ? Tema.Colors.GNP
+                                                : Tema.Colors.validarCampo,
+                                            width: 2),
+                                      ),
+                                      focusedErrorBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: _validEmailOlvide
+                                                ? Tema.Colors.inputlinea
+                                                : Tema.Colors.validarCampo,
+                                            width: 2),
+                                      ),
+                                      labelText: "Correo electrónico",
+                                      labelStyle: TextStyle(
+                                        fontFamily: "Roboto",
+                                        fontWeight: FontWeight.normal,
+                                        fontSize: _generalResponsive.ip(1.7),
+                                        color: _validEmailOlvide
+                                            ? focusCorreoCambio.hasFocus
+                                                ? Tema.Colors.GNP
+                                                : Tema.Colors.inputcorreo
+                                            : Tema.Colors.validarCampo,
+                                      )),
+                                  validator: (value) {
+                                    String result = value.trim();
+                                    String p =
+                                        //"^[ñÑa-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+                                        //"^[a-zA-Z0-9.!#\$%&ñÑ'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
+                                        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                                    RegExp regExp = new RegExp(p);
+
+                                    String message = "";
+
+                                    if (result.isEmpty) {
+                                      message = 'Este campo es requerido';
+                                    } else if (regExp.hasMatch(result)) {
+                                      if (value.contains(" ")) {
+                                        return 'No debe tener espacios en blanco';
+                                      } else {
+                                        message = null;
+                                      }
+                                    } else if (value.contains(" ")) {
+                                      message =
+                                          'No debe tener espacios en blanco';
+                                    } else {
+                                      message = 'Este campo es inválido';
+                                    }
+
+                                    return message;
+                                  },
+                                  onTap: () {
+                                    _validEmailOlvide = _formKeyOlvideContrasena
+                                        .currentState
+                                        .validate();
+                                    setState(() {
+                                      //controllerCorreoCambioContrasena.text;
+                                      //focusCorreo.unfocus();
+                                      //focusCorreoCambio.requestFocus();
+                                      // focusContrasena.unfocus();
+                                      tamano = _generalResponsive.hp(30);
+                                    });
+                                    setState(() {
+                                      tamano;
+                                      print("tamano ${tamano}");
+                                    });
+                                  },
+                                  onChanged: (s) {
+                                    _validEmailOlvide = _formKeyOlvideContrasena
+                                        .currentState
+                                        .validate();
+                                    setState(() {
+                                      print(
+                                          "correo ------------- > ${controllerCorreoCambioContrasena.text}");
+
+                                      try {
+                                        if (controllerCorreoCambioContrasena
+                                                .text.isNotEmpty &&
+                                            controllerCorreoCambioContrasena
+                                                    .text.length >=
+                                                50) {
+                                          controllerCorreoCambioContrasena
+                                                  .text =
+                                              controllerCorreoCambioContrasena
+                                                  .text
+                                                  .substring(0, 49);
+                                          focusCorreoCambio.unfocus();
+                                        }
+                                      } catch (e) {
+                                        print(e);
+                                      }
+                                    });
+                                  },
+                                ),
+                              )),
+                          Container(
+                            height: _generalResponsive.hp(6.25),
+                            width: _generalResponsive.wp(90),
+                            margin: EdgeInsets.only(
+                                top: _generalResponsive.height * 0.05,
+                                left: _generalResponsive.wp(4.4),
+                                right: _generalResponsive.wp(4.4),
+                                bottom: _generalResponsive.height * 0.01),
+                            child: RaisedButton(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6.0),
+                              ),
+                              color: controllerCorreoCambioContrasena.text != ""
+                                  ? Tema.Colors.GNP
+                                  : Tema.Colors.botonlogin,
+                              onPressed: () async {
+                                if (_formKeyOlvideContrasena.currentState
+                                    .validate()) {
+                                  Navigator.pop(context);
+
+                                  prefs.setBool("seActualizarNumero", false);
+                                  validarCodigoVerificacion(_generalResponsive);
+                                }
+                              },
+                              child: Text(
+                                "ACEPTAR",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color:
+                                      controllerCorreoCambioContrasena.text !=
+                                              ""
+                                          ? Tema.Colors.White
+                                          : Tema.Colors.botonletra,
+                                  fontSize: _generalResponsive.ip(2.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ]),
+                  ),
+                ]));
+          },
         );
       },
     );
   }
 
-  validarCodigoVerificacion(Responsive responsive) async{
-    prefs.setBool('flujoOlvideContrasena', true);
-    prefs.setString("correoCambioContrasena", controllerCorreoCambioContrasena.text);
-    UsuarioPorCorreo respuesta = await  consultaUsuarioPorCorreo(context, prefs.getString("correoCambioContrasena"));
+  Future<http.Response> getVersionApp(String idApp, String idOs) async {
+    AppConfig _appEnvironmentConfig = AppConfig.of(context);
+    bool conecxion = false;
+    conecxion = await validatePinig();
+    print("getVersionApp ${conecxion}");
+    Responsive responsive = Responsive.of(context);
 
-    print("UsuarioPorCorreo ${respuesta}" );
-    if(respuesta != null){
-      if(respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.idParticipante != ""){
-        idParticipanteValidaPorCorre = respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid;
+    if (conecxion) {
+      try {
+        final response = await http
+            .get('http://app.gnp.com.mx/versionapp/' + idApp + "/" + idOs);
+        try {
+          Map mapVersion = json.decode(response.body.toString());
+          String version = mapVersion["version"];
+          version = version.replaceAll("_", ".");
+          bool validacion =
+              validateExpiration(mapVersion["fecha_publicacion"]); //
+          print("validacion: $validacion");
 
-        mediosContacto = await  consultaMediosContactoServicio(context, idParticipanteValidaPorCorre);
-
-        if(mediosContacto != null){
-          prefs.setString("codigoAfiliacion", mediosContacto.codigoFiliacion);
-          List<telefonosModel> teledonosLista = [];
-          teledonosLista = obtenerMedioContacto(mediosContacto);
-          if(teledonosLista.length > 0){
-            prefs.setString("medioContactoTelefono", teledonosLista[0].lada+teledonosLista[0].valor);
-          } else {
-            prefs.setString("medioContactoTelefono", "");
+          if (compareVersion(version, Tema.StringsMX.appVersion) &&
+              validacion &&
+              _appEnvironmentConfig.ambient == Ambient.prod) {
+            if (!mapVersion['requerida']) {
+              _showDialogoUpdateApplication(context);
+            } else {
+              _showDialogoUpdateApplicationRequried(context);
+            }
           }
-        } else{
-          prefs.setString("medioContactoTelefono", "");
-          ConsultarPorIdParticipanteConsolidado consulta =  await ConsultarPorIdParticipanteServicio(context, datosUsuario.idparticipante);
-          if(consulta != null){
-            prefs.setString("codigoAfiliacion", consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado);
-          } else{
-
-          }
+        } catch (e) {
+          print("Error Version: $e");
         }
-
-        OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoCambioContrasena"), "", prefs.getBool('flujoOlvideContrasena'));
-
-        setState(() {
-          _saving = false;
-        });
-
-        print("optRespuesta  ${optRespuesta}");
-
-        if(optRespuesta != null){
-          if(optRespuesta.error == "" && optRespuesta.idError == ""){
-            prefs.setString("idOperacion", optRespuesta.idOperacion);
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,isNumero: false,)));
-          } else{
-            customAlert(AlertDialogType.errorServicio,context,"","", responsive, funcionAlerta);
-          }
-        } else{
-          customAlert(AlertDialogType.errorServicio,context,"","", responsive, funcionAlerta);
-        }
-      } else {
-        setState(() {
-          _saving = false;
-        });
-        customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
-
+        return response;
+      } catch (e) {
+        print("getVersionApp catch");
+        print(e);
+        customAlert(AlertDialogType.errorServicio, context, "", "", responsive,
+            funcionAlerta);
       }
     } else {
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
+          "", responsive, funcionAlerta);
+    }
+  }
+
+  validarCodigoVerificacion(Responsive responsive) async {
+    setState(() {
+      _saving = true;
+    });
+    prefs.setBool('flujoOlvideContrasena', true);
+    prefs.setString(
+        "correoCambioContrasena", controllerCorreoCambioContrasena.text);
+    UsuarioPorCorreo respuesta = await consultaUsuarioPorCorreo(
+        context, prefs.getString("correoCambioContrasena"));
+
+    print("UsuarioPorCorreo ${respuesta}");
+    bool conecxion = false;
+    conecxion = await validatePinig();
+    print("UsuarioPorCorreo ${conecxion}");
+    if (conecxion) {
+      try {
+        if (respuesta != null) {
+          if (respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO !=
+                  null &&
+              respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO
+                      .idParticipante !=
+                  null &&
+              respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO
+                      .idParticipante !=
+                  "") {
+            //print("UsuarioPorCorreo if1");
+            if (respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO
+                    .idParticipante !=
+                "") {
+              // print("UsuarioPorCorreo if2");
+              idParticipanteValidaPorCorre = respuesta
+                  .consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid;
+
+              mediosContacto = await consultaMediosContactoServicio(
+                  context, idParticipanteValidaPorCorre);
+
+              if (mediosContacto != null) {
+                // print("UsuarioPorCorreo if3");
+                prefs.setString(
+                    "codigoAfiliacion", mediosContacto.codigoFiliacion);
+                List<telefonosModel> teledonosLista = [];
+                teledonosLista = obtenerMedioContacto(mediosContacto);
+                if (teledonosLista.length > 0) {
+                  // print("UsuarioPorCorreo if4");
+                  prefs.setString("medioContactoTelefono",
+                      teledonosLista[0].lada + teledonosLista[0].valor);
+                } else {
+                  //print("UsuarioPorCorreo else1");
+                  prefs.setString("medioContactoTelefono", "");
+                }
+              } else {
+                //print("UsuarioPorCorreo else2");
+                prefs.setString("medioContactoTelefono", "");
+                ConsultarPorIdParticipanteConsolidado consulta = await ConsultarPorIdParticipanteServicio(context, idParticipanteValidaPorCorre);
+                if (consulta != null) {
+                  //print("UsuarioPorCorreo if5");
+                  prefs.setString(
+                      "codigoAfiliacion",
+                      consulta
+                          .consultarPorIdParticipanteConsolidadoResponse
+                          .personaConsulta
+                          .persona
+                          .datosGenerales
+                          .idParticipanteConsolidado);
+                } else {
+                  // print("UsuarioPorCorreo else3");
+                }
+              }
+              setState(() {
+                _saving = true;
+              });
+
+              OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
+                  context,
+                  prefs.getString("correoCambioContrasena"),
+                  prefs.getString("medioContactoTelefono")!=null?prefs.getString("medioContactoTelefono"):"",
+                  prefs.getBool('flujoOlvideContrasena'));
+
+              setState(() {
+                _saving = false;
+              });
+
+              print("optRespuesta  ${optRespuesta}");
+
+              if (optRespuesta != null) {
+                //print("UsuarioPorCorreo if6");
+                if (optRespuesta.error == "" && optRespuesta.idError == "") {
+                  //print("UsuarioPorCorreo if7");
+                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              LoginCodigoVerificaion(
+                                responsive: responsive,
+                                isNumero: false,
+                              )));
+                } else {
+                  // print("UsuarioPorCorreo else4");
+                  customAlert(AlertDialogType.errorServicio, context, "", "",
+                      responsive, funcionAlerta);
+                }
+              } else {
+                //print("UsuarioPorCorreo else5");
+                customAlert(AlertDialogType.errorServicio, context, "", "",
+                    responsive, funcionAlerta);
+              }
+            } else {
+              // print("UsuarioPorCorreo else6");
+              setState(() {
+                _saving = false;
+              });
+              customAlert(AlertDialogType.Correo_no_registrado, context, "", "",
+                  responsive, funcionAlerta);
+            }
+          } else {
+            // print("UsuarioPorCorreo else7");
+            //print("${respuesta.consultaUsuarioPorCorreoResponse.ErrorData.toJson()}");
+            setState(() {
+              _saving = false;
+            });
+            if (respuesta
+                    .consultaUsuarioPorCorreoResponse.ErrorData.codigoError !=
+                null) {
+              //print("UsuarioPorCorreo if8");
+              if (respuesta
+                      .consultaUsuarioPorCorreoResponse.ErrorData.codigoError ==
+                  "eCl00014") {
+                //print("UsuarioPorCorreo if9");
+                customAlert(AlertDialogType.Correo_no_registrado, context, "",
+                    "", responsive, funcionAlerta);
+              }
+            }
+          }
+        } else {
+          //print("UsuarioPorCorreo else8");
+          setState(() {
+            _saving = false;
+          });
+          customAlert(AlertDialogType.errorServicio, context, "", "",
+              responsive, funcionAlerta);
+        }
+      } catch (e) {
+        print("UsuarioPorCorreo catch");
+        print(e);
+        setState(() {
+          _saving = false;
+        });
+        customAlert(AlertDialogType.errorServicio, context, "", "", responsive,
+            funcionAlerta);
+      }
+    } else {
+      print("UsuarioPorCorreo sin coneccion");
       setState(() {
         _saving = false;
       });
-      customAlert(AlertDialogType.Correo_no_registrado,context,"","", responsive, funcionAlerta);
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
+          "", responsive, funcionAlerta);
     }
-
   }
 
-  Widget inputTextCorreoCambio(Responsive responsive){
-
-    return TextFormField(
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@. ñ]")),
-        ],
-        controller: controllerCorreoCambioContrasena,
-        focusNode: focusCorreoCambio,
-        onFieldSubmitted: (S) {
-          tamano = responsive.hp(57);
-          focusCorreoCambio.unfocus();
-        },
-        obscureText: false,
-        enabled: _enable,
-        cursorColor: Tema.Colors.GNP,
-        decoration: new InputDecoration(
-            focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Tema.Colors.inputlinea),
-            ),
-            enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Tema.Colors.inputlinea),
-            ),
-            labelText: "Correo electrónico",
-            labelStyle: TextStyle(
-                fontFamily: "Roboto",
-                fontWeight: FontWeight.normal,
-                fontSize: responsive.ip(1.7),
-                color: Tema.Colors.inputcorreo
-            )
-        ),
-        validator: (value) {
-          String p = "^[a-zA-Z0-9.!#ñÑ\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\$";
-          RegExp regExp = new RegExp(p);
-          if (value.isEmpty) {
-            _validEmail  = false;
-            return 'Este campo es requerido';
-          } else if (regExp.hasMatch(value)) {
-            _validEmail  = true;
-            return null;
-          } else {
-            _validEmail  = false;
-            return 'Este campo es inválido';
-          }
-          return null;
-        },
-        onTap: (){
-          print("Focusssssssssssss");
-          print("Focusssssssssssss");
-          setState(() {
-            tamano = responsive.hp(30);
-          });
-          setState(() {
-              tamano;
-              print("tamano ${tamano}");
-          });
-
-
-        }
-    );
-  }
-
-  Widget botonInicioSesion(Responsive responsive){
+  Widget botonInicioSesion(Responsive responsive) {
     return CupertinoButton(
         padding: EdgeInsets.zero,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(3),
-            color: (controllerContrasena.text != "" && controllerCorreo.text != "") || (existeUsuario && controllerContrasena.text != "") ?
-            Tema.Colors.GNP : Tema.Colors.botonlogin ,
+            borderRadius: BorderRadius.circular(4),
+            color: (controllerContrasena.text != "" &&
+                        controllerCorreo.text != "") ||
+                    (existeUsuario && controllerContrasena.text != "")
+                ? Tema.Colors.GNP
+                : Tema.Colors.botonlogin,
           ),
-          padding: EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
+          padding:
+              EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
           width: responsive.width,
-          child: Text("INICIAR SESIÓN", style: TextStyle(
-            color:  (controllerContrasena.text != "" && controllerCorreo.text != "")  || (existeUsuario && controllerContrasena.text != "")?
-                Tema.Colors.backgroud : Tema.Colors.botonletra,
-          ),
-          textAlign: TextAlign.center),
+          child: Text("INICIAR SESIÓN",
+              style: TextStyle(
+                color: (controllerContrasena.text != "" &&
+                            controllerCorreo.text != "") ||
+                        (existeUsuario && controllerContrasena.text != "")
+                    ? Tema.Colors.backgroud
+                    : Tema.Colors.botonletra,
+              ),
+              textAlign: TextAlign.center),
         ),
         onPressed: () async {
+          prefs.setBool("esPerfil", false);
 
-          if(!_saving){
-            if(_formKey.currentState.validate()){
-             setState(() {
+          if (!_saving) {
+            if (_formKey.currentState.validate() &&
+                _formKeyPass.currentState.validate()) {
+              FocusScope.of(context).requestFocus(new FocusNode());
+              setState(() {
                 _saving = true;
                 _enable = false;
               });
 
-              if(prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "" ){
-                 correoUsuario = prefs.getString("correoUsuario");
-                 if(controllerContrasena.text != prefs.getString("contrasenaUsuario")){
-                   contrasenaUsuario = controllerContrasena.text;
-                   prefs.setString("contrasenaUsuario", contrasenaUsuario);
-                 } else{
-                   contrasenaUsuario = prefs.getString("contrasenaUsuario");
-                 }
-
-              }
-              else {
+              if (prefs.getString("correoUsuario") != null &&
+                  prefs.getString("correoUsuario") != "") {
+                print("if correoUsuario");
+                correoUsuario = prefs.getString("correoUsuario");
+                print("controllerContrasena.text ${controllerContrasena.text}");
+                print(
+                    "prefs.getString ${prefs.getString("contrasenaUsuario")}");
+                if (controllerContrasena.text != null &&
+                    controllerContrasena.text.isNotEmpty &&
+                    controllerContrasena.text !=
+                        prefs.getString("contrasenaUsuario")) {
+                  print("if ---");
+                  contrasenaUsuario = controllerContrasena.text;
+                  //prefs.setString("contrasenaUsuario", contrasenaUsuario);
+                } else {
+                  print("else -----");
+                  contrasenaUsuario = prefs.getString("contrasenaUsuario");
+                }
+                if (controllerCorreo.text != null &&
+                    controllerCorreo.text.isNotEmpty) {
+                  print("if ---");
+                  correoUsuario = controllerCorreo.text;
+                  prefs.setString("correoUsuario", controllerCorreo.text);
+                  //prefs.setString("contrasenaUsuario", contrasenaUsuario);
+                } else {
+                  print("else -----");
+                  correoUsuario = prefs.getString("correoUsuario");
+                }
+              } else {
+                print("else correoUsuario");
                 prefs.setString("correoUsuario", controllerCorreo.text);
                 correoUsuario = controllerCorreo.text;
+
                 prefs.setString("contrasenaUsuario", controllerContrasena.text);
                 contrasenaUsuario = controllerContrasena.text;
                 print("ELSE correoUsuario ${correoUsuario}");
                 print("contrasenaUsuario ${contrasenaUsuario}");
               }
-              datosUsuario = await logInServices(context,correoUsuario, contrasenaUsuario, correoUsuario,responsive);
-              UsuarioPorCorreo respuesta;
-              if(datosUsuario != null){
-                 respuesta = await  consultaUsuarioPorCorreo(context, correoUsuario);
-                 print("respuesta  ${respuesta}");
+
+              datosUsuario = await logInServices(context, correoUsuario,
+                  contrasenaUsuario, correoUsuario, responsive);
+
+              if (datosUsuario != null) {
+                prefs.setString("contrasenaUsuario", contrasenaUsuario);
+                respuestaServicioCorreo =
+                    await consultaUsuarioPorCorreo(context, correoUsuario);
+                print("respuesta  ${respuestaServicioCorreo}");
               }
 
-              if(datosUsuario != null && respuesta != null && respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario == "ACTIVO"){
+              if (datosUsuario != null &&
+                  respuestaServicioCorreo != null &&
+                  respuestaServicioCorreo.consultaUsuarioPorCorreoResponse
+                          .USUARIOS.USUARIO.estatusUsuario ==
+                      "ACTIVO") {
+                //Roles
+                validarRolesUsuario();
+                //Medio de contacto
+                mediosContacto = await consultaMediosContactoServicio(
+                    context, datosUsuario.idparticipante);
 
-                mediosContacto = await  consultaMediosContactoServicio(context, datosUsuario.idparticipante);
                 print("mediosContacto ${mediosContacto}");
 
-                if(mediosContacto != null){
-                  prefs.setString("codigoAfiliacion", mediosContacto.codigoFiliacion);
+                if (mediosContacto != null) {
+                  prefs.setString(
+                      "codigoAfiliacion", mediosContacto.codigoFiliacion);
                   List<telefonosModel> teledonosLista = [];
                   teledonosLista = obtenerMedioContacto(mediosContacto);
-                  if(teledonosLista.length > 0){
-                    prefs.setString("medioContactoTelefono", teledonosLista[0].lada+teledonosLista[0].valor);
+                  if (teledonosLista.length > 0) {
+                    prefs.setString("medioContactoTelefono",
+                        teledonosLista[0].lada + teledonosLista[0].valor);
+                    print(
+                        "Medios contacto ${prefs.getString("medioContactoTelefono")}");
                   } else {
                     prefs.setString("medioContactoTelefono", "");
                   }
-
-                }
-                else{
+                } else {
                   prefs.setString("medioContactoTelefono", "");
-                  ConsultarPorIdParticipanteConsolidado consulta =  await ConsultarPorIdParticipanteServicio(context, datosUsuario.idparticipante);
-                  if(consulta != null){
-                    print("afiliacion ${consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado} ");
-                    prefs.setString("codigoAfiliacion", consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado);
-                  } else{
-
-                  }
-
+                  ConsultarPorIdParticipanteConsolidado consulta =
+                      await ConsultarPorIdParticipanteServicio(
+                          context, datosUsuario.idparticipante);
+                  if (consulta != null) {
+                    print(
+                        "afiliacion ${consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado} ");
+                    prefs.setString(
+                        "codigoAfiliacion",
+                        consulta
+                            .consultarPorIdParticipanteConsolidadoResponse
+                            .personaConsulta
+                            .persona
+                            .datosGenerales
+                            .idParticipanteConsolidado);
+                  } else {}
                 }
 
-                if(!existeUsuario){
-                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante);
-
-                  print("preguntas ${preguntas.requestStatus}");
+                if (!existeUsuario) {
+                  consultaPreguntasSecretasModel preguntas =
+                      await consultarPreguntaSecretaServicio(
+                          context, datosUsuario.idparticipante);
 
                   setState(() {
                     _saving = false;
                     _enable = true;
                   });
 
-                  if(preguntas != null){
-                    if(preguntas.requestStatus == "FAILED" && preguntas.error != ""){
-                        prefs.setBool('primeraVezIntermediario', true);
-                    } else{
-                        prefs.setBool('primeraVezIntermediario', false);
+                  if (preguntas != null) {
+                    if (preguntas.requestStatus == "FAILED" &&
+                        preguntas.error != "") {
+                      prefs.setBool('primeraVezIntermediario', true);
+                    } else {
+                      prefs.setBool('primeraVezIntermediario', false);
                     }
-                  } else{
+                  } else {}
+                } else {
+                  consultaPreguntasSecretasModel preguntas =
+                      await consultarPreguntaSecretaServicio(
+                          context, datosUsuario.idparticipante);
 
-                  }
-
-                } else{
                   setState(() {
                     _saving = false;
                     _enable = true;
                   });
 
+                  if (preguntas != null) {
+                    if (preguntas.requestStatus == "FAILED" &&
+                        preguntas.error != "") {
+                      prefs.setBool('primeraVezIntermediario', true);
+                    } else {
+                      prefs.setBool('primeraVezIntermediario', false);
+                    }
+                  } else {}
                 }
 
                 prefs.setBool("seHizoLogin", true);
                 prefs.setBool("regitroDatosLoginExito", true);
-                prefs.setString("nombreUsuario", datosPerfilador.agenteInteresadoList.elementAt(0).nombres);
-                prefs.setString("currentDA", datosPerfilador.daList.elementAt(0).cveDa);
-                prefs.setString("currentCUA",  datosPerfilador.daList.elementAt(0).codIntermediario[0]);
+                prefs.setString(
+                    "nombreUsuario",
+                    respuestaServicioCorreo.consultaUsuarioPorCorreoResponse
+                                    .USUARIOS.USUARIO.apellidoPaterno !=
+                                null &&
+                            respuestaServicioCorreo
+                                    .consultaUsuarioPorCorreoResponse
+                                    .USUARIOS
+                                    .USUARIO
+                                    .nombre !=
+                                null
+                        ? respuestaServicioCorreo
+                            .consultaUsuarioPorCorreoResponse
+                            .USUARIOS
+                            .USUARIO
+                            .nombre
+                        : "");
+                prefs.setString(
+                    "currentDA",
+                    datosPerfilador.daList.length > 0
+                        ? datosPerfilador.daList.elementAt(0).cveDa
+                        : "");
+                prefs.setString(
+                    "currentCUA",
+                    datosPerfilador.daList.length > 0
+                        ? datosPerfilador.daList
+                            .elementAt(0)
+                            .codIntermediario[0]
+                        : "");
 
                 redirect(responsive);
-              }
-              else {
+              } else {
                 setState(() {
                   _saving = false;
                   _enable = true;
                 });
                 print("else datosUsuario ${datosUsuario}");
-                if(prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
-
-                } else if(respuesta != null && respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario != "ACTIVO"){
-
-                  customAlert(AlertDialogType.Cuenta_inactiva,context,"","", responsive, funcionAlertaHullaLogin);
+                if (prefs.getBool("regitroDatosLoginExito") != null &&
+                    prefs.getBool("regitroDatosLoginExito")) {
+                } else if (respuestaServicioCorreo != null &&
+                    respuestaServicioCorreo.consultaUsuarioPorCorreoResponse
+                            .USUARIOS.USUARIO.estatusUsuario !=
+                        "ACTIVO") {
+                  customAlert(AlertDialogType.Cuenta_inactiva, context, "", "",
+                      responsive, funcionAlertaHullaLogin);
                   prefs.setBool("regitroDatosLoginExito", false);
                   prefs.setString("nombreUsuario", "");
                   prefs.setString("correoUsuario", "");
                   prefs.setString("contrasenaUsuario", "");
-
-                } else{
+                } else {
+                  //customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
                   prefs.setBool("regitroDatosLoginExito", false);
                   prefs.setString("nombreUsuario", "");
                   prefs.setString("correoUsuario", "");
@@ -824,23 +1293,24 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
                 _saving = false;
                 _enable = true;
               });
-
-            } else{}
+            } else {}
           }
-        }
-    );
+        });
   }
 
-  List<telefonosModel> obtenerMedioContacto(consultaMediosContactoAgentesModel mediosContacto){
-
+  List<telefonosModel> obtenerMedioContacto(
+      consultaMediosContactoAgentesModel mediosContacto) {
     List<telefonosModel> teledonosLista = [];
     telefonosModel telefono;
 
-    if(mediosContacto != null && mediosContacto.mediosContacto != null && mediosContacto.mediosContacto.telefonos != null) {
+    if (mediosContacto != null &&
+        mediosContacto.mediosContacto != null &&
+        mediosContacto.mediosContacto.telefonos != null) {
       for (int i = 0; i < mediosContacto.mediosContacto.telefonos.length; i++) {
         telefono = mediosContacto.mediosContacto.telefonos[i];
 
-        if (telefono.propositosContacto != null && telefono.tipoContacto.id == "TLCL") {
+        if (telefono.propositosContacto != null &&
+            telefono.tipoContacto.id == "TLCL") {
           //TODO validar nulos maria@bonos.com mexico.18
           for (int i = 0; i < telefono.propositosContacto.length; i++) {
             if (telefono.propositosContacto[i].id == "CAA") {
@@ -851,100 +1321,229 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
       }
     }
 
-    if(teledonosLista.length>0){
-        if(teledonosLista.length > 1){
-          teledonosLista.sort((b, a){
-            return a.idMedioContacto.compareTo(b.idMedioContacto);
-          });
-        }
+    if (teledonosLista.length > 0) {
+      if (teledonosLista.length > 1) {
+        teledonosLista.sort((b, a) {
+          return a.idMedioContacto.compareTo(b.idMedioContacto);
+        });
+      }
     }
 
     return teledonosLista;
-
   }
 
-  redirect( Responsive responsive) async {
+  redirect(Responsive responsive) async {
     prefs.setBool('flujoOlvideContrasena', false);
     if (prefs != null) {
       if (existeUsuario) {
-          controllerContrasena.clear();
-          controllerCorreo.clear();
-          //TODO 238
-          if(_biometricos && _subSecuentaIngresoCorreo != null && !_subSecuentaIngresoCorreo ){
-            if(is_available_finger != false && is_available_face != false){
-              if (deviceType == ScreenType.phone) {
-                customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
-              }
-              else{
-                customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
-              }
-            } else{
-              prefs.setBool("esFlujoBiometricos", true);
-              is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive, funcionAlertaHullaLogin)
-              : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, funcionAlertaHullaLogin);
-            }
+        controllerContrasena.clear();
+        controllerCorreo.clear();
+        //TODO 238
 
-          } else{
-            if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
-              Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
-            } else{
-              if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
+        if (_biometricos &&
+            _subSecuentaIngresoCorreo != null &&
+            !_subSecuentaIngresoCorreo) {
+          prefs.setBool("esFlujoBiometricos", true);
 
-                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
-
-              } else{
-                if (deviceType == ScreenType.phone) {
-                  prefs.setBool("esFlujoBiometricos", false);
-                  customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlertaCodVerificacion);
-                }
-                else{
-                  customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
-                }
-              }
-            }
-          }
-
-      }
-      else {
-        prefs.setBool("userRegister", true);
-        if(_biometricos) {
-          if(is_available_finger != false && is_available_face != false){
+          if (is_available_finger && is_available_face) {
             if (deviceType == ScreenType.phone) {
-              customAlert(AlertDialogType.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
+                  "", "", responsive, funcionAlertaHullaLogin);
+            } else {
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
+                  "", "", responsive, funcionAlertaHullaLogin);
+              //TODO customAlertTablet
+              //customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
             }
-            else{
-              customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive);
-            }
-          } else{
-            prefs.setBool("esFlujoBiometricos", true);
-            is_available_finger != false ? customAlert(AlertDialogType.huella, context, "", "", responsive, funcionAlertaHullaLogin)
-                : customAlert(AlertDialogType.Reconocimiento_facial, context, "", "", responsive, funcionAlertaHullaLogin);
+          } else {
+            print("biometricos subsecuentes");
+            is_available_finger
+                ? customAlert(AlertDialogType.huella, context, "", "",
+                    responsive, funcionAlertaHullaLogin)
+                : customAlert(AlertDialogType.Reconocimiento_facial, context,
+                    "", "", responsive, funcionAlertaHullaLogin);
           }
+        } else if (_biometricos &&
+            (prefs.getBool("flujoCompletoLogin") != null &&
+                !prefs.getBool("flujoCompletoLogin"))) {
+          print("flujo completo biometricos activos");
 
-        } else{
-          if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
+          prefs.setBool("esFlujoBiometricos", true);
 
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
-
-          } else{
-
+          if (is_available_finger && is_available_face) {
             if (deviceType == ScreenType.phone) {
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
+                  "", "", responsive, funcionAlertaHullaLogin);
+            } else {
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
+                  "", "", responsive, funcionAlertaHullaLogin);
+              //TODO customAlertTablet
+              //customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
+            }
+          } else {
+            is_available_finger
+                ? customAlert(AlertDialogType.huella, context, "", "",
+                    responsive, funcionAlertaHullaLogin)
+                : customAlert(AlertDialogType.Reconocimiento_facial, context,
+                    "", "", responsive, funcionAlertaHullaLogin);
+          }
+        } else {
+          if (prefs.getBool("flujoCompletoLogin") != null &&
+              prefs.getBool("flujoCompletoLogin")) {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (_) => new HomePage(
+                          responsive: responsive,
+                        )));
+          } else {
+            if (prefs.getBool('primeraVezIntermediario') != null &&
+                prefs.getBool('primeraVezIntermediario')) {
+              if (prefs.getBool("aceptoCondicionesDeUso") == null) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => CondicionesPage(
+                              callback: funcionAlerta,
+                            )));
+              } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
+                  prefs.getBool("aceptoCondicionesDeUso")) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            LoginActualizarContrasena(
+                              responsive: responsive,
+                            )));
+              } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
+                  !prefs.getBool("aceptoCondicionesDeUso")) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => CondicionesPage(
+                              callback: funcionAlerta,
+                            )));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            LoginActualizarContrasena(
+                              responsive: responsive,
+                            )));
+              }
+            } else {
               prefs.setBool("esFlujoBiometricos", false);
-              customAlert(AlertDialogType.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlertaCodVerificacion);
+              if (prefs.getString("medioContactoTelefono") != "") {
+                if (deviceType == ScreenType.phone) {
+                  customAlert(AlertDialogType.verificaTuNumeroCelular, context,
+                      "", "", responsive, funcionAlertaCodVerificacion);
+                } else {
+                  customAlert(AlertDialogType.verificaTuNumeroCelular, context,
+                      "", "", responsive, funcionAlertaCodVerificacion);
+                  //TODO customAlertTablet
+                  //customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlertaCodVerificacion);
+                }
+              } else {
+                print(
+                    "No tiene medios de contacto login sin biometricos usuario ya registrado");
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            LoginActualizarNumero(
+                              responsive: responsive,
+                            )));
+              }
             }
-            else{
-              customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive);
-            }
-
           }
+        }
+      } else {
+        prefs.setBool("userRegister", true);
+        if (_biometricos) {
+          prefs.setBool("esFlujoBiometricos", true);
 
+          if (is_available_finger && is_available_face) {
+            if (deviceType == ScreenType.phone) {
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
+                  "", "", responsive, funcionAlertaHullaLogin);
+            } else {
+              customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
+                  "", "", responsive, funcionAlertaHullaLogin);
+              //TODO customAlertTablet
+              //customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", responsive, funcionAlertaHullaLogin);
+            }
+          } else {
+            is_available_finger
+                ? customAlert(AlertDialogType.huella, context, "", "",
+                    responsive, funcionAlertaHullaLogin)
+                : customAlert(AlertDialogType.Reconocimiento_facial, context,
+                    "", "", responsive, funcionAlertaHullaLogin);
+          }
+        } else {
+          if (prefs.getBool('primeraVezIntermediario') != null &&
+              prefs.getBool('primeraVezIntermediario')) {
+            if (prefs.getBool("aceptoCondicionesDeUso") == null) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => CondicionesPage(
+                            callback: funcionAlerta,
+                          )));
+            } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
+                prefs.getBool("aceptoCondicionesDeUso")) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          LoginActualizarContrasena(
+                            responsive: responsive,
+                          )));
+            } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
+                !prefs.getBool("aceptoCondicionesDeUso")) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => CondicionesPage(
+                            callback: funcionAlerta,
+                          )));
+            } else {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          LoginActualizarContrasena(
+                            responsive: responsive,
+                          )));
+            }
+          } else {
+            prefs.setBool("esFlujoBiometricos", false);
+            if (prefs.getString("medioContactoTelefono") != "") {
+              if (deviceType == ScreenType.phone) {
+                customAlert(AlertDialogType.verificaTuNumeroCelular, context,
+                    "", "", responsive, funcionAlertaCodVerificacion);
+              } else {
+                customAlert(AlertDialogType.verificaTuNumeroCelular, context,
+                    "", "", responsive, funcionAlertaCodVerificacion);
+                //TODO customAlertTablet
+                //customAlertTablet(AlertDialogTypeTablet.verificaTuNumeroCelular, context, "",  "", responsive, funcionAlertaCodVerificacion);
+              }
+            } else {
+              print("No tiene medios de contacto login sin biometricos");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => LoginActualizarNumero(
+                            responsive: responsive,
+                          )));
+            }
+          }
         }
       }
     }
   }
 
-  Widget ingresarConOtroUsuario(){
-
+  Widget ingresarConOtroUsuario() {
     return CupertinoButton(
         padding: EdgeInsets.zero,
         child: Container(
@@ -952,91 +1551,144 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(3),
           ),
-          padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
+          padding: EdgeInsets.only(
+              top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
           width: widget.responsive.width,
-          child: Text("INGRESAR CON OTRO USUARIO", style: TextStyle(
-            color: Tema.Colors.gnpOrange,
-          ),
+          child: Text("INGRESAR CON OTRO USUARIO",
+              style: TextStyle(
+                color: Tema.Colors.gnpOrange,
+              ),
               textAlign: TextAlign.center),
         ),
         onPressed: () async {
           prefs.setBool("userRegister", false);
-          prefs.setString("contrasenaUsuario","");
+          prefs.setString("contrasenaUsuario", "");
           prefs.setString("correoUsuario", "");
           prefs.setBool("activarBiometricos", false);
           prefs.setBool("regitroDatosLoginExito", false);
           prefs.setBool("flujoCompletoLogin", false);
-          Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
-        }
-    );
-
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) =>
+                      PrincipalFormLogin(responsive: widget.responsive)));
+        });
   }
 
   showOnboarding() async {
     prefs = await SharedPreferences.getInstance();
     if (prefs != null) {
       if (prefs.getBool("userRegister") != null) {
-        if (prefs.getBool("userRegister") == true) {}
-        else{
-          Navigator.push(context,new MaterialPageRoute(builder: (_) => OnBoardingAppAutos()));
+        if (prefs.getBool("userRegister") == true) {
+        } else {
+          Navigator.push(context,
+              new MaterialPageRoute(builder: (_) => OnBoardingAppAutos()));
         }
       } else {
-          Navigator.push(context, new MaterialPageRoute(builder: (_) => OnBoardingAppAutos()));
+        Navigator.push(context,
+            new MaterialPageRoute(builder: (_) => OnBoardingAppAutos()));
       }
     }
   }
 
-  Widget activarHuella(Responsive  responsive ){
-    return  Container(
-      margin: EdgeInsets.only(top: 28, bottom: 32),
+  Widget activarHuella(Responsive responsive) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: responsive.width * 0.02),
+      padding: EdgeInsets.only(top: 28, bottom: 32),
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Switch(
-              onChanged:(val) {
-                setState(() {
-                  _biometricos = val;
+              onChanged: (val) {
+                _biometricos = val;
+                if (prefs.getBool("subSecuentaIngresoCorreo") != null &&
+                    prefs.getBool("subSecuentaIngresoCorreo") &&
+                    !_biometricos) {
+                  is_available_finger
+                      ? customAlert(AlertDialogType.Desactivar_huella_digital,
+                          context, "", "", widget.responsive, funcionBiometrics)
+                      : customAlert(
+                          AlertDialogType.Desactivar_recoFacial,
+                          context,
+                          "",
+                          "",
+                          widget.responsive,
+                          funcionBiometrics);
+                } else {
                   prefs.setBool("activarBiometricos", _biometricos);
-                });
+                }
+                setState(() {});
               },
               value: _biometricos,
               activeColor: Tema.Colors.GNP,
               activeTrackColor: Tema.Colors.biometrico,
               inactiveThumbColor: Tema.Colors.Azul_gnp,
-              inactiveTrackColor:Tema.Colors.botonletra,
+              inactiveTrackColor: Tema.Colors.botonletra,
             ),
             Expanded(
               child: Container(
                 margin: EdgeInsets.only(left: responsive.wp(2)),
-                child: Text("Inicio de sesión con datos biométricos",
+                child: Text(
+                  "Inicio de sesión con datos biométricos",
                   style: TextStyle(
                       fontFamily: "Roboto",
                       fontWeight: FontWeight.normal,
                       fontSize: responsive.ip(1.9),
-                      color: Tema.Colors.Azul_2
-                  ),),
+                      color: Tema.Colors.Azul_2),
+                ),
               ),
             ),
-          ]
-      ),
+          ]),
     );
   }
 
-  Widget version(Responsive responsive){
+  Widget version(Responsive responsive) {
     return Center(
       child: Container(
         //margin: EdgeInsets.only( top: responsive.hp(0.5), bottom: responsive.hp(0.5)),
         child: GestureDetector(
-          onLongPress: (){
+          onTap: () {
             initPlatformState(updateDeviceData);
-            customAlert(AlertDialogType.versionTag, context, "",  "", responsive,funcion);
+            customAlert(AlertDialogType.versionTag, context, "", "", responsive,
+                funcionAlertaCodVerificacion);
+            //initPlatformState(updateDeviceData);
           },
-          child: Text("Versión 2.0",
+          onLongPress: () {
+            if (deviceType == ScreenType.phone) {
+               Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) =>
+                          TerminosYCondicionesPage(
+                            callback: callback,
+                          )
+                  )
+
+              );
+
+              // customAlert(AlertDialogType.Sesionfinalizada_por_inactividad, context, "",  "", responsive, CallbackInactividad);
+            } else {
+              /*
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => PreguntasSecretas(
+                            responsive: responsive,
+
+                          )
+                  )
+              );
+              */
+
+              //TODO customAlertTablet
+              //customAlertTablet(AlertDialogTypeTablet.huella, context, "",  "", responsive, funcionAlertaCodVerificacion);
+
+            }
+          },
+          child: Text(
+            "Versión ${Tema.StringsMX.appVersion}",
             style: TextStyle(
-              color: Tema.Colors.Azul_2,
-              fontSize: responsive.ip(1.5),
-              fontWeight: FontWeight.normal
-            ),
+                color: Tema.Colors.Azul_2, fontWeight: FontWeight.normal),
             textAlign: TextAlign.center,
           ),
         ),
@@ -1044,108 +1696,272 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
     );
   }
 
-  Widget separacion( Responsive responsive, double tamano ){
+  Widget separacion(Responsive responsive, double tamano) {
     return SizedBox(
       height: responsive.hp(tamano),
     );
   }
 
-  void funcionAlerta( bool abc){
+  void funcionAlerta(bool abc) {}
 
-  }
-  void updateDeviceData(  Map<String, dynamic> deviceDato){
+  void updateDeviceData(Map<String, dynamic> deviceDato) {
     setState(() {
       deviceData = deviceDato;
     });
   }
 
-  void funcionAlertaCodVerificacion (Responsive responsive) async{
+  void _showDialogoUpdateApplicationRequried(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () => Future.value(false),
+            child: AlertDialog(
+              title: new Text("Nueva versión",
+                  style: TextStyle(
+                      color: Tema.Colors.Blue,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              content: new Text(
+                  "Existe una nueva versión de Intermediario GNP.",
+                  style: TextStyle(
+                      color: Tema.Colors.Blue,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("Descargar"),
+                  onPressed: () {
+                    _onLoading(context);
+                    _launchURL(context, true);
+                  },
+                ),
+              ],
+            ));
+      },
+    );
+  }
 
+  void _showDialogoUpdateApplication(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () => Future.value(false),
+            child: AlertDialog(
+              title: new Text("Nueva versión",
+                  style: TextStyle(
+                      color: Tema.Colors.Blue,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              content: new Text(
+                  "Existe una nueva versión de Intermediario GNP.",
+                  style: TextStyle(
+                      color: Tema.Colors.Blue,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              actions: <Widget>[
+                new FlatButton(
+                    child: new Text("Después"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+                new FlatButton(
+                  child: new Text("Descargar"),
+                  onPressed: () {
+                    _onLoading(context);
+                    _launchURL(context, false);
+                  },
+                ),
+              ],
+            ));
+      },
+    );
+  }
+
+  void _onLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  _launchURL(BuildContext context, bool close) async {
+    String url;
+    try {
+      if (Platform.isIOS) {
+        url =
+            "itms-services://?action=download-manifest&amp;url=https://app.gnp.com.mx/components/ios/Intermediariognp.plist";
+        _redirectEmp(url);
+      } else if (Platform.isAndroid) {
+        url = "https://app.gnp.com.mx/components/android/Intermediariognp.apk";
+        if (await downloadTiendaEmpresarialApk(
+            url, "gnpintermediario", "apk")) {
+          SystemNavigator.pop();
+        } else {
+          Navigator.pop(context);
+        }
+      } else {
+        url = 'https://app.gnp.com.mx/';
+        _redirectEmp(url);
+      }
+    } catch (e) {
+      url = 'https://app.gnp.com.mx/';
+      _redirectEmp(url);
+    }
+  }
+
+  _redirectEmp(String url) async {
+    if (await canLaunch(url)) {
+      if (Platform.isIOS) {
+        Future.delayed(const Duration(seconds: 5), () async {
+          await launch(url);
+          exit(0);
+        });
+      } else {
+        SystemNavigator.pop();
+        await launch(url);
+      }
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void CallbackInactividad() {
+    //setState(() {
+      //print("CallbackInactividad login");
+      showInactividad;
+      //handleUserInteraction(context,CallbackInactividad);
+      //contrasenaInactividad = !contrasenaInactividad;
+   // });
+  }
+
+  void funcionAlertaCodVerificacion(Responsive responsive) async {
     setState(() {
-      _saving=true;
+      _saving = true;
     });
-    OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), prefs.getBool('flujoOlvideContrasena'));
+    OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
+        context,
+        prefs.getString("correoUsuario"),
+        prefs.getString("medioContactoTelefono"),
+        prefs.getBool('flujoOlvideContrasena'));
 
     setState(() {
       _saving = false;
     });
 
-    if(optRespuesta != null){
-      if(optRespuesta.error == "" && optRespuesta.idError == "") {
+    if (optRespuesta != null) {
+      if (optRespuesta.error == "" && optRespuesta.idError == "") {
         prefs.setString("idOperacion", optRespuesta.idOperacion);
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) =>
-                    LoginCodigoVerificaion(
+                builder: (BuildContext context) => LoginCodigoVerificaion(
                       responsive: responsive,
                       isNumero: false,
-                    )
-            )
-        );
-      } else{
-        customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+                    )));
+      } else {
+        customAlert(AlertDialogType.errorServicio, context, "", "", responsive,
+            funcion);
       }
-    } else{
-      customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+    } else {
+      print("Error Servicio OTP");
+      customAlert(
+          AlertDialogType.errorServicio, context, "", "", responsive, funcion);
     }
-
   }
 
-  void funcionAlertaHullaLogin(bool activarBiometricos, Responsive responsive) async{
+  void funcionAlertaHullaLogin(
+      bool activarBiometricos, Responsive responsive) async {
     print("funcionAlertaHullaLogin");
 
-    if(!activarBiometricos){
+    if (!activarBiometricos) {
       setState(() {
         _biometricos = activarBiometricos;
       });
       prefs.setBool("activarBiometricos", _biometricos);
-    } else{
-      if(prefs.getBool("primeraVez") || prefs.getBool("flujoCompletoLogin") == null || !prefs.getBool("flujoCompletoLogin")){
-        setState(() {
-          _saving=true;
-        });
-        OrquestadorOTPModel optRespuesta = await  orquestadorOTPServicio(context, prefs.getString("correoUsuario"), prefs.getString("medioContactoTelefono"), prefs.getBool('flujoOlvideContrasena'));
+      validateBiometricstatus(funcion);
+    } else {
+      if (prefs.getBool("primeraVez") ||
+          prefs.getBool("flujoCompletoLogin") == null ||
+          !prefs.getBool("flujoCompletoLogin")) {
+        if (prefs.getString("medioContactoTelefono") != "") {
+          setState(() {
+            _saving = true;
+          });
+          OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
+              context,
+              prefs.getString("correoUsuario"),
+              prefs.getString("medioContactoTelefono"),
+              prefs.getBool('flujoOlvideContrasena'));
 
-        setState(() {
-          _saving = false;
-        });
+          setState(() {
+            _saving = false;
+          });
 
-        if(optRespuesta != null){
-          if(optRespuesta.error == "" && optRespuesta.idError == "") {
-            prefs.setString("idOperacion", optRespuesta.idOperacion);
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (BuildContext context) =>
-                        LoginCodigoVerificaion(
-                          responsive: responsive,
-                          isNumero: false,
-                        )
-                )
-            );
-          } else{
-            customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+          if (optRespuesta != null) {
+            if (optRespuesta.error == "" && optRespuesta.idError == "") {
+              prefs.setString("idOperacion", optRespuesta.idOperacion);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => LoginCodigoVerificaion(
+                            responsive: responsive,
+                            isNumero: false,
+                          )));
+            } else {
+              customAlert(AlertDialogType.errorServicio, context, "", "",
+                  responsive, funcion);
+            }
+          } else {
+            customAlert(AlertDialogType.errorServicio, context, "", "",
+                responsive, funcion);
           }
-        } else{
-          customAlert(AlertDialogType.errorServicio, context, "",  "", responsive,funcion);
+        } else {
+          print("Sin medio contacto Flujo con biometricos");
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => LoginActualizarNumero(
+                        responsive: responsive,
+                      )));
         }
-
       }
-
     }
   }
 
-  void funcionCanselBiometrics(){
+  void funcionCanselBiometrics() {
     setState(() {
       prefs.setBool("activarBiometricos", false);
     });
 //    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
   }
+
+  void funcionBiometrics() {
+    setState(() {
+      _biometricos = prefs.getBool("activarBiometricos");
+    });
+
+    if (!_biometricos) {
+      prefs.setBool("subSecuentaIngresoCorreo", false);
+      prefs.setBool("bloqueoDespuesSubBio", false);
+      setState(() {
+        _subSecuentaIngresoCorreo = prefs.getBool("subSecuentaIngresoCorreo");
+      });
+    } else {}
+//    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+  }
+
   Future<Position> _getLocation() async {
     var currentLocation;
     try {
-      currentLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+      currentLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
     } catch (e) {
       print("e _getLocation ${e}");
       currentLocation = null;
@@ -1154,17 +1970,18 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
   }
 
   void _getPlace() async {
-
-    List<Placemark> newPlace = await placemarkFromCoordinates(userLocation.latitude, userLocation.longitude);
+    List<Placemark> newPlace = await placemarkFromCoordinates(
+        userLocation.latitude, userLocation.longitude);
     // this is all you need
-    Placemark placeMark  = newPlace[0];
+    Placemark placeMark = newPlace[0];
     String name = placeMark.name;
     String subLocality = placeMark.subLocality;
     String locality = placeMark.locality;
     String administrativeArea = placeMark.administrativeArea;
     String postalCode = placeMark.postalCode;
     String country = placeMark.country;
-    String address = "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+    String address =
+        "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
     //String address = "${country}";
 
     setState(() {
@@ -1176,77 +1993,101 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>  with WidgetsBi
 void ultimoAcceso() async {
   print("== Firebase ==");
   DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
-  await _dataBaseReference.child("accesoUsuarios").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+  /*await _dataBaseReference
+      .child("accesoUsuarios")
+      .child(datosUsuario.idparticipante)
+      .once()
+      .then((DataSnapshot _snapshot) {
     var jsoonn = json.encode(_snapshot.value);
-    Map response = json.decode(jsoonn);
+    Map response = json.decode(jsoonn);*/
 
-    if(response!= null && response.isNotEmpty){
-      String dateFirebase = response["ultimoAcceso"]!= null ? response["ultimoAcceso"]:"";
-      print("if dateFirebase  ${dateFirebase}");
-      DateTime now = DateTime.now();
-      String formattedDate = DateFormat('dd/MM/yyyy hh:mm:ss').format(now);
-      validacionAcceso(dateFirebase, formattedDate);
-      print("formattedDate  ${formattedDate}");
-      /*
-      "deviceID":Platform.isIOS ?deviceData["isPhysicalDevice"]:deviceData["androidId"],
-          "model":deviceData["model"],
-     */
-      Map<String, dynamic> mapa = {
-        '${datosUsuario.idparticipante}': {
-          'ultimoAcceso' : formattedDate,
-        }
-      };
-      _dataBaseReference.child("accesoUsuarios").update(mapa);
+  if (accesoFirebase != null && accesoFirebase.isNotEmpty) {
+    String dateFirebase = accesoFirebase["ultimoAcceso"] != null
+        ? accesoFirebase["ultimoAcceso"]
+        : "";
+    print("if dateFirebase  ${dateFirebase}");
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd/MM/yyyy hh:mm:ss').format(now);
+    validacionAcceso(dateFirebase, formattedDate);
+    print("formattedDate  ${formattedDate}");
 
-    }else{
-      DateTime now = DateTime.now();
-      String formattedDate = DateFormat('dd/MM/yyyy hh:mm:ss').format(now);
-      print("else formattedDate  ${formattedDate}");
-      prefs.setString("ultimoAcceso", formattedDate);
-      prefs.setBool("primerAccesoFecha", true);
-      Map<String, dynamic> mapa = {
-        '${datosUsuario.idparticipante}': {
-          'ultimoAcceso' : formattedDate,
-        }
-      };
+    Map<String, dynamic> mapa = {
+      '${datosUsuario.idparticipante}': {
+        'ultimoAcceso': formattedDate,
+      }
+    };
+    _dataBaseReference.child("accesoUsuarios").update(mapa);
+  } else {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd/MM/yyyy hh:mm:ss').format(now);
+    print("else formattedDate  ${formattedDate}");
+    prefs.setString("ultimoAcceso", formattedDate);
+    prefs.setBool("primerAccesoFecha", true);
+    Map<String, dynamic> mapa = {
+      '${datosUsuario.idparticipante}': {
+        'ultimoAcceso': formattedDate,
+      }
+    };
 
-      _dataBaseReference.child("accesoUsuarios").update(mapa);
-
-    }
-  });
+    _dataBaseReference.child("accesoUsuarios").update(mapa);
+  }
+  //});
 }
 
-void validacionAcceso(String dataFirebase, String dateNow){
-
+void validacionAcceso(String dataFirebase, String dateNow) {
   prefs.setBool("primerAccesoFecha", false);
 
-  String diaFirebase = dataFirebase.substring(0,2);
-  String mesFirebase = dataFirebase.substring(3,5);
-  String anioFirebase = dataFirebase.substring(6,10);
+  String diaFirebase = dataFirebase.substring(0, 2);
+  String mesFirebase = dataFirebase.substring(3, 5);
+  String anioFirebase = dataFirebase.substring(6, 10);
 
-  String diaPrefs = dateNow.substring(0,2);
-  String mesPrefs = dateNow.substring(3,5);
-  String anioPrefs = dateNow.substring(6,10);
+  String diaPrefs = dateNow.substring(0, 2);
+  String mesPrefs = dateNow.substring(3, 5);
+  String anioPrefs = dateNow.substring(6, 10);
 
-  if((diaFirebase == diaPrefs) && (mesFirebase == mesPrefs) && (anioFirebase == anioPrefs)) {
+  if ((diaFirebase == diaPrefs) &&
+      (mesFirebase == mesPrefs) &&
+      (anioFirebase == anioPrefs)) {
     print("Fechaa now");
     prefs.setBool("ultimoAccesoHoy", true);
     prefs.setBool("ultimoAccesoAyer", false);
-  } else if((mesFirebase == mesPrefs) && (anioFirebase == anioPrefs) && (int.parse(diaFirebase) +1 == int.parse(diaPrefs))){
+  } else if ((mesFirebase == mesPrefs) &&
+      (anioFirebase == anioPrefs) &&
+      (int.parse(diaFirebase) + 1 == int.parse(diaPrefs))) {
     print("Fehca ayer");
     print("");
     prefs.setBool("ultimoAccesoHoy", false);
     prefs.setBool("ultimoAccesoAyer", true);
-  } else{
+  } else {
     print("Fehca otro dia");
     prefs.setBool("ultimoAccesoHoy", false);
     prefs.setBool("ultimoAccesoAyer", false);
   }
   prefs.setString("ultimoAcceso", dataFirebase);
-
 }
 
-void funcion(){
+void funcion() {}
 
+void validarRolesUsuario() {
+  prefs.setBool("rolAutoscotizarActivo", false);
+  List<String> activoAutoCotizar = [];
+  String campo = "";
+  bool activoCotizarAutos = false;
+
+  if (respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol.length > 0) {
+    List<dynamic> rol = respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol;
+    for (int i = 0; i < rol.length; i++) {
+      String rolAux = rol[i].toString().substring(3, rol[i].length);
+
+      campo = cotizarAutos.where((element) => element.toString().toLowerCase() == rolAux.toLowerCase()).toString();
+
+      if (campo != "" && campo != "()") {
+        activoAutoCotizar.add(campo);
+      }
+    }
+    activoAutoCotizar.length > 0
+        ? activoCotizarAutos = true
+        : activoCotizarAutos = false;
+    prefs.setBool("rolAutoscotizarActivo", activoCotizarAutos);
+  }
 }
-

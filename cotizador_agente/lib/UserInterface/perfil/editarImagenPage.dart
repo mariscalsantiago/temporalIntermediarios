@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
@@ -8,9 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:simple_image_crop/simple_image_crop.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
+import 'package:image/image.dart' as newImage;
+import 'package:vector_math/vector_math.dart' as vector;
 
 import '../../main.dart';
-
 
 class SimpleCropRoute extends StatefulWidget {
   final Function callback;
@@ -45,97 +48,183 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
         });
   }
 
+  double angle = 0.0;
+  bool flagRotate = false;
+
+
   @override
   Widget build(BuildContext context) {
+    try {
+      if (widget.image != null || widget.image.isAbsolute == false) {
+      } else {
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      print(e);
+    }
     Responsive responsive = Responsive.of(context);
     final Map args = ModalRoute.of(context).settings.arguments;
-    return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          title: Text(
-            'Ajustar foto',
-            style: TextStyle(color: Theme.Colors.Azul_gnp),
-          ),
-          backgroundColor: Colors.white,
-          leading: new IconButton(
-            icon:
-            new Icon(Icons.arrow_back, color: Theme.Colors.Rectangle_PA, size: 24),
-            onPressed: (){
-              customAlert(AlertDialogType.AjustesSinGuardar_camara, context, "",  "", responsive,widget.callback);
-           /* setState(() {
+    return WillPopScope(
+        onWillPop: () async => false,
+    child: SafeArea(
+    bottom: true,
+    child:Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: Text(
+          'Ajustar foto',
+          style: TextStyle(color: Theme.Colors.Azul_gnp),
+        ),
+        backgroundColor: Colors.white,
+        leading: new IconButton(
+          icon: new Icon(Icons.arrow_back,
+              color: Theme.Colors.Rectangle_PA, size: 24),
+          onPressed: () {
+            customAlert(AlertDialogType.AjustesSinGuardar_camara, context, "", "", responsive, widget.callback);
+            /* setState(() {
               datosFisicos.personales.foto;
               widget.callback();
             });*/
-            },
-          ),
-        ),
-        body: Center(
-          child: Stack(
-            children:[ Container(
-              color: Theme.Colors.Azul_gnp,
-              child: ImgCrop(
-                key: cropKey,
-                chipRadius: 150,
-                chipShape: 'circle',
-                maximumScale: 3,
-                image: FileImage(widget.image),
-                // handleSize: 0.0,
-              ),
-            ),
-              new Positioned(
-                bottom: 0.0,
-                child: GestureDetector(
-                    onTap: () async {
-                      widget.callback();
-                      final crop = cropKey.currentState;
-                      File fotoPerfil;
-                      fotoPerfil =  await crop.cropCompleted(widget.image, pictureQuality: 900);
-                      try{
-                        await fetchFoto(context, fotoPerfil,widget.callback);
-                        Navigator.of(context).pop();
-                        setState(() {
-                          urlImagen = datosFisicos.personales.foto;
-                          image = fotoPerfil;
-                          widget.callback();
-                        });
-                      }catch(e){
-                        widget.callback();
-                        print(e);
-                      }
-
-                    },
-                    child: Container(
-                      color: Theme.Colors.White,
-                      height: responsive.hp(10),
-                      width: responsive.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                              margin: EdgeInsets.only( right: responsive.height * 0.02, ),
-                              child: Icon(Icons.save_outlined, color: Theme.Colors.GNP,)),
-                          Container(child: Text("GUARDAR AJUSTES", style: TextStyle(color: Theme.Colors.GNP, fontSize: responsive.ip(2)),))
-                        ],
-                      ),
-                    )
-                ),
-              )
-            ]
-          ),
-        ),
-    );
-
-        /*
-        FloatingActionButton(
-          onPressed: () async {
-            final crop = cropKey.currentState;
-            final croppedFile =
-            await crop.cropCompleted(widget.image);
-            showImage(context, croppedFile);
           },
-          tooltip: 'Increment',
-          child: Text('Crop'),
-        ));*/
+        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              handleUserInteraction(context,CallbackInactividad);
+              setState(() {
+                if (!flagRotate && angle == 0) {
+                  angle = 270;
+                } else if (flagRotate && angle == 0) {
+                  angle = 270;
+                } else {
+                  if (angle == 0) {
+                    angle = 360;
+                  } else {
+                    angle -= 90;
+                  }
+                }
+                flagRotate = true;
+              });
+            },
+            icon: Image.asset(
+              'assets/icon/perfil/prev.png',
+              width: 24,
+              height: 24,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              handleUserInteraction(context,CallbackInactividad);
+              setState(() {
+                if (flagRotate && angle == 360) {
+                  angle = 90;
+                } else if (!flagRotate && angle == 360) {
+                  angle = 90;
+                } else {
+                  if (angle == 360) {
+                    angle = 0;
+                  } else {
+                    angle += 90;
+                  }
+                }
+
+                flagRotate = false;
+              });
+            },
+            icon: Image.asset(
+              "assets/icon/perfil/next.png",
+              width: 24,
+              height: 24,
+            ),
+          )
+        ],
+      ),
+      body: Center(
+        child: Stack(children: [
+          Container(
+              color: Theme.Colors.Azul_gnp,
+              child: Transform.rotate(
+                angle: vector.radians(angle),
+                child: ImgCrop(
+                  key: cropKey,
+                  chipRadius: 150,
+                  chipShape: 'circle',
+                  maximumScale: 3,
+                  image: FileImage(widget.image),
+                  onImageError: (exception, stackTrace) {
+                    Navigator.pop(context);
+                  },
+                ),
+              )),
+          new Positioned(
+            bottom: 0.0,
+            child: GestureDetector(
+                onTap: () async {
+                  handleUserInteraction(context,CallbackInactividad);
+                 // widget.callback();
+                  File fotoPerfil;
+                  final crop = cropKey.currentState;
+                  fotoPerfil = await crop.cropCompleted(widget.image, pictureQuality: 900);
+                  final fotoActualizada = newImage.copyRotate(newImage.readJpg(fotoPerfil.readAsBytesSync()), angle);
+                  File newPicture = fotoPerfil..writeAsBytesSync(newImage.encodePng(fotoActualizada));
+                  try {
+
+                    await fetchFoto(context, newPicture);
+                    widget.callback(newPicture);
+                    Navigator.pop(context);
+
+                  } catch (e) {
+                    widget.callback();
+                    Navigator.pop(context, newPicture);
+                    print(e);
+                  }
+
+                },
+                child: Container(
+                  color: Theme.Colors.White,
+                  height: responsive.hp(10),
+                  width: responsive.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                          margin: EdgeInsets.only(
+                            right: responsive.height * 0.02,
+                          ),
+                          child: Icon(
+                            Icons.save_outlined,
+                            color: Theme.Colors.GNP,
+                          )),
+                      Container(
+                          child: Text(
+                        "GUARDAR AJUSTES",
+                        style: TextStyle(
+                            color: Theme.Colors.GNP,
+                            fontSize: responsive.ip(2)),
+                      ))
+                    ],
+                  ),
+                )),
+          ),
+          new WillPopScope(
+              child: Text(""),
+              // ignore: missing_return
+              onWillPop: () {
+                customAlert(AlertDialogType.AjustesSinGuardar_camara, context,
+                    "", "", responsive, widget.callback);
+              })
+        ]),
+      ),
+    )));
+  }
+  void CallbackInactividad(){
+    setState(() {
+      print("CallbackInactividad editarfoto");
+      focusContrasenaInactividad.hasFocus;
+      showInactividad;
+      handleUserInteraction(context,CallbackInactividad);
+      //contrasenaInactividad = !contrasenaInactividad;
+    });
   }
 }

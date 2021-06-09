@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>es_MX</string>
 	<key>CFBundleDisplayName</key>
-	<string>Intermediarios GNP</string>
+	<string>Intermediario GNP</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -36,6 +36,8 @@
 		<string>yandexnavi</string>
 		<string>citymapper</string>
 		<string>instagram</string>
+		<string>https</string>
+		<string>http</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -51,7 +53,7 @@
 	<key>NSContactsUsageDescription</key>
 	<string>This app requires Contacts access to function properly.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>¿Por qué mi aplicación se autentica con Face ID?</string>
+	<string>Intermediarios GNP necesita tu persmios para iniciar sesión con Face ID</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Intermediarios GNP necesita tu permiso para encontrar servicios cerca de ti. (hospitales, gasiloneras, bomberos, etc.)</string>
 	<key>NSLocationAlwaysUsageDescription</key>

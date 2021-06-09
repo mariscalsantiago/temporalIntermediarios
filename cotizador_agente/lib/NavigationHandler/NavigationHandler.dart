@@ -41,9 +41,10 @@ class NavigationHandler {
   }
 
   static void showCotizar(BuildContext context) {
+    Responsive responsive = Responsive.of(context);
     switch(opcionElegida){
       case HomeSelection.Atuos:
-        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage()), );
+        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), );
         break;
 
       case HomeSelection.AP:

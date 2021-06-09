@@ -1,8 +1,16 @@
+import 'package:cotizador_agente/Functions/Analytics.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
+import 'package:cotizador_agente/utils/MobileContainerPage.dart';
+import 'package:cotizador_agente/utils/TabletContainerPage.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 
+import '../../../main.dart';
 
+bool useMobileLayout;
+bool isPortrait = true;
 class OnBoardingAppAutos extends StatefulWidget {
   @override
   _OnBoardingAppAutosState createState() => _OnBoardingAppAutosState();
@@ -38,33 +46,45 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
     Responsive responsive = Responsive.of(context);
     return WillPopScope(
       onWillPop: () async => false,
-      child: Scaffold(
-        backgroundColor: Theme.Colors.White,
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                height: _selectedIndex == 4 ? responsive.hp(95): responsive.hp(85),
-                  color: Theme.Colors.White,
-                  child: DefaultTabController(
-                    length: 5,
-                    child: TabBarView(
-                        controller: _controller,
-                        children: [
-                          APyAutosOnboarding(responsive),
-                          HerramientasVentas(responsive),
-                          CoparteCotizaciones_Onboarding(responsive),
-                          ActualizaTuPerfil_Onboarding(responsive),
-                          CotizaTusNegocios_Onboarding(responsive)
-                        ]
+      child: OrientationBuilder(builder: (context, orientation) {
+        if (orientation == Orientation.portrait) {
+          responsiveMainTablet = Responsive.of(context);
+          isPortrait = true;
+        } else {
+          responsiveMainTablet = Responsive.of(context);
+          isPortrait = false;
+        }
+        return Container(
+          child: Scaffold(
+            backgroundColor: Theme.Colors.White,
+            body: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                        height: _selectedIndex == 4 ? responsiveMainTablet.hp(95): responsiveMainTablet.hp(85),
+                        color: Theme.Colors.White,
+                        child: DefaultTabController(
+                          length: 5,
+
+                          child: TabBarView(
+                              controller: _controller,
+                              children: [
+                                APyAutosOnboarding(responsiveMainTablet),
+                                HerramientasVentas(responsiveMainTablet),
+                                CoparteCotizaciones_Onboarding(responsiveMainTablet),
+                                ActualizaTuPerfil_Onboarding(responsiveMainTablet),
+                                CotizaTusNegocios_Onboarding(responsiveMainTablet)
+                              ]
+                          ),
+                        )
                     ),
-                  )
-              ),
-              _selectedIndex != 4 ?  tabulador(responsive): Container(),
-            ],
-          )
-        ),
+                    _selectedIndex != 4 ?  tabulador(responsiveMainTablet): Container(),
+                  ],
+                )
+            ),
+          ),
+        );},
       ),
     );
   }
@@ -79,11 +99,38 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
             Image.asset('assets/images/primero.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),),
             Container(
               child: GestureDetector(
-                onTap: () {
-                  _controller.animateTo((4) );
-                  setState(() {
-                    _controller.index;
-                  });
+                onTap: () async {
+                  //TODO validar Dali
+                  sendTag("appinter_login_onboarding_omitir");
+
+                  //TODO validar Dali
+                  Vistas tipoVista;
+
+                  tipoVista = Vistas.login;
+
+                  Navigator.pop(context,true);
+                  var shortestSide = MediaQuery.of(context).size.shortestSide;
+                  useMobileLayout = shortestSide < 600;
+
+                  //prefs.setBool("userRegister", false);
+
+                  if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+
+                  } else {
+                    prefs.clear();
+
+                    prefs.setBool("useMobileLayout", useMobileLayout);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                        useMobileLayout ?
+                        MobileContainerPage(ParentView: Responsive.of(context),
+                            vista: tipoVista)
+                        // Todo Tablet
+                            : TabletContainerPage(ParentView: Responsive.of(
+                            context), vista: tipoVista,))
+
+                    );
+                  }
 
                 },
                 child: Text(
@@ -110,11 +157,36 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                 child: Image.asset('assets/images/segundo.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
             Container(
               child: GestureDetector(
-                onTap: () {
-                  _controller.animateTo((4) );
-                  setState(() {
-                    _controller.index;
-                  });
+                onTap: () async {
+                  //TODO validar Dali
+                  sendTag("appinter_login_onboarding_omitir");
+                  Vistas tipoVista;
+                  tipoVista = Vistas.login;
+
+                  Navigator.pop(context,true);
+                  var shortestSide = MediaQuery.of(context).size.shortestSide;
+                  useMobileLayout = shortestSide < 600;
+
+                  //prefs.setBool("userRegister", false);
+
+                  if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+
+                  } else {
+                    prefs.clear();
+
+                    prefs.setBool("useMobileLayout", useMobileLayout);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                        useMobileLayout ?
+                        MobileContainerPage(ParentView: Responsive.of(context),
+                            vista: tipoVista)
+                        // Todo Tablet
+                            : TabletContainerPage(ParentView: Responsive.of(context),
+                          vista: tipoVista,))
+
+                    );
+                  }
+
                 },
                 child: Text(
                   "Omitir",
@@ -141,11 +213,36 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                 child: Image.asset('assets/images/tercero.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
             Container(
               child: GestureDetector(
-                onTap: () {
-                  _controller.animateTo((4) );
-                  setState(() {
-                    _controller.index;
-                  });
+                onTap: () async {
+                  //TODO validar Dali
+                  sendTag("appinter_login_onboarding_omitir");
+                  Vistas tipoVista;
+                  tipoVista = Vistas.login;
+
+                  Navigator.pop(context,true);
+                  var shortestSide = MediaQuery.of(context).size.shortestSide;
+                  useMobileLayout = shortestSide < 600;
+
+                  //prefs.setBool("userRegister", false);
+
+                  if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+
+                  } else {
+                    prefs.clear();
+
+                    prefs.setBool("useMobileLayout", useMobileLayout);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                        useMobileLayout ?
+                        MobileContainerPage(ParentView: Responsive.of(context),
+                            vista: tipoVista)
+                        // Todo Tablet
+                            : TabletContainerPage(ParentView: Responsive.of(context),
+                          vista: tipoVista,))
+
+                    );
+                  }
+
                 },
                 child: Text(
                   "Omitir",
@@ -172,11 +269,35 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                 child: Image.asset('assets/images/cuarto.png', fit:BoxFit.contain, height:responsive.hp(10), width: responsive.wp(16),)),
             Container(
               child: GestureDetector(
-                onTap: () {
-                  _controller.animateTo((4) );
-                  setState(() {
-                    _controller.index;
-                  });
+                onTap: () async {
+                  //TODO validar Dali
+                  sendTag("appinter_login_onboarding_omitir");
+                  Vistas tipoVista;
+                  tipoVista = Vistas.login;
+
+                  Navigator.pop(context,true);
+                  var shortestSide = MediaQuery.of(context).size.shortestSide;
+                  useMobileLayout = shortestSide < 600;
+
+                  //prefs.setBool("userRegister", false);
+
+                  if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+
+                  } else{
+                    prefs.clear();
+
+                    prefs.setBool("useMobileLayout", useMobileLayout);
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (BuildContext context) => useMobileLayout ?
+                        MobileContainerPage(ParentView: Responsive.of(context), vista: tipoVista)
+                        // Todo Tablet
+                            :  TabletContainerPage(ParentView: Responsive.of(context), vista: tipoVista,))
+
+                    );
+                  }
+
+
+
                 },
                 child: Text(
                   "Omitir",
@@ -280,7 +401,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
               ),
               Container(
                 margin: EdgeInsets.only(top: responsive.height * 0.03),
-                child: Text("Descarga las cotizaciones y/o envíalas\n directamente a tu\n Cliente desde tu dispositivo.",
+                child: Text("Descarga las cotizaciones y/o envíalas\n directamente a tu Cliente desde tu dispositivo.",
                   style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.2) ),
                   textAlign: TextAlign.center,),
               ),
@@ -352,7 +473,9 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                 height: responsive.hp(6.25),
                 width: responsive.wp(90),
                 margin: EdgeInsets.only(
-                    top: responsive.height * 0.15,
+                    top: prefs.getBool("useMobileLayout")
+                        ? responsive.height * 0.15
+                        : isPortrait ? responsive.height * 0.15 :responsive.height * 0.05,
                     left: responsive.wp(4.4),
                     right: responsive.wp(4.4)),
                 child: RaisedButton(
@@ -360,8 +483,37 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                     borderRadius: BorderRadius.circular(6.0),
                   ),
                   color: Theme.Colors.GNP,
-                  onPressed: () {
+                  onPressed: () async {
+                    //TODO validar Dali
+                    sendTag("appinter_login_onboarding_continuar");
+                    Vistas tipoVista;
+                    tipoVista = Vistas.login;
+
                     Navigator.pop(context,true);
+                    var shortestSide = MediaQuery.of(context).size.shortestSide;
+                    useMobileLayout = shortestSide < 600;
+                    prefs.setBool("useMobileLayout", useMobileLayout);
+
+                    //prefs.setBool("userRegister", false);
+
+                    if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+
+                    } else {
+                      prefs.clear();
+
+                      prefs.setBool("useMobileLayout", useMobileLayout);
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                          useMobileLayout ?
+                          MobileContainerPage(
+                              ParentView: Responsive.of(context), vista: tipoVista)
+                          // Todo Tablet
+                              : TabletContainerPage(
+                            ParentView: Responsive.of(context), vista: tipoVista,))
+                
+                      );
+                    }
+
 
                   },
                   child: Text(

@@ -30,7 +30,9 @@ class _LoginMainPageState extends State<LoginMainPage> {
             () =>  Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (BuildContext context) => useMobileLayout ?
             MobileContainerPage(ParentView: Responsive.of(context), vista: Vistas.login,)
+                //Todo tablet
                 :  TabletContainerPage(ParentView: Responsive.of(context), vista: Vistas.login,))));
+                //:  MobileContainerPage(ParentView: Responsive.of(context), vista: Vistas.login,))));
 
 
   }

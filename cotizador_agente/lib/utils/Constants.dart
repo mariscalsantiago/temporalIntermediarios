@@ -32,7 +32,7 @@ const String Formato_Comparativa = "Formato Comparativa ";
 const String tlt_nocoinciden = "Correo electrónico o contraseña no \ncoinciden";
 const String tlt_noregistrado = "Correo electrónico no registrado";
 const String ms_nocoinciden = "Por seguridad, tu cuenta se bloqueará después de 3 intentos";
-const String ms_noregistrado = "El correo que ingresaste aún no ha sido registrado. Verifícalo e inténtalo nuevamente.";
+const String ms_noregistrado = "El correo que ingresaste aún no ha sido registrado.";
 
 //remote config
 const String CONFIG_SPLASH = "splash_screen";

@@ -5,7 +5,7 @@ class UsuarioPorCorreo{
 
   factory UsuarioPorCorreo.fromJson(Map<dynamic, dynamic> data){
     return UsuarioPorCorreo(
-      consultaUsuarioPorCorreoResponse: data["consultaUsuarioPorCorreoResponse"] != null ? Usuario.fromJson(data["consultaUsuarioPorCorreoResponse"]): Usuario(),
+      consultaUsuarioPorCorreoResponse: data["consultaUsuarioPorCorreoResponse"] != null? Usuario.fromJson(data["consultaUsuarioPorCorreoResponse"]): Usuario.fromJson(data["detail"]),
     );
   }
 
@@ -16,21 +16,65 @@ class UsuarioPorCorreo{
   }
 }
 
+class UsuarioError {
+
+  String mensajeLargo;
+  String codigoError;
+  String sistemaOrigen;
+  String mensajeTecnico;
+  String mensaje;
+
+
+  UsuarioError({this.mensajeLargo,this.codigoError,this.sistemaOrigen,this.mensajeTecnico,this.mensaje});
+
+  factory UsuarioError.fromJson(Map<dynamic, dynamic> data){
+    //print("UsuarioError");
+    //print("data ${data}");
+    Map errorMap =  data["eotException"];
+    //print("UsuarioError");
+    //print("errorMap ${errorMap}");
+    return UsuarioError(
+      mensajeLargo: errorMap["mensajeLargo"],
+      codigoError: errorMap["codigoError"],
+      sistemaOrigen:errorMap["sistemaOrigen"],
+      mensajeTecnico: errorMap["mensajeTecnico"],
+      mensaje: errorMap["mensaje"],
+    );
+  }
+
+  toJson() {
+    return{
+      'mensajeLargo': mensajeLargo,
+      'codigoError': codigoError,
+      'sistemaOrigen': sistemaOrigen,
+      'mensajeTecnico': mensajeTecnico,
+      'mensaje': mensaje,
+    };
+  }
+
+}
+
 class Usuario {
 
   UsuarioUno USUARIOS;
+  UsuarioError ErrorData;
 
-  Usuario({this.USUARIOS});
+  Usuario({this.USUARIOS,this.ErrorData});
 
   factory Usuario.fromJson(Map<dynamic, dynamic> data){
+    print("Usuario");
+    print("data ${data}");
+
     return Usuario(
       USUARIOS: data["USUARIOS"] != null ? UsuarioUno.fromJson(data["USUARIOS"]): UsuarioUno(),
+      ErrorData: data["eotException"]!=null ? UsuarioError.fromJson(data) : UsuarioError(),
     );
   }
 
   toJson() {
     return{
       'USUARIOS': USUARIOS,
+      'ErrorData':ErrorData,
     };
   }
 
@@ -89,6 +133,7 @@ class UsuarioDos{
         uid: data['uid'],
         apellidoPaterno: data['apellidoPaterno'],
         numeroEmpleado: data['numeroEmpleado'],
+        roles: data["roles"] != null ? RolesUsuarioModel.fromJson(data["roles"]): RolesUsuarioModel(),
         codigosIntermediarios: data['codigosIntermediarios'],
         nombre: data['nombre'],
         rfc: data['rfc'],
@@ -153,14 +198,14 @@ class CorreoUsuario{
 }
 
 class RolesUsuarioModel{
-  List<String> rol;
+  List<dynamic> rol;
 
   RolesUsuarioModel({this.rol});
 
   factory RolesUsuarioModel.fromJson(Map<dynamic, dynamic> data){
     var list = data['rol'] as List;
     return RolesUsuarioModel(
-      rol: list,
+      rol: list.length > 0 ? list : [],
     );
   }
 

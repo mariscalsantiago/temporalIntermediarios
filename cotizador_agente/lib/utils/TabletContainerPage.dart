@@ -31,22 +31,28 @@ class _TabletContainerPageState extends State<TabletContainerPage> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]); SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
     return OrientationBuilder(
       builder: (context, orientation) {
         if(orientation == Orientation.portrait){
+          /*
           deviceType = ScreenType.tabletPor;
           double wid = widget.ParentView.wp(64);
           double hei = widget.ParentView.hp(70);
           double inc = math.sqrt(math.pow(wid, 2) + math.pow(hei, 2));
           responsiveMainTablet = Responsive(height: hei,width: wid, inch: inc);
+          */
+          responsiveMainTablet = Responsive.of(context);
           return getPage(widget.vista);
         }
         else{
+          /*
           double wid = widget.ParentView.wp(60);
           double hei = widget.ParentView.hp(80);
           double inc = math.sqrt(math.pow(wid, 2) + math.pow(hei, 2));
           responsiveMainTablet = Responsive(height: hei,width: wid, inch: inc);
+          */
+          responsiveMainTablet = Responsive.of(context);
           print("LansTablet");
           deviceType = ScreenType.tabletLan;
           return getPage(widget.vista);

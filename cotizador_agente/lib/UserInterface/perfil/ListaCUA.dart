@@ -29,6 +29,17 @@ class _listaCUAState extends State<listaCUA> {
   void initState() {
     _saving = false;
     // TODO: implement initState
+    if(widget.isDA){
+      if(posicionDA!= null && posicionDA>=0)
+      {
+        _character = prefs!=null && prefs.getString("currentDA")!=null?widget.list.indexOf(prefs.getString("currentDA")):widget.list[0];
+      }
+    }else{
+      if(posicionCUA!= null && posicionCUA>=0)
+      {
+        _character = prefs!=null && prefs.getString("currentCUA")!=null?widget.list.indexOf(prefs.getString("currentCUA")):widget.list[0];
+      }
+    }
     print(widget.list);
     super.initState();
   }
@@ -64,9 +75,7 @@ class _listaCUAState extends State<listaCUA> {
     ScrollController scrollController =  new ScrollController();
     Widget data = Container();
     Form form;
-    data = SingleChildScrollView(
-        controller: scrollController,
-        child: Container(
+    data = Container(
           height: responsive.height*0.85,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,33 +93,35 @@ class _listaCUAState extends State<listaCUA> {
                           color: Tema.Colors.fecha_1
                       ))
                   ),
-                  separacion(responsive,2),
-                  Container(
-                      margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(5)),
-                      child: ListView.separated(
-                        controller:scrollController,
-                        scrollDirection:  Axis.vertical,
-                        shrinkWrap: true,
-                        itemBuilder: (context, posicion) {
-                          //return PreguntaUno(responsive,widget.list, datosPerfilador.agenteInteresadoList.elementAt(posicion).nombres,datosPerfilador.agenteInteresadoList.elementAt(posicion).apellidoPaterno ,posicion);
-                          print(widget.list.elementAt(posicion));
-                          return PreguntaUno(responsive,widget.list.elementAt(posicion),posicion);
-                        },
-                        separatorBuilder: (context, posicion) {
-                          return separacion(responsive,1);
-                        },
-                        itemCount: widget.list.length,
-                      )
+                  separacion(responsive,6),
+                   Container(
+                     height: responsive.hp(67),
+                        margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(5)),
+                        child: SingleChildScrollView(
+                            controller: scrollController,
+                            child:ListView.separated(
+                          controller:scrollController,
+                          scrollDirection:  Axis.vertical,
+                          shrinkWrap: true,
+                          itemBuilder: (context, posicion) {
+                            //return PreguntaUno(responsive,widget.list, datosPerfilador.agenteInteresadoList.elementAt(posicion).nombres,datosPerfilador.agenteInteresadoList.elementAt(posicion).apellidoPaterno ,posicion);
+                            print(widget.list.elementAt(posicion));
+                            return PreguntaUno(responsive,widget.list.elementAt(posicion),posicion);
+                          },
+                          separatorBuilder: (context, posicion) {
+                            return separacion(responsive,1);
+                          },
+                          itemCount: widget.list.length,
+                        )
+                    ),
                   ),
                 ],
               ),
               Container(
-                  margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), bottom:responsive.hp(4)),
+                  margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), bottom:responsive.hp(0)),
                   child: botonSeleccionarPregunta(responsive)),
             ],
           ),
-        )
-
     );
 
     var l = new List<Widget>();
@@ -131,11 +142,26 @@ class _listaCUAState extends State<listaCUA> {
   Widget PreguntaUno(Responsive responsive, String cua,int posicion){
     return  ListTile(
       //title:  Text("${cua} - ${nombre} ${apellido}",
-      title:  Text("${cua}",
-        style: TextStyle(
-            letterSpacing: 0.16,
-            fontWeight: FontWeight.normal,
-            color: Tema.Colors.Azul_2
+      title:  GestureDetector(
+        onTap: (){
+          setState(() {
+            print(posicion);
+            _character = posicion;
+            if(widget.isDA){
+              posicionDA = posicion;
+              valorDA = widget.list.elementAt(posicion);
+            }else{
+              posicionCUA = posicion;
+              valorCUA = cua;
+            }
+          });
+        },
+        child: Text("${cua}",
+          style: TextStyle(
+              letterSpacing: 0.16,
+              fontWeight: FontWeight.normal,
+              color: Tema.Colors.Azul_2
+          ),
         ),
       ),
       leading: Radio<int>(
@@ -187,18 +213,16 @@ class _listaCUAState extends State<listaCUA> {
         onPressed: () async {
           if(_character != 99999){
             setState(() {
-              widget.callback();
             if(widget.isDA){
               valorDA = widget.list.elementAt(_character);
-              widget.callback();
               prefs.setString("currentDA", widget.list.elementAt(_character));
+              widget.callback(_character);
             } else {
               posicionCUA = _character;
               valorCUA = datosPerfilador.intermediarios[_character];
+              prefs.setString("currentCUA",  widget.list.elementAt(_character).substring(0, widget.list.elementAt(_character).indexOf('-')));
               widget.callback();
-              prefs.setString("currentCUA",  widget.list.elementAt(_character));
             }
-              widget.callback();
             });
 
             Navigator.pop(context,true);

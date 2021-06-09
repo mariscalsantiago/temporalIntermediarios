@@ -4,16 +4,22 @@ import 'dart:io';
 
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
 import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
+import 'package:cotizador_agente/RequestHandler/RequestHandlerDio.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/AlertModule/GNPDialog.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/ConnectionManager.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,32 +38,46 @@ import '../main.dart';
   String uPass;
   AppConfig _appEnvironmentConfig;
   Responsive _responsive;
+  List<dynamic> cotizarAutos = [];
+  List<dynamic> emitirAutos = [];
+  List<dynamic> pagarAutos = [];
+
+  Map accesoFirebase;
 
   void funcionAlerta(){
 
   }
 
   Future<LoginDatosModel> logInServices(BuildContext context, String mail, String password, String user, Responsive responsive) async {
+    bool conecxion = false;
     _responsive = responsive;
     print("== Log In Interactor==");
+    conecxion = await validatePinig();
+    print("== Log In ${conecxion}");
     //prefs=await SharedPreferences.getInstance();
-    try{
-    datosUsuario = await logInPost(context,mail, password, user);
-
-    if(datosUsuario == null){
-      return null;
+    if(conecxion) {
+      try {
+        datosUsuario = await logInPost(context, mail, password, user);
+        print("datos: $mail  $password, $user");
+        if (datosUsuario == null) {
+          return null;
+        }
+      } catch (e) {
+        return null;
+        print(e);
+        //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+      }
     }
-    }catch(e){
-      print(e);
-      throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+    else{
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "", responsive, callback);
+      return null;
     }
     Map<String, dynamic> datos = {
       'nombre': datosUsuario.givenname,
-      'email': datosUsuario.mail,
+      'email': user,
       'contraseña': password,
       'savedMailApp':mail,
     };
-
     var encodeData = json.encode(datos);
     _sharedPreferences.setString('datosHuella', encodeData);
 
@@ -97,8 +117,127 @@ import '../main.dart';
 
     print("loginData.jwt ${loginData.jwt}");
 
+    await consultarRolesFirebase();
+    await getTimer();
+    await getAcceso();
+    //await consultaBitacora();
+    getNegociosOperables(context);
+
     return datosUsuario;
   }
+
+  void getAcceso() async {
+    print("getAcceso");
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    await _dataBaseReference.child("accesoUsuarios").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      accesoFirebase = json.decode(jsoonn);
+      print("accesoFirebase ${accesoFirebase}");
+    });
+
+  }
+
+  void getTimer() async {
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    await _dataBaseReference.child("timer").once().then((DataSnapshot _snapshot) {
+
+      timerMinuts = _snapshot.value;
+      print("_snapshot.value ${_snapshot.value}");
+
+    });
+  }
+
+  void consultaBitacora() async {
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+
+      print("-- response -- ${response}");
+      if(response!= null && response.isNotEmpty){
+
+      } else{
+
+        print("id ${deviceData["id"]}");
+
+        Map<String, dynamic> mapa = {
+          '${datosUsuario.idparticipante}': {
+            'deviceID' : deviceData["id"],
+          }
+        };
+
+        _dataBaseReference.child("bitacora").update(mapa);
+
+      }
+
+    });
+  }
+
+  void consultarRolesFirebase()  async {
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    await _dataBaseReference.child("permisos").once().then((DataSnapshot _snapshot) {
+    //await _dataBaseReference.child("Permisos").once().then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+
+      List<dynamic> cotizarAPP = [];
+      List<dynamic> emitirAPP = [];
+      List<dynamic> pagarAAP = [];
+
+      cotizarAutos = response["cotizadorAutos"]["Cotiza"];
+      emitirAutos = response["cotizadorAutos"]["Emitir"];
+      pagarAutos = response["cotizadorAutos"]["Pagar"];
+
+    });
+  }
+
+  void getNegociosOperables(BuildContext context) async {
+    var config = AppConfig.of(context);
+  bool success = false;
+  var headers = {
+    "Content-Type": "application/json"
+  };
+  Map<String, dynamic> jsonMap = {
+    "consultaNegocio": {
+      "idParticipante": datosUsuario.idparticipante.toString(),
+    }
+  };
+  var request = MyRequest(
+      baseUrl: config.urlNegociosOperables,
+      path: Constants.NEGOCIOS_OPERABLES,
+      method: Method.POST,
+      body: jsonEncode(jsonMap).toString(),
+      headers: headers
+  );
+
+  MyResponse response = await RequestHandlerDio.httpRequest(request);
+
+  print("response  ${response.response}");
+
+  if(response.success){
+    try {
+      success = true;
+      var list = response.response['consultaPorParticipanteResponse']["consultaNegocios"]["participante"]["listaNegocioOperable"] as List;
+      dynamic valor = list.where((element) => element["idNegocioOperable"].toString() == "NOP0002010").first;
+      print("valor ${valor}");
+      if(valor != null){
+        print("showAP true");
+        prefs.setBool("showAP",true);
+      }else{
+        print("showAP false");
+        prefs.setBool("showAP",false);
+      }
+    }catch(e,s){
+      print("showAP ${e}");
+      prefs.setBool("showAP",false);
+      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+    }
+
+  }else{
+
+  }
+
+}
 
   Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String password,String user) async {
     String _service = "Login";
@@ -110,7 +249,9 @@ import '../main.dart';
         customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive, funcionAlerta);
       }
       else{
-        customAlertTablet(AlertDialogTypeTablet.errorConexion, context, "",  "", _responsive);
+        //TODO customAlertTablet
+        customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive, funcionAlerta);
+        // customAlertTablet(AlertDialogTypeTablet.errorConexion, context, "",  "", _responsive, funcionAlerta);
       }
     }
     emailSession = emailApp;
@@ -168,7 +309,9 @@ import '../main.dart';
             customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive, funcionAlerta);
           }
           else{
-            customAlertTablet(AlertDialogTypeTablet.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive);
+            customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive, funcionAlerta);
+            //TODO customAlertTablet
+            //customAlertTablet(AlertDialogTypeTablet.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive, funcionAlerta);
           }
 
           //output.showAlert(Constants.tlt_nocoinciden, Constants.ms_nocoinciden, TipoDialogo.ADVERTENCIA, "CERRAR");
@@ -179,7 +322,9 @@ import '../main.dart';
             customAlert(AlertDialogType.Correo_no_registrado, context, "",  "", _responsive, funcionAlerta);
           }
           else{
-            customAlertTablet(AlertDialogTypeTablet.Correo_no_registrado, context, "",  "", _responsive);
+            customAlert(AlertDialogType.Correo_no_registrado, context, "",  "", _responsive, funcionAlerta);
+            //TODO customAlertTablet
+            //customAlertTablet(AlertDialogTypeTablet.Correo_no_registrado, context, "",  "", _responsive, funcionAlerta);
           }
           return null;
         }
@@ -212,7 +357,7 @@ import '../main.dart';
       path: '?idInteresado=' + idParticipante,
       method: Method.GET,
       body: null,
-      headers: {"apikey": config.apikeyAppAgentes},
+      headers: {"apikey": config.apiKey},
     );
 
     MyResponse response = await RequestHandler.httpRequest(request); //.timeout(const Duration (seconds:6),onTimeout :  _onTimeout(context, _responsive));
@@ -239,7 +384,6 @@ import '../main.dart';
           return _datosPerfilador;
         }
       }else {
-        //customAlertTablet(AlertDialogTypeTablet.opciones_de_inicio_de_sesion,context,"","", _responsive);
         throw Exception(ErrorLoginMessageModel().responseNullErrorTextException);
 
       }
@@ -256,23 +400,42 @@ import '../main.dart';
   }
 
   Future<http.Response> getVersionApp(String idApp,String idOs, BuildContext context) async {
-    final response = await http.get('http://app.gnp.com.mx/versionapp/'+ idApp + "/" + idOs);
-    try {
-      Map mapVersion = json.decode(response.body.toString());
-      String version = mapVersion["version"];
-      version = version.replaceAll("_", ".");
-      bool validacion = validateExpiration(mapVersion["fecha_publicacion"]);
-      if(compareVersion(version,Theme.StringsMX.appVersion)&& validacion && _appEnvironmentConfig.ambient==Ambient.prod){
-        if(!mapVersion['requerida']) {
-          _showDialogoUpdateApplication(context);
-        }else{
-          _showDialogoUpdateApplicationRequried(context);
+    bool conecxion = false;
+    conecxion = await validatePinig();
+    print("getVersionApp ${conecxion}");
+    Responsive responsive = Responsive.of(context);
+    if(conecxion) {
+      try {
+        final response = await http.get('http://app.gnp.com.mx/versionapp/'+ idApp + "/" + idOs);
+        try {
+          Map mapVersion = json.decode(response.body.toString());
+          String version = mapVersion["version"];
+          version = version.replaceAll("_", ".");
+          bool validacion = validateExpiration(mapVersion["fecha_publicacion"]);
+          if(compareVersion(version,Theme.StringsMX.appVersion)&& validacion && _appEnvironmentConfig.ambient==Ambient.prod){
+            if(!mapVersion['requerida']) {
+              _showDialogoUpdateApplication(context);
+            }else{
+              _showDialogoUpdateApplicationRequried(context);
+            }
+          }
+        }catch(e) {
+          print("GetVersionApp : $e");
         }
+        return response;
+
+      }catch(e){
+        print("GetVersionApp catch");
+        print(e);
+        customAlert(AlertDialogType.errorServicio, context, "", "",
+            responsive, funcionAlerta);
       }
-    }catch(e) {
-      print("Error Version: $e");
+    }else{
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "",
+          responsive, funcionAlerta);
     }
-    return response;
+
+
   }
 
   bool compareVersion(String store, String device){
@@ -509,7 +672,7 @@ import '../main.dart';
     return null;
   }
 
-  Future<String> fetchFoto(BuildContext context, File url, Function callback) async {
+  Future<File> fetchFoto(BuildContext context, File url) async {
     print("fetchFoto");
     _appEnvironmentConfig = AppConfig.of(context);
 
@@ -522,7 +685,7 @@ import '../main.dart';
 
       responsePost.send().then((responseDataPost) {
         if (responseDataPost != null && responseDataPost.statusCode == 200) {
-          responseDataPost.stream.transform(utf8.decoder).listen((value) {
+          responseDataPost.stream.transform(utf8.decoder).listen((value) async {
 
             Map postMap = json.decode(value);
             //  print("response : $postMap");
@@ -536,28 +699,26 @@ import '../main.dart';
               // print("${postMap["url"]}");
               mensajeStatus = ErrorLoginMessageModel.fromJson(mensaje);
               datosFisicos.personales.foto = postMap["url"];
-              callback();
-              return postMap["url"];
+              datosFisicos.personales.photoFile = await urlToFile(datosFisicos.personales.foto);
+              return datosFisicos.personales.photoFile;
             } else {
-              callback();
               throw Exception('Failed to load post response');
             }
           }, onError: (error) {
-            callback();
             throw Exception('Failed to load post response');
           });
         } else {
-          callback();
           throw Exception('Failed to load post response');
         }
       }).catchError((error) => throw Exception('Failed to load post response'));
     } catch (e) {
-      callback();
       return null;
     }
   }
 
-  Future<bool> fetchFotoDelete(BuildContext context, Function callback) async {
+
+
+  Future<bool> fetchFotoDelete(BuildContext context) async {
     print("fetchFotoDelete");
 
     _appEnvironmentConfig = AppConfig.of(context);
@@ -580,13 +741,8 @@ import '../main.dart';
           Map postMap = json.decode(responsePost.body);
           //   print("response : ${postMap}");
           if (postMap['success'] == true) {
-            var mensaje = {
-              'mensaje': "¡Gracias! Tus datos fueron actualizados exitosamente.",
-              'titulo': "Edición de fotografía",
-              'success': false
-            };
-            mensajeStatus = ErrorLoginMessageModel.fromJson(mensaje);
             datosFisicos.personales.foto = null;
+            datosFisicos.personales.photoFile = null;
             return true;
           } else {
             throw Exception('Failed to load post response');
@@ -621,50 +777,66 @@ import '../main.dart';
   }
 
   Future<DatosFisicosModel> getPersonaFisica(BuildContext context, String idParticipante, bool isImport) async {
-
     var config = AppConfig.of(context);
-    String _service = isImport ? "Persona fisica import" : "Persona fisica";
-    String _serviceID = isImport ? "S5" : "S3";
-    print("Getting $_service");
-      http.Response _response;
+    bool conecxion = false;
+    conecxion = await validatePinig();
+    print("getPersonaFisica ${conecxion}");
+    Responsive responsive = Responsive.of(context);
+    if(conecxion) {
       try {
-        print(config.serviceBCA + '/app/datos-perfil/' + idParticipante);
-        _response = await http.get(config.serviceBCA + '/app/datos-perfil/' + idParticipante,
-            headers: {"x-api-key": config.apikeyBCA});
+        String _service = isImport ? "Persona fisica import" : "Persona fisica";
+        String _serviceID = isImport ? "S5" : "S3";
+        print("Getting $_service");
+        http.Response _response;
+        try {
+          print(config.serviceBCA + '/app/datos-perfil/' + idParticipante);
+          _response = await http.get(config.serviceBCA + '/app/datos-perfil/' + idParticipante,
+              headers: {"x-api-key": config.apikeyBCA});
 
-        print("getPersonaFisica  ${_response.body}");
-        if (_response != null) {
-          if (_response.statusCode == 200) {
-            if (_response.body != null && _response.body.isNotEmpty) {
-              Map mapAgentes = json.decode(_response.body);
-              if (mapAgentes != null && mapAgentes.isNotEmpty) {
-                if (mapAgentes["success"] == false) {
-                  //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
+          print("getPersonaFisica  ${_response.body}");
+          if (_response != null) {
+            if (_response.statusCode == 200) {
+              if (_response.body != null && _response.body.isNotEmpty) {
+                Map mapAgentes = json.decode(_response.body);
+                if (mapAgentes != null && mapAgentes.isNotEmpty) {
+                  if (mapAgentes["success"] == false) {
+                    //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
+                  } else {
+                    datosFisicos = DatosFisicosModel.fromJson(mapAgentes);
+                    datosFisicos.personales.photoFile = await urlToFile(datosFisicos.personales.foto);
+                    return datosFisicos;
+                  }
                 } else {
-                  datosFisicos = DatosFisicosModel.fromJson(mapAgentes);
-                  return datosFisicos;
+                  //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
                 }
               } else {
                 //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
               }
             } else {
-              //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
+              throw Exception(ErrorLoginMessageModel().statusErrorTextException);
             }
           } else {
-            throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+            throw Exception(
+                ErrorLoginMessageModel().responseNullErrorTextException);
           }
-        } else {
-          throw Exception(
-              ErrorLoginMessageModel().responseNullErrorTextException);
+        } catch (e) {
+          ErrorLoginMessageModel().serviceErrorAlert(
+              "$_serviceID - ${_response != null ? _response.statusCode : "null"}");
+          print(
+              "==$e==\n$_serviceID - ${_response != null ? _response.statusCode : "null"}\n=>$e<=");
+          return null;
         }
-      } catch (e) {
-        ErrorLoginMessageModel().serviceErrorAlert(
-            "$_serviceID - ${_response != null ? _response.statusCode : "null"}");
-        print(
-            "==$e==\n$_serviceID - ${_response != null ? _response.statusCode : "null"}\n=>$e<=");
-        return null;
-      }
 
+      }catch(e){
+        print("getPersonaFisica catch");
+        print(e);
+        customAlert(AlertDialogType.errorServicio, context, "", "",
+            responsive, funcionAlerta);
+      }
+    }else{
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "",
+          responsive, funcionAlerta);
+    }
 }
 
   Future<bool> getImporta(BuildContext context,String idParticipante) async {

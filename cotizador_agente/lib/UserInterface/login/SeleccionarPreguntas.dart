@@ -1,3 +1,4 @@
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/UserInterface/login/loginPreguntasSecretas.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -33,7 +34,8 @@ List <String> preguntas = [
 class SeleccionarPreguntas extends StatefulWidget {
   final tipoDePregunta typeResponse;
   final Responsive responsive;
-  const SeleccionarPreguntas({Key key, this.responsive, this.typeResponse}) : super(key: key);
+  final Function callback;
+  const SeleccionarPreguntas({Key key, this.responsive, this.typeResponse, this.callback}) : super(key: key);
   @override
   _SeleccionarPreguntasState createState() => _SeleccionarPreguntasState();
 }
@@ -45,6 +47,7 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
 
   @override
   void initState() {
+    _character = 99999;
     _saving = false;
     // TODO: implement initState
     super.initState();
@@ -56,7 +59,7 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
 
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
-          appBar: AppBar(
+          appBar:_saving  ? null : AppBar(
             backgroundColor: Tema.Colors.backgroud,
             elevation: 0,
             title: Text('Pregunta de seguridad', style: TextStyle(
@@ -66,10 +69,12 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
             ),),
             centerTitle: true,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back_outlined,
+              icon: Icon(Icons.close ,
                 color: Tema.Colors.GNP,),
               onPressed: () {
-                Navigator.pop(context,true);
+                Navigator.pop(context);
+                widget.callback();
+                widget.callback();
               },
             ),
           ),
@@ -84,9 +89,7 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
     ScrollController scrollController =  new ScrollController();
     Widget data = Container();
     Form form;
-    data = SingleChildScrollView(
-        controller: scrollController,
-        child: Column(
+    data =  Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -100,27 +103,30 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
                 ),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(left: responsive.wp(2), right: responsive.wp(5)),
-              child: ListView.separated(
-                controller:scrollController,
-                scrollDirection:  Axis.vertical,
-                shrinkWrap: true,
-                itemBuilder: (context, posicion) {
-                  return PreguntaUno(responsive,preguntas.elementAt(posicion),posicion);
-                },
-                separatorBuilder: (context, posicion) {
-                  return separacion(responsive,1);
-                },
-                itemCount: preguntas.length,
-              )
+             Container(
+               height: widget.responsive.hp(64),
+                margin: EdgeInsets.only(left: responsive.wp(2), right: responsive.wp(5)),
+                child: SingleChildScrollView(
+                    controller: scrollController,
+                    child:ListView.separated(
+                  controller:scrollController,
+                  scrollDirection:  Axis.vertical,
+                  shrinkWrap: true,
+                  itemBuilder: (context, posicion) {
+                    return PreguntaUno(responsive,preguntas.elementAt(posicion),posicion);
+                  },
+                  separatorBuilder: (context, posicion) {
+                    return separacion(responsive,1);
+                  },
+                  itemCount: preguntas.length,
+                )
+              ),
             ),
             Container(
-                margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), bottom:responsive.hp(4) ),
+                margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), bottom:responsive.hp(2), top:responsive.hp(2)  ),
                 child: botonSeleccionarPregunta(responsive)),
           ],
-        )
-    );
+        );
 
     var l = new List<Widget>();
     l.add(data);
@@ -139,12 +145,19 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
 
   Widget PreguntaUno(Responsive responsive, String pregunta, int posicion){
     return  ListTile(
-      title:  Text(pregunta,
-        style: TextStyle(
-            letterSpacing: 0.16,
-            fontWeight: FontWeight.normal,
-            color: Tema.Colors.Azul_2,
-            fontSize: responsive.ip(2)
+      title:  GestureDetector(
+        onTap: (){
+          setState(() {
+            _character = posicion;
+          });
+        },
+        child: Text(pregunta,
+          style: TextStyle(
+              letterSpacing: 0.16,
+              fontWeight: FontWeight.normal,
+              color: Tema.Colors.Azul_2,
+              fontSize: responsive.ip(2)
+          ),
         ),
       ),
       leading: Transform.scale(
@@ -196,6 +209,7 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
               controllerPreguntaDos.text = preguntas[_character];
             }
             Navigator.pop(context);
+            widget.callback();
           }
         //  Navigator.push(context, MaterialPageRoute(builder: (context) => SeleccionarPreguntas(responsive: responsive,)),);
         }

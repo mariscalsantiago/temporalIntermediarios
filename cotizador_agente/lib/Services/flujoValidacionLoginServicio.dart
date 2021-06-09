@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/DinamicCustumWidget.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
@@ -11,6 +14,8 @@ import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart'
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:http/http.dart' as http;
@@ -355,6 +360,15 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(BuildContext context, String  
           } else if(_response.statusCode == 404){
             print("StatusCode 404");
             return null;
+          } else if(_response.statusCode == 500){
+            print("StatusCode 500");
+            Map<String, dynamic> map = json.decode(_response.body);
+            UsuarioPorCorreo _datosConsulta = UsuarioPorCorreo.fromJson(map);
+            if(_datosConsulta != null){
+              return _datosConsulta;
+            } else{
+              return null;
+            }
           } else {
             print("StatusCode");
             return null;
@@ -387,6 +401,9 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
   print("orquestadorOTPServicio");
   _appEnvironmentConfig = AppConfig.of(context);
 
+  if(context!=null)
+    DinamicCustumWidget(context: context).loadinGif();
+
   ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
 
   if(_connectivityStatus.available) {
@@ -395,11 +412,20 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
     Map _loginBody;
 
     if(esReestablecer){
-      _loginBody = {
-        "correo": correo,
-        "enviarSms": true,
-        "enviarMail": true
-      };
+      if(celular!= null && celular !="" && celular!=" " && celular.isNotEmpty){
+        _loginBody = {
+          "correo": correo,
+          "enviarSms": true,
+          "enviarMail": true
+        };
+      }
+      else{
+        _loginBody = {
+          "correo": correo,
+          "enviarSms": false,
+          "enviarMail": true
+        };
+      }
     } else {
       _loginBody = {
         "correo": correo,
@@ -434,33 +460,49 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context, String 
               return null;
             }
           } else if(_response.statusCode == 401){
+            if(context!=null)
+              print("context StatusCode 401");
             print("StatusCode 401");
             return null;
           } else if(_response.statusCode == 404){
             print("StatusCode 404");
+            if(context!=null)
+              print("context StatusCode 404");
             return null;
           } else {
             print("StatusCode");
+            if(context!=null)
+              print("context StatusCode");
             return null;
           }
         } else{
           print("Body null");
+          if(context!=null)
+            print("context Body null");
           return null;
         }
       } else {
+        if(context!=null)
+          print("context response null");
         print("response null");
         return null;
       }
     }on TimeoutException{
+      if(context!=null)
+        print("context orquestadorOTPServicio -- TimeOut");
       //TODO time out test
       print("orquestadorOTPServicio -- TimeOut");
       //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
       return null;
     } catch (e) {
+      if(context!=null)
+        print("context orquestadorOTPServicio catch -- $e");
       print("orquestadorOTPServicio catch -- $e");
       return null;
     }
   } else {
+    if(context!=null)
+      print("_connectivityStatus context");
     //errorConexion = true;
     return null;
   }
@@ -542,59 +584,82 @@ Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(BuildC
   _appEnvironmentConfig = AppConfig.of(context);
 
   ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
+  Responsive responsive = Responsive.of(context);
 
-  if(_connectivityStatus.available) {
-    http.Response _response;
-
+  bool conecxion = false;
+  conecxion = await validatePinig();
+  print("consultaMediosContactoServicio ${conecxion}");
+  if(conecxion) {
     try {
-      _response = await http.get(Uri.parse(_appEnvironmentConfig.consultarMedioContactosAgentes+idParticipante),
-          headers: {"Content-Type": "application/json",'apiKey': _appEnvironmentConfig.apiKey}
-      );
+      if(_connectivityStatus.available) {
+        http.Response _response;
 
-      print("consultaMediosContactoServicio ${_response.body}");
-      print("consultaMediosContactoServicio ${_response.statusCode}");
+        try {
+          _response = await http.get(Uri.parse(_appEnvironmentConfig.consultarMedioContactosAgentes+idParticipante),
+              headers: {"Content-Type": "application/json",'apiKey': _appEnvironmentConfig.apiKey}
+          );
 
-      if(_response != null){
-        if(_response.body != null){
-          if(_response.statusCode == 200){
-            Map<String, dynamic> map = json.decode(_response.body);
-            consultaMediosContactoAgentesModel _datosConsulta = consultaMediosContactoAgentesModel.fromJson(map);
-            if(_datosConsulta != null){
-              return _datosConsulta;
+          print("consultaMediosContactoServicio ${Uri.parse(_appEnvironmentConfig.consultarMedioContactosAgentes+idParticipante)}");
+          print("consultaMediosContactoServicio ${_response.body}");
+          print("consultaMediosContactoServicio ${_response.statusCode}");
+
+          if(_response != null){
+            if(_response.body != null){
+              if(_response.statusCode == 200){
+                Map<String, dynamic> map = json.decode(_response.body);
+                consultaMediosContactoAgentesModel _datosConsulta = consultaMediosContactoAgentesModel.fromJson(map);
+                if(_datosConsulta != null){
+                  return _datosConsulta;
+                } else{
+                  return null;
+                }
+              } else if(_response.statusCode == 401){
+                print("StatusCode 401");
+                return null;
+              } else if(_response.statusCode == 404){
+                print("StatusCode 404");
+                return null;
+              } else if(_response.statusCode == 500){
+                print("StatusCode 500");
+                return null;
+              } else {
+                print("StatusCode");
+                return null;
+              }
             } else{
+              print("Body null");
               return null;
             }
-          } else if(_response.statusCode == 401){
-            print("StatusCode 401");
-            return null;
-          } else if(_response.statusCode == 404){
-            print("StatusCode 404");
-            return null;
           } else {
-            print("StatusCode");
+            print("response null");
             return null;
           }
-        } else{
-          print("Body null");
+        }on TimeoutException{
+          //TODO time out test
+          print("consultaMediosContactoServicio -- TimeOut");
+          //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
+          return null;
+        } catch (e) {
+          print("consultaMediosContactoServicio catch -- $e");
           return null;
         }
       } else {
-        print("response null");
+        //errorConexion = true;
         return null;
       }
-    }on TimeoutException{
-      //TODO time out test
-      print("consultaMediosContactoServicio -- TimeOut");
-      //ErrorLoginMessageModel().serviceErrorAlert("TimeOut");
-      return null;
-    } catch (e) {
-      print("consultaMediosContactoServicio catch -- $e");
+    } catch(e){
+      print("consultaMediosContactoServicio catch");
+      print(e);
+      customAlert(AlertDialogType.errorServicio, context, "", "",
+          responsive, funcionAlerta);
       return null;
     }
-  } else {
-    //errorConexion = true;
+  }else{
+    customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "",
+        responsive, funcionAlerta);
     return null;
   }
+
 }
 
 Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(BuildContext context, String lada, String numero) async {
@@ -716,7 +781,7 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(BuildContext context, St
     try {
       _response = await http.post(Uri.parse(_appEnvironmentConfig.orquestadorOtpJwt),
           body: _loginJSON,
-          headers: {"Authorization": "Bearer ${loginData.jwt}", "Content-Type": "application/json"}
+          headers: {"Authorization": "Bearer ${loginData.refreshtoken}", "Content-Type": "application/json"}
       );
 
       print("orquestadorOTPJwtServicio ${_response.body}");

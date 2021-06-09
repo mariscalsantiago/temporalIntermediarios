@@ -1,26 +1,34 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
+import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/perfil/editarImagenPage.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:skeleton_animation/skeleton_animation.dart';
+import 'package:skeleton_text/skeleton_text.dart';
+import 'package:cotizador_agente/Custom/skeleton_container.dart';
 
-File image;
-var _image;
-String urlImagen;
+import '../../main.dart';
+
+bool banderaTrans = false;
 
 class VerFotoPage extends StatefulWidget {
 
   Function callback;
   VerFotoPage({Key key, this.callback}) : super(key: key);
-
 
   @override
   _VerFotoPageState createState() => _VerFotoPageState();
@@ -28,55 +36,72 @@ class VerFotoPage extends StatefulWidget {
 
 
 class _VerFotoPageState extends State<VerFotoPage> {
-  File fotoPerfil;
   double width = 300.0;
   double height = 150.0;
-  bool _saving;
+  bool _saving = false;
+  bool _loading = false;
+  Timer timerLoading;
+  File imagePefil;
+
+  Responsive _responsiveMainTablet;
+  bool isPortrait = false;
 
   @override
   void initState() {
-    _saving = false;
     //updateFoto();
-    obtenerImagen();
+   // obtenerImagen();
+   skeletonLoad();
     super.initState();
   }
-
-  void obtenerImagen() async {
-    urlImagen = "";
-    if( datosFisicos != null && datosFisicos.personales.foto != null && datosFisicos.personales.foto != "" ) {
-      await urlToFile(datosFisicos.personales.foto);
-      setState(() {
-        urlImagen = datosFisicos.personales.foto;
-        widget.callback();
-      });
-    } else{
-      setState(() {
-        image = null;
-      widget.callback();
-      });
-
-    }
-    return null;
+  @override
+  dispose() {
+    super.dispose();
   }
 
-  Future<File> urlToFile(String imageUrl) async {
-    var rng = new Random();
-    Directory tempDir = await getTemporaryDirectory();
-    String tempPath = tempDir.path;
-    File file = new File('$tempPath'+ (rng.nextInt(100)).toString() +'.png');
-    http.Response response = await http.get(imageUrl);
-    await file.writeAsBytes(response.bodyBytes);
+
+  Future<void>  skeletonLoad() async {
+    handleUserInteraction(context,CallbackInactividad);
     setState(() {
-      image = file;
+      _loading = true;
     });
-    return file;
+      timerLoading = Timer.periodic(Duration(seconds: 2), (timer) {
+        cancelTimerLoading();
+      });
+
+  }
+
+  void cancelTimerLoading(){
+    if(timerLoading!=null&&timerLoading.isActive){
+      timerLoading.cancel();
+    }
+    imagePefil = datosFisicos.personales.photoFile;
+    setState(() {
+      _loading = false;
+    });
+  }
+
+
+  Future<void>  skeletonLoadDelete() async {
+    setState(() {
+      _loading = true;
+    });
+    bool resp = await fetchFotoDelete(context);
+    if(resp != null && resp) {
+      imagePefil = null;
+    }
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
-
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async => false,
+    child: SafeArea(
+    bottom: true,
+    child: Scaffold(
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.white,
@@ -89,33 +114,53 @@ class _VerFotoPageState extends State<VerFotoPage> {
             icon: Icon(Icons.arrow_back, color: Tema.Colors.GNP),
             onPressed: () {
               Navigator.pop(context,true);
-              setState(() {
-                datosFisicos.personales.foto;
-                updateFoto();
-              });
+              widget.callback(imagePefil);
             },
           ),
         ),
-        body:  Container(
-          color: Tema.Colors.White,
-          child: Stack(
-              children: builData(responsive)
-          ),
-        ));
+        body:  OrientationBuilder(builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            _responsiveMainTablet = Responsive.of(context);
+            isPortrait = true;
+          } else {
+            _responsiveMainTablet = Responsive.of(context);
+            isPortrait = false;
+          }
+          return Container(
+            color: Tema.Colors.White,
+            child: Stack(
+                children: builData(responsive)
+            ),
+          );})
+        )));
   }
 
   List<Widget> builData(Responsive responsive){
     Widget data = Container();
     data = Column(
       children: [
-        Container(
-          margin:EdgeInsets.only(top: responsive.hp(9.4)),
-          height: responsive.hp(56),
-          width: responsive.width,
-          child:  datosFisicos != null && datosFisicos.personales.foto != null &&
-              datosFisicos.personales.foto != "" ?
-              Image(image:NetworkImage(datosFisicos.personales.foto,) ): Image(image: NetworkImage("https://blog.altabel.com/wp-content/uploads/2019/12/1-768x446.png"),),
-        ),
+        _loading ? new Container(
+          margin: prefs.getBool("useMobileLayout") ? EdgeInsets.only(top: responsive.hp(15.5), left: responsive.wp(4), right: responsive.wp(4), bottom: responsive.hp(5)) :  isPortrait
+              ? EdgeInsets.only(top: responsive.hp(15.5), left: responsive.wp(15), right: responsive.wp(15), bottom: responsive.hp(5)) : EdgeInsets.only(top: responsive.hp(15.5), left: responsive.wp(30), right: responsive.wp(30), bottom: responsive.hp(5)) ,
+          child: new Skeleton(
+            animationDuration: Duration(milliseconds: 500),
+            textColor: Tema.Colors.gris_load1,
+              height: responsive.hp(45),
+              width: responsive.width,
+              style: SkeletonStyle.box,
+          ),
+        )
+        :
+       new Container(
+            margin:EdgeInsets.only(top: responsive.hp(13.5), left: responsive.wp(4), right: responsive.wp(4)),
+            height: responsive.hp(52),
+            width: responsive.width,
+            child: imagePefil != null && imagePefil!= "" ?
+              Image.file(imagePefil, fit: BoxFit.cover,): Container(
+              margin: prefs.getBool("useMobileLayout") ? EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(2), top: responsive.hp(10), bottom: responsive.hp(10)) : isPortrait ? EdgeInsets.only( left: responsive.wp(25), right: responsive.wp(25), top: responsive.hp(9), bottom: responsive.hp(9)) : EdgeInsets.only(left: responsive.wp(32), right: responsive.wp(32), top: responsive.hp(5), bottom: responsive.hp(5)),
+              child: new Image.asset('assets/images/nopic.png',  height: responsive.hp(1), width: responsive.wp(1),),
+            ),
+          ),
         Container(
           margin:EdgeInsets.only(top: responsive.hp(9.4)),
           child: Row(
@@ -123,36 +168,23 @@ class _VerFotoPageState extends State<VerFotoPage> {
             children: [
               GestureDetector(
                   onTap: (){
-                    print("image ${image}");
-                    if(image != null){
-                      print("image ${image}");
-                      updateFoto();
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(image: image, callback: updateFoto,)),);
-                    } else{
-                      updateFoto();
+                    if(imagePefil != null ){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(image: imagePefil, callback: editFoto,)),);
                     }
                   },
-                  child: Icon(Icons.create_outlined, color: Tema.Colors.GNP,)),
+                  child: Icon(Icons.create_outlined, color: imagePefil!=null?Tema.Colors.GNP:Tema.Colors.Light2,)),
               GestureDetector(
                   onTap: (){
                     _showPicker(context);
-                    updateFoto();
                   },
                   child: Icon(Icons.camera_alt_outlined, color: Tema.Colors.GNP,)),
               GestureDetector(
                   onTap: () async{
-                    bool resp = await fetchFotoDelete(context, updateFoto);
-                    print("resp");
-                    print(resp);
-
-                    if (resp!= null && resp) {
-                        //_saving = false;
-                        datosFisicos.personales.foto = null;
-                        updateFoto();
-                    } else {
+                    if(imagePefil!=null) {
+                        skeletonLoadDelete();
                     }
                   },
-                  child: Icon(Icons.delete_outlined, color: Tema.Colors.GNP,)),
+                  child: Icon(Icons.delete_outlined, color: imagePefil!=null?Tema.Colors.GNP:Tema.Colors.Light2,)),
             ],
           ),
         )
@@ -165,7 +197,6 @@ class _VerFotoPageState extends State<VerFotoPage> {
       var modal = Stack(
         children: [
           LoadingController(
-
           )
         ],
       );
@@ -191,7 +222,6 @@ class _VerFotoPageState extends State<VerFotoPage> {
                       ),
                       onTap: () {
                         _imgFromGallery();
-                        updateFoto();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
@@ -201,9 +231,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                     ),
                     onTap: () {
                       _imgFromCamera();
-                     updateFoto();
                       Navigator.of(context).pop();
-
                     },
                   ),
                 ],
@@ -217,53 +245,88 @@ class _VerFotoPageState extends State<VerFotoPage> {
     File _image;
     final picker = ImagePicker();
     //TODO revisar doble intento y validacion de null
-    try{
+    try {
       final pickedFile = await picker.getImage(source: ImageSource.camera);
-      _image = File(pickedFile.path);
-      //fetchFoto(context, _image, widget.callback);
-      if(_image!= null){
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SimpleCropRoute(
-                image: _image,
-                callback: updateFoto,
-              )),
-        );
-      }}catch(e){
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+        //fetchFoto(context, _image, widget.callback);
+        if (_image != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SimpleCropRoute(
+                      image: _image,
+                      callback: editFoto,
+                    )),
+          ).then((value) {
+           // changeFoto();
+          });
+        }
+      }
+      } catch (e) {
       print(e);
-    }
-
+   }
   }
 
   _imgFromGallery() async {
     File _image;
     final picker = ImagePicker();
     //TODO revisar doble intento y validacion de null
-    try{
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
-      _image = File(pickedFile.path);
-      //fetchFoto(context, _image, widget.callback);
-      if(_image!= null){
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => SimpleCropRoute(
-                image: _image,
-                callback: updateFoto,
-              )),
-        );
-      }}catch(e){
-      print(e);
+    if (picker != null) {
+      try {
+        final pickedFile = await picker.getImage(source: ImageSource.gallery);
+        _image = File(pickedFile.path);
+        //fetchFoto(context, _image, widget.callback);
+        if (_image != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SimpleCropRoute(
+                      image: _image,
+                      callback: editFoto,
+                    )),
+          );
+        }
+      } catch (e) {
+        print(e);
+      }
     }
 
   }
-  void updateFoto(){
+  void imageSimilar(){
+    skeletonLoad();
+  }
+  Future<void> editFoto(File sendFile) async {
+
     setState(() {
-      fotoPerfil;
-      datosFisicos.personales.foto;
-      obtenerImagen();
-      widget.callback();
+      _loading = true;
+    });
+
+    timerLoading = Timer.periodic(Duration(seconds: 2), (timer) {
+      cancelTimerLoadingEdit(sendFile);
+    });
+
+
+  }
+
+  void cancelTimerLoadingEdit(File image){
+    if(timerLoading!=null&&timerLoading.isActive){
+      timerLoading.cancel();
+    }
+    imagePefil = image;
+    setState(() {
+      _loading = false;
     });
   }
+  void CallbackInactividad(){
+    setState(() {
+      focusContrasenaInactividad.hasFocus;
+      showInactividad;
+      handleUserInteraction(context,CallbackInactividad);
+      //contrasenaInactividad = !contrasenaInactividad;
+    });
+  }
+
 }

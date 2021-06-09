@@ -202,6 +202,8 @@ class Colors {
   static const Color Rectangle_PA= const Color(0xFFFF6B0B);
   static const Color Rectangle_1117_PA= const Color(0xFFF6F9FD);
   static const Color azul_apoyo= const Color (0xFF73A8E7);
+  static const Color gris_load1 = const Color (0xFFE8EEF8);
+  static const Color gris_load2 = const Color (0xFFF6F9FD);
 
 
   static const Color azulMesaggeCongresos = const Color(0xFF343F61);

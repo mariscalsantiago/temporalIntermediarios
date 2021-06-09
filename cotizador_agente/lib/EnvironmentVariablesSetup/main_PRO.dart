@@ -5,7 +5,7 @@ import '../main.dart';
 import 'package:flutter/material.dart';
 
 
-int timerMinuts = 20;
+
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

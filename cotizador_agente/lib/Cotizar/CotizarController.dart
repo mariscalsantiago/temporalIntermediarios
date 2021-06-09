@@ -1,7 +1,10 @@
 
 import 'package:cotizador_agente/Cotizar/CotizarContract.dart';
 import 'package:cotizador_agente/Cotizar/CotizarPresenter.dart';
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
+import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,7 +39,11 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
         child: Scaffold(
           appBar: getAppBar(context),
           backgroundColor: Colors.white,
-          body: getBody(),
+          body: GestureDetector(
+              onTap: (){
+                handleUserInteraction(context,CallbackInactividad);
+              },
+              child: getBody()),
           bottomNavigationBar: Visibility(
               visible: false,
               child: SafeArea(
@@ -112,5 +119,15 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
         ],
       ),
     );
+  }
+
+  void CallbackInactividad(){
+    setState(() {
+      print("CallbackInactividad AP");
+      focusContrasenaInactividad.hasFocus;
+      showInactividad;
+      handleUserInteraction(context,CallbackInactividad);
+      //contrasenaInactividad = !contrasenaInactividad;
+    });
   }
 }
