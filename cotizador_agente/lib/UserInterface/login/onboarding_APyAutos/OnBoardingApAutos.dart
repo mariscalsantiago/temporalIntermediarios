@@ -1,4 +1,5 @@
 import 'package:cotizador_agente/Functions/Analytics.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/utils/MobileContainerPage.dart';
@@ -23,8 +24,14 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
 
   @override
   void initState() {
+    if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil"))
+      Inactivity(context:context).initialInactivity(functionInactivity);
+
     _controller = TabController(vsync: this, initialIndex: 0, length: 5);
     _controller.addListener(() {
+      if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil"))
+        Inactivity(context:context).initialInactivity(functionInactivity);
+
       setState(() {
         _selectedIndex = _controller.index;
       });
@@ -32,6 +39,13 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
     });
     // TODO: implement initState
     super.initState();
+  }
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
   }
 
   @override
@@ -44,7 +58,12 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
-    return WillPopScope(
+    return GestureDetector(
+        onTap: () {
+          if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil"))
+            Inactivity(context:context).initialInactivity(functionInactivity);
+          //handleUserInteraction(context, CallbackInactividad);
+        },child:WillPopScope(
       onWillPop: () async => false,
       child: OrientationBuilder(builder: (context, orientation) {
         if (orientation == Orientation.portrait) {
@@ -64,9 +83,15 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                     Container(
                         height: _selectedIndex == 4 ? responsiveMainTablet.hp(95): responsiveMainTablet.hp(85),
                         color: Theme.Colors.White,
-                        child: DefaultTabController(
-                          length: 5,
+                        child: GestureDetector(
+                                onTap: () {
+                                  if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil"))
+                                    Inactivity(context:context).initialInactivity(functionInactivity);
 
+                                 // validateIntenetstatus(context, widget.responsive,functionConnectivity);                            Inactivity(context:context).initialInactivity(functionInactivity);
+
+                          },child: DefaultTabController(
+                          length: 5,
                           child: TabBarView(
                               controller: _controller,
                               children: [
@@ -78,7 +103,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                               ]
                           ),
                         )
-                    ),
+                    )),
                     _selectedIndex != 4 ?  tabulador(responsiveMainTablet): Container(),
                   ],
                 )
@@ -86,7 +111,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
           ),
         );},
       ),
-    );
+    ));
   }
 
   Widget tabulador(Responsive responsive){
@@ -115,6 +140,8 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                   //prefs.setBool("userRegister", false);
 
                   if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+
+                      Inactivity(context:context).cancelInactivity();
 
                   } else {
                     prefs.clear();
@@ -497,6 +524,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                     //prefs.setBool("userRegister", false);
 
                     if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+                        Inactivity(context:context).cancelInactivity();
 
                     } else {
                       prefs.clear();

@@ -5,6 +5,7 @@ import 'package:cotizador_agente/Custom/Constantes.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustumFuntions.dart';
 import 'package:cotizador_agente/Custom/DinamicCustumWidget.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
@@ -43,9 +44,17 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
 
   @override
   void initState() {
+    if (prefs.getBool("esPerfil") != null &&prefs.getBool("esPerfil")){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    }
     checkedValue = false;
 
   }
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+
 
   double width = 300.0;
   double height = 150.0;
@@ -63,6 +72,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
               icon:Icon(Icons.close, color: Theme.Colors.GNP,),
               onPressed: (){
                 if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+                  Inactivity(context:context).cancelInactivity();
                   prefs.setBool("activarBiometricos", false);
                   //widget.callback();
                   Navigator.pop(context,true);
@@ -245,7 +255,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                               Container(child:IconButton(
                                 icon: checkedValue ? Image.asset("assets/terminosycondiciones/check_box_24px.png", width: 18, height: 18,) : Image.asset("assets/terminosycondiciones/check_box_outline_blank_24px.png", width: 18, height: 18),
                               )),
-                            Container(child: Text("ACEPTO LOS TÉRMINOS Y CONDICIONES DE USO",textAlign: TextAlign.start, style:TextStyle(color: Theme.Colors.Azul_2, fontSize: responsive.ip(1.8),)),)
+                              Expanded(child: Container(child: Text("ACEPTO LOS TÉRMINOS Y CONDICIONES DE USO",textAlign: TextAlign.start, style:TextStyle(color: Theme.Colors.Azul_2, fontSize: responsive.ip(1.8),)),))
 
                             ],),),
                           ),
@@ -348,36 +358,40 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
 
             if (Platform.isIOS) {
               didAuthenticate = await localAuth.authenticateWithBiometrics(
-                  localizedReason: is_available_finger && is_available_face ? 'Coloca tu dedo o mira fijamente a la cámara para continuar' :is_available_finger ?  'Coloca tu dedo para continuar' : 'Mira fijamente a la cámara para continuar ',
+                  localizedReason:is_available_finger ?  'Coloca tu dedo para continuar.' : 'Mira fijamente a la cámara para continuar.',
                   iOSAuthStrings: new IOSAuthMessages (
                       lockOut: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
-                      goToSettingsDescription: 'Hola',
-                      cancelButton: "Cancelar", goToSettingsButton: "Aceptar"),
-                  useErrorDialogs: false,
+                      goToSettingsDescription:  is_available_finger
+                          ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                          : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
+                      goToSettingsButton: "Ir a configuraciones",
+                      cancelButton: "Cancelar"),
+                  useErrorDialogs: true,
                   stickyAuth: false);
             } else {
               didAuthenticate = await localAuth.authenticateWithBiometrics(
+                  localizedReason: is_available_finger && is_available_face
+                      ? "Coloca tu dedo o mira a la cámara para continuar."
+                      : is_available_finger
+                      ? "Coloca tu dedo para continuar"
+                      : "Mira fijamente a la cámara",
                   androidAuthStrings: new AndroidAuthMessages(
+                      fingerprintNotRecognized: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
                       signInTitle: "Inicio de sesión",
-                      fingerprintHint: is_available_finger && is_available_face
-                          ? "Coloca tu dedo o mira a la cámara para continuar."
-                          : is_available_finger
-                          ? "Coloca tu dedo para continuar"
-                          : "Mira fijamente a la cámara",
+                      fingerprintHint: '',
                       cancelButton: "Cancelar",
-                      fingerprintRequiredTitle: is_available_finger
+                      fingerprintRequiredTitle: is_available_finger && is_available_face ?
+                        "Solicitud de huella digital o reconocimiento facial"
+                        : is_available_finger
                           ? "Solicitud de huella digital"
-                          : is_available_face
-                          ? "Mira fijamente a la cámara"
-                          : "",
-                      goToSettingsDescription: "Tu huella digital no está configurada en el dispositivo, ve a configuraciones para añadirla.",
+                          : "Mira fijamente a la cámara",
+                      goToSettingsDescription: is_available_finger && is_available_face ?
+                      "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                      : is_available_finger
+                      ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                      : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
                       goToSettingsButton: "Ir a configuraciones"),
-                  iOSAuthStrings: new IOSAuthMessages (
-                    lockOut: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
-                      goToSettingsDescription: '',
-                      cancelButton: "Cancelar", goToSettingsButton: "Aceptar"),
-                  localizedReason: ' ',
-                  useErrorDialogs: false,
+                  useErrorDialogs: true,
                   stickyAuth: false);
             }
 
@@ -485,12 +499,18 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
               responsive, widget.callback) :
           customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
               responsive, widget.callback);
-        } else {
-          print("auth_error.else");
-          prefs.setInt("localAuthCountIOS", 103);
+        }else{
+          prefs.setInt("localAuthCountIOS", 102);
           localAuth.stopAuthentication();
           Navigator.pop(context, true);
-          procesoActiveBiometricosOTP(context, responsive, widget.callback);
+          is_available_finger && is_available_face ? customAlert(
+              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, widget.callback) :
+          is_available_finger ? customAlert(
+              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, widget.callback) :
+          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
+              responsive, widget.callback);
           }
         }
       }

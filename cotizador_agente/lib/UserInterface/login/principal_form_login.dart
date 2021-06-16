@@ -45,6 +45,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 */
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:cotizador_agente/Services/metricsPerformance.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 
 double tamano;
 String idParticipanteValidaPorCorre;
@@ -101,11 +103,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   int _keyboardVisibilitySubscriberId;
   bool _keyboardState;
 
+  bool _firstSession = true;
+
   @override
   void initState() {
-
-    validateIntenetstatus(context, widget.responsive, CallbackInactividad);
-    initializeTimerWifi(context, widget.responsive, CallbackInactividad);
+    validateIntenetstatus(context, widget.responsive,functionConnectivity);
+    //initializeTimerWifi(context, widget.responsive, CallbackInactividad);
     initPlatformState(updateDeviceData);
 
     Future.delayed(Duration.zero, () {
@@ -114,6 +117,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     cancelTimers();
 
     super.initState();
+  }
+  void functionConnectivity() {
+    setState(() {});
   }
 
   void arranque() async {
@@ -167,7 +173,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       existeUsuario = false;
       prefs.setBool("primeraVez", true);
     }
-
 
     /*_getLocation().then((position) {
       userLocation = position;
@@ -504,7 +509,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   ? _validPass
                       ? Image.asset("assets/login/novercontrasena.png")
                       : Image.asset("assets/login/_icon_error_contrasena.png")
-                  : _validPass ?Image.asset("assets/login/vercontrasena.png"):Image.asset("assets/login/_icono-withmask.png"),
+                  : _validPass
+                      ? Image.asset("assets/login/vercontrasena.png")
+                      : Image.asset("assets/login/_icono-withmask.png"),
               color: Tema.Colors.validarCampo,
               onPressed: () {
                 setState(() {
@@ -857,6 +864,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   }
 
   Future<http.Response> getVersionApp(String idApp, String idOs) async {
+    print("getVersionApp");
     AppConfig _appEnvironmentConfig = AppConfig.of(context);
     bool conecxion = false;
     conecxion = await validatePinig();
@@ -867,6 +875,18 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       try {
         final response = await http
             .get('http://app.gnp.com.mx/versionapp/' + idApp + "/" + idOs);
+
+        //TODO: Metrics
+        final MetricsPerformance metricsPerformance = MetricsPerformance(
+            http.Client(),
+            'http://app.gnp.com.mx/versionapp/' + idApp + "/" + idOs,
+            HttpMethod.Get);
+        final http.Request request = http.Request(
+            "VersionApp",
+            Uri.parse(
+                'http://app.gnp.com.mx/versionapp/' + idApp + "/" + idOs));
+        metricsPerformance.send(request);
+
         try {
           Map mapVersion = json.decode(response.body.toString());
           String version = mapVersion["version"];
@@ -953,7 +973,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               } else {
                 //print("UsuarioPorCorreo else2");
                 prefs.setString("medioContactoTelefono", "");
-                ConsultarPorIdParticipanteConsolidado consulta = await ConsultarPorIdParticipanteServicio(context, idParticipanteValidaPorCorre);
+                ConsultarPorIdParticipanteConsolidado consulta =
+                    await ConsultarPorIdParticipanteServicio(
+                        context, idParticipanteValidaPorCorre);
                 if (consulta != null) {
                   //print("UsuarioPorCorreo if5");
                   prefs.setString(
@@ -975,7 +997,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
                   context,
                   prefs.getString("correoCambioContrasena"),
-                  prefs.getString("medioContactoTelefono")!=null?prefs.getString("medioContactoTelefono"):"",
+                  prefs.getString("medioContactoTelefono") != null
+                      ? prefs.getString("medioContactoTelefono")
+                      : "",
                   prefs.getBool('flujoOlvideContrasena'));
 
               setState(() {
@@ -1088,6 +1112,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         ),
         onPressed: () async {
           prefs.setBool("esPerfil", false);
+
+          _validEmail = _formKey.currentState.validate();
+          _validPass = _formKeyPass.currentState.validate();
+          setState(() {});
 
           if (!_saving) {
             if (_formKey.currentState.validate() &&
@@ -1332,12 +1360,16 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     return teledonosLista;
   }
 
+  // Redireccionamiento
   redirect(Responsive responsive) async {
     prefs.setBool('flujoOlvideContrasena', false);
     if (prefs != null) {
       if (existeUsuario) {
         controllerContrasena.clear();
         controllerCorreo.clear();
+        _validEmail = _formKey.currentState.validate();
+        _validPass = _formKeyPass.currentState.validate();
+        setState(() {});
         //TODO 238
 
         if (_biometricos &&
@@ -1397,40 +1429,83 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                           responsive: responsive,
                         )));
           } else {
+            primerAccesoUsuario();
             if (prefs.getBool('primeraVezIntermediario') != null &&
                 prefs.getBool('primeraVezIntermediario')) {
               if (prefs.getBool("aceptoCondicionesDeUso") == null) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => CondicionesPage(
-                              callback: funcionAlerta,
-                            )));
+                // validamos si el usuario ya inicio sesión por primera vez
+                if (_firstSession) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => CondicionesPage(
+                                callback: funcionAlerta,
+                              )));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              LoginActualizarContrasena(
+                                responsive: responsive,
+                              )));
+                }
               } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
                   prefs.getBool("aceptoCondicionesDeUso")) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            LoginActualizarContrasena(
-                              responsive: responsive,
-                            )));
+                // validamos si el usuario ya inicio sesión por primera vez
+                if (_firstSession) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => CondicionesPage(
+                                callback: funcionAlerta,
+                              )));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              LoginActualizarContrasena(
+                                responsive: responsive,
+                              )));
+                }
               } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
                   !prefs.getBool("aceptoCondicionesDeUso")) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => CondicionesPage(
-                              callback: funcionAlerta,
-                            )));
+                // validamos si el usuario ya inicio sesión por primera vez
+                if (_firstSession) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => CondicionesPage(
+                                callback: funcionAlerta,
+                              )));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              LoginActualizarContrasena(
+                                responsive: responsive,
+                              )));
+                }
               } else {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            LoginActualizarContrasena(
-                              responsive: responsive,
-                            )));
+                // validamos si el usuario ya inicio sesión por primera vez
+                if (_firstSession) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) => CondicionesPage(
+                                callback: funcionAlerta,
+                              )));
+                } else {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (BuildContext context) =>
+                              LoginActualizarContrasena(
+                                responsive: responsive,
+                              )));
+                }
               }
             } else {
               prefs.setBool("esFlujoBiometricos", false);
@@ -1481,40 +1556,84 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                     "", "", responsive, funcionAlertaHullaLogin);
           }
         } else {
+          primerAccesoUsuario();
+
           if (prefs.getBool('primeraVezIntermediario') != null &&
               prefs.getBool('primeraVezIntermediario')) {
             if (prefs.getBool("aceptoCondicionesDeUso") == null) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => CondicionesPage(
-                            callback: funcionAlerta,
-                          )));
+              // validamos si el usuario ya inicio sesión por primera vez
+              if (_firstSession) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => CondicionesPage(
+                              callback: funcionAlerta,
+                            )));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            LoginActualizarContrasena(
+                              responsive: responsive,
+                            )));
+              }
             } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
                 prefs.getBool("aceptoCondicionesDeUso")) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          LoginActualizarContrasena(
-                            responsive: responsive,
-                          )));
+              // validamos si el usuario ya inicio sesión por primera vez
+              if (_firstSession) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => CondicionesPage(
+                              callback: funcionAlerta,
+                            )));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            LoginActualizarContrasena(
+                              responsive: responsive,
+                            )));
+              }
             } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
                 !prefs.getBool("aceptoCondicionesDeUso")) {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) => CondicionesPage(
-                            callback: funcionAlerta,
-                          )));
+              // validamos si el usuario ya inicio sesión por primera vez
+              if (_firstSession) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => CondicionesPage(
+                              callback: funcionAlerta,
+                            )));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            LoginActualizarContrasena(
+                              responsive: responsive,
+                            )));
+              }
             } else {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (BuildContext context) =>
-                          LoginActualizarContrasena(
-                            responsive: responsive,
-                          )));
+              // validamos si el usuario ya inicio sesión por primera vez
+              if (_firstSession) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => CondicionesPage(
+                              callback: funcionAlerta,
+                            )));
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            LoginActualizarContrasena(
+                              responsive: responsive,
+                            )));
+              }
             }
           } else {
             prefs.setBool("esFlujoBiometricos", false);
@@ -1561,12 +1680,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               textAlign: TextAlign.center),
         ),
         onPressed: () async {
+          prefs.setBool("esPerfil", false);
           prefs.setBool("userRegister", false);
           prefs.setString("contrasenaUsuario", "");
           prefs.setString("correoUsuario", "");
           prefs.setBool("activarBiometricos", false);
           prefs.setBool("regitroDatosLoginExito", false);
           prefs.setBool("flujoCompletoLogin", false);
+          cancelTimers();
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -1655,16 +1776,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
           },
           onLongPress: () {
             if (deviceType == ScreenType.phone) {
-               Navigator.push(
+              Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (BuildContext context) =>
                           TerminosYCondicionesPage(
                             callback: callback,
-                          )
-                  )
-
-              );
+                          )));
 
               // customAlert(AlertDialogType.Sesionfinalizada_por_inactividad, context, "",  "", responsive, CallbackInactividad);
             } else {
@@ -1718,13 +1836,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         return WillPopScope(
             onWillPop: () => Future.value(false),
             child: AlertDialog(
-              title: new Text("Nueva versión",
+              title: new Text("Actualización disponible.",
                   style: TextStyle(
                       color: Tema.Colors.Blue,
                       fontSize: 16.0,
                       fontFamily: "Roboto")),
               content: new Text(
-                  "Existe una nueva versión de Intermediario GNP.",
+                  "Existe una actualización importante para tu App Intermediario GNP.",
                   style: TextStyle(
                       color: Tema.Colors.Blue,
                       fontSize: 16.0,
@@ -1733,6 +1851,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 new FlatButton(
                   child: new Text("Descargar"),
                   onPressed: () {
+                    setIsUpdateVersion();
                     _onLoading(context);
                     _launchURL(context, true);
                   },
@@ -1751,13 +1870,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         return WillPopScope(
             onWillPop: () => Future.value(false),
             child: AlertDialog(
-              title: new Text("Nueva versión",
+              title: new Text("Actualización disponible.",
                   style: TextStyle(
                       color: Tema.Colors.Blue,
                       fontSize: 16.0,
                       fontFamily: "Roboto")),
               content: new Text(
-                  "Existe una nueva versión de Intermediario GNP.",
+                  "Te recomendamos tener instalada la versión más reciente de tu App Intermediario GNP. \n\n¡Descárgala ahora!",
                   style: TextStyle(
                       color: Tema.Colors.Blue,
                       fontSize: 16.0,
@@ -1771,6 +1890,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 new FlatButton(
                   child: new Text("Descargar"),
                   onPressed: () {
+                    setIsUpdateVersion();
                     _onLoading(context);
                     _launchURL(context, false);
                   },
@@ -1779,6 +1899,62 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
             ));
       },
     );
+  }
+
+  void setIsUpdateVersion() async {
+    print("setIsUpdateVersion");
+    Map setIsUpdateVersion;
+    try {
+      String devideID = await _getId();
+      print("devideID ${devideID}");
+      DatabaseReference _dataBaseReference =
+          FirebaseDatabase.instance.reference();
+
+      await _dataBaseReference
+          .child("deviceUser")
+          .child(devideID)
+          .once()
+          .then((DataSnapshot _snapshot) {
+        var jsoonn = json.encode(_snapshot.value);
+        setIsUpdateVersion = json.decode(jsoonn);
+        print("setIsUpdateVersion ---> ${setIsUpdateVersion}");
+        if (setIsUpdateVersion != null && setIsUpdateVersion.isNotEmpty) {
+          Map<String, dynamic> mapa = {
+            '${devideID}': {
+              'version': Tema.StringsMX.appVersion,
+              'requiredUpdate': false,
+            }
+          };
+          _dataBaseReference.child("deviceUser").update(mapa);
+        } else {
+          Map<String, dynamic> mapa = {
+            '${devideID}': {
+              'version': Tema.StringsMX.appVersion,
+              'requiredUpdate': true,
+            }
+          };
+          _dataBaseReference.child("deviceUser").update(mapa);
+        }
+      });
+    } catch (e) {
+      print(" setIsUpdateVersion error ${e}");
+    }
+  }
+
+  Future<String> _getId() async {
+    try {
+      var deviceInfo = DeviceInfoPlugin();
+      if (Platform.isIOS) {
+        // import 'dart:io'
+        var iosDeviceInfo = await deviceInfo.iosInfo;
+        return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+      } else {
+        var androidDeviceInfo = await deviceInfo.androidInfo;
+        return androidDeviceInfo.androidId; // unique ID on Android
+      }
+    } catch (e) {
+      print(" deviceID error ${e}");
+    }
   }
 
   void _onLoading(BuildContext context) {
@@ -1834,11 +2010,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
   void CallbackInactividad() {
     //setState(() {
-      //print("CallbackInactividad login");
-      showInactividad;
-      //handleUserInteraction(context,CallbackInactividad);
-      //contrasenaInactividad = !contrasenaInactividad;
-   // });
+    //print("CallbackInactividad login");
+    showInactividad;
+    //handleUserInteraction(context,CallbackInactividad);
+    //contrasenaInactividad = !contrasenaInactividad;
+    // });
   }
 
   void funcionAlertaCodVerificacion(Responsive responsive) async {
@@ -1988,6 +2164,59 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       _address = address; // update _address
     });
   }
+
+  void primerAccesoUsuario() async {
+    Map userInfo;
+    DatabaseReference _dataBaseReference =
+        FirebaseDatabase.instance.reference();
+
+    String emailFirst;
+    String email;
+
+    if (controllerCorreo.text.isNotEmpty || controllerCorreo.text != "") {
+      emailFirst = controllerCorreo.text.replaceAll('.', '-');
+      email = emailFirst.replaceAll('@', '-');
+    } else {
+      correoUsuario = prefs.getString("correoUsuario");
+      emailFirst = correoUsuario.replaceAll('.', '-');
+      email = emailFirst.replaceAll('@', '-');
+    }
+
+    try {
+      await _dataBaseReference
+          .child("firstSessionUser")
+          .child(email.toLowerCase())
+          .once()
+          .then((DataSnapshot _snapshot) {
+        var jsoonn = json.encode(_snapshot.value);
+        userInfo = json.decode(jsoonn);
+
+        if (userInfo.isNotEmpty && userInfo != null) {
+          if (userInfo["isFirstMobileSession"]) {
+            _dataBaseReference
+                .child("firstSessionUser")
+                .child(email.toLowerCase())
+                .set({'isFirstMobileSession': false});
+          }
+          setState(() {
+            _firstSession = false;
+          });
+        } else {
+          setState(() {
+            _firstSession = true;
+          });
+        }
+      });
+    } catch (err) {
+      setState(() {
+        _firstSession = true;
+      });
+      _dataBaseReference
+          .child("firstSessionUser")
+          .child(email.toLowerCase())
+          .set({'isFirstMobileSession': true});
+    }
+  }
 }
 
 void ultimoAcceso() async {
@@ -2074,12 +2303,18 @@ void validarRolesUsuario() {
   String campo = "";
   bool activoCotizarAutos = false;
 
-  if (respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol.length > 0) {
-    List<dynamic> rol = respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol;
+  if (respuestaServicioCorreo
+          .consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol.length >
+      0) {
+    List<dynamic> rol = respuestaServicioCorreo
+        .consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol;
     for (int i = 0; i < rol.length; i++) {
       String rolAux = rol[i].toString().substring(3, rol[i].length);
 
-      campo = cotizarAutos.where((element) => element.toString().toLowerCase() == rolAux.toLowerCase()).toString();
+      campo = cotizarAutos
+          .where((element) =>
+              element.toString().toLowerCase() == rolAux.toLowerCase())
+          .toString();
 
       if (campo != "" && campo != "()") {
         activoAutoCotizar.add(campo);

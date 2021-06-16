@@ -2,7 +2,9 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
+import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
@@ -15,10 +17,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 
-AppConfig _appEnvironmentConfig;
 
-FlutterWebviewPlugin _flutterWebViewPlugin;
-String _initialURL="";
 bool doReturn = true;
 
 class AutosPage extends StatefulWidget {
@@ -30,27 +29,10 @@ class AutosPage extends StatefulWidget {
 }
 
 class _AutosPageState extends State<AutosPage> {
+
   String returnToApp = "/returnApp";
   final GlobalKey webViewKey = GlobalKey();
-
   InAppWebViewController webViewController;
-
-
-  InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
-
-      crossPlatform: InAppWebViewOptions(
-        useShouldOverrideUrlLoading: true,
-        mediaPlaybackRequiresUserGesture: false,
-        supportZoom: false,
-      ),
-      android: AndroidInAppWebViewOptions(
-          allowContentAccess: true,),
-      ios: IOSInAppWebViewOptions(
-        allowsInlineMediaPlayback: true,
-      ));
-
-
-  //PullToRefreshController pullToRefreshController;
   ContextMenu contextMenu;
   String url = "";
   String codigoIntermediario = prefs.getString("currentCUA");
@@ -58,190 +40,102 @@ class _AutosPageState extends State<AutosPage> {
   double progress = 0;
   final urlController = TextEditingController();
 
+  InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
+      crossPlatform: InAppWebViewOptions(
+        useShouldOverrideUrlLoading: true,
+        mediaPlaybackRequiresUserGesture: false,
+        supportZoom: false,),
+      android: AndroidInAppWebViewOptions(allowContentAccess: true),
+      ios: IOSInAppWebViewOptions(allowsInlineMediaPlayback: true,
+      ));
+
+
   @override
   void initState() {
-
-    // TODO: implement initState
-   // _initialURL = _appEnvironmentConfig.cotizadorAutos+'?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}&cveDA=${DA}";
+    Inactivity(context:context).initialInactivity(functionInactivity);
+    validateIntenetstatus(context,widget.responsive,functionConnectivity);
     doReturn = true;
-    _flutterWebViewPlugin = FlutterWebviewPlugin();
-    //_flutterWebViewPlugin.stopLoading();
-
-    _flutterWebViewPlugin.onStateChanged.listen((onData) async {
-      String mUrl = onData.url.toString();
-      print("mUrl: "+mUrl);
-      // print("Eventos type: "+onData.type.toString());
-      if (mUrl.contains(returnToApp)) {
-            print(onData.url);
-            print(onData.type);
-            print(onData.navigationType);
-            _flutterWebViewPlugin.close();
-            _flutterWebViewPlugin.dispose();
-            doReturn = false;
-            Navigator.pop(context,true);
-
-          }
-      if (mUrl.contains("tel")) {
-        print("===mUrl======");
-        String strWithDig =mUrl;
-        String submUrl=strWithDig.replaceAll(RegExp(r'+'), '');
-        print(submUrl);
-        String submUrlSpace=submUrl.replaceAll(RegExp(r' '), '');
-        print(submUrlSpace);
-        launch(submUrlSpace);
-      }
-    });
-    _flutterWebViewPlugin.onHttpError.listen((event) {
-      print("ERROR Listener" + event.toString());
-      Navigator.pop(context,true);
-    });
-    print(datosUsuario.idparticipante);
-    print(codigoIntermediario);
-    //print(datosPerfilador.intermediarios[0]);
-    print('https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}&cveDA=${DA}",);
-    validateIntenetstatus(context, widget.responsive,CallbackInactividad);
-    handleUserInteraction(this.context,CallbackInactividad);
-    //print('https://gnp-appcontratacionautos-qa.appspot.com/?jwt='+loginData.jwt+"&codigoIntermediario=${datosPerfilador.intermediarios[0]}",);
     super.initState();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _appEnvironmentConfig = AppConfig.of(context);
-
-    print("showInactividad ${showInactividad}");
-    Responsive responsive = Responsive.of(context);
-    return WillPopScope(
-      onWillPop: () async => false,
-      child:/*  showInactividad? Container(
-        height: responsive.height,
-        color: Theme.Colors.White,
-      ):*/SafeArea(
-        child: Scaffold(
-          resizeToAvoidBottomPadding:false,
-          resizeToAvoidBottomInset:true,
-          body: InAppWebView(
-            key: webViewKey,
-            initialUrl:_appEnvironmentConfig.cotizadorAutos+'?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}&cveDA=${DA}",
-            initialOptions: options,
-            onWebViewCreated: (controller) {
-              webViewController = controller;
-            },
-            onLoadStart: (controller, url) {
-              print("onLoadStart ${url}");
-              handleUserInteraction(context,CallbackInactividad);
-            },
-            onPrint:(controller, url){
-              print("---mUrl---");
-              String strWithDig =url;
-              String submUrl=strWithDig.replaceAll(RegExp(r'+'), '');
-              print(submUrl);
-              String submUrlSpace=submUrl.replaceAll(RegExp(r' '), '');
-              print(submUrlSpace);
-              launch(submUrlSpace);
-              print("onPrint ${url}");
-              handleUserInteraction(context,CallbackInactividad);
-            } ,
-            onJsAlert: (controller, jsAlertRequest){
-              print("onJsAlert ${jsAlertRequest}");
-              handleUserInteraction(context,CallbackInactividad);
-            },
-            onScrollChanged: ( controller, x, y){
-              print("onPrint ${x}");
-              print("onPrint ${y}");
-              handleUserInteraction(context,CallbackInactividad);
-            },
-            onJsConfirm: (controller,jsConfirm ){
-              handleUserInteraction(context,CallbackInactividad);
-              print("onJsConfirm ${jsConfirm}");
-            },
-            androidOnPermissionRequest: (controller, origin, resources) async {
-              return PermissionRequestResponse(
-                  resources: resources,
-                  action: PermissionRequestResponseAction.GRANT);
-            },
-            shouldOverrideUrlLoading: (controller, navigationAction) async {
-              var uri = navigationAction.url;
-              print("navigationAction");
-              print(navigationAction);
-              print(navigationAction.url);
-              if (uri.contains(returnToApp)) {
-                Navigator.pop(context,true);
-              }
-              if (navigationAction.url.contains("tel")) {
-                print("===mUrl======");
-                String submUrlSpace=navigationAction.url.replaceAll(RegExp(r' '), '');
-                print(submUrlSpace);
-                launch(submUrlSpace);
-              }
-            },
-            onConsoleMessage: (controller, consoleMessage) {
-              handleUserInteraction(context,CallbackInactividad);
-              print("consoleMessage");
-              print(consoleMessage);
-            },
-          ),
-/*
-          WebviewScaffold(
-            url:_appEnvironmentConfig.cotizadorAutos+'?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}&cveDA=${DA}",
-            primary: false,
-            withJavascript: true,
-            withZoom: false,
-            displayZoomControls: false,
-            withLocalStorage: true,
-            hidden:false,
-            clearCache: true,
-    initialChild: Container()
-          ),
-          */
-        ),
-      ));
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
   }
 
-  /*
-          onHorizontalDragStart:(d){
-            handleUserInteraction(context,CallbackInactividad);
-          },
-          onVerticalDragStart:(d){
-            handleUserInteraction(context,CallbackInactividad);
-          },
 
-           */
-
-  void CallbackInactividad(){
-    //setState(() {
-      print("CallbackInactividad Autos");
-      focusContrasenaInactividad.hasFocus;
-      //showInactividad;
-      _flutterWebViewPlugin = FlutterWebviewPlugin();
-      _flutterWebViewPlugin.onStateChanged.listen((onData) async {
-        print("CallbackInactividad Autos");
-        String mUrl = onData.url.toString();
-        print("mUrl: "+mUrl);
-        // print("Eventos type: "+onData.type.toString());
-        if (mUrl.contains(returnToApp)) {
-          print(onData.url);
-          print(onData.type);
-          print(onData.navigationType);
-          _flutterWebViewPlugin.close();
-          _flutterWebViewPlugin.dispose();
-
-          if(doReturn){
-          Navigator.pop(context,true);
-          doReturn = false;
-          }
-        }
-        if (mUrl.contains("tel")) {
-          print("***mUrl***");
-          print(mUrl);
-          String strWithDig =mUrl;
-          String submUrl=strWithDig.replaceAll(RegExp(r'+'), '');
-          print(submUrl);
-          launch(submUrl);
-        }
-      });
-      handleUserInteraction(context,CallbackInactividad);
-      //contrasenaInactividad = !contrasenaInactividad;
-    //});
+  @override
+  Widget build(BuildContext context) {
+    appEnvironmentConfig = AppConfig.of(context);
+    return  GestureDetector(
+        onTap: (){
+          Inactivity(context:context).initialInactivity(functionInactivity);
+        },child:WillPopScope(
+        onWillPop: () async => false,
+        child: SafeArea(
+          child: Scaffold(
+            resizeToAvoidBottomPadding:true,
+            resizeToAvoidBottomInset:false,
+            body: InAppWebView(
+              key: webViewKey,
+              initialUrl: appEnvironmentConfig.cotizadorAutos+'?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}&cveDA=${DA}",
+              initialOptions: options,
+              onWebViewCreated: (controller) {
+                webViewController = controller;
+              },
+              onLoadStart: (controller, url) {
+                print("onLoadStart ${url}");
+                Inactivity(context:context).initialInactivity(functionInactivity);
+              },
+              onLoadStop: (controller, url) {
+                print("onLoadStop ${url}");
+                Inactivity(context:context).initialInactivity(functionInactivity);
+              },
+              onPrint:(controller, url){
+                Inactivity(context:context).initialInactivity(functionInactivity);
+                print("---mUrl---");
+                String strWithDig =url;
+                String submUrl=strWithDig.replaceAll(RegExp(r'+'), '');
+                String submUrlSpace=submUrl.replaceAll(RegExp(r' '), '');
+                launch(submUrlSpace);
+              } ,
+              onScrollChanged: ( controller, x, y){
+                Inactivity(context:context).initialInactivity(functionInactivity);
+                print("onPrint ${x}");
+                print("onPrint ${y}");
+                //handleUserInteraction(context,CallbackInactividad);
+              },
+              androidOnPermissionRequest: (controller, origin, resources) async {
+                return PermissionRequestResponse(
+                    resources: resources,
+                    action: PermissionRequestResponseAction.GRANT);
+              },
+              shouldOverrideUrlLoading: (controller, shouldOverrideUrlLoadingRequest) async {
+                print("URL: ${shouldOverrideUrlLoadingRequest.url}");
+                if (shouldOverrideUrlLoadingRequest.url.contains(returnToApp)) {
+                  Inactivity(context:context).cancelInactivity();
+                  Navigator.pop(context,true);
+                }
+                if (shouldOverrideUrlLoadingRequest.url.contains("tel")) {
+                  print("===mUrl======");
+                  Inactivity(context:context).initialInactivity(functionInactivity);
+                  String submUrlSpace=shouldOverrideUrlLoadingRequest.url.replaceAll(RegExp(r' '), '');
+                  print(submUrlSpace);
+                  launch(submUrlSpace);
+                }
+                return ShouldOverrideUrlLoadingAction.ALLOW;
+              },
+              onConsoleMessage: (controller, consoleMessage) {
+                Inactivity(context:context).initialInactivity(functionInactivity);
+                //handleUserInteraction(context,CallbackInactividad);
+                print("consoleMessage");
+                print(consoleMessage);
+              },
+            ),
+          ),
+        )));
   }
 }

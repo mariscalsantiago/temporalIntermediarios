@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
@@ -5,6 +6,7 @@ import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/Custom/Constantes.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
@@ -22,6 +24,7 @@ import 'package:cotizador_agente/UserInterface/perfil/condiciones_uso.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +43,7 @@ FocusNode focusContrasenaInactividad = new FocusNode();
 bool contrasenaInactividad = true;
 bool _didAuthenticate = true;
 var isShowAlert = false;
+bool _firstSession = true;
 
 enum AlertDialogType {
   errorConexion,
@@ -979,6 +983,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   onTap: () {
                                     print(
                                         "-----------Exito----------------------");
+                                    primerAccesoUsuario();
                                     if (prefs.getBool("primeraVez") ||
                                         prefs.getBool("flujoCompletoLogin") ==
                                             null ||
@@ -996,51 +1001,118 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         if (prefs.getBool(
                                                 "aceptoCondicionesDeUso") ==
                                             null) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          CondicionesPage(
-                                                            callback:
-                                                                FuncionAlerta,
-                                                          )));
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginActualizarContrasena(
+                                                          responsive:
+                                                              responsive,
+                                                        )));
+                                          }
                                         } else if (prefs.getBool(
                                                     "aceptoCondicionesDeUso") !=
                                                 null &&
                                             prefs.getBool(
                                                 "aceptoCondicionesDeUso")) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (BuildContext
-                                                          context) =>
-                                                      LoginActualizarContrasena(
-                                                        responsive: responsive,
-                                                      )));
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginActualizarContrasena(
+                                                          responsive:
+                                                              responsive,
+                                                        )));
+                                          }
                                         } else if (prefs.getBool(
                                                     "aceptoCondicionesDeUso") !=
                                                 null &&
                                             !prefs.getBool(
                                                 "aceptoCondicionesDeUso")) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            // validamos si el usuario ya inicio sesión por primera vez
+                                            if (_firstSession) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
                                                           CondicionesPage(
                                                             callback:
                                                                 FuncionAlerta,
                                                           )));
+                                            } else {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (BuildContext
+                                                              context) =>
+                                                          LoginActualizarContrasena(
+                                                            responsive:
+                                                                responsive,
+                                                          )));
+                                            }
+                                          }
                                         } else {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (BuildContext
-                                                          context) =>
-                                                      LoginActualizarContrasena(
-                                                        responsive: responsive,
-                                                      )));
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginActualizarContrasena(
+                                                          responsive:
+                                                              responsive,
+                                                        )));
+                                          }
                                         }
                                         //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
                                       } else {
@@ -1220,15 +1292,28 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         if (prefs.getBool(
                                                 "aceptoCondicionesDeUso") ==
                                             null) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          CondicionesPage(
-                                                            callback:
-                                                                FuncionAlerta,
-                                                          )));
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginActualizarContrasena(
+                                                          responsive:
+                                                              responsive,
+                                                        )));
+                                          }
                                         } else if (prefs.getBool(
                                                     "aceptoCondicionesDeUso") !=
                                                 null &&
@@ -1247,24 +1332,51 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 null &&
                                             !prefs.getBool(
                                                 "aceptoCondicionesDeUso")) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          CondicionesPage(
-                                                            callback:
-                                                                FuncionAlerta,
-                                                          )));
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginActualizarContrasena(
+                                                          responsive:
+                                                              responsive,
+                                                        )));
+                                          }
                                         } else {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (BuildContext
-                                                          context) =>
-                                                      LoginActualizarContrasena(
-                                                        responsive: responsive,
-                                                      )));
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginActualizarContrasena(
+                                                          responsive:
+                                                              responsive,
+                                                        )));
+                                          }
                                         }
                                         //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
                                       } else {
@@ -1445,15 +1557,28 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         if (prefs.getBool(
                                                 "aceptoCondicionesDeUso") ==
                                             null) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          CondicionesPage(
-                                                            callback:
-                                                                FuncionAlerta,
-                                                          )));
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginActualizarContrasena(
+                                                          responsive:
+                                                              responsive,
+                                                        )));
+                                          }
                                         } else if (prefs.getBool(
                                                     "aceptoCondicionesDeUso") !=
                                                 null &&
@@ -1472,15 +1597,28 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 null &&
                                             !prefs.getBool(
                                                 "aceptoCondicionesDeUso")) {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          CondicionesPage(
-                                                            callback:
-                                                                FuncionAlerta,
-                                                          )));
+                                          // validamos si el usuario ya inicio sesión por primera vez
+                                          if (_firstSession) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        CondicionesPage(
+                                                          callback:
+                                                              FuncionAlerta,
+                                                        )));
+                                          } else {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        LoginActualizarContrasena(
+                                                          responsive:
+                                                              responsive,
+                                                        )));
+                                          }
                                         } else {
                                           Navigator.push(
                                               context,
@@ -1675,15 +1813,27 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       if (prefs.getBool(
                                               "aceptoCondicionesDeUso") ==
                                           null) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        CondicionesPage(
-                                                          callback:
-                                                              FuncionAlerta,
-                                                        )));
+                                        // validamos si el usuario ya inicio sesión por primera vez
+                                        if (_firstSession) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          CondicionesPage(
+                                                            callback:
+                                                                FuncionAlerta,
+                                                          )));
+                                        } else {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      LoginActualizarContrasena(
+                                                        responsive: responsive,
+                                                      )));
+                                        }
                                       } else if (prefs.getBool(
                                                   "aceptoCondicionesDeUso") !=
                                               null &&
@@ -1702,15 +1852,27 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                               null &&
                                           !prefs.getBool(
                                               "aceptoCondicionesDeUso")) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        CondicionesPage(
-                                                          callback:
-                                                              FuncionAlerta,
-                                                        )));
+                                        // validamos si el usuario ya inicio sesión por primera vez
+                                        if (_firstSession) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          CondicionesPage(
+                                                            callback:
+                                                                FuncionAlerta,
+                                                          )));
+                                        } else {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      LoginActualizarContrasena(
+                                                        responsive: responsive,
+                                                      )));
+                                        }
                                       } else {
                                         Navigator.push(
                                             context,
@@ -1898,15 +2060,27 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       if (prefs.getBool(
                                               "aceptoCondicionesDeUso") ==
                                           null) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        CondicionesPage(
-                                                          callback:
-                                                              FuncionAlerta,
-                                                        )));
+                                        // validamos si el usuario ya inicio sesión por primera vez
+                                        if (_firstSession) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          CondicionesPage(
+                                                            callback:
+                                                                FuncionAlerta,
+                                                          )));
+                                        } else {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      LoginActualizarContrasena(
+                                                        responsive: responsive,
+                                                      )));
+                                        }
                                       } else if (prefs.getBool(
                                                   "aceptoCondicionesDeUso") !=
                                               null &&
@@ -1925,15 +2099,27 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                               null &&
                                           !prefs.getBool(
                                               "aceptoCondicionesDeUso")) {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        CondicionesPage(
-                                                          callback:
-                                                              FuncionAlerta,
-                                                        )));
+                                        // validamos si el usuario ya inicio sesión por primera vez
+                                        if (_firstSession) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) =>
+                                                          CondicionesPage(
+                                                            callback:
+                                                                FuncionAlerta,
+                                                          )));
+                                        } else {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      LoginActualizarContrasena(
+                                                        responsive: responsive,
+                                                      )));
+                                        }
                                       } else {
                                         Navigator.push(
                                             context,
@@ -4722,7 +4908,10 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    SystemSettings.defaultApps();
+                                    if(Platform.isIOS)
+                                      SystemSettings.defaultApps();
+                                    else
+                                      SystemSettings.security();
                                   },
                                   child: Text(
                                     Constantes.ACTIVAR_AHORA,
@@ -6302,10 +6491,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
             return WillPopScope(
-              onWillPop: () {
-                callback();
-                Navigator.pop(context, true);
-              },
+              onWillPop: () async => false,
               child: Stack(
                 children: [
                   GestureDetector(
@@ -6561,6 +6747,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
+                                    Inactivity(context:context).cancelInactivity();
+
                                     if (prefs.getBool("activarBiometricos")) {
                                       Navigator.pushReplacement(
                                           context,
@@ -6569,6 +6757,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                   BiometricosPage(
                                                       responsive: responsive)));
                                     } else {
+
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
@@ -8445,6 +8634,7 @@ class _MyDialogContrasenaInactividadState
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
+                                    prefs.setBool("esPerfil", false);
                                     sendTag("appinter_inactividad");
                                     canceltimer();
                                     Navigator.pop(context, true);
@@ -8486,40 +8676,40 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
 
     if (Platform.isIOS) {
       authenticated = await localAuth.authenticateWithBiometrics(
-          localizedReason: is_available_finger && is_available_face
-              ? 'Coloca tu dedo o mira fijamente a la cámara para continuar'
-              : is_available_finger
-                  ? 'Coloca tu dedo para continuar'
-                  : 'Mira fijamente a la cámara para continuar ',
-          iOSAuthStrings: new IOSAuthMessages(
-              lockOut:
-                  'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
-              goToSettingsDescription:
-                  'Tus biométricos no estan configurados en el dispositivo, ve a configuraciones para añadirla.',
-              cancelButton: "Cancelar",
-              goToSettingsButton: "Aceptar"),
-          useErrorDialogs: false,
+          localizedReason:is_available_finger ?  'Coloca tu dedo para continuar.' : 'Mira fijamente a la cámara para continuar.',
+          iOSAuthStrings: new IOSAuthMessages (
+              lockOut: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
+              goToSettingsDescription:  is_available_finger
+                  ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                  : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
+              goToSettingsButton: "Ir a configuraciones",
+              cancelButton: "Cancelar"),
+          useErrorDialogs: true,
           stickyAuth: false);
     } else {
       authenticated = await localAuth.authenticateWithBiometrics(
+          localizedReason: is_available_finger && is_available_face
+              ? "Coloca tu dedo o mira a la cámara para continuar."
+              : is_available_finger
+              ? "Coloca tu dedo para continuar"
+              : "Mira fijamente a la cámara",
           androidAuthStrings: new AndroidAuthMessages(
+              fingerprintNotRecognized: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
               signInTitle: "Inicio de sesión",
-              fingerprintHint: is_available_finger && is_available_face
-                  ? "Coloca tu dedo o mira a la cámara para continuar."
-                  : is_available_finger
-                      ? "Coloca tu dedo para continuar"
-                      : "Mira fijamente a la cámara",
+              fingerprintHint: '',
               cancelButton: "Cancelar",
-              fingerprintRequiredTitle: is_available_finger
+              fingerprintRequiredTitle: is_available_finger && is_available_face ?
+              "Solicitud de huella digital o reconocimiento facial"
+                  : is_available_finger
                   ? "Solicitud de huella digital"
-                  : is_available_face
-                      ? "Mira fijamente a la cámara"
-                      : "",
-              goToSettingsDescription:
-                  "Tus biométricos no estan configurados en el dispositivo, ve a configuraciones para añadirla.",
+                  : "Mira fijamente a la cámara",
+              goToSettingsDescription: is_available_finger && is_available_face ?
+              "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                  : is_available_finger
+                  ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                  : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
               goToSettingsButton: "Ir a configuraciones"),
-          localizedReason: ' ',
-          useErrorDialogs: false,
+          useErrorDialogs: true,
           stickyAuth: false);
     }
 
@@ -8655,5 +8845,46 @@ String numero() {
         prefs.getString("medioContactoTelefono").substring(numero - 4, numero);
   } else {
     return "**********";
+  }
+}
+
+void primerAccesoUsuario() async {
+  Map userInfo;
+  DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+
+  String correoUsuario;
+  String emailFirst;
+  String email;
+  correoUsuario = prefs.getString("correoUsuario");
+  emailFirst = correoUsuario.replaceAll('.', '-');
+  email = emailFirst.replaceAll('@', '-');
+
+  try {
+    await _dataBaseReference
+        .child("firstSessionUser")
+        .child(email.toLowerCase())
+        .once()
+        .then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      userInfo = json.decode(jsoonn);
+
+      if (userInfo.isNotEmpty && userInfo != null) {
+        if (userInfo["isFirstMobileSession"]) {
+          _dataBaseReference
+              .child("firstSessionUser")
+              .child(email.toLowerCase())
+              .set({'isFirstMobileSession': false});
+        }
+        _firstSession = false;
+      } else {
+        _firstSession = true;
+      }
+    });
+  } catch (err) {
+    _firstSession = true;
+    _dataBaseReference
+        .child("firstSessionUser")
+        .child(email.toLowerCase())
+        .set({'isFirstMobileSession': true});
   }
 }

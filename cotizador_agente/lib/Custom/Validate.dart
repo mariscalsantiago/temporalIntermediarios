@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
@@ -83,56 +84,82 @@ Future<File> urlToFile(String imageUrl) async {
   return file;
 }
 
-void validateIntenetstatus(BuildContext context, Responsive responsive,Function callback){
-  print("validateIntenetstatus $isNone $isMobile");
-
+Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,Function callback) async {
+ print("init:validateIntenetstatus");
+  isNone = false;
+  isMobile = false;
   callback();
-  Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-    print("validateIntenetstatus $result");
-    print(ConnectivityResult.values);
-    if(result == ConnectivityResult.wifi){
-      print("validateIntenetstatus:wifi");
-      if(isNone){
+  if((await ConnectivityServices().getConnectivityStatus(false)).available) {
+    print("available");
+      if(isMobile) {
+        print("available:mobil");
+        isMobile = false;
         Navigator.pop(context);
-        isNone = false;
-        showInactividad = false;
-
       }
-      if(isMobile){
-        Navigator.pop(context);
-        isMobile=false;
-      }
-
-      callback();
-      print("validateIntenetstatus:wifi:next: $isNone $isMobile ");
-    }else if (result == ConnectivityResult.mobile){
-      print("validateIntenetstatus:mobile");
-
-      if(isNone){
-        Navigator.pop(context);
-        isNone = false;
-      }
-      if(!isMobile){
-        customAlert(AlertDialogType.DatosMoviles_Activados, context, "", "", responsive, funcionAlerta);
-        isMobile=true;
-      }
-      print("validateIntenetstatus:mobile:next: $isNone $isMobile ");
-
-      callback();
-    }else if(result == ConnectivityResult.none){
-      print("validateIntenetstatus:none");
-
-      if(!isNone){
-        //TODO validar Dali
+    } else {
+    print("available:else");
+    if(!isNone) {
+      print("available:isNone");
         sendTag("appinter_msg_wifi");
         showInactividad = true;
-         customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "", responsive, funcionAlertaNone);
+        isNone = true;
+        customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "", responsive, funcionAlertaNone);
       }
-      isNone = true;
-      print("validateIntenetstatus:none: $isNone $isMobile ");
-      callback();
     }
-  });
+ print("init:validateIntenetstatus $isNone $isMobile");
+
+
+ Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.wifi) {
+        print("validateIntenetstatus:wifi");
+        if (isNone) {
+          Navigator.pop(context);
+          isNone = false;
+          showInactividad = false;
+        }
+        if (isMobile) {
+          Navigator.pop(context);
+          isMobile = false;
+        }
+
+        callback();
+        print("validateIntenetstatus:wifi:next: $isNone $isMobile ");
+      } else if (result == ConnectivityResult.mobile) {
+        print("validateIntenetstatus:mobile");
+
+        if(isNone) {
+          Navigator.pop(context);
+          isNone = false;
+        }
+        if (!isMobile) {
+          customAlert(AlertDialogType.DatosMoviles_Activados, context, "", "", responsive, funcionAlerta);
+          isMobile = true;
+        }
+        print("validateIntenetstatus:mobile:next: $isNone $isMobile ");
+
+        callback();
+      } else if (result == ConnectivityResult.none) {
+        print("validateIntenetstatus:none");
+
+        if (!isNone) {
+          //TODO validar Dali
+          if (isMobile) {
+            isMobile = false;
+            Navigator.pop(context);
+          }
+          sendTag("appinter_msg_wifi");
+          showInactividad = true;
+          isNone = true;
+          customAlert(
+              AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "",
+              responsive, funcionAlertaNone);
+        }
+
+        print("validateIntenetstatus:none: $isNone $isMobile ");
+        callback();
+      }
+    });
+
 }
 
 void validateBiometricstatus( Function callback) {

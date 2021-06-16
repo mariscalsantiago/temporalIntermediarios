@@ -8,6 +8,7 @@ import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Models/DeasModel.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
@@ -57,7 +58,7 @@ bool internet;
 var _image;
 bool isSwitchedPerfill;
 Responsive responsiveMainTablet;
-bool _loading=false;
+bool _loading = false;
 
 class PerfilPage extends StatefulWidget {
   Function callback;
@@ -72,12 +73,14 @@ class PerfilPage extends StatefulWidget {
 class _PerfilPageState extends State<PerfilPage> {
   File fotoPerfil;
   bool _saving;
-  bool _loading=false;
+  bool _loading = false;
   Timer timerLoading;
   File imagePefil;
 
   @override
   void initState() {
+    Inactivity(context: context).initialInactivity(functionInactivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity);
     _saving = false;
     super.initState();
     listadoDA = [];
@@ -91,30 +94,28 @@ class _PerfilPageState extends State<PerfilPage> {
     getDeasCuas(context);
     getCuas(context);
     posicionCUA = 0;
-    handleUserInteraction(context,CallbackInactividad);
-    validateIntenetstatus(context, widget.responsive,CallbackInactividad);
+   // handleUserInteraction(context, CallbackInactividad);
+   // validateIntenetstatus(context, widget.responsive, CallbackInactividad);
     imagePefil = datosFisicos.personales.photoFile;
     //skeletonLoad();
   }
 
-  Future<void>  skeletonLoad() async {
-    handleUserInteraction(context,CallbackInactividad);
+  Future<void> skeletonLoad() async {
+   // handleUserInteraction(context, CallbackInactividad);
     print("skeletoLoad");
     setState(() {
       _loading = true;
     });
-
 
     timerLoading = Timer.periodic(Duration(seconds: 2), (timer) {
       print("skeletoLoad: timer");
 
       cancelTimerLoading();
     });
-
   }
 
-  void cancelTimerLoading(){
-    if(timerLoading!=null&&timerLoading.isActive){
+  void cancelTimerLoading() {
+    if (timerLoading != null && timerLoading.isActive) {
       timerLoading.cancel();
     }
 
@@ -145,16 +146,27 @@ class _PerfilPageState extends State<PerfilPage> {
 
     // valorCUA = datosPerfilador.intermediarios[0];
     //dropdownValue2 = datosPerfilador.intermediarios[0];
-    for (int j = 0; j < datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++) {
-      if(datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] == datosPerfilador.agenteInteresadoList.elementAt(j).codIntermediario){
-        if(datosPerfilador.agenteInteresadoList.elementAt(j).nombres != null && datosPerfilador.agenteInteresadoList.elementAt(j).nombres.isNotEmpty){
-          listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(j).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(j).apellidoPaterno}");
+    for (int j = 0;
+        j <
+            datosPerfilador.daList
+                .elementAt(posicionDA)
+                .codIntermediario
+                .length;
+        j++) {
+      if (datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] ==
+          datosPerfilador.agenteInteresadoList.elementAt(j).codIntermediario) {
+        if (datosPerfilador.agenteInteresadoList.elementAt(j).nombres != null &&
+            datosPerfilador.agenteInteresadoList
+                .elementAt(j)
+                .nombres
+                .isNotEmpty) {
+          listadoCUA.add(
+              "${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(j).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(j).apellidoPaterno}");
+        } else {
+          listadoCUA.add(
+              "${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(j).razonSocial}");
         }
-        else{
-          listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(j).razonSocial}");
-        }
-      }
-      else{
+      } else {
         //listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
       }
 
@@ -163,7 +175,7 @@ class _PerfilPageState extends State<PerfilPage> {
 
     print("listadoCUA ${listadoCUA.length}");
 
-    if (listadoCUA.length >=2) {
+    if (listadoCUA.length >= 2) {
       showCua = true;
     } else {
       showCua = false;
@@ -175,38 +187,53 @@ class _PerfilPageState extends State<PerfilPage> {
     print("getCuas");
     // valorCUA = datosPerfilador.intermediarios[0];
     //dropdownValue2 = datosPerfilador.intermediarios[0];
-    for (int j = 0; j < datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++) {
-
-      print("getCuas daList en J: ${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
+    for (int j = 0;
+        j <
+            datosPerfilador.daList
+                .elementAt(posicionDA)
+                .codIntermediario
+                .length;
+        j++) {
+      print(
+          "getCuas daList en J: ${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
       bool inlist = false;
 
-      for(int n =0; n<datosPerfilador.agenteInteresadoList.length; n++){
-        print("getCuas datosPerfilador en N ${datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario}");
-        if(datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] == datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario){
+      for (int n = 0; n < datosPerfilador.agenteInteresadoList.length; n++) {
+        print(
+            "getCuas datosPerfilador en N ${datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario}");
+        if (datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] ==
+            datosPerfilador.agenteInteresadoList
+                .elementAt(n)
+                .codIntermediario) {
           print("getCuas if1");
-          if(datosPerfilador.agenteInteresadoList.elementAt(j).nombres != null && datosPerfilador.agenteInteresadoList.elementAt(n).nombres.isNotEmpty){
+          if (datosPerfilador.agenteInteresadoList.elementAt(j).nombres !=
+                  null &&
+              datosPerfilador.agenteInteresadoList
+                  .elementAt(n)
+                  .nombres
+                  .isNotEmpty) {
             print("getCuas if2");
-            listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(n).apellidoPaterno}");
-            inlist=true;
-          }
-          else{
+            listadoCUA.add(
+                "${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(n).apellidoPaterno}");
+            inlist = true;
+          } else {
             print("getCuas else1");
-            listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).razonSocial}");
-            inlist=true;
+            listadoCUA.add(
+                "${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).razonSocial}");
+            inlist = true;
           }
+        }
       }
-      }
-      if(!inlist){
+      if (!inlist) {
         print("getCuas if3");
         //listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
       }
-
 
       //listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
     }
 
     print("listadoCUA ${listadoCUA.length}");
-    if (listadoCUA.length >=2) {
+    if (listadoCUA.length >= 2) {
       showCua = true;
     } else {
       showCua = false;
@@ -221,36 +248,46 @@ class _PerfilPageState extends State<PerfilPage> {
     });
   }
 
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     isSwitchedPerfill = prefs.getBool("activarBiometricos");
-    //print("build isSwitchedPerfill ${isSwitchedPerfill}");
-    return SafeArea(
-      child: GestureDetector(
-        onTap: (){
-          handleUserInteraction(context,CallbackInactividad);
-        },
-        child: Scaffold(
-            appBar: _saving ? null : AppBar(
-              elevation: 0.0,
-              backgroundColor: Colors.white,
-              centerTitle: false,
-              title: Text(
-                "Mi perfil",
-                style: TextStyle(color: Theme.Colors.Azul_2),
-              ),
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Theme.Colors.GNP),
-                onPressed: () {
-                  handleUserInteraction(context,CallbackInactividad);
-                  if (_saving) {
-                  } else {
-                    Navigator.pop(context, true);
-                    widget.callback();
-                  }
-                },
-              ),
-            ),
+    return  GestureDetector(onTap: (){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    },child:WillPopScope(
+    onWillPop: () async => false,
+    child: SafeArea(
+      child:Scaffold(
+            appBar: _saving
+                ? null
+                : AppBar(
+                    elevation: 0.0,
+                    backgroundColor: Colors.white,
+                    centerTitle: false,
+                    title: Text(
+                      "Mi perfil",
+                      style: TextStyle(color: Theme.Colors.Azul_2),
+                    ),
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back, color: Theme.Colors.GNP),
+                      onPressed: () {
+                          Inactivity(context:context).cancelInactivity();
+                       // handleUserInteraction(context, CallbackInactividad);
+                        if (_saving) {
+                        } else {
+                          Navigator.pop(context, true);
+                          widget.callback();
+                        }
+                      },
+                    ),
+                  ),
             body: prefs.getBool("useMobileLayout")
                 ? Container(
                     width: widget.responsive.width,
@@ -274,7 +311,7 @@ class _PerfilPageState extends State<PerfilPage> {
                     );
                   })),
       ),
-    );
+    ));
   }
 
   List<Widget> builData(Responsive responsive) {
@@ -299,95 +336,117 @@ class _PerfilPageState extends State<PerfilPage> {
                           flex: 2,
                           child: GestureDetector(
                             onTap: () {
-                              handleUserInteraction(context,CallbackInactividad);
+                             // handleUserInteraction(context, CallbackInactividad);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          VerFotoPage(callback: loadingImage)));
+                                          VerFotoPage(responsive: widget.responsive,callback: loadingImage))).then((value){
+                                Inactivity(context:context).initialInactivity(functionInactivity);
+                              });
                             },
-                            child:
-                            _loading ?
-                            Container(
-                              margin:prefs.getBool("useMobileLayout") ? EdgeInsets.only(top: responsive.hp(1)): EdgeInsets.only(),
-                              width: prefs.getBool("useMobileLayout")
-                                  ? responsive.wp(22)
-                                  : isPortrait
-                                  ? responsive.wp(13)
-                                  : responsive.wp(10),
-                              height: prefs.getBool("useMobileLayout")
-                                  ? responsive.wp(24)
-                                  : isPortrait
-                                  ? responsive.wp(13)
-                                  : responsive.wp(10),
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  //borderRadius: BorderRadius.circular(100),
-                                  ),
-                              child: Container(
-                                margin: prefs.getBool("useMobileLayout") ?  EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5)) :  isPortrait?  EdgeInsets.only(left: responsive.wp(2.9), right: responsive.wp(2.9)) : EdgeInsets.only(left: responsive.wp(4), right: responsive.wp(4)) ,
-                                child: Skeleton(
-                                  animationDuration: Duration(milliseconds: 500),
-                                  textColor: Theme.Colors.gris_load1,
-                                  height: responsive.hp(10),
-                                  width: responsive.width,
-                                  style: SkeletonStyle.circle,
-
-                                ),
-                              ),
-                            )
-                                :
-
-                                Container(
-                              margin:prefs.getBool("useMobileLayout") ? EdgeInsets.only(top: responsive.hp(1)): EdgeInsets.only(),
-                                width: prefs.getBool("useMobileLayout")
-                                    ? responsive.wp(22)
-                                    : isPortrait
-                                        ? responsive.wp(13)
-                                        : responsive.wp(10),
-                                height: prefs.getBool("useMobileLayout")
-                                    ? responsive.wp(24)
-                                    : isPortrait
-                                        ? responsive.wp(13)
-                                        : responsive.wp(10),
-                                decoration: BoxDecoration(
-                                    color: Theme.Colors.profile_logo,
-                                    shape: BoxShape.circle,
-                                    //borderRadius: BorderRadius.circular(100),
-                                    border: Border.all(
-                                        width: 2, color: Theme.Colors.Azul_2)),
-                                child:  Center(
-                                  child: imagePefil != null ?
-                                  CircleAvatar(
-                                          radius: prefs.getBool("useMobileLayout")
-                                              ? 43: isPortrait ? 52 : 70 ,
-                                          backgroundImage: Image.file(imagePefil, fit: BoxFit.cover).image,
-                                          backgroundColor: Colors.transparent,
-                                        )
-                                      : Text(
-                                          respuestaServicioCorreo
-                                                          .consultaUsuarioPorCorreoResponse
-                                                          .USUARIOS
-                                                          .USUARIO
-                                                          .apellidoPaterno !=
-                                                      null &&
-                                                  respuestaServicioCorreo
-                                                          .consultaUsuarioPorCorreoResponse
-                                                          .USUARIOS
-                                                          .USUARIO
-                                                          .nombre !=
-                                                      null
-                                              ? "${(respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre[0] : "")} ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno[0] : ""}"
-                                              : "",
-                                          style: TextStyle(
-                                              fontSize: prefs.getBool(
+                            child: _loading
+                                ? Container(
+                                    margin: prefs.getBool("useMobileLayout")
+                                        ? EdgeInsets.only(top: responsive.hp(1))
+                                        : EdgeInsets.only(),
+                                    width: prefs.getBool("useMobileLayout")
+                                        ? responsive.wp(22)
+                                        : isPortrait
+                                            ? responsive.wp(13)
+                                            : responsive.wp(10),
+                                    height: prefs.getBool("useMobileLayout")
+                                        ? responsive.wp(24)
+                                        : isPortrait
+                                            ? responsive.wp(13)
+                                            : responsive.wp(10),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      //borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    child: Container(
+                                      margin: prefs.getBool("useMobileLayout")
+                                          ? EdgeInsets.only(
+                                              left: responsive.wp(5),
+                                              right: responsive.wp(5))
+                                          : isPortrait
+                                              ? EdgeInsets.only(
+                                                  left: responsive.wp(2.9),
+                                                  right: responsive.wp(2.9))
+                                              : EdgeInsets.only(
+                                                  left: responsive.wp(4),
+                                                  right: responsive.wp(4)),
+                                      child: Skeleton(
+                                        animationDuration:
+                                            Duration(milliseconds: 500),
+                                        textColor: Theme.Colors.gris_load1,
+                                        height: responsive.hp(10),
+                                        width: responsive.width,
+                                        style: SkeletonStyle.circle,
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    margin: prefs.getBool("useMobileLayout")
+                                        ? EdgeInsets.only(top: responsive.hp(1))
+                                        : EdgeInsets.only(),
+                                    width: prefs.getBool("useMobileLayout")
+                                        ? responsive.wp(22)
+                                        : isPortrait
+                                            ? responsive.wp(13)
+                                            : responsive.wp(10),
+                                    height: prefs.getBool("useMobileLayout")
+                                        ? responsive.wp(24)
+                                        : isPortrait
+                                            ? responsive.wp(13)
+                                            : responsive.wp(10),
+                                    decoration: BoxDecoration(
+                                        color: Theme.Colors.profile_logo,
+                                        shape: BoxShape.circle,
+                                        //borderRadius: BorderRadius.circular(100),
+                                        border: Border.all(
+                                            width: 2,
+                                            color: Theme.Colors.Azul_2)),
+                                    child: Center(
+                                      child: imagePefil != null
+                                          ? CircleAvatar(
+                                              radius: prefs.getBool(
                                                       "useMobileLayout")
-                                                  ? responsive.hp(3.4)
-                                                  : responsive.hp(3.2),
-                                              color: Theme.Colors.Azul_gnp,
-                                              fontWeight: FontWeight.w400),
-                                        ),
-                                )),
+                                                  ? 43
+                                                  : isPortrait
+                                                      ? 52
+                                                      : 70,
+                                              backgroundImage: Image.file(
+                                                      imagePefil,
+                                                      fit: BoxFit.cover)
+                                                  .image,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                            )
+                                          : Text(
+                                              respuestaServicioCorreo
+                                                              .consultaUsuarioPorCorreoResponse
+                                                              .USUARIOS
+                                                              .USUARIO
+                                                              .apellidoPaterno !=
+                                                          null &&
+                                                      respuestaServicioCorreo
+                                                              .consultaUsuarioPorCorreoResponse
+                                                              .USUARIOS
+                                                              .USUARIO
+                                                              .nombre !=
+                                                          null
+                                                  ? "${(respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre[0] : "")} ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno[0] : ""}"
+                                                  : "",
+                                              style: TextStyle(
+                                                  fontSize: prefs.getBool(
+                                                          "useMobileLayout")
+                                                      ? responsive.hp(3.4)
+                                                      : responsive.hp(3.2),
+                                                  color: Theme.Colors.Azul_gnp,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                    )),
                           ),
                         ),
                         Expanded(
@@ -404,7 +463,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                     color: Theme.Colors.Azul_gnp),
                               ),
                               Text(
-                                datosUsuario.emaillogin,
+                                datosUsuario.emaillogin.toLowerCase(),
                                 style: TextStyle(
                                     fontSize: prefs.getBool("useMobileLayout")
                                         ? responsive.ip(2)
@@ -430,10 +489,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                           Expanded(
                                             child: Container(
                                               margin: new EdgeInsets.only(
-                                                  left:
-                                                      responsive.wp(4.4),
-                                                  right: responsive
-                                                      .wp(2.2)),
+                                                  left: responsive.wp(4.4),
+                                                  right: responsive.wp(2.2)),
                                               decoration: BoxDecoration(
                                                 border: Border(
                                                   bottom: BorderSide(
@@ -446,8 +503,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                                 children: [
                                                   Container(
                                                     margin: EdgeInsets.only(
-                                                        bottom: responsive
-                                                            .hp(2.2)),
+                                                        bottom:
+                                                            responsive.hp(2.2)),
                                                     child: Text(
                                                       "DA",
                                                       style: TextStyle(
@@ -466,10 +523,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                           Expanded(
                                             child: (Container(
                                               margin: new EdgeInsets.only(
-                                                  right:
-                                                      responsive.wp(4.4),
-                                                  left: responsive
-                                                      .wp(2.2)),
+                                                  right: responsive.wp(4.4),
+                                                  left: responsive.wp(2.2)),
                                               decoration: BoxDecoration(
                                                 border: Border(
                                                   bottom: BorderSide(
@@ -482,8 +537,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                                 children: [
                                                   Container(
                                                     margin: EdgeInsets.only(
-                                                        bottom: responsive
-                                                            .hp(2.2)),
+                                                        bottom:
+                                                            responsive.hp(2.2)),
                                                     child: Text(
                                                       "CUA",
                                                       style: TextStyle(
@@ -531,7 +586,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                               child: showDea
                                                   ? GestureDetector(
                                                       onTap: () {
-                                                        handleUserInteraction(context,CallbackInactividad);
+                                                       // handleUserInteraction(context, CallbackInactividad);
                                                         Navigator.push(
                                                             context,
                                                             new MaterialPageRoute(
@@ -544,8 +599,10 @@ class _PerfilPageState extends State<PerfilPage> {
                                                                       isDA:
                                                                           true,
                                                                       callback:
-                                                                      updateDea,
-                                                                    )));
+                                                                          updateDea,
+                                                                    ))).then((value){
+                                                          Inactivity(context:context).initialInactivity(functionInactivity);
+                                                        });
                                                       },
                                                       onLongPressStart: (p) {
                                                         setState(() {
@@ -568,8 +625,10 @@ class _PerfilPageState extends State<PerfilPage> {
                                                                       isDA:
                                                                           true,
                                                                       callback:
-                                                                      updateDea,
-                                                                    )));
+                                                                          updateDea,
+                                                                    ))).then((value){
+                                                          Inactivity(context:context).initialInactivity(functionInactivity);
+                                                        });
                                                       },
                                                       child: Row(
                                                         crossAxisAlignment:
@@ -647,9 +706,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                 vertical: 8.0),
                                             child: showCua
                                                 ? GestureDetector(
-                                                    onTap: ()  {
-                                                      handleUserInteraction(context,CallbackInactividad);
-                                                       //getCuas(context);
+                                                    onTap: () {
+                                                    //  handleUserInteraction(context, CallbackInactividad);
+                                                      //getCuas(context);
                                                       Navigator.push(
                                                           context,
                                                           new MaterialPageRoute(
@@ -662,7 +721,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                                     isDA: false,
                                                                     callback:
                                                                         updateDeaCUA,
-                                                                  )));
+                                                                  ))).then((value){
+                                                        Inactivity(context:context).initialInactivity(functionInactivity);
+                                                      });
                                                     },
                                                     onLongPressStart: (p) {
                                                       setState(() async {
@@ -690,7 +751,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                                     isDA: false,
                                                                     callback:
                                                                         updateDeaCUA,
-                                                                  )));
+                                                                  ))).then((value){
+                                                        Inactivity(context:context).initialInactivity(functionInactivity);
+                                                      });
                                                     },
                                                     child: Row(
                                                       crossAxisAlignment:
@@ -705,8 +768,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                                 color: Theme
                                                                     .Colors
                                                                     .Azul_2,
-                                                                fontSize: responsive
-                                                                    .ip(1.5))),
+                                                                fontSize:
+                                                                    responsive.ip(
+                                                                        1.5))),
                                                         Icon(
                                                           preesCua
                                                               ? Icons
@@ -734,8 +798,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                               color: Theme
                                                                   .Colors
                                                                   .botonletra,
-                                                              fontSize: responsive
-                                                                  .ip(1.5))),
+                                                              fontSize:
+                                                                  responsive.ip(
+                                                                      1.5))),
                                                       Icon(
                                                           Icons.arrow_drop_down)
                                                     ],
@@ -763,28 +828,30 @@ class _PerfilPageState extends State<PerfilPage> {
                               : responsive.wp(11),
                       child: GestureDetector(
                         onTap: () async {
-                          handleUserInteraction(context,CallbackInactividad);
+                          //handleUserInteraction(context, CallbackInactividad);
                           _showPicker(context);
                         },
-                        child: _loading ? Container() :  Container(
-                            width: prefs.getBool("useMobileLayout")
-                                ? responsive.wp(10)
-                                : isPortrait
-                                ? responsive.wp(5)
-                                : responsive.wp(5),
-                            height: prefs.getBool("useMobileLayout")
-                                ? responsive.hp(10)
-                                : isPortrait
-                                ? responsive.wp(5)
-                                : responsive.wp(5),
-                            decoration: BoxDecoration(
-                              color: Theme.Colors.White,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.camera_alt_outlined,
-                              color: Theme.Colors.GNP,
-                            )),
+                        child: _loading
+                            ? Container()
+                            : Container(
+                                width: prefs.getBool("useMobileLayout")
+                                    ? responsive.wp(10)
+                                    : isPortrait
+                                        ? responsive.wp(5)
+                                        : responsive.wp(5),
+                                height: prefs.getBool("useMobileLayout")
+                                    ? responsive.hp(10)
+                                    : isPortrait
+                                        ? responsive.wp(5)
+                                        : responsive.wp(5),
+                                decoration: BoxDecoration(
+                                  color: Theme.Colors.White,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.camera_alt_outlined,
+                                  color: Theme.Colors.GNP,
+                                )),
                       ),
                     )
                   ],
@@ -887,7 +954,7 @@ class _PerfilPageState extends State<PerfilPage> {
                               child: showDea
                                   ? GestureDetector(
                                       onTap: () {
-                                        handleUserInteraction(context,CallbackInactividad);
+                                       // handleUserInteraction(context, CallbackInactividad);
                                         Navigator.push(
                                             context,
                                             new MaterialPageRoute(
@@ -897,7 +964,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                       list: listadoDA,
                                                       isDA: true,
                                                       callback: updateDea,
-                                                    )));
+                                                    ))).then((value){
+                                          Inactivity(context:context).initialInactivity(functionInactivity);
+                                        });
                                       },
                                       onLongPressStart: (p) {
                                         setState(() {
@@ -917,7 +986,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                       list: listadoDA,
                                                       isDA: true,
                                                       callback: updateDea,
-                                                    )));
+                                                    ))).then((value){
+                                          Inactivity(context:context).initialInactivity(functionInactivity);
+                                        });
                                       },
                                       child: Row(
                                         crossAxisAlignment:
@@ -979,7 +1050,7 @@ class _PerfilPageState extends State<PerfilPage> {
                             child: showCua
                                 ? GestureDetector(
                                     onTap: () {
-                                      handleUserInteraction(context,CallbackInactividad);
+                                      //handleUserInteraction(context, CallbackInactividad);
                                       getCuas(context);
                                       Navigator.push(
                                           context,
@@ -990,7 +1061,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                     list: listadoCUA,
                                                     isDA: false,
                                                     callback: updateDeaCUA,
-                                                  )));
+                                                  ))).then((value){
+                                        Inactivity(context:context).initialInactivity(functionInactivity);
+                                      });
                                     },
                                     onLongPressStart: (p) {
                                       setState(() {
@@ -1011,7 +1084,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                     list: listadoCUA,
                                                     isDA: false,
                                                     callback: updateDeaCUA,
-                                                  )));
+                                                  ))).then((value){
+                                        Inactivity(context:context).initialInactivity(functionInactivity);
+                                      });
                                     },
                                     child: Row(
                                       crossAxisAlignment:
@@ -1065,7 +1140,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 padding: EdgeInsets.zero,
                 onPressed: () async {
                   sendTag("appinter_perfil_cambio_pwd");
-                  handleUserInteraction(context,CallbackInactividad);
+                 // handleUserInteraction(context, CallbackInactividad);
                   prefs.setBool("seActualizarNumero", false);
                   prefs.setBool("esPerfil", true);
                   prefs.setBool("actualizarContrasenaPerfil", true);
@@ -1091,7 +1166,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                   LoginCodigoVerificaion(
                                     responsive: responsive,
                                     isNumero: false,
-                                  )));
+                                  ))).then((value){
+                        Inactivity(context:context).initialInactivity(functionInactivity);
+                      });
                     } else {
                       customAlert(AlertDialogType.errorServicio, context, "",
                           "", responsive, funcion);
@@ -1134,7 +1211,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   sendTag("appinter_perfil_cambio_tel");
-                  handleUserInteraction(context,CallbackInactividad);
+                 // handleUserInteraction(context, CallbackInactividad);
                   prefs.setBool("seActualizarNumero", false);
                   prefs.setBool("esPerfil", true);
                   prefs.setBool("esActualizarNumero", true);
@@ -1144,7 +1221,9 @@ class _PerfilPageState extends State<PerfilPage> {
                     MaterialPageRoute(
                         builder: (context) => LoginActualizarNumero(
                             responsive: widget.responsive)),
-                  );
+                  ).then((value){
+                    Inactivity(context:context).initialInactivity(functionInactivity);
+                  });
                 },
                 child: Container(
                   margin: EdgeInsets.only(
@@ -1176,7 +1255,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   sendTag("appinter_perfil_onboarding");
-                  handleUserInteraction(context,CallbackInactividad);
+                 // handleUserInteraction(context, CallbackInactividad);
                   setState(() {
                     prefs.setBool("primeraVez", false);
                     prefs.setBool("esPerfil", true);
@@ -1184,8 +1263,10 @@ class _PerfilPageState extends State<PerfilPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => OnBoardingAppAutos()),
-                  );
+                        builder: (context) => OnBoardingAppAutos())
+                  ).then((value){
+                    Inactivity(context:context).initialInactivity(functionInactivity);
+                  });
                 },
                 child: Container(
                   margin: EdgeInsets.only(
@@ -1230,14 +1311,16 @@ class _PerfilPageState extends State<PerfilPage> {
                           child: Switch(
                             value: isSwitchedPerfill,
                             onChanged: (on) {
-                              handleUserInteraction(context,CallbackInactividad);
+                             // handleUserInteraction(context, CallbackInactividad);
                               setState(() {
                                 prefs.setBool("primeraVez", false);
                                 prefs.setBool("esPerfil", true);
                               });
-                              if ((is_available_finger && is_available_face) && isSwitchedPerfill == false) {
+                              if ((is_available_finger && is_available_face) &&
+                                  isSwitchedPerfill == false) {
                                 print("if1");
-                                if (deviceType == ScreenType.phone && isSwitchedPerfill == false) {
+                                if (deviceType == ScreenType.phone &&
+                                    isSwitchedPerfill == false) {
                                   print("if2");
                                   customAlert(
                                       AlertDialogType
@@ -1247,36 +1330,34 @@ class _PerfilPageState extends State<PerfilPage> {
                                       "",
                                       widget.responsive,
                                       funcionAlertaBiometricos);
-
-                                } else if (on == false)
-                                {
+                                } else if (on == false) {
                                   print("if3");
                                   is_available_finger && is_available_face
                                       ? customAlert(
-                                      AlertDialogType
-                                          .Desactivar_huella_digital_face,
-                                      context,
-                                      "",
-                                      "",
-                                      widget.responsive,
-                                      funcionAlertaBiometricos)
-                                      :
-                                  is_available_finger != false
-                                      ? customAlert(
                                           AlertDialogType
-                                              .Desactivar_huella_digital,
+                                              .Desactivar_huella_digital_face,
                                           context,
                                           "",
                                           "",
                                           widget.responsive,
                                           funcionAlertaBiometricos)
-                                      : customAlert(
-                                          AlertDialogType.Desactivar_recoFacial,
-                                          context,
-                                          "",
-                                          "",
-                                          widget.responsive,
-                                          funcionAlertaBiometricos);
+                                      : is_available_finger != false
+                                          ? customAlert(
+                                              AlertDialogType
+                                                  .Desactivar_huella_digital,
+                                              context,
+                                              "",
+                                              "",
+                                              widget.responsive,
+                                              funcionAlertaBiometricos)
+                                          : customAlert(
+                                              AlertDialogType
+                                                  .Desactivar_recoFacial,
+                                              context,
+                                              "",
+                                              "",
+                                              widget.responsive,
+                                              funcionAlertaBiometricos);
                                 } else {
                                   print("else1");
                                   if (isSwitchedPerfill == false) {
@@ -1298,52 +1379,57 @@ class _PerfilPageState extends State<PerfilPage> {
                                   print("if5");
                                   is_available_finger && is_available_face
                                       ? customAlert(
-                                      AlertDialogType.opciones_de_inicio_de_sesion,
-                                      context,
-                                      "",
-                                      "",
-                                      widget.responsive,
-                                      funcionAlertaBiometricos)
-                                      :
-                                  is_available_finger
-                                      ? customAlert(
-                                          AlertDialogType.huella,
+                                          AlertDialogType
+                                              .opciones_de_inicio_de_sesion,
                                           context,
                                           "",
                                           "",
                                           widget.responsive,
-                                      funcionAlertaBiometricos)
-                                      : customAlert(
-                                          AlertDialogType.Reconocimiento_facial,
-                                          context,
-                                          "",
-                                          "",
-                                          widget.responsive,
-                                      funcionAlertaBiometricos);
+                                          funcionAlertaBiometricos)
+                                      : is_available_finger
+                                          ? customAlert(
+                                              AlertDialogType.huella,
+                                              context,
+                                              "",
+                                              "",
+                                              widget.responsive,
+                                              funcionAlertaBiometricos)
+                                          : customAlert(
+                                              AlertDialogType
+                                                  .Reconocimiento_facial,
+                                              context,
+                                              "",
+                                              "",
+                                              widget.responsive,
+                                              funcionAlertaBiometricos);
                                 } else if (on == false) {
                                   print("if8");
                                   is_available_finger && is_available_face
-                                      ? customAlert(AlertDialogType.Desactivar_huella_digital_face,
-                                      context,
-                                      "",
-                                      "",
-                                      widget.responsive,
-                                      funcionAlertaBiometricos)
-                                      :
-                                  is_available_finger != false
-                                      ? customAlert(AlertDialogType.Desactivar_huella_digital,
+                                      ? customAlert(
+                                          AlertDialogType
+                                              .Desactivar_huella_digital_face,
                                           context,
                                           "",
                                           "",
                                           widget.responsive,
-                                      funcionAlertaBiometricos)
-                                      : customAlert(
-                                          AlertDialogType.Desactivar_recoFacial,
-                                          context,
-                                          "",
-                                          "",
-                                          widget.responsive,
-                                      funcionAlertaBiometricos);
+                                          funcionAlertaBiometricos)
+                                      : is_available_finger != false
+                                          ? customAlert(
+                                              AlertDialogType
+                                                  .Desactivar_huella_digital,
+                                              context,
+                                              "",
+                                              "",
+                                              widget.responsive,
+                                              funcionAlertaBiometricos)
+                                          : customAlert(
+                                              AlertDialogType
+                                                  .Desactivar_recoFacial,
+                                              context,
+                                              "",
+                                              "",
+                                              widget.responsive,
+                                              funcionAlertaBiometricos);
                                 }
                               }
                               setState(() {
@@ -1357,16 +1443,17 @@ class _PerfilPageState extends State<PerfilPage> {
                             activeColor: Theme.Colors.GNP,
                           ),
                         ),
-                        Expanded(child:Container(
-                            margin: EdgeInsets.only(left: responsive.wp(1)),
-                            child: Text(
-                              "Inicio de sesión con datos biométricos",
-                              style: TextStyle(
-                                  color: Theme.Colors.Azul_2,
-                                  fontSize: prefs.getBool("useMobileLayout")
-                                      ? widget.responsive.ip(2)
-                                      : widget.responsive.ip(1.4)),
-                            ))),
+                        Expanded(
+                            child: Container(
+                                margin: EdgeInsets.only(left: responsive.wp(1)),
+                                child: Text(
+                                  "Inicio de sesión con datos biométricos",
+                                  style: TextStyle(
+                                      color: Theme.Colors.Azul_2,
+                                      fontSize: prefs.getBool("useMobileLayout")
+                                          ? widget.responsive.ip(2)
+                                          : widget.responsive.ip(1.4)),
+                                ))),
                       ],
                     )
                   : Container(),
@@ -1490,7 +1577,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         style: TextStyle(fontSize: responsive.ip(1.5)),
                       ),
                       onTap: () {
-                        handleUserInteraction(context,CallbackInactividad);
+                        //handleUserInteraction(context, CallbackInactividad);
                         _imgFromGallery();
                         Navigator.of(context).pop();
                       }),
@@ -1501,7 +1588,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       style: TextStyle(fontSize: responsive.ip(1.5)),
                     ),
                     onTap: () {
-                      handleUserInteraction(context,CallbackInactividad);
+                      //handleUserInteraction(context, CallbackInactividad);
                       _imgFromCamera();
                       Navigator.of(context).pop();
                     },
@@ -1529,7 +1616,9 @@ class _PerfilPageState extends State<PerfilPage> {
                     image: _image,
                     callback: editFoto,
                   )),
-        );
+        ).then((value){
+          Inactivity(context:context).initialInactivity(functionInactivity);
+        });
       }
     } catch (e) {
       print(e);
@@ -1554,13 +1643,14 @@ class _PerfilPageState extends State<PerfilPage> {
                     image: _image,
                     callback: editFoto,
                   )),
-        );
+        ).then((value){
+          Inactivity(context:context).initialInactivity(functionInactivity);
+        });
       }
     } catch (e) {
       print(e);
     }
   }
-
 
   Future<void> editFoto(File sendFile) async {
     setState(() {
@@ -1570,18 +1660,15 @@ class _PerfilPageState extends State<PerfilPage> {
     timerLoading = Timer.periodic(Duration(seconds: 2), (timer) {
       cancelTimerLoadingEdit(sendFile);
     });
-
-
   }
 
-  void loadingImage(File image){
+  void loadingImage(File image) {
     imagePefil = image;
-    setState(() {
-    });
+    setState(() {});
   }
 
-  void cancelTimerLoadingEdit(File image){
-    if(timerLoading!=null&&timerLoading.isActive){
+  void cancelTimerLoadingEdit(File image) {
+    if (timerLoading != null && timerLoading.isActive) {
       timerLoading.cancel();
     }
     imagePefil = image;
@@ -1596,7 +1683,9 @@ class _PerfilPageState extends State<PerfilPage> {
     });
   }
 
+
   void funcionAlertaBiometricos() {
+    Inactivity(context:context).initialInactivity(functionInactivity);
     print("funcionAlertaBiometricos perfiles");
     print(prefs.getBool("activarBiometricos"));
     //Navigator.pop(context, true);
@@ -1615,6 +1704,7 @@ class _PerfilPageState extends State<PerfilPage> {
       validateBiometricstatus(vacio);
     });
   }
+
   void vacio() {
     setState(() {});
   }
@@ -1627,14 +1717,28 @@ class _PerfilPageState extends State<PerfilPage> {
       valorCUA = prefs.getString("currentCUA");
     });
   }
+
   void updateDea(int i) {
     setState(() {
       listadoCUA = [];
-      for (int j = 0; j < datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++) {
-        for(int n =0; n<datosPerfilador.agenteInteresadoList.length; n++){
-          print("getCuas datosPerfilador en N ${datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario}");
-          if(datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] == datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario){
-              listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
+      for (int j = 0;
+          j <
+              datosPerfilador.daList
+                  .elementAt(posicionDA)
+                  .codIntermediario
+                  .length;
+          j++) {
+        for (int n = 0; n < datosPerfilador.agenteInteresadoList.length; n++) {
+          print(
+              "getCuas datosPerfilador en N ${datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario}");
+          if (datosPerfilador.daList
+                  .elementAt(posicionDA)
+                  .codIntermediario[j] ==
+              datosPerfilador.agenteInteresadoList
+                  .elementAt(n)
+                  .codIntermediario) {
+            listadoCUA.add(
+                "${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
           }
         }
       }
@@ -1642,22 +1746,21 @@ class _PerfilPageState extends State<PerfilPage> {
       valorDA = prefs.getString("currentDA");
       dropdownValue2 = listadoCUA.elementAt(0);
       valorCUA = listadoCUA.elementAt(0);
-      prefs.setString("currentCUA",listadoCUA.elementAt(0).toString());
-      if(listadoCUA.isNotEmpty && listadoCUA.length>1){
+      prefs.setString("currentCUA", listadoCUA.elementAt(0).toString());
+      if (listadoCUA.isNotEmpty && listadoCUA.length > 1) {
         showCua = true;
-      }else{
+      } else {
         showCua = false;
       }
     });
   }
 
-
-  void CallbackInactividad(){
+  void CallbackInactividad() {
     setState(() {
       print("CallbackInactividad perfiles");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      handleUserInteraction(context,CallbackInactividad);
+     // handleUserInteraction(context, CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

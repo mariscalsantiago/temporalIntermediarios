@@ -1,5 +1,7 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
@@ -44,6 +46,12 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
 
   @override
   void initState() {
+
+    if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    }
+    validateIntenetstatus(context,widget.responsive,functionConnectivity);
+
     _saving = false;
     timerEnd = false;
     focusCodigo = new FocusNode();
@@ -70,9 +78,20 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
     });
   }
 
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
+  }
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
+    return GestureDetector(onTap: (){
+        if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+          Inactivity(context:context).initialInactivity(functionInactivity);
+        }
+      },child:WillPopScope(
       onWillPop: () async => false,
       child: SafeArea(
         child: Scaffold(
@@ -98,20 +117,14 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                         color: Tema.Colors.GNP,
                       ),
                       onPressed: () {
+                        if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+                          Inactivity(context:context).cancelInactivity();
+                        }
                         if (_saving) {
                         } else {
-                          if (prefs.getBool("esPerfil") != null &&
-                              prefs.getBool("esPerfil")) {
-                            prefs.setString(
-                                "medioContactoTelefono",
-                                prefs.getString(
-                                    "medioContactoTelefonoServicio"));
+                          if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {prefs.setString("medioContactoTelefono", prefs.getString("medioContactoTelefonoServicio"));
                             Navigator.pop(context, true);
-                          } else {
-                            prefs.setString(
-                                "medioContactoTelefono",
-                                prefs.getString(
-                                    "medioContactoTelefonoServicio"));
+                          } else {prefs.setString("medioContactoTelefono", prefs.getString("medioContactoTelefonoServicio"));
                             Navigator.pop(context, true);
                           }
                         }
@@ -120,7 +133,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   ),
             body: Stack(children: builData(widget.responsive))),
       ),
-    );
+    ));
   }
 
   List<Widget> builData(Responsive responsive) {
@@ -306,9 +319,8 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       ),
       onTap: () {
         setState(() {
-          if (prefs.getBool("esPerfil") != null &&
-              prefs.getBool("esPerfil")){
-            handleUserInteraction(context,CallbackInactividad);
+          if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+            //handleUserInteraction(context,CallbackInactividad);
           }
           focusCodigo.requestFocus();
         });
@@ -345,7 +357,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
 
             if (prefs.getBool("esPerfil") != null &&
                 prefs.getBool("esPerfil")){
-              handleUserInteraction(context,CallbackInactividad);
+             // handleUserInteraction(context,CallbackInactividad);
             }
           } catch (e) {
             print(e);
@@ -454,7 +466,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
 
               if (prefs.getBool("esPerfil") != null &&
                   prefs.getBool("esPerfil")){
-                handleUserInteraction(context,CallbackInactividad);
+               // handleUserInteraction(context,CallbackInactividad);
               }
 
               sendTag("appinter_otp_reenvio");
@@ -918,7 +930,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       print("CallbackInactividad codigo de verificacion");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      handleUserInteraction(context,CallbackInactividad);
+      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

@@ -1,9 +1,11 @@
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
@@ -13,17 +15,21 @@ import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:skeleton_animation/skeleton_animation.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:firebase_database/firebase_database.dart';
+
 
 import '../../main.dart';
 enum HomeSelection {Atuos,AP,None}
 
 HomeSelection opcionElegida =  HomeSelection.None;
 bool _loading=false;
+bool _available = true;
 String iniciales="EJ";
 
 bool _isPortrait = false;
@@ -45,10 +51,16 @@ class _HomePageState extends State<HomePage> {
   bool showRamos;
   bool pressRamo;
   Timer timerPhoto;
+  DatabaseReference _databaseReference;
+  bool _isActiveAutos = false;
 
   @override
   void initState() {
-   // skeletonLoad();
+    // skeletonLoad();
+    _databaseReference=FirebaseDatabase.instance.reference();
+    Inactivity(context:context).initialInactivity(functionInactivity);
+    validateIntenetstatus(context,widget.responsive,functionConnectivity);
+    _runAsyncInit();
 
     pressRamo = false;
 
@@ -77,10 +89,73 @@ class _HomePageState extends State<HomePage> {
     //dropdownValue =  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos": "AP";
     ultimoAcceso();
     prefs.setInt("localAuthCount", 0);
-    handleUserInteraction(context,CallbackInactividad);
+    //handleUserInteraction(context,CallbackInactividad);
     //validateIntenetstatus(context, widget.responsive);
+
+    // Validate Autos
+    Map userInfo;
+
+    DatabaseReference _dataBaseReference =
+    FirebaseDatabase.instance.reference();
+
+    try {
+      _dataBaseReference
+          .child("AutosAvailable")
+          .child("dataAutos")
+          .once()
+          .then((DataSnapshot _snapshot) {
+        var jsoonn = json.encode(_snapshot.value);
+        userInfo = json.decode(jsoonn);
+
+        List _whiteList = userInfo["whitelist"];
+        if (userInfo["show"]) {
+          if (_whiteList.contains(datosUsuario.emaillogin.toLowerCase())) {
+            setState(() {
+              _available = true;
+            });
+          } else {
+            setState(() {
+              _available = false;
+            });
+          }
+        }
+      });
+    } catch (err) {
+      setState(() {
+        _available = false;
+      });
+    }
+
     super.initState();
   }
+
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
+  }
+
+  void _runAsyncInit() {
+
+    _databaseReference.child("AutosAvailable").onValue.listen((Event event) async {
+
+      _isActiveAutos = validateNotEmptyBool(event.snapshot.value["dataAutos"]["show"]);
+      if(!_isActiveAutos){
+        List _whiteList = event.snapshot.value["dataAutos"]["whitelist"];
+        bool _whiteListMember = _whiteList.contains(datosUsuario.emaillogin.toLowerCase());
+        if(_whiteListMember){
+          _isActiveAutos=true;
+        }
+      }
+      if(mounted) setState(() { });
+    }, onError: (Object o) {
+      final DatabaseError error = o;
+      print('Error: ${error.code} ${error.message}');
+    });
+  }
+
 
   @override
   dispose() {
@@ -89,7 +164,7 @@ class _HomePageState extends State<HomePage> {
 
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print("didChangeAppLifecycleState_home $state");
-    validateIntenetstatus(context, widget.responsive,CallbackInactividad);
+    // validateIntenetstatus(context, widget.responsive,CallbackInactividad);
 
   }
 
@@ -145,8 +220,7 @@ class _HomePageState extends State<HomePage> {
   Widget builData(Responsive responsive) {
     return GestureDetector(
         onTap: (){
-          validateIntenetstatus(context,responsive,CallbackInactividad);
-          handleUserInteraction(context,CallbackInactividad);
+          Inactivity(context:context).initialInactivity(functionInactivity);
         },child:WillPopScope(
       onWillPop: () async => false,
       child: SafeArea(
@@ -156,7 +230,7 @@ class _HomePageState extends State<HomePage> {
             child: Center(
               child: Column(
                 children: [
-                  
+
                   Container(
                     margin: EdgeInsets.only(top: responsive.hp(2),),
                     child: Text( prefs.getString("nombreUsuario") != null &&  prefs.getString("nombreUsuario")  != "" ?
@@ -176,7 +250,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(
                               color: Theme.Colors.Encabezados,
                               fontSize: responsive.ip(1.3),
-                                fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.bold,
 
 
                             ),
@@ -211,25 +285,29 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: responsive.hp(1.6)),
                     child: showRamos ? GestureDetector(
                         onTap: () {
-                          validateIntenetstatus(context,responsive,CallbackInactividad);
-                          handleUserInteraction(context,CallbackInactividad);
+                          //validateIntenetstatus(context,responsive,CallbackInactividad);
+                          //handleUserInteraction(context,CallbackInactividad);
                           Navigator.push( context,
-                              new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,)));
+                              new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
+                            Inactivity(context:context).initialInactivity(functionInactivity);
+                          });
                         },
                         onLongPressStart: (p) {
-                          handleUserInteraction(context,CallbackInactividad);
+                          //handleUserInteraction(context,CallbackInactividad);
                           setState(() {
                             pressRamo = true;
                           });
                         },
                         onLongPressEnd: (p) {
-                          handleUserInteraction(context,CallbackInactividad);
+                          //handleUserInteraction(context,CallbackInactividad);
                           setState(() {
                             pressRamo = false;
                           });
 
                           Navigator.push( context,
-                              new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,)));
+                              new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
+                            Inactivity(context:context).initialInactivity(functionInactivity);
+                          });
                         },
                         child: Container(
                           color: Theme.Colors.backgroud,
@@ -250,19 +328,19 @@ class _HomePageState extends State<HomePage> {
                           ),
                         )
                     ) : Row(
-                          crossAxisAlignment:CrossAxisAlignment.center,
-                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(dropdownValue,
-                                style: TextStyle(
-                                    color: Theme
-                                        .Colors
-                                        .botonletra,
-                                    fontSize: responsive
-                                        .ip(1.5))),
-                            Icon(
-                                Icons.arrow_drop_down)
-                          ],
+                      crossAxisAlignment:CrossAxisAlignment.center,
+                      mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(dropdownValue,
+                            style: TextStyle(
+                                color: Theme
+                                    .Colors
+                                    .botonletra,
+                                fontSize: responsive
+                                    .ip(1.5))),
+                        Icon(
+                            Icons.arrow_drop_down)
+                      ],
                     ),
                   ),
                   prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") && dropdownValue == "Autos" ? Container(
@@ -271,12 +349,14 @@ class _HomePageState extends State<HomePage> {
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
                       onTap: (){
-                        validateIntenetstatus(context,responsive,CallbackInactividad);
+                        // validateIntenetstatus(context,responsive,CallbackInactividad);
                         setState(() {
                           showInactividad = false;
-                          handleUserInteraction(context, callback);
+                          // handleUserInteraction(context, callback);
                         });
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), );
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
+                          Inactivity(context:context).initialInactivity(functionInactivity);
+                        });
 
                         //opcionElegida = HomeSelection.Atuos;
                       },
@@ -289,9 +369,11 @@ class _HomePageState extends State<HomePage> {
                         setState(() {
                           opcionElegida = HomeSelection.None;
                           showInactividad = false;
-                          handleUserInteraction(context, callback);
+                          //handleUserInteraction(context, callback);
                         });
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), );
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
+                          Inactivity(context:context).initialInactivity(functionInactivity);
+                        });
                       },
                       child: Card(
                         shape: RoundedRectangleBorder(
@@ -335,21 +417,21 @@ class _HomePageState extends State<HomePage> {
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
                       onTap: (){
-                        validateIntenetstatus(context,responsive,CallbackInactividad);
-                        handleUserInteraction(context,CallbackInactividad);
+                        //validateIntenetstatus(context,responsive,CallbackInactividad);
+                        //handleUserInteraction(context,CallbackInactividad);
                         Navigator.pushNamed(context, "/cotizadorUnicoAP");
                         setState(() {
                         });
                         //opcionElegida = HomeSelection.AP;
                       },
                       onLongPressStart: (j){
-                        handleUserInteraction(context,CallbackInactividad);
+                        //handleUserInteraction(context,CallbackInactividad);
                         setState(() {
                           opcionElegida = HomeSelection.AP;
                         });
                       },
                       onLongPressEnd: (j){
-                        handleUserInteraction(context,CallbackInactividad);
+                        // handleUserInteraction(context,CallbackInactividad);
                         setState(() {
                           opcionElegida = HomeSelection.None;
                         });
@@ -423,107 +505,109 @@ class _HomePageState extends State<HomePage> {
   AppBar getAppBar(BuildContext context, Responsive responsive) {
     bool tablet = false;
     tablet = prefs.getBool("useMobileLayout");
-   // print("tablet ${tablet}");
-   // validateIntenetstatus(context, widget.responsive);
+    // print("tablet ${tablet}");
+    // validateIntenetstatus(context, widget.responsive);
     return AppBar(
       elevation: 0.0,
       leading: Container(
         margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
         //child: Image.asset("assets/icon/splash/logoGNP.png",
-            //height: responsive.hp(25), width: responsive.wp(25)),
+        //height: responsive.hp(25), width: responsive.wp(25)),
       ),
       title: Center(
         child:
-      Container(
+        Container(
           //margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
-         child: Image.asset("assets/icon/splash/logoGNP.png",
-            height:tablet ? responsive.hp(15): responsive.hp(10),
-           width:tablet ? responsive.hp(15): responsive.hp(10),
-          )
+            child: Image.asset("assets/icon/splash/logoGNP.png",
+              height:tablet ? responsive.hp(15): responsive.hp(10),
+              width:tablet ? responsive.hp(15): responsive.hp(10),
+            )
         ),
       ),
       //centerTitle: true,
       backgroundColor: Colors.white,
       bottom: new PreferredSize(
           child: new Container(
-              color: Theme.Colors.Encabezados,
-              padding: const EdgeInsets.all(0.5),
-             ),
+            color: Theme.Colors.Encabezados,
+            padding: const EdgeInsets.all(0.5),
+          ),
           preferredSize: const Size.fromHeight(10.0)),
       actions: [
         GestureDetector(
-          onTap: (){
-            validateIntenetstatus(context,responsive,CallbackInactividad);
-            handleUserInteraction(context,CallbackInactividad);
-            Navigator.push(context, MaterialPageRoute(builder: (context) => PerfilPage(responsive:responsive, callback: LoadingImage,)),);
-          },
-          child:
-          _loading ?
-          Container(
-            margin:prefs.getBool("useMobileLayout")
-                ? EdgeInsets.only(top: responsive.hp(0.5)) : isPortrait
-                ? EdgeInsets.only(right: responsive.wp(2)) : EdgeInsets.only(right: responsive.wp(3)) ,
-            width: prefs.getBool("useMobileLayout")
-                ? responsive.wp(13) : isPortrait
-                ? responsive.wp(5.5) : responsive.wp(4) ,
-            child: Skeleton(
-              animationDuration: Duration(milliseconds: 500),
-              textColor: Theme.Colors.gris_load1,
-              height: responsive.hp(10),
-              width: responsive.width,
-              style: SkeletonStyle.circle,),)
-              :
-          Container(
+            onTap: (){
+              //validateIntenetstatus(context,responsive,CallbackInactividad);
+              //handleUserInteraction(context,CallbackInactividad);
+              Navigator.push(context, MaterialPageRoute(builder: (context) => PerfilPage(responsive:responsive, callback: LoadingImage,)),).then((value){
+                Inactivity(context:context).initialInactivity(functionInactivity);
+              });
+            },
+            child:
+            _loading ?
+            Container(
+              margin:prefs.getBool("useMobileLayout")
+                  ? EdgeInsets.only(top: responsive.hp(0.5)) : isPortrait
+                  ? EdgeInsets.only(right: responsive.wp(2)) : EdgeInsets.only(right: responsive.wp(3)) ,
               width: prefs.getBool("useMobileLayout")
-                  ? responsive.wp(13)
-                  : isPortrait
-                  ? responsive.wp(10)
-                  : responsive.wp(10),
-              height: prefs.getBool("useMobileLayout")
-                  ? responsive.wp(13)
-                  : isPortrait
-                  ? responsive.wp(10)
-                  : responsive.wp(10),
-              decoration: BoxDecoration(
-                  color: Theme.Colors.profile_logo,
+                  ? responsive.wp(13) : isPortrait
+                  ? responsive.wp(5.5) : responsive.wp(4) ,
+              child: Skeleton(
+                animationDuration: Duration(milliseconds: 500),
+                textColor: Theme.Colors.gris_load1,
+                height: responsive.hp(10),
+                width: responsive.width,
+                style: SkeletonStyle.circle,),)
+                :
+            Container(
+                width: prefs.getBool("useMobileLayout")
+                    ? responsive.wp(13)
+                    : isPortrait
+                    ? responsive.wp(10)
+                    : responsive.wp(10),
+                height: prefs.getBool("useMobileLayout")
+                    ? responsive.wp(13)
+                    : isPortrait
+                    ? responsive.wp(10)
+                    : responsive.wp(10),
+                decoration: BoxDecoration(
+                    color: Theme.Colors.profile_logo,
 
-                  shape: BoxShape.circle,
-                  //borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                      width: 2, color: Theme.Colors.Azul_2)),
-              child: Center(
-                child: datosFisicos != null &&
-                    datosFisicos.personales.photoFile != null
-                    ? CircleAvatar(
-                  radius: prefs.getBool("useMobileLayout")
-                      ? 22.0: isPortrait ? 28 : 27 ,
-                  backgroundImage: Image.file(datosFisicos.personales.photoFile, fit: BoxFit.cover,).image,
-                  backgroundColor: Colors.transparent,
-                )
-                    : Text(
-                  respuestaServicioCorreo
-                      .consultaUsuarioPorCorreoResponse
-                      .USUARIOS
-                      .USUARIO
-                      .apellidoPaterno !=
-                      null &&
-                      respuestaServicioCorreo
-                          .consultaUsuarioPorCorreoResponse
-                          .USUARIOS
-                          .USUARIO
-                          .nombre !=
-                          null
-                      ? "${(respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre[0] : "")} ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno[0] : ""}"
-                      : "",
-                  style: TextStyle(
-                      fontSize: prefs.getBool(
-                          "useMobileLayout")
-                          ? responsive.hp(1.8)
-                          : responsive.hp(2.0),
-                      color: Theme.Colors.Azul_gnp,
-                      fontWeight: FontWeight.w400),
-                ),
-              ))
+                    shape: BoxShape.circle,
+                    //borderRadius: BorderRadius.circular(100),
+                    border: Border.all(
+                        width: 2, color: Theme.Colors.Azul_2)),
+                child: Center(
+                  child: datosFisicos != null &&
+                      datosFisicos.personales.photoFile != null
+                      ? CircleAvatar(
+                    radius: prefs.getBool("useMobileLayout")
+                        ? 22.0: isPortrait ? 28 : 27 ,
+                    backgroundImage: Image.file(datosFisicos.personales.photoFile, fit: BoxFit.cover,).image,
+                    backgroundColor: Colors.transparent,
+                  )
+                      : Text(
+                    respuestaServicioCorreo
+                        .consultaUsuarioPorCorreoResponse
+                        .USUARIOS
+                        .USUARIO
+                        .apellidoPaterno !=
+                        null &&
+                        respuestaServicioCorreo
+                            .consultaUsuarioPorCorreoResponse
+                            .USUARIOS
+                            .USUARIO
+                            .nombre !=
+                            null
+                        ? "${(respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre[0] : "")} ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno[0] : ""}"
+                        : "",
+                    style: TextStyle(
+                        fontSize: prefs.getBool(
+                            "useMobileLayout")
+                            ? responsive.hp(1.8)
+                            : responsive.hp(2.0),
+                        color: Theme.Colors.Azul_gnp,
+                        fontWeight: FontWeight.w400),
+                  ),
+                ))
         )
       ],
     );
@@ -560,12 +644,12 @@ class _HomePageState extends State<HomePage> {
 
 
   void CallbackInactividad(){
-  setState(() {
-    print("CallbackInactividad home");
-    focusContrasenaInactividad.hasFocus;
-    showInactividad;
-    handleUserInteraction(context,CallbackInactividad);
-    //contrasenaInactividad = !contrasenaInactividad;
-  });
+    setState(() {
+      print("CallbackInactividad home");
+      focusContrasenaInactividad.hasFocus;
+      showInactividad;
+      // handleUserInteraction(context,CallbackInactividad);
+      //contrasenaInactividad = !contrasenaInactividad;
+    });
   }
 }

@@ -1,3 +1,5 @@
+import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
@@ -27,6 +29,9 @@ class _listaCUAState extends State<listaCUA> {
 
   @override
   void initState() {
+    Inactivity(context:context).initialInactivity(functionInactivity);
+    validateIntenetstatus(context, widget.responsive,functionConnectivity);
+
     _saving = false;
     // TODO: implement initState
     if(widget.isDA){
@@ -44,9 +49,23 @@ class _listaCUAState extends State<listaCUA> {
     super.initState();
   }
 
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  GestureDetector(
+        onTap: () {
+          Inactivity(context:context).initialInactivity(functionInactivity);
+        },child: WillPopScope(
+        onWillPop: () async => false,
+    child: Scaffold(
       backgroundColor: Tema.Colors.backgroud,
       appBar: AppBar(
         centerTitle: false,
@@ -61,6 +80,7 @@ class _listaCUAState extends State<listaCUA> {
           icon: Icon(Icons.clear,
             color: Tema.Colors.GNP,),
           onPressed: () {
+            Inactivity(context:context).cancelInactivity();
             Navigator.pop(context,true);
           },
         ),
@@ -68,7 +88,7 @@ class _listaCUAState extends State<listaCUA> {
       body: Stack(
           children: builData(widget.responsive)
       ),
-    );
+    )));
   }
 
   List<Widget> builData(Responsive responsive){
@@ -117,9 +137,9 @@ class _listaCUAState extends State<listaCUA> {
                   ),
                 ],
               ),
-              Container(
-                  margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), bottom:responsive.hp(0)),
-                  child: botonSeleccionarPregunta(responsive)),
+      Expanded(child: Container(
+          margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), bottom:responsive.hp(0)),
+                  child: botonSeleccionarPregunta(responsive))),
             ],
           ),
     );

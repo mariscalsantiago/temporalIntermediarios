@@ -29,7 +29,7 @@ void main() async {
 
 
   var configuredApp = new AppConfig(
-    ambient: Ambient.uat,
+    ambient: Ambient.prod,
     serviceLogin: 'https://cuentas-uat.gnp.com.mx/auth/login',
     apikeyAppAgentes: 'l7xx526ec2d1bd9140a39ad15f72e1964bca',
     service_perfilador: "https://api-uat.oscp.gnp.com.mx/Consulta-Agentes/consulta-perfil-app-int",
@@ -118,7 +118,7 @@ class MyApp extends StatelessWidget {
                   '/login': (context) => PrincipalFormLogin(),
                   '/loginBiometricos': (context) => BiometricosPage(),
                 },
-                title: 'App Contratacion',
+                title: 'Intermediario GNP',
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
                   unselectedWidgetColor: Colors.indigo,

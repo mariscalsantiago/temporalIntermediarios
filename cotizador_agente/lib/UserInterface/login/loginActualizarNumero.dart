@@ -1,4 +1,6 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
@@ -31,6 +33,10 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
   @override
   void initState() {
+    if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    }
+    validateIntenetstatus(context, widget.responsive,functionConnectivity);
     super.initState();
     var keyboardVisibilityController = KeyboardVisibilityController();
     // Query
@@ -56,15 +62,25 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       });
     });
 
-    if (prefs.getBool("esPerfil") != null &&
-        prefs.getBool("esPerfil")){
-      handleUserInteraction(context,CallbackInactividad);
-    }
+  }
+
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return  GestureDetector(onTap: (){
+        if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+          Inactivity(context:context).initialInactivity(functionInactivity);
+        }
+      },child:WillPopScope(
+        onWillPop: () async => false,
+    child: SafeArea(
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar: _saving
@@ -86,6 +102,11 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                       color: Tema.Colors.GNP,
                     ),
                     onPressed: () {
+
+                      if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+                        Inactivity(context:context).cancelInactivity();
+                      }
+
                       if (_saving) {
                       } else {
                         Navigator.pop(context, true);
@@ -94,7 +115,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                   ),
                 ),
           body: Stack(children: builData(widget.responsive))),
-    );
+    )));
   }
 
   List<Widget> builData(Responsive responsive) {
@@ -247,7 +268,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           onChanged: (value) {
             if (prefs.getBool("esPerfil") != null &&
                 prefs.getBool("esPerfil")){
-              handleUserInteraction(context,CallbackInactividad);
+             // handleUserInteraction(context,CallbackInactividad);
             }
             setState(() {
               focusCodigo.hasFocus;
@@ -268,7 +289,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           onEditingComplete: () {
             if (prefs.getBool("esPerfil") != null &&
                 prefs.getBool("esPerfil")){
-              handleUserInteraction(context,CallbackInactividad);
+              //handleUserInteraction(context,CallbackInactividad);
             }
             setState(() {
               focusCodigo.unfocus();
@@ -277,7 +298,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           onFieldSubmitted: (s) {
             if (prefs.getBool("esPerfil") != null &&
                 prefs.getBool("esPerfil")){
-              handleUserInteraction(context,CallbackInactividad);
+             // handleUserInteraction(context,CallbackInactividad);
             }
             setState(() {
               focusCodigo.unfocus();
@@ -286,7 +307,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           onTap: () {
             if (prefs.getBool("esPerfil") != null &&
                 prefs.getBool("esPerfil")){
-              handleUserInteraction(context,CallbackInactividad);
+             // handleUserInteraction(context,CallbackInactividad);
             }
             setState(() {
               focusCodigo.requestFocus();
@@ -390,7 +411,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           setState(() {});
           if (prefs.getBool("esPerfil") != null &&
               prefs.getBool("esPerfil")){
-            handleUserInteraction(context,CallbackInactividad);
+           // handleUserInteraction(context,CallbackInactividad);
           }
           if (formKey.currentState.validate()) {
             if (prefs.getBool("esPerfil") != null &&
@@ -616,7 +637,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       print("CallbackInactividad Actualizar numero");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      handleUserInteraction(context,CallbackInactividad);
+     // handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

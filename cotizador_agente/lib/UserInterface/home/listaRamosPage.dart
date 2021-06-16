@@ -1,4 +1,6 @@
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
@@ -22,15 +24,28 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
 
   @override
   void initState() {
+    Inactivity(context:context).initialInactivity(functionInactivity);
+    validateIntenetstatus(context,widget.responsive,functionConnectivity);
     _saving = false;
     // TODO: implement initState
     super.initState();
   }
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-
+    return   GestureDetector(
+        onTap: (){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    },child:WillPopScope(
+    onWillPop: () async => false,
+    child: SafeArea(
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar: AppBar(
@@ -45,7 +60,8 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
               icon: Icon(Icons.close ,
                 color: Tema.Colors.GNP,),
               onPressed: () {
-                handleUserInteraction(context,CallbackInactividad);
+                Inactivity(context:context).cancelInactivity();
+                // handleUserInteraction(context,CallbackInactividad);
                 Navigator.pop(context);
               },
             ),
@@ -54,7 +70,7 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
               children: builData(widget.responsive)
           )
       ),
-    );
+    )));
   }
 
   List<Widget> builData(Responsive responsive){
@@ -147,7 +163,7 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
           activeColor: Tema.Colors.Rectangle_PA,
           groupValue: _character,
           onChanged: (int value) {
-            handleUserInteraction(context,CallbackInactividad);
+            //handleUserInteraction(context,CallbackInactividad);
             setState(() {
               _character = value;
             });
@@ -174,7 +190,7 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
               textAlign: TextAlign.center),
         ),
         onPressed: () async {
-          handleUserInteraction(context,CallbackInactividad);
+          //handleUserInteraction(context,CallbackInactividad);
           if(_character != 99999){
             print("lista -> ${widget.lista[_character]}");
             print("indice ${_character}");
@@ -190,7 +206,7 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
       print("CallbackInactividad listaRamosPage");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      handleUserInteraction(context,CallbackInactividad);
+      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

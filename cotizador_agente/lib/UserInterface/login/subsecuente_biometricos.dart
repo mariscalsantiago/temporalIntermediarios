@@ -1,8 +1,11 @@
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/Custom/Downloads.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
@@ -12,6 +15,8 @@ import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController_2.dart';
+import 'package:device_info/device_info.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/UserInterface/login/loginRestablecerContrasena.dart';
@@ -21,9 +26,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../main.dart';
 import 'logoEncabezadoLogin.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:http/http.dart' as http;
+import 'package:cotizador_agente/Services/metricsPerformance.dart';
+import 'package:firebase_performance/firebase_performance.dart';
 
 
 String _authorized = 'Not Authorized';
@@ -44,6 +53,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
   bool _saving;
   @override
   void initState() {
+    validateIntenetstatus(context, widget.responsive,functionConnectivity);
     cancelTimers();
     showBio_available = is_available_finger;
     _saving = false;
@@ -52,9 +62,13 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     prefs.setBool("esPerfil", false);
     prefs.setBool("bloqueoDespuesSubBio", false);
     WidgetsBinding.instance.addObserver(this);
-    validateIntenetstatus(context, widget.responsive,CallbackInactividad);
+    Platform.isIOS ? getVersionApp("24", "1") : getVersionApp("24", "2");
+    // validateIntenetstatus(context, widget.responsive,CallbackInactividad);
     validateBiometricstatus(funcionCanselBiometrics);
 
+  }
+  void functionConnectivity() {
+    setState(() {});
   }
 
   @override
@@ -127,7 +141,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
         Container(
           margin: EdgeInsets.only(top: widget.responsive.hp(3), bottom: widget.responsive.hp(4), left: widget.responsive.wp(30), right: widget.responsive.wp(30)),
           child:
-          Text(showBio_available?"Coloca tu huella en el lector de tu dispositivo": "Mira fijamente a la cámara de tu dispositivo",
+          Text(showBio_available?"Toca para activar el inicio de sesión con tu huella.": "Toca para activar el inicio de sesión con tu rostro",
             textAlign: TextAlign.center,
             style: TextStyle(color: Tema.Colors.Funcional_Textos_Body, fontSize: widget.responsive.ip(1.5)),
           ),
@@ -187,6 +201,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
                   textAlign: TextAlign.center),
             ),
             onPressed: () async {
+              prefs.setBool("esPerfil", false);
               prefs.setBool("bloqueoDespuesSubBio", false);
               prefs.setBool("userRegister", false);
               prefs.setString("contrasenaUsuario","");
@@ -194,6 +209,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               prefs.setBool("activarBiometricos", false);
               prefs.setBool("regitroDatosLoginExito", false);
               prefs.setBool("flujoCompletoLogin", false);
+              cancelTimers();
               Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
             }
         ),
@@ -217,7 +233,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     var l = new List<Widget>();
     l.add(data);
     if (_saving) {
-     /* var modal = Stack(
+      /* var modal = Stack(
         children: [
           Opacity(
             opacity: 0.6,
@@ -247,109 +263,343 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     );
   }
 
+
+  Future<http.Response> getVersionApp(String idApp, String idOs) async {
+    print("getVersionApp");
+    AppConfig _appEnvironmentConfig = AppConfig.of(context);
+    bool conecxion = false;
+    conecxion = await validatePinig();
+    print("getVersionApp ${conecxion}");
+    Responsive responsive = Responsive.of(context);
+
+    if (conecxion) {
+      try {
+        final response = await http
+            .get('http://app.gnp.com.mx/versionapp/' + idApp + "/" + idOs);
+
+        //TODO: Metrics
+        final MetricsPerformance metricsPerformance = MetricsPerformance(
+            http.Client(),
+            'http://app.gnp.com.mx/versionapp/' + idApp + "/" + idOs,
+            HttpMethod.Get);
+        final http.Request request = http.Request(
+            "VersionApp",
+            Uri.parse(
+                'http://app.gnp.com.mx/versionapp/' + idApp + "/" + idOs));
+        metricsPerformance.send(request);
+
+        try {
+          Map mapVersion = json.decode(response.body.toString());
+          String version = mapVersion["version"];
+          version = version.replaceAll("_", ".");
+          bool validacion =
+          validateExpiration(mapVersion["fecha_publicacion"]); //
+          print("validacion: $validacion");
+
+          if (compareVersion(version, Tema.StringsMX.appVersion) &&
+              validacion &&
+              _appEnvironmentConfig.ambient == Ambient.prod) {
+            if (!mapVersion['requerida']) {
+              _showDialogoUpdateApplication(context);
+            } else {
+              _showDialogoUpdateApplicationRequried(context);
+            }
+          }
+        } catch (e) {
+          print("Error Version: $e");
+        }
+        return response;
+      } catch (e) {
+        print("getVersionApp catch");
+        print(e);
+        customAlert(AlertDialogType.errorServicio, context, "", "", responsive,
+            funcionAlerta);
+      }
+    } else {
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
+          "", responsive, funcionAlerta);
+    }
+  }
+
+  void _showDialogoUpdateApplicationRequried(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () => Future.value(false),
+            child: AlertDialog(
+              title: new Text("Actualización disponible.",
+                  style: TextStyle(
+                      color: Tema.Colors.Blue,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              content: new Text(
+                  "Existe una actualización importante para tu App Intermediario GNP.",
+                  style: TextStyle(
+                      color: Tema.Colors.Blue,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("Descargar"),
+                  onPressed: () {
+                    setIsUpdateVersion();
+                    _onLoading(context);
+                    _launchURL(context, true);
+                  },
+                ),
+              ],
+            ));
+      },
+    );
+  }
+
+  void _showDialogoUpdateApplication(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return WillPopScope(
+            onWillPop: () => Future.value(false),
+            child: AlertDialog(
+              title: new Text("Actualización disponible.",
+                  style: TextStyle(
+                      color: Tema.Colors.Blue,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              content: new Text(
+                  "Te recomendamos tener instalada la versión más reciente de tu App Intermediario GNP. \n\n¡Descárgala ahora!",
+                  style: TextStyle(
+                      color: Tema.Colors.Blue,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              actions: <Widget>[
+                new FlatButton(
+                    child: new Text("Después"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    }),
+                new FlatButton(
+                  child: new Text("Descargar"),
+                  onPressed: () {
+                    setIsUpdateVersion();
+                    _onLoading(context);
+                    _launchURL(context, false);
+                  },
+                ),
+              ],
+            ));
+      },
+    );
+  }
+
+  void setIsUpdateVersion() async{
+    print("setIsUpdateVersion");
+    Map setIsUpdateVersion;
+    try{
+      String devideID = await _getId();
+      print("devideID ${devideID}");
+      DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+
+      await _dataBaseReference.child("deviceUser").child(devideID).once().then((DataSnapshot _snapshot) {
+        var jsoonn = json.encode(_snapshot.value);
+        setIsUpdateVersion = json.decode(jsoonn);
+        print("setIsUpdateVersion ---> ${setIsUpdateVersion}");
+        if (setIsUpdateVersion != null && setIsUpdateVersion.isNotEmpty){
+          Map<String, dynamic> mapa = {
+            '${devideID}': {
+              'version': Tema.StringsMX.appVersion,
+              'requiredUpdate': false,
+            }
+          };
+          _dataBaseReference.child("deviceUser").update(mapa);
+        }else{
+          Map<String, dynamic> mapa = {
+            '${devideID}': {
+              'version': Tema.StringsMX.appVersion,
+              'requiredUpdate': true,
+            }
+          };
+          _dataBaseReference.child("deviceUser").update(mapa);
+        }
+      });
+    }catch(e){
+      print(" setIsUpdateVersion error ${e}");
+    }
+  }
+
+  Future<String> _getId() async {
+    try{
+      var deviceInfo = DeviceInfoPlugin();
+      if (Platform.isIOS) { // import 'dart:io'
+        var iosDeviceInfo = await deviceInfo.iosInfo;
+        return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+      } else {
+        var androidDeviceInfo = await deviceInfo.androidInfo;
+        return androidDeviceInfo.androidId; // unique ID on Android
+      }
+    }catch(e){
+      print(" deviceID error ${e}");
+    }
+
+  }
+
+  void _onLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  _launchURL(BuildContext context, bool close) async {
+    String url;
+    try {
+      if (Platform.isIOS) {
+        url = "itms-services://?action=download-manifest&amp;url=https://app.gnp.com.mx/components/ios/Intermediariognp.plist";
+        _redirectEmp(url);
+      } else if (Platform.isAndroid) {
+        url = "https://app.gnp.com.mx/components/android/Intermediariognp.apk";
+        if (await downloadTiendaEmpresarialApk(
+            url, "gnpintermediario", "apk")) {
+          SystemNavigator.pop();
+        } else {
+          Navigator.pop(context);
+        }
+      } else {
+        url = 'https://app.gnp.com.mx/';
+        _redirectEmp(url);
+      }
+    } catch (e) {
+      url = 'https://app.gnp.com.mx/';
+      _redirectEmp(url);
+    }
+  }
+
+  _redirectEmp(String url) async {
+    if (await canLaunch(url)) {
+      if (Platform.isIOS) {
+        Future.delayed(const Duration(seconds: 5), () async {
+          await launch(url);
+          exit(0);
+        });
+      } else {
+        SystemNavigator.pop();
+        await launch(url);
+      }
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+
+
+
   Future<void> _authenticateHuella(Responsive responsive) async {
 
-      if( prefs != null && prefs.getInt("localAuthCountIOS") != null && prefs.getInt("localAuthCountIOS")>0) {
-        switch(prefs.getInt("localAuthCountIOS")){
-          case 100:
-            customAlert(is_available_face && is_available_finger
-                ? AlertDialogType.Rostro_huella_no_reconocido :
-            is_available_face ? AlertDialogType.Rostro_no_reconocido
-                : AlertDialogType.Huella_no_reconocida, context, "", "",
-                responsive, funcionDenegadoBiometric);
-            break;
-          case 101:
-            customAlert(is_available_face && is_available_finger ?
-            AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado :
-            is_available_finger ?
-            AlertDialogType.inicio_de_sesion_con_huella_bloqueado:
-            AlertDialogType.inicio_de_sesion_con_facial_bloqueado, context, "", "", responsive, funcionDenegadoBiometric);
-            break;
-          case 102:
-          case 103:
-            is_available_finger && is_available_face ? customAlert(
-                AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
-                responsive, funcionDenegadoBiometric) :
-            is_available_finger ? customAlert(
-                AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
-                responsive, funcionDenegadoBiometric) :
-            customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
-                responsive, funcionDenegadoBiometric);
+    if( prefs != null && prefs.getInt("localAuthCountIOS") != null && prefs.getInt("localAuthCountIOS")>0) {
+      switch(prefs.getInt("localAuthCountIOS")){
+        case 100:
+          customAlert(is_available_face && is_available_finger
+              ? AlertDialogType.Rostro_huella_no_reconocido :
+          is_available_face ? AlertDialogType.Rostro_no_reconocido
+              : AlertDialogType.Huella_no_reconocida, context, "", "",
+              responsive, funcionDenegadoBiometric);
+          break;
+        case 101:
+          customAlert(is_available_face && is_available_finger ?
+          AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado :
+          is_available_finger ?
+          AlertDialogType.inicio_de_sesion_con_huella_bloqueado:
+          AlertDialogType.inicio_de_sesion_con_facial_bloqueado, context, "", "", responsive, funcionDenegadoBiometric);
+          break;
+        case 102:
+        case 103:
+          is_available_finger && is_available_face ? customAlert(
+              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric) :
+          is_available_finger ? customAlert(
+              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric) :
+          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric);
 
-            break;
-          default:
-            break;
-        }
-      }else {
-        try {
-          bool authenticated = false;
+          break;
+        default:
+          break;
+      }
+    }else {
+      try {
+        bool authenticated = false;
         if (Platform.isIOS) {
           authenticated = await localAuth.authenticateWithBiometrics(
-              localizedReason: is_available_finger && is_available_face
-                  ? 'Coloca tu dedo o mira fijamente a la cámara para continuar'
-                  : is_available_finger
-                  ? 'Coloca tu dedo para continuar'
-                  : 'Mira fijamente a la cámara para continuar ',
+              localizedReason:is_available_finger ?  'Coloca tu dedo para continuar.' : 'Mira fijamente a la cámara para continuar.',
               iOSAuthStrings: new IOSAuthMessages (
                   lockOut: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
-                  goToSettingsDescription: 'hola',
-                  cancelButton: "Cancelar", goToSettingsButton: "Aceptar"),
-              useErrorDialogs: false,
+                  goToSettingsDescription:  is_available_finger
+                      ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                      : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
+                  goToSettingsButton: "Ir a configuraciones",
+                  cancelButton: "Cancelar"),
+              useErrorDialogs: true,
               stickyAuth: false);
         } else {
           authenticated = await localAuth.authenticateWithBiometrics(
+              localizedReason: is_available_finger && is_available_face
+                  ? "Coloca tu dedo o mira a la cámara para continuar."
+                  : is_available_finger
+                  ? "Coloca tu dedo para continuar"
+                  : "Mira fijamente a la cámara",
               androidAuthStrings: new AndroidAuthMessages(
+                  fingerprintNotRecognized: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
                   signInTitle: "Inicio de sesión",
-                  fingerprintHint: is_available_finger && is_available_face
-                      ? "Coloca tu dedo o mira fijamente a la cámara para continuar."
+                  fingerprintHint: '',
+                  cancelButton: "Cancelar",
+                  fingerprintRequiredTitle: is_available_finger && is_available_face ?
+                  "Solicitud de huella digital o reconocimiento facial"
                       : is_available_finger
-                      ? "Coloca tu dedo para continuar"
-                      : "Mira fijamente a la cámara para continuar.",
-                  cancelButton: "CANCELAR",
-                  fingerprintRequiredTitle: is_available_finger && is_available_face
-                      ? "Coloca tu dedo o mira fijamente a la cámara para continuar."
-                      :is_available_finger
-                      ? "Coloca tu dedo para continuar"
-                      : is_available_face
-                      ? "Mira fijamente a la cámara para continuar."
-                      : "",
-                  goToSettingsDescription: "Tu huella digital no está configurada en el dispositivo, ve a configuraciones para añadirla.",
+                      ? "Solicitud de huella digital"
+                      : "Mira fijamente a la cámara",
+                  goToSettingsDescription: is_available_finger && is_available_face ?
+                  "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                      : is_available_finger
+                      ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
+                      : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
                   goToSettingsButton: "Ir a configuraciones"),
-              iOSAuthStrings: new IOSAuthMessages (
-                  lockOut: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
-                  cancelButton: "Cancelar", goToSettingsButton: "Cancelar"),
-              localizedReason: ' ',
-              useErrorDialogs: false,
+              useErrorDialogs: true,
               stickyAuth: false);
         }
 
-      if(authenticated){
-        setState(() {
-          _saving = true;
-        });
-        datosUsuario = await logInServices(context,prefs.getString("correoUsuario"), prefs.getString("contrasenaUsuario"), prefs.getString("correoUsuario"),responsive);
-        if(datosUsuario != null){
-          respuestaServicioCorreo = await  consultaUsuarioPorCorreo(context, prefs.getString("correoUsuario"));
-          //Validacion Roles
-          validarRolesUsuario();
-
-          print("roles ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol.length}" );
-          print("respuesta  ${respuestaServicioCorreo}");
+        if(authenticated){
           setState(() {
-            _saving = false;
+            _saving = true;
           });
-          Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+          datosUsuario = await logInServices(context,prefs.getString("correoUsuario"), prefs.getString("contrasenaUsuario"), prefs.getString("correoUsuario"),responsive);
+          if(datosUsuario != null){
+            respuestaServicioCorreo = await  consultaUsuarioPorCorreo(context, prefs.getString("correoUsuario"));
+            //Validacion Roles
+            validarRolesUsuario();
+
+            print("roles ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol.length}" );
+            print("respuesta  ${respuestaServicioCorreo}");
+            setState(() {
+              _saving = false;
+            });
+            Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+          } else{
+
+
+            setState(() {
+              _saving = false;
+            });
+            //customAlert(AlertDialogType.errorServicio,context,"","", responsive, ErrorServicio);
+            print("else sub Biometrios");
+
+          }
         } else{
-
-
-          setState(() {
-            _saving = false;
-          });
-          //customAlert(AlertDialogType.errorServicio,context,"","", responsive, ErrorServicio);
-          print("else sub Biometrios");
-
-        }
-      } else{
 
           localAuth.stopAuthentication();
           bool localAuths = await localAuth.canCheckBiometrics;
@@ -381,51 +631,63 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           }
         }
 
-    } on PlatformException catch (e) {
-          print("PlatformException ${e}");
-          print("PlatformException: code ${e.code}");
-          print("PlatformException: message ${e.message}");
-          print("PlatformException: stacktrace ${e.stacktrace}");
+      } on PlatformException catch (e) {
+        print("PlatformException ${e}");
+        print("PlatformException: code ${e.code}");
+        print("PlatformException: message ${e.message}");
+        print("PlatformException: stacktrace ${e.stacktrace}");
 
-          setState(() {
-            prefs.setBool("subSecuentaIngresoCorreo", true);
-          });
+        setState(() {
+          prefs.setBool("subSecuentaIngresoCorreo", true);
+        });
 
-          if (e.code == auth_error.lockedOut) {
-            print("auth_error.lockedOut");
-            prefs.setInt("localAuthCountIOS", 100);
-            prefs.setInt("localAuthCount", 5);
-            localAuth.stopAuthentication();
-            customAlert(is_available_face && is_available_finger
-                ? AlertDialogType.Rostro_huella_no_reconocido :
-            is_available_face ? AlertDialogType.Rostro_no_reconocido
-                : AlertDialogType.Huella_no_reconocida, context, "", "",
-                responsive, funcionDenegadoBiometric);
-          } else if (e.code == auth_error.permanentlyLockedOut) {
-            prefs.setInt("localAuthCountIOS", 101);
-            print("auth_error.permanentlyLockedOut");
-            prefs.setInt("localAuthCount", 6);
-            localAuth.stopAuthentication();
-            customAlert(is_available_face && is_available_finger ?
-            AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado :
-            is_available_finger ?
-            AlertDialogType.inicio_de_sesion_con_huella_bloqueado :
-            AlertDialogType.inicio_de_sesion_con_facial_bloqueado, context, "",
-                "",
-                responsive, funcionAlerta);
-          } else if (e.code == auth_error.notAvailable) {
-            prefs.setInt("localAuthCountIOS", 102);
-            localAuth.stopAuthentication();
-            is_available_finger && is_available_face ? customAlert(
-                AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
-                responsive, funcionDenegadoBiometric) :
-            is_available_finger ? customAlert(
-                AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
-                responsive, funcionDenegadoBiometric) :
-            customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
-                responsive, funcionDenegadoBiometric);
-          }
+        if (e.code == auth_error.lockedOut) {
+          print("auth_error.lockedOut");
+          prefs.setInt("localAuthCountIOS", 100);
+          prefs.setInt("localAuthCount", 5);
+          localAuth.stopAuthentication();
+          customAlert(is_available_face && is_available_finger
+              ? AlertDialogType.Rostro_huella_no_reconocido :
+          is_available_face ? AlertDialogType.Rostro_no_reconocido
+              : AlertDialogType.Huella_no_reconocida, context, "", "",
+              responsive, funcionDenegadoBiometric);
+        } else if (e.code == auth_error.permanentlyLockedOut) {
+          prefs.setInt("localAuthCountIOS", 101);
+          print("auth_error.permanentlyLockedOut");
+          prefs.setInt("localAuthCount", 6);
+          localAuth.stopAuthentication();
+          customAlert(is_available_face && is_available_finger ?
+          AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado :
+          is_available_finger ?
+          AlertDialogType.inicio_de_sesion_con_huella_bloqueado :
+          AlertDialogType.inicio_de_sesion_con_facial_bloqueado, context, "",
+              "",
+              responsive, funcionAlerta);
+        } else if (e.code == auth_error.notAvailable) {
+          prefs.setInt("localAuthCountIOS", 102);
+          localAuth.stopAuthentication();
+          is_available_finger && is_available_face ? customAlert(
+              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric) :
+          is_available_finger ? customAlert(
+              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric) :
+          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric);
+        }else{
+          prefs.setInt("localAuthCountIOS", 102);
+          localAuth.stopAuthentication();
+          Navigator.pop(context, true);
+          is_available_finger && is_available_face ? customAlert(
+              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric) :
+          is_available_finger ? customAlert(
+              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive,funcionDenegadoBiometric) :
+          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
+              responsive,funcionDenegadoBiometric);
         }
+      }
 
     }
 

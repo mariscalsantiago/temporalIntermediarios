@@ -25,7 +25,7 @@ DateTime date2;
 bool showInp = true;
 
 
-void initializeTimer(BuildContext context,  Function callback) {
+/*void initializeTimer(BuildContext context,  Function callback) {
   contextGlobal=context;
   date3 = DateTime.now();
   if(_timer!=null && _timer.isActive){
@@ -35,13 +35,13 @@ void initializeTimer(BuildContext context,  Function callback) {
     _timer = Timer.periodic(Duration(minutes: timerMinuts), (_) => logOutUser(context,callback));
   }
 
-}
-
+}*/
+/*
 void initializeTimerWifi(BuildContext context,  Responsive responsive, Function callback) {
   contextGlobal=context;
   date3 = DateTime.now();
   _timerWifi = Timer.periodic(Duration(seconds: 6), (_) => validateIntenetstatus(context,responsive,callback));
-}
+}*/
 
 void initializeTimerOtroUsuario(BuildContext context,  Function callback) {
   contextGlobal=context;
@@ -94,7 +94,7 @@ Future<void> logOutOtherUser(BuildContext context, Function callback) async {
   }
 }
 
-Future<void> ValidateWifi(BuildContext context,Responsive responsive,Function callback) async {
+/*Future<void> ValidateWifi(BuildContext context,Responsive responsive,Function callback) async {
   if(_timerWifi.isActive){
     _timerWifi.cancel();
     validateIntenetstatus(context,responsive,callback);
@@ -102,7 +102,7 @@ Future<void> ValidateWifi(BuildContext context,Responsive responsive,Function ca
   }else{
     print("Timer no esta activo");
   }
-}
+}*/
 
 void logOutUser(BuildContext context, Function callback) {
   if(_timer.isActive && !showInactividad){
@@ -149,7 +149,7 @@ void internetStatus(BuildContext context) async {
   }
 }
 
-void handleUserInteraction(BuildContext context,  callback ) {
+/*void handleUserInteraction(BuildContext context,  callback ) {
   print("*** Inicializando el timer en handle...");
   try{
     _timer.cancel();
@@ -157,9 +157,9 @@ void handleUserInteraction(BuildContext context,  callback ) {
     print("try del cancel timer");
     print(e.toString());
   }
-  initializeTimer(context,callback);
+  //initializeTimer(context,callback);
   internetStatus (contextGlobal);
-}
+}*/
 
 void canceltimer([_]) {
   print("*** Cancelando Timer para web view...");

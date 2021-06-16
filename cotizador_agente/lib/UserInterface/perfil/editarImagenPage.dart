@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
@@ -18,7 +20,9 @@ import '../../main.dart';
 class SimpleCropRoute extends StatefulWidget {
   final Function callback;
   final File image;
-  const SimpleCropRoute({Key key, this.image, this.callback}) : super(key: key);
+  final Responsive responsive;
+
+  const SimpleCropRoute({Key key, this.responsive, this.image, this.callback}) : super(key: key);
   @override
   _SimpleCropRouteState createState() => _SimpleCropRouteState();
 }
@@ -64,8 +68,11 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
     }
     Responsive responsive = Responsive.of(context);
     final Map args = ModalRoute.of(context).settings.arguments;
-    return WillPopScope(
-        onWillPop: () async => false,
+    return  GestureDetector(
+        onTap: (){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    },child:WillPopScope(
+    onWillPop: () async => false,
     child: SafeArea(
     bottom: true,
     child:Scaffold(
@@ -80,6 +87,7 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
           icon: new Icon(Icons.arrow_back,
               color: Theme.Colors.Rectangle_PA, size: 24),
           onPressed: () {
+            Inactivity(context:context).cancelInactivity();
             customAlert(AlertDialogType.AjustesSinGuardar_camara, context, "", "", responsive, widget.callback);
             /* setState(() {
               datosFisicos.personales.foto;
@@ -90,7 +98,7 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
         actions: [
           IconButton(
             onPressed: () {
-              handleUserInteraction(context,CallbackInactividad);
+              //handleUserInteraction(context,CallbackInactividad);
               setState(() {
                 if (!flagRotate && angle == 0) {
                   angle = 270;
@@ -114,7 +122,7 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
           ),
           IconButton(
             onPressed: () {
-              handleUserInteraction(context,CallbackInactividad);
+              //handleUserInteraction(context,CallbackInactividad);
               setState(() {
                 if (flagRotate && angle == 360) {
                   angle = 90;
@@ -160,7 +168,7 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
             bottom: 0.0,
             child: GestureDetector(
                 onTap: () async {
-                  handleUserInteraction(context,CallbackInactividad);
+                  //handleUserInteraction(context,CallbackInactividad);
                  // widget.callback();
                   File fotoPerfil;
                   final crop = cropKey.currentState;
@@ -216,14 +224,30 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
               })
         ]),
       ),
-    )));
+    ))));
   }
+
+
+  @override
+  void initState() {
+    Inactivity(context: context).initialInactivity(functionInactivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity);
+  }
+
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
+  }
+
   void CallbackInactividad(){
     setState(() {
       print("CallbackInactividad editarfoto");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      handleUserInteraction(context,CallbackInactividad);
+      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

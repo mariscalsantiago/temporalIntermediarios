@@ -195,50 +195,66 @@ class _SplashMainState extends State<SplashMain> {
         if (onboarding != null && onboarding.isNotEmpty) {
 
           String valor = onboarding["version"];
+          bool requiredUpdate = onboarding["requiredUpdate"];
           List<String> cadenaFirebase = valor.split(".");
           List<String> cadenaApp = Tema.StringsMX.appVersion.split(".");
 
-          if(int.parse(cadenaApp[0])  > int.parse(cadenaFirebase[0])){
-            setState(() {
-              showOnBoardingFirebase = true;
-            });
-            Map<String, dynamic> mapa = {
-              '${devideID}': {
-                'version': Tema.StringsMX.appVersion,
-              }
-            };
-            _dataBaseReference.child("deviceUser").update(mapa);
-
-          } else if(int.parse(cadenaApp[0])  == int.parse(cadenaFirebase[0])){
-
-            if(int.parse(cadenaApp[1])  > int.parse(cadenaFirebase[1])){
+          if(requiredUpdate){
+            if(int.parse(cadenaApp[0])  > int.parse(cadenaFirebase[0])){
               setState(() {
                 showOnBoardingFirebase = true;
               });
               Map<String, dynamic> mapa = {
                 '${devideID}': {
                   'version': Tema.StringsMX.appVersion,
+                  'requiredUpdate': true
                 }
               };
               _dataBaseReference.child("deviceUser").update(mapa);
-            } else if(int.parse(cadenaApp[1])  == int.parse(cadenaFirebase[1])){
-              if(int.parse(cadenaApp[2])  > int.parse(cadenaFirebase[2])){
+
+            } else if(int.parse(cadenaApp[0])  == int.parse(cadenaFirebase[0])){
+
+              if(int.parse(cadenaApp[1])  > int.parse(cadenaFirebase[1])){
                 setState(() {
                   showOnBoardingFirebase = true;
                 });
                 Map<String, dynamic> mapa = {
                   '${devideID}': {
                     'version': Tema.StringsMX.appVersion,
+                    'requiredUpdate': true
                   }
                 };
                 _dataBaseReference.child("deviceUser").update(mapa);
+              } else if(int.parse(cadenaApp[1])  == int.parse(cadenaFirebase[1])){
+                if(int.parse(cadenaApp[2])  > int.parse(cadenaFirebase[2])){
+                  setState(() {
+                    showOnBoardingFirebase = true;
+                  });
+                  Map<String, dynamic> mapa = {
+                    '${devideID}': {
+                      'version': Tema.StringsMX.appVersion,
+                      'requiredUpdate': true
+                    }
+                  };
+                  _dataBaseReference.child("deviceUser").update(mapa);
+                }
               }
             }
+          }
+          else{
+            Map<String, dynamic> mapa = {
+              '${devideID}': {
+                'version': Tema.StringsMX.appVersion,
+                'requiredUpdate': true
+              }
+            };
+            _dataBaseReference.child("deviceUser").update(mapa);
           }
         } else{
           Map<String, dynamic> mapa = {
             '${devideID}': {
               'version': Tema.StringsMX.appVersion,
+              'requiredUpdate': true
             }
           };
           setState(() {

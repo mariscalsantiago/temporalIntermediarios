@@ -2,6 +2,7 @@
 import 'package:cotizador_agente/Cotizar/CotizarContract.dart';
 import 'package:cotizador_agente/Cotizar/CotizarPresenter.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/main.dart';
@@ -25,6 +26,11 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
   CotizarControllerState() {
     this.presenter = CotizarPresenter(this);
   }
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+
+  }
 
   @override
   void initState(){
@@ -34,14 +40,18 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
   @override
   Widget build(BuildContext context) {
 
-    return DefaultTabController(
+    return GestureDetector(
+        onTap: (){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    }, child:DefaultTabController(
         length: 5,
         child: Scaffold(
           appBar: getAppBar(context),
           backgroundColor: Colors.white,
           body: GestureDetector(
               onTap: (){
-                handleUserInteraction(context,CallbackInactividad);
+                Inactivity(context: context).cancelInactivity();
+                //handleUserInteraction(context,CallbackInactividad);
               },
               child: getBody()),
           bottomNavigationBar: Visibility(
@@ -50,7 +60,7 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
                   child: TabsController(isSecondLevel: false,)
               )
           ),
-        ));
+        )));
   }
 
   AppBar getAppBar(BuildContext context) {
@@ -126,7 +136,7 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
       print("CallbackInactividad AP");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      handleUserInteraction(context,CallbackInactividad);
+      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
@@ -28,7 +29,8 @@ bool banderaTrans = false;
 class VerFotoPage extends StatefulWidget {
 
   Function callback;
-  VerFotoPage({Key key, this.callback}) : super(key: key);
+  Responsive responsive;
+  VerFotoPage({Key key,this.responsive, this.callback}) : super(key: key);
 
   @override
   _VerFotoPageState createState() => _VerFotoPageState();
@@ -48,11 +50,24 @@ class _VerFotoPageState extends State<VerFotoPage> {
 
   @override
   void initState() {
+    Inactivity(context: context).initialInactivity(functionInactivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity);
     //updateFoto();
    // obtenerImagen();
-   skeletonLoad();
+   // validateIntenetstatus(context, widget.responsive,CallbackInactividad);
+    skeletonLoad();
     super.initState();
   }
+
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
+  }
+
+
   @override
   dispose() {
     super.dispose();
@@ -60,7 +75,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
 
 
   Future<void>  skeletonLoad() async {
-    handleUserInteraction(context,CallbackInactividad);
+   // handleUserInteraction(context,CallbackInactividad);
     setState(() {
       _loading = true;
     });
@@ -97,8 +112,10 @@ class _VerFotoPageState extends State<VerFotoPage> {
   @override
   Widget build(BuildContext context) {
     Responsive responsive = Responsive.of(context);
-    return WillPopScope(
-        onWillPop: () async => false,
+    return  GestureDetector(onTap: (){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    },child:WillPopScope(
+    onWillPop: () async => false,
     child: SafeArea(
     bottom: true,
     child: Scaffold(
@@ -113,6 +130,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Tema.Colors.GNP),
             onPressed: () {
+              Inactivity(context:context).cancelInactivity();
               Navigator.pop(context,true);
               widget.callback(imagePefil);
             },
@@ -132,7 +150,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                 children: builData(responsive)
             ),
           );})
-        )));
+        ))));
   }
 
   List<Widget> builData(Responsive responsive){
@@ -169,7 +187,9 @@ class _VerFotoPageState extends State<VerFotoPage> {
               GestureDetector(
                   onTap: (){
                     if(imagePefil != null ){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(image: imagePefil, callback: editFoto,)),);
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(responsive: widget.responsive,image: imagePefil, callback: editFoto,)),).then((value){
+                        Inactivity(context:context).initialInactivity(functionInactivity);
+                      });
                     }
                   },
                   child: Icon(Icons.create_outlined, color: imagePefil!=null?Tema.Colors.GNP:Tema.Colors.Light2,)),
@@ -259,8 +279,8 @@ class _VerFotoPageState extends State<VerFotoPage> {
                       image: _image,
                       callback: editFoto,
                     )),
-          ).then((value) {
-           // changeFoto();
+          ).then((value){
+            Inactivity(context:context).initialInactivity(functionInactivity);
           });
         }
       }
@@ -287,7 +307,9 @@ class _VerFotoPageState extends State<VerFotoPage> {
                       image: _image,
                       callback: editFoto,
                     )),
-          );
+          ).then((value){
+            Inactivity(context:context).initialInactivity(functionInactivity);
+          });
         }
       } catch (e) {
         print(e);
@@ -324,7 +346,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
     setState(() {
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      handleUserInteraction(context,CallbackInactividad);
+      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }
