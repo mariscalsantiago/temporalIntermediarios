@@ -239,14 +239,7 @@ class _PerfilPageState extends State<PerfilPage> {
       showCua = false;
     }
   }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("didChangeAppLifecycleState_principal $state");
-    setState(() {
-      isSwitchedPerfill = prefs.getBool("activarBiometricos");
-    });
-  }
+  
 
   functionInactivity(){
     print("functionInactivity");
@@ -1467,7 +1460,7 @@ class _PerfilPageState extends State<PerfilPage> {
               ),
               TextButton(
                 onPressed: () {
-                  canceltimer();
+                  Inactivity(context: context).cancelInactivity();
                   //TODO 238
                   prefs.setBool("subSecuentaIngresoCorreo", false);
                   prefs.setBool("esPerfil", false);

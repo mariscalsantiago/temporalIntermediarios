@@ -77,8 +77,8 @@ class _AutosPageState extends State<AutosPage> {
         onWillPop: () async => false,
         child: SafeArea(
           child: Scaffold(
-            resizeToAvoidBottomPadding:true,
-            resizeToAvoidBottomInset:false,
+            resizeToAvoidBottomPadding:false,
+            resizeToAvoidBottomInset:true,
             body: InAppWebView(
               key: webViewKey,
               initialUrl: appEnvironmentConfig.cotizadorAutos+'?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}&cveDA=${DA}",

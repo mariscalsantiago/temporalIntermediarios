@@ -42,4 +42,16 @@ logOutIntermediario(Function callback) {
   customAlert(AlertDialogType.Sesionfinalizada_por_inactividad, this.context, "$nowInicio",  "$nowTermino", Responsive.of(this.context),callback);
 }
 
+backgroundTimier(Function callback){
+  print("backgroundTimier");
+      if (_timerInactivity != null && _timerInactivity.isActive){
+        DateTime backgroundTermino = new DateTime.now();
+        DateTime stopInicio = nowInicio.add(Duration(minutes: timerMinuts));
+        print("backgroundTimier: $backgroundTermino $stopInicio ");
+         if(backgroundTermino.isAfter(stopInicio)){
+           _timerInactivity.cancel();
+           customAlert(AlertDialogType.Sesionfinalizada_por_inactividad, this.context, "$nowInicio",  "$nowTermino", Responsive.of(this.context),callback);
+         }
+      }
+  }
 }

@@ -4886,8 +4886,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 ),
                                 child: Center(
                                   child: Text(
-                                    Constantes
-                                        .FACE_HUELLA_DECRIPTION_PERMISS_DECLINADO,
+                                    "$message${Constantes.FACE_HUELLA_DECRIPTION_PERMISS_DECLINADO}",
                                     style: TextStyle(
                                         color:
                                             Theme.Colors.Funcional_Textos_Body,
@@ -4908,6 +4907,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () {
+                                    prefs.setInt("localAuthCountIOS", 0);
                                     if(Platform.isIOS)
                                       SystemSettings.defaultApps();
                                     else
@@ -8636,7 +8636,7 @@ class _MyDialogContrasenaInactividadState
                                   onPressed: () {
                                     prefs.setBool("esPerfil", false);
                                     sendTag("appinter_inactividad");
-                                    canceltimer();
+                                    Inactivity(context: context).cancelInactivity();
                                     Navigator.pop(context, true);
                                     Navigator.push(
                                         context,

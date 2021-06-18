@@ -1095,8 +1095,8 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
                                                   }else{
                                                     print("No se cumplen reglas");
-//TODO revisar
-//                                                    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres");
+                                                    //TODO revisar
+                                                    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres");
 
                                                   }
 

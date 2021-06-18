@@ -64,8 +64,10 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
     keyboardVisibilityController.onChange.listen((bool visible) {
       print('Keyboard visibility update. Is visible: ${visible}');
       if (!visible) {
-        focusCodigo.unfocus();
-        focusContrasenaInactividad.unfocus();
+        setState(() {
+          focusCodigo.unfocus();
+          focusContrasenaInactividad.unfocus();
+        });
       }
     });
     super.initState();
@@ -88,7 +90,11 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(onTap: (){
-        if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
+      setState(() {
+        focusCodigo.unfocus();
+        focusContrasenaInactividad.unfocus();
+      });
+      if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
           Inactivity(context:context).initialInactivity(functionInactivity);
         }
       },child:WillPopScope(

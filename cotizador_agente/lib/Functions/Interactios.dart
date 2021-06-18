@@ -118,11 +118,11 @@ void logOutUser(BuildContext context, Function callback) {
     print("Timer no esta activo");
   }
 }
-
+/*
 void cancelTimer(BuildContext context) {
   _timer.cancel();
   showInactividad = false;
-}
+}*/
 
 void cancelTimers() {
   showInactividad = false;
@@ -160,10 +160,10 @@ void internetStatus(BuildContext context) async {
   //initializeTimer(context,callback);
   internetStatus (contextGlobal);
 }*/
-
+/*
 void canceltimer([_]) {
   print("*** Cancelando Timer para web view...");
   _timer.cancel();
   //internetStatus (contextGlobal);
-}
+}*/
 

@@ -499,7 +499,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
               responsive, widget.callback) :
           customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
               responsive, widget.callback);
-        }else{
+        }else if (e.code == auth_error.otherOperatingSystem ){
           prefs.setInt("localAuthCountIOS", 102);
           localAuth.stopAuthentication();
           Navigator.pop(context, true);
@@ -511,6 +511,19 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
               responsive, widget.callback) :
           customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
               responsive, widget.callback);
+          }else{
+          prefs.setInt("localAuthCountIOS", 102);
+          localAuth.stopAuthentication();
+          Navigator.pop(context, true);
+          is_available_finger && is_available_face ? customAlert(
+              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, widget.callback) :
+          is_available_finger ? customAlert(
+              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, widget.callback) :
+          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
+              responsive, widget.callback);
+
           }
         }
       }

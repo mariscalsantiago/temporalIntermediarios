@@ -6,6 +6,7 @@ import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Downloads.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
@@ -73,11 +74,17 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("didChangeAppLifecycleState");
+    print("didChangeAppLifecycleState subsecuentes");
     if(state == AppLifecycleState.resumed){
       print(state);
       validateBiometricstatus(funcionCanselBiometrics);
+      Inactivity(context:context).backgroundTimier(functionInactivity);
     }
+  }
+
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
   }
 
   @override
@@ -674,6 +681,18 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               responsive, funcionDenegadoBiometric) :
           customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
               responsive, funcionDenegadoBiometric);
+        }else if (e.code == auth_error.otherOperatingSystem ){
+          prefs.setInt("localAuthCountIOS", 102);
+          localAuth.stopAuthentication();
+          Navigator.pop(context, true);
+          is_available_finger && is_available_face ? customAlert(
+              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "otherOperatingSystem",
+              responsive, funcionDenegadoBiometric) :
+          is_available_finger ? customAlert(
+              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric) :
+          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric);
         }else{
           prefs.setInt("localAuthCountIOS", 102);
           localAuth.stopAuthentication();
@@ -683,9 +702,10 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               responsive, funcionDenegadoBiometric) :
           is_available_finger ? customAlert(
               AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive,funcionDenegadoBiometric) :
+              responsive, funcionDenegadoBiometric) :
           customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
-              responsive,funcionDenegadoBiometric);
+              responsive, funcionDenegadoBiometric);
+
         }
       }
 

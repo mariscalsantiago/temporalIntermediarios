@@ -75,6 +75,10 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
   @override
   Widget build(BuildContext context) {
     return  GestureDetector(onTap: (){
+      setState(() {
+        focusCodigo.unfocus();
+        focusContrasenaInactividad.unfocus();
+      });
         if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
           Inactivity(context:context).initialInactivity(functionInactivity);
         }

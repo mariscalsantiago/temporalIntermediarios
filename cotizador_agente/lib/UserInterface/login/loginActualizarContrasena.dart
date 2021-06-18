@@ -110,11 +110,12 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     keyboardVisibilityController.onChange.listen((bool visible) {
       print('Keyboard visibility update. Is visible: ${visible}');
       if (!visible) {
+        setState(() {
         focusActualContrasena.unfocus();
         focusNuevaContrasena.unfocus();
         focusConfirmarContrasena.unfocus();
         focusContrasenaInactividad.unfocus();
-        setState(() {});
+       });
       }
     });
 
@@ -201,6 +202,12 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   @override
   Widget build(BuildContext context) {
     return  GestureDetector(onTap: (){
+          setState(() {
+            focusActualContrasena.unfocus();
+            focusNuevaContrasena.unfocus();
+            focusConfirmarContrasena.unfocus();
+            focusContrasenaInactividad.unfocus();
+          });
           if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
             Inactivity(context:context).initialInactivity(functionInactivity);
           }

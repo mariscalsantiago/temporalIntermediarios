@@ -29,12 +29,12 @@ enum HomeSelection {Atuos,AP,None}
 
 HomeSelection opcionElegida =  HomeSelection.None;
 bool _loading=false;
-bool _available = true;
 String iniciales="EJ";
-
 bool _isPortrait = false;
 Responsive _responsiveMainTablet;
+
 class HomePage extends StatefulWidget {
+
   bool verificacionCodigo;
   Responsive responsive;
   HomePage({Key key, this.verificacionCodigo, this.responsive}) : super(key: key);
@@ -47,6 +47,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   String dropdownValue =  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos" : prefs.getBool("showAP") ? "AP" : "";
+
   List<String> listaCotizadores = [];
   bool showRamos;
   bool pressRamo;
@@ -56,14 +57,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // skeletonLoad();
     _databaseReference=FirebaseDatabase.instance.reference();
     Inactivity(context:context).initialInactivity(functionInactivity);
     validateIntenetstatus(context,widget.responsive,functionConnectivity);
     _runAsyncInit();
 
     pressRamo = false;
-
     if( prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo")){
       print("auto ${prefs.getBool("rolAutoscotizarActivo")}");
       print("showAP ${prefs.getBool("showAP")}");
@@ -86,46 +85,8 @@ class _HomePageState extends State<HomePage> {
       listaCotizadores=[""];
       dropdownValue = "";
     }
-    //dropdownValue =  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos": "AP";
     ultimoAcceso();
     prefs.setInt("localAuthCount", 0);
-    //handleUserInteraction(context,CallbackInactividad);
-    //validateIntenetstatus(context, widget.responsive);
-
-    // Validate Autos
-    Map userInfo;
-
-    DatabaseReference _dataBaseReference =
-    FirebaseDatabase.instance.reference();
-
-    try {
-      _dataBaseReference
-          .child("AutosAvailable")
-          .child("dataAutos")
-          .once()
-          .then((DataSnapshot _snapshot) {
-        var jsoonn = json.encode(_snapshot.value);
-        userInfo = json.decode(jsoonn);
-
-        List _whiteList = userInfo["whitelist"];
-        if (userInfo["show"]) {
-          if (_whiteList.contains(datosUsuario.emaillogin.toLowerCase())) {
-            setState(() {
-              _available = true;
-            });
-          } else {
-            setState(() {
-              _available = false;
-            });
-          }
-        }
-      });
-    } catch (err) {
-      setState(() {
-        _available = false;
-      });
-    }
-
     super.initState();
   }
 
@@ -162,26 +123,17 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("didChangeAppLifecycleState_home $state");
-    // validateIntenetstatus(context, widget.responsive,CallbackInactividad);
-
-  }
-
   void  skeletonLoad(){
     setState(() {
       _loading = true;
     });
-
     timerPhoto = Timer.periodic(Duration(seconds: 3), (timer) {
       cancelTimerLoadingEdit();
     });
-
   }
 
   void LoadingImage(){
     setState(() {
-
     });
   }
   void cancelTimerLoadingEdit(){
@@ -192,18 +144,9 @@ class _HomePageState extends State<HomePage> {
       _loading = false;
     });
   }
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-  }
 
   @override
   Widget build(BuildContext context) {
-
     return OrientationBuilder(builder: (context, orientation) {
       if (orientation == Orientation.portrait) {
         _responsiveMainTablet = Responsive.of(context);
@@ -271,7 +214,6 @@ class _HomePageState extends State<HomePage> {
                         )
                     ),
                   ),
-
                   Container(
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -285,21 +227,17 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: responsive.hp(1.6)),
                     child: showRamos ? GestureDetector(
                         onTap: () {
-                          //validateIntenetstatus(context,responsive,CallbackInactividad);
-                          //handleUserInteraction(context,CallbackInactividad);
                           Navigator.push( context,
                               new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
                             Inactivity(context:context).initialInactivity(functionInactivity);
                           });
                         },
                         onLongPressStart: (p) {
-                          //handleUserInteraction(context,CallbackInactividad);
                           setState(() {
                             pressRamo = true;
                           });
                         },
                         onLongPressEnd: (p) {
-                          //handleUserInteraction(context,CallbackInactividad);
                           setState(() {
                             pressRamo = false;
                           });
@@ -343,13 +281,12 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") && dropdownValue == "Autos" ? Container(
+                  _isActiveAutos && prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") && dropdownValue == "Autos" ? Container(
                     height: responsive.hp(36),
                     width: responsive.width,
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
                       onTap: (){
-                        // validateIntenetstatus(context,responsive,CallbackInactividad);
                         setState(() {
                           showInactividad = false;
                           // handleUserInteraction(context, callback);
@@ -417,21 +354,17 @@ class _HomePageState extends State<HomePage> {
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
                     child: GestureDetector(
                       onTap: (){
-                        //validateIntenetstatus(context,responsive,CallbackInactividad);
-                        //handleUserInteraction(context,CallbackInactividad);
                         Navigator.pushNamed(context, "/cotizadorUnicoAP");
                         setState(() {
                         });
                         //opcionElegida = HomeSelection.AP;
                       },
                       onLongPressStart: (j){
-                        //handleUserInteraction(context,CallbackInactividad);
                         setState(() {
                           opcionElegida = HomeSelection.AP;
                         });
                       },
                       onLongPressEnd: (j){
-                        // handleUserInteraction(context,CallbackInactividad);
                         setState(() {
                           opcionElegida = HomeSelection.None;
                         });
@@ -477,19 +410,8 @@ class _HomePageState extends State<HomePage> {
                   ): Container(),
                 ],
               ),
-              /*Container(
-                child: WebView(
-                  javascriptMode: JavascriptMode.unrestricted,
-                  gestureNavigationEnabled:true,
-                  initialUrl: 'https://gnp-appcontratacionautos-qa.appspot.com/?idParticipante=TSUAUT',
-                ),
-              )*/
             ),
           ),
-          /*
-          bottomNavigationBar: TabsController(
-            isSecondLevel: false,
-          ),*/
         ),
       ),
     ));
@@ -505,19 +427,14 @@ class _HomePageState extends State<HomePage> {
   AppBar getAppBar(BuildContext context, Responsive responsive) {
     bool tablet = false;
     tablet = prefs.getBool("useMobileLayout");
-    // print("tablet ${tablet}");
-    // validateIntenetstatus(context, widget.responsive);
     return AppBar(
       elevation: 0.0,
       leading: Container(
         margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
-        //child: Image.asset("assets/icon/splash/logoGNP.png",
-        //height: responsive.hp(25), width: responsive.wp(25)),
       ),
       title: Center(
         child:
         Container(
-          //margin: EdgeInsets.only(left: responsive.wp(1), right: responsive.wp(1), top: responsive.hp(1), bottom: responsive.hp(1)),
             child: Image.asset("assets/icon/splash/logoGNP.png",
               height:tablet ? responsive.hp(15): responsive.hp(10),
               width:tablet ? responsive.hp(15): responsive.hp(10),
@@ -535,8 +452,6 @@ class _HomePageState extends State<HomePage> {
       actions: [
         GestureDetector(
             onTap: (){
-              //validateIntenetstatus(context,responsive,CallbackInactividad);
-              //handleUserInteraction(context,CallbackInactividad);
               Navigator.push(context, MaterialPageRoute(builder: (context) => PerfilPage(responsive:responsive, callback: LoadingImage,)),).then((value){
                 Inactivity(context:context).initialInactivity(functionInactivity);
               });
@@ -611,45 +526,5 @@ class _HomePageState extends State<HomePage> {
         )
       ],
     );
-  }
-
-  Widget _getBodyRemoteConfig() {
-    var healthWelcome = "Buenos días";
-    return Container(
-      padding: EdgeInsets.only(top: 0),
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 0.0),
-            child: Divider(
-              thickness: 1,
-              color: Theme.Colors.Azul_gnp,
-            ),
-          ),
-          Container(
-              color: Colors.white,
-              margin: EdgeInsets.fromLTRB(16, 16, 16, 0),
-              alignment: Alignment.center,
-              child: Text("¡$healthWelcome " + datosUsuario.givenname + "!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 24, color: Theme.Colors.Azul_gnp))),
-        ],
-      ),
-    );
-  }
-
-
-  void CallbackInactividad(){
-    setState(() {
-      print("CallbackInactividad home");
-      focusContrasenaInactividad.hasFocus;
-      showInactividad;
-      // handleUserInteraction(context,CallbackInactividad);
-      //contrasenaInactividad = !contrasenaInactividad;
-    });
   }
 }

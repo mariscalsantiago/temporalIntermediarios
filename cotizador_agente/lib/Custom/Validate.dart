@@ -64,6 +64,10 @@ Future<bool> validatePinig() async {
 
 bool isNone = false;
 bool isMobile = false;
+bool isWifi = false;
+bool isMessageMobile = false;
+bool isMessageWifi = false;
+
 List<BiometricType> _availableBiometrics;
 final LocalAuthentication auth = LocalAuthentication();
 
@@ -82,6 +86,123 @@ Future<File> urlToFile(String imageUrl) async {
     file.writeAsBytes(response.bodyBytes);
   }
   return file;
+}
+
+Future<void> validateIntenetstatuss(BuildContext context, Responsive responsive,Function callback) async {
+  print("init:validateIntenetstatus");
+
+  callback();
+  ConnectivityStatus connectivity = await ConnectivityServices().getConnectivityStatus(false);
+
+  if(connectivity.available) {
+    print("available");
+
+    isWifi = connectivity.type.toString() == ""? true:false;
+    isMobile = connectivity.type.toString() == ""? true:false;
+
+//    isMessageMobile = connectivity.type.toString() == ""? true:false;
+  //  isMessageWifi = connectivity.type.toString() == ""? true:false;
+
+   /* if(isMobile) {
+      print("available:mobil");
+      isMobile = false;
+      Navigator.pop(context);
+    }*/
+  } else {
+    print("available:else");
+
+     isMobile = false;
+     isWifi = false;
+     isMessageMobile = false;
+     isMessageWifi = false;
+
+   /* if(!isNone) {
+      print("available:isNone");
+      sendTag("appinter_msg_wifi");
+      showInactividad = true;
+      isNone = true;
+      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "", responsive, funcionAlertaNone);
+    }*/
+  }
+  print("init:validateIntenetstatus $isWifi $isMobile");
+
+
+  Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+    if (result == ConnectivityResult.wifi) {
+      print("validateIntenetstatus:wifi");
+     if(isMobile){
+
+        if(isMessageWifi){
+          isMessageWifi = false;
+          Navigator.pop(context);
+        }
+        if(isMessageMobile){
+          isMessageWifi = false;
+          Navigator.pop(context);
+        }
+
+      }else{
+
+          if(isMessageMobile){
+
+          }
+          if(isMessageMobile){
+
+          }
+
+      }
+
+
+      /*if (isWifi) {
+        Navigator.pop(context);
+        isWifi = false;
+        showInactividad = false;
+      }
+      if (isWifi) {
+        Navigator.pop(context);
+        isMobile = false;
+      }*/
+
+      isWifi = true;
+      isMobile = false;
+      callback();
+      print("validateIntenetstatus:wifi:next: $isWifi $isMobile ");
+    } else if (result == ConnectivityResult.mobile) {
+      print("validateIntenetstatus:mobile");
+/*
+      if(isWifi) {
+        Navigator.pop(context);
+        isWifi = false;
+      }
+      if (!isMobile) {
+        customAlert(AlertDialogType.DatosMoviles_Activados, context, "", "", responsive, funcionAlerta);
+        isMobile = true;
+      }
+      print("validateIntenetstatus:mobile:next: $isWifi $isMobile ");
+*/
+      callback();
+    } else if (result == ConnectivityResult.none) {
+      print("validateIntenetstatus:none");
+/*
+      if (!isWifi) {
+        //TODO validar Dali
+        if (isMobile) {
+          isMobile = false;
+          Navigator.pop(context);
+        }
+        sendTag("appinter_msg_wifi");
+        showInactividad = true;
+        isWifi = true;
+        customAlert(
+            AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "",
+            responsive, funcionAlertaNone);
+      }*/
+
+      print("validateIntenetstatus:none: $isNone $isMobile ");
+      callback();
+    }
+  });
+
 }
 
 Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,Function callback) async {

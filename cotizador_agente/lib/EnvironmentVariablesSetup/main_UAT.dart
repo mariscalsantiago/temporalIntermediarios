@@ -30,7 +30,7 @@ void main() {
     cambioContrasenaPerfil: 'https://api-uat.oscpuat.gnp.com.mx/aprAprovisionamientoProvee/intermediario/password/',
     reestablecerContrasena: 'https://api-uat.oscpuat.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
     consultaUsuarioPorCorreo: 'https://api-uat.oscpuat.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
-    orquestadorOTPSinSesion:'https://gnp-accidentespersonales-uat.uc.r.appspot.com/intermediario/enviarOtp/sinSesion',
+    orquestadorOTPSinSesion:'https://app-inter-uat.gnp.com.mx/intermediario/enviarOtp/sinSesion',
     validaOTP: 'https://api-uat.oscpuat.gnp.com.mx/apr/otpLocalService/validateOtp/',
     consultarMedioContactosAgentes :'https://api-uat.oscpuat.gnp.com.mx/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
     altaMediosContactoAgentes:'https://api-uat.oscpuat.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
