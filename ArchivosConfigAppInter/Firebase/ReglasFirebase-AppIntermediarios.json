@@ -1,0 +1,46 @@
+{
+	"rules": {
+		".read": false,
+		".write": false,		
+	"deviceUser": {
+		".read": true,
+		".write": true
+	},
+	"AutosAvailable": {
+		".read": true,
+		".write": true
+	},
+	"Avisos": {
+		".read": true,
+		".write": true
+	},
+	"Secciones": {
+		".read": true,
+		".write": true
+	},
+	"accesoUsuarios": {
+		".read": true,
+		".write": true
+	},
+	"bitacora": {
+		".read": true,
+		".write": true
+	},
+	"firstSessionUser": {
+		".read": true,
+		".write": true
+	},
+	"permisos": {
+		".read": true,
+		".write": false
+	},
+	"timer": {
+		".read": true,
+		".write": false
+	},
+	"timerIntentos": {
+		".read": true,
+		".write": false
+	}
+  }
+}
