@@ -14,7 +14,7 @@ void main() {
     ambient: Ambient.prod,
     serviceLogin: 'https://cuentas.gnp.com.mx/auth/login',
     apikeyAppAgentes: 'COLOCAR APIKEY GNP_Flutter_AppInter',
-    service_perfilador: "https://api.service.oscp.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
+    service_perfilador: "https://api.service.gnp.com.mx/Consulta-Agentes/consulta-perfil-app-int",
     proyectId: 'gnp-accidentespersonales-pro',
     // urlNotifierService:'https://api.service.gnp.com.mx',
 
