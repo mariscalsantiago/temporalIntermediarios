@@ -1,7 +1,7 @@
 {
 	"rules": {
 		".read": false,
-		".write": false,		
+		".write": "auth.uid != null",		
 	"deviceUser": {
 		".read": true,
 		".write": true
