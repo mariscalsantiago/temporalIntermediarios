@@ -58,6 +58,7 @@ void main() async {
     altaMediosContactoAgentes:'https://api.service.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
     orquestadorOtpJwt:'https://app-inter.gnp.com.mx/intermediario/enviarOtp/me',
     consultaPersonaIdParticipante:"https://api.service.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
+    cotizadorAutos: "https://gnp-appcontratacionautos-pro.uc.r.appspot.com/",
 
     child: new MyApp(),
 
