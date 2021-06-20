@@ -100,26 +100,34 @@ class FormularioCotizacion {
     print("incia calculación de reglas******");
 
     for (int i = 0; i<paso2.secciones.length; i++){
+      Regla reglaAcumulada;
+      String mensaje = "";
       if(paso2.secciones[i].reglasNegocio!=null){
         if(paso2.secciones[i].reglasNegocio.length>0){
           for (int j=0; j<paso2.secciones[i].reglasNegocio.length; j++){
+            print("Calculando regla: "+ paso2.secciones[i].reglasNegocio[j].mensaje);
             for(int k=0; k<paso2.secciones[i].reglasNegocio[j].operaciones.length; k++){
 
-              print("Calculando regla: "+ paso2.secciones[i].reglasNegocio[j].mensaje);
               bool resultadoRegla=paso2.secciones[i].reglasNegocio[j].operaciones[k].calcularOperacion();
               if(resultadoRegla==true){
                 if(paso2.secciones[i].reglasNegocio[j].tipoRegla == Utilidades.REGLA_STOPPER){
-                  return paso2.secciones[i].reglasNegocio[j];
+
+                  reglaAcumulada = Regla(tipoRegla: Utilidades.REGLA_STOPPER, mensaje: mensaje);
+
                 }
                 reglas.add(paso2.secciones[i].reglasNegocio[j]);
 
+                mensaje += paso2.secciones[i].reglasNegocio[j].mensaje + "\n";
               }
             }
+          }
+          if(reglaAcumulada != null){
+            reglaAcumulada = Regla(tipoRegla: Utilidades.REGLA_STOPPER, mensaje: mensaje);
+            return reglaAcumulada;
           }
         }
       }
     }
-
     if(reglas.length > 0){
 
       String mensaje = "";
@@ -131,9 +139,6 @@ class FormularioCotizacion {
       Regla reglaAcumulada = Regla(tipoRegla: Utilidades.REGLA_INFO, mensaje: mensaje);
       return reglaAcumulada;
     }
-
-
-
   }
 
 

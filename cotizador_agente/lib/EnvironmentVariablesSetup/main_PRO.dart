@@ -13,7 +13,7 @@ void main() {
   var configuredApp = new AppConfig(
     ambient: Ambient.prod,
     serviceLogin: 'https://cuentas.gnp.com.mx/auth/login',
-    apikeyAppAgentes: 'l7xx9d2ed3d704454924ba7bbc4f80cb56ea',
+    apikeyAppAgentes: 'COLOCAR APIKEY GNP_Flutter_AppInter',
     service_perfilador: "https://api.service.gnp.com.mx/Consulta-Agentes/consulta-perfil-app-int",
     proyectId: 'gnp-accidentespersonales-pro',
     // urlNotifierService:'https://api.service.gnp.com.mx',
@@ -28,7 +28,7 @@ void main() {
     apikeyBCA: '9a780a70-c5fc-4bee-86cf-5650cce16516',
 
     //Preguntas Secretas
-    apiKey: 'l7xx9d2ed3d704454924ba7bbc4f80cb56ea',
+    apiKey: 'COLOCAR APIKEY GNP_Flutter_AppInter',
     consultaPreguntasSecretas: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/preguntas/',
     actualizarEstablecerPreguntasSecretas: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/preguntas',
     cambioContrasenaPerfil: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/password/',
