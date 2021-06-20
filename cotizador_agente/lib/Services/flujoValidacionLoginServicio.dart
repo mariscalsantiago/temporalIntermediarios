@@ -972,7 +972,10 @@ Future<ConsultarPorIdParticipanteConsolidado>
   if (_connectivityStatus.available) {
     http.Response _response;
 
-    Map _loginBody = {"idParticipante": idParticipante};
+    Map _loginBody = {
+      "idParticipante": idParticipante,
+      "modoConsulta": "H"
+    };
 
     String _loginJSON = json.encode(_loginBody);
 

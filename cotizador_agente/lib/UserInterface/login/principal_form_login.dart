@@ -985,17 +985,20 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                     await ConsultarPorIdParticipanteServicio(
                         context, idParticipanteValidaPorCorre);
                 if (consulta != null) {
-                  //print("UsuarioPorCorreo if5");
-                  prefs.setString(
-                      "codigoAfiliacion",
-                      consulta
-                          .consultarPorIdParticipanteConsolidadoResponse
-                          .personaConsulta
-                          .persona
-                          .datosGenerales
-                          .idParticipanteConsolidado);
-                } else {
-                  // print("UsuarioPorCorreo else3");
+                  String codigoAfiliacion = consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.sistemasOrigen.sistemaOrigen.valorSistemaOrigen.valor;
+                  if(codigoAfiliacion != null){
+                    print("codigoAfiliacion if ${codigoAfiliacion}");
+                    prefs.setString("codigoAfiliacion", codigoAfiliacion);
+                  } else {
+                    List<ValorSistemaOrigen> listCodigosAfiliacion = consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.sistemasOrigen.sistemaOrigen.valorSistemaOrigenList;
+                    print("codigoAfiliacion else ${listCodigosAfiliacion.length}");
+                    for(int i =0; i < listCodigosAfiliacion.length; i++){
+                      if(listCodigosAfiliacion[i].banPadre){
+                        prefs.setString("codigoAfiliacion", listCodigosAfiliacion[i].valor);
+                        break;
+                      }
+                    }
+                  }
                 }
               }
               setState(() {
@@ -1195,12 +1198,25 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                     prefs.setString("medioContactoTelefono", "");
                   }
                 } else {
+                  print("--> ConsultarPorIdParticipanteConsolidado");
                   prefs.setString("medioContactoTelefono", "");
                   ConsultarPorIdParticipanteConsolidado consulta = await ConsultarPorIdParticipanteServicio(context, datosUsuario.idparticipante);
 
                   if (consulta != null) {
-                    print("afiliacion ${consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado} ");
-                    prefs.setString("codigoAfiliacion", consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.datosGenerales.idParticipanteConsolidado);
+                    String codigoAfiliacion = consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.sistemasOrigen.sistemaOrigen.valorSistemaOrigen.valor;
+                    if(codigoAfiliacion != null){
+                      print("codigoAfiliacion if ${codigoAfiliacion}");
+                      prefs.setString("codigoAfiliacion", codigoAfiliacion);
+                    } else {
+                      List<ValorSistemaOrigen> listCodigosAfiliacion = consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.sistemasOrigen.sistemaOrigen.valorSistemaOrigenList;
+                      print("codigoAfiliacion else ${listCodigosAfiliacion.length}");
+                      for(int i =0; i < listCodigosAfiliacion.length; i++){
+                        if(listCodigosAfiliacion[i].banPadre){
+                          prefs.setString("codigoAfiliacion", listCodigosAfiliacion[i].valor);
+                          break;
+                        }
+                      }
+                    }
                   }
                 }
 
