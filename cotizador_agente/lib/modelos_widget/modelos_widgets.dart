@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jiffy/jiffy.dart';
 import 'modelo_seccion.dart';
-import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 
 ////COMBOBOX
 class ComboBoxDinamico extends StatefulWidget {
@@ -203,6 +202,8 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
   @override
   Widget build(BuildContext context) {
+
+
     return Padding(
       padding: EdgeInsets.only(top: 5, bottom: 4),
       child: AbsorbPointer(
@@ -213,9 +214,9 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
             //color: AppColors.color_sombra,
             child: Column(
               children: <Widget>[
-                Divider(
+               /* Divider(
                   color: AppColors.color_Bordes, height: 1
-                ),
+                ),*/
                 Container(
                   width: double.infinity,
                   margin: EdgeInsets.only( top: 8),
@@ -224,20 +225,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                     widget.campo.etiqueta == null
                         ? widget.campo.obligatorio == true ? widget.campo.nombre_campo.toUpperCase() + " *" :  widget.campo.nombre_campo.toUpperCase()
                         : widget.campo.etiqueta.toUpperCase(),
-                    style: widget.campo.enabled?
-                    TextStyle(
-                        color: AppColors.color_Etiqueta,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Roboto',
-                        letterSpacing: 1.5
-                    ) : TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Roboto',
-                        letterSpacing: 1.5
-                    ),
+                    style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5) : TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5),
                   ),
                 ),
                 Container(
@@ -257,15 +245,8 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                   child: DropdownButtonFormField(
                     value:  widget.campo.valor,
                     items: getDropDownMenuItems(),
-                   // onChanged: isUnValor ? null : ? null : changedDropDownItem,
-                    disabledHint: Text("  "+ widget.campo.valores[0].descripcion.toString(),
-                      style: TextStyle(
-                          color: AppColors.color_disable,
-                          fontSize: 16,
-                          fontWeight:
-                          FontWeight.w400,
-                          fontFamily: 'Roboto')
-                      ,),
+                    onChanged: isUnValor ? null : changedDropDownItem,
+                    disabledHint: Text("  "+ widget.campo.valores[0].descripcion.toString(), style: TextStyle(color: AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),),
                     /*decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(top: 0, bottom: 0),
                       enabledBorder: UnderlineInputBorder(
@@ -1158,7 +1139,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       reverse: true,
                       child: TextFormField(
                         controller: _controller,
-                        cursorColor: Tema.Colors.GNP,
                         style: TextStyle(color: AppColors.gnpTextUser, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                         key: ValueKey('Key_' + widget.campo.hashCode.toString() + "_" + DateTime.now().millisecondsSinceEpoch.toString()),
                         inputFormatters: [new WhitelistingTextInputFormatter(new RegExp(widget.campo.reg_ex)), //[0-9]
@@ -1373,7 +1353,6 @@ class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
                 inputFormatters: [LengthLimitingTextInputFormatter(30), WhitelistingTextInputFormatter(RegExp("[A-Za-zÀ-ÿ\u00f1\u00d10-9 ]")),],
                 maxLength: 30,
                 maxLengthEnforced: true,
-                cursorColor: Tema.Colors.GNP,
                 decoration:
                 InputDecoration(
                   hintText: "Nombre cotización",
@@ -1509,17 +1488,19 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                   children: <Widget>[
                     Expanded(
                       child: Container(
-                        height: 24,
+                        height: 32,
                         color: AppColors.color_background,
                         padding: EdgeInsets.only(bottom: 4.0, left: 8.0, top:4.0),
-                        child: Text(
-                          widget.titulo,
-                          style: TextStyle(
-                              color: AppColors.color_Etiqueta,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              letterSpacing: 0.4),
-                          textAlign: TextAlign.left,
+                        child: Align( alignment: Alignment.centerLeft,
+                          child: Text(
+                            widget.titulo,
+                            style: TextStyle(
+                                color: AppColors.color_Etiqueta,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
+                                letterSpacing: 0.4),
+                            textAlign: TextAlign.left,
+                          ),
                         ),
                       ),
                     ),
@@ -1533,15 +1514,17 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
                       child: Container(
                         height: 32,
                         color: Colors.white,
-                        padding: EdgeInsets.only(left: 8.0,bottom: 4.0, top: 4.0),
-                        child: Text(
-                          widget.valor == "Novus" ? "N/A" : widget.valor,
-                          style: TextStyle(
-                              color: AppColors.color_appBar,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              letterSpacing: 0.25),
-                          textAlign: TextAlign.left,
+                        padding: EdgeInsets.only(left: 16.0,bottom: 4.0, top: 4.0),
+                        child: Align( alignment: Alignment.centerLeft,
+                          child: Text(
+                            widget.valor == "Novus" ? "N/A" : widget.valor,
+                            style: TextStyle(
+                                color: AppColors.color_appBar,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                letterSpacing: 0.25),
+                            textAlign: TextAlign.left,
+                          ),
                         ),
                       ),
                     ),

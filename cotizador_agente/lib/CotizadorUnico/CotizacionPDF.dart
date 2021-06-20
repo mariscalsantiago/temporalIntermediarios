@@ -12,8 +12,10 @@ import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter/widgets.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
@@ -26,7 +28,6 @@ import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
 
-import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 
 
 
@@ -70,7 +71,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   getFormato(BuildContext context) async{
 
-    final Trace formato = FirebasePerformance.instance.newTrace("SoySocio_GetPDF");
+    final Trace formato = FirebasePerformance.instance.newTrace("IntermediarioGNP_GetPDF");
     formato.start();
     print(formato.name);
     bool success = false;
@@ -115,7 +116,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
             }else{
               formato.stop();
               Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleError, response.body, context,"Reintentar",(){
-                Navigator.pop(context,true);
+                Navigator.pop(context);
                 getFormato(context);
               });
             }
@@ -123,14 +124,14 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
           }else {
             formato.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-              Navigator.pop(context,true);
+              Navigator.pop(context);
               getFormato(context);
             });
           }
 
         }catch(e,s){
           formato.stop();
-          //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+          await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
         }
 
     return success;
@@ -166,7 +167,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
 
   sendEmailService() async {
 
-    final Trace mytrace = FirebasePerformance.instance.newTrace("SoySocio_EnviaEmail");
+    final Trace mytrace = FirebasePerformance.instance.newTrace("IntermediarioGNP_EnviaEmail");
     mytrace.start();
     print(mytrace.name);
     bool success = false;
@@ -201,9 +202,9 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
         this.setState(() {
           isLoading = false;
           success = true;
-          Navigator.pop(context,true);
+          Navigator.pop(context);
           Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleExito, Mensajes.cotizacionEnviada, context, "Aceptar", (){
-            Navigator.pop(context,true);
+            Navigator.pop(context);
             Navigator.pushReplacement(context,  MaterialPageRoute(
               builder: (context) => CotizacionPDF(id: widget.id, folio: widget.folio, idFormato: widget.idFormato, id_Plan: widget.id_Plan,),
             ));
@@ -213,8 +214,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
       }else{
         mytrace.stop();
         isLoading = false;
-        Navigator.pop(context,true);
-        Navigator.pop(context,true);
+        Navigator.pop(context);
+        Navigator.pop(context);
         String message = response.response != null ? response.response : response.response['message'] != null ? response.response['message'] : response.response['errors'][0] != null ? response.response['errors'][0] : "Error del servidor";
 
         Utilidades.mostrarAlertas(Mensajes.titleError, message, context);
@@ -222,7 +223,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
     }else {
       mytrace.stop();
       Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-        Navigator.pop(context,true);
+        Navigator.pop(context);
         sendEmailService();
       });
     }
@@ -277,7 +278,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
   Widget mostrarAlerta(){
     showModalBottomSheet(
       isScrollControlled: true,
-      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
       backgroundColor: Colors.transparent,
       context: context,
       builder: (context) => AnimatedPadding(
@@ -305,7 +306,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                             child: Text("Enviar cotización",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: AppColors.color_titleAlert,
+                                    color: AppColors.AzulGNP,
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 0.15))),
@@ -366,7 +367,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                                           }
                                         }
                                       },
-                                      cursorColor: Tema.Colors.GNP,
                                       decoration: new InputDecoration(
                                         counter: SizedBox(
                                           width: 0,
@@ -533,7 +533,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                           minLines: 3,
                           maxLines: 50,
                           maxLength: 999,
-                          cursorColor: Tema.Colors.GNP,
                           decoration: InputDecoration(
                             hintText: "Escribe tu mensaje...",
                             counterText: "",
@@ -681,7 +680,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                         flex: 2,
                         child: FloatingActionButton(
                           onPressed: () {
-                            Navigator.pop(context,true);
+                            Navigator.pop(context);
                           },
                           heroTag: "btn1",
                           tooltip: "Cerrar",

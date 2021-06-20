@@ -88,7 +88,7 @@ class GNPDialog extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                   fontSize: 16,
                                   letterSpacing: 0.15,
-                                  color: AppColors.azulGNP)),
+                                  color: AppColors.AzulGNP)),
                         )),
                     Visibility(
                         visible: (this.description == null) ? false : true,

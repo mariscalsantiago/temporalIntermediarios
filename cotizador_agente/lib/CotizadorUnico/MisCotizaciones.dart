@@ -8,6 +8,7 @@ import 'package:cotizador_agente/utils/Mensajes.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -89,7 +90,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   eliminarDelServer(int id, BuildContext context) async {
 
-    final Trace deleteCot = FirebasePerformance.instance.newTrace("SoySocio_EliminarCotizacion");
+    final Trace deleteCot = FirebasePerformance.instance.newTrace("IntermediarioGNP_EliminarCotizacion");
     deleteCot.start();
     print(deleteCot.name);
     bool success = false;
@@ -120,7 +121,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
           }else{
             deleteCot.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-              Navigator.pop(context,true);
+              Navigator.pop(context);
               eliminarDelServer(id, context);
             });
           }
@@ -129,14 +130,14 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
       }else {
         deleteCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context,true);
+          Navigator.pop(context);
           eliminarDelServer(id, context);
         });
       }
 
     }catch (e,s) {
       deleteCot.stop();
-      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
 
@@ -150,7 +151,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   llenarTabla(BuildContext context) async {
 
-    final Trace llenaTbl = FirebasePerformance.instance.newTrace("SoySocio_CotizacionesGuardadas");
+    final Trace llenaTbl = FirebasePerformance.instance.newTrace("IntermediarioGNP_CotizacionesGuardadas");
     llenaTbl.start();
     print(llenaTbl.name);
     bool success = false;
@@ -254,7 +255,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
               } else if (statusCode != null) {
                 llenaTbl.stop();
                 isLoading = false;
-                Navigator.pop(context,true);
+                Navigator.pop(context);
                 String message = json.decode(response.body)['message'] != null
                     ? json.decode(response.body)['message']
                     : json.decode(response.body)['errors'][0] != null
@@ -282,13 +283,13 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
       } else {
         llenaTbl.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
-          Navigator.pop(context,true);
+          Navigator.pop(context);
           llenarTabla(context);
         });
       }
     }catch(e,s){
       llenaTbl.stop();
-      //await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
     }
 
     return success;
@@ -369,7 +370,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
     Utilidades.cargarNuevoPaso = true;
 
-    Navigator.pop(context,true);
+    Navigator.pop(context);
 
     Navigator.push(context,
         MaterialPageRoute(
@@ -524,7 +525,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
           leading: IconButton(
             icon: Icon(Icons.chevron_left, size: 35,),
             onPressed: () {
-              Navigator.pop(context,true);
+              Navigator.pop(context);
             },
           ),
           actions: <Widget>[
@@ -564,7 +565,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                         children: <Widget>[
                           GestureDetector(
                             onTap: () {
-                              Navigator.pop(context,true);
+                              Navigator.pop(context);
                               Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                             },
                             child: Padding(
@@ -582,7 +583,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                           IconButton(
                             icon: Icon(Icons.add, color: AppColors.color_primario,),
                             onPressed: () {
-                              Navigator.pop(context,true);
+                              Navigator.pop(context);
                               Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
                             },),
                         ],
