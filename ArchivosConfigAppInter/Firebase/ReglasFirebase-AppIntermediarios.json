@@ -41,6 +41,10 @@
 	"timerIntentos": {
 		".read": true,
 		".write": false
+	},
+    "emailSesion": {
+		".read": true,
+		".write": true
 	}
   }
 }
