@@ -55,7 +55,6 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
   @override
   void initState() {
     validateIntenetstatus(context, widget.responsive,functionConnectivity);
-    cancelTimers();
     showBio_available = is_available_finger;
     _saving = false;
     // TODO: implement initState
@@ -64,7 +63,6 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     prefs.setBool("bloqueoDespuesSubBio", false);
     WidgetsBinding.instance.addObserver(this);
     Platform.isIOS ? getVersionApp("24", "1") : getVersionApp("24", "2");
-    // validateIntenetstatus(context, widget.responsive,CallbackInactividad);
     validateBiometricstatus(funcionCanselBiometrics);
 
   }

@@ -61,7 +61,6 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
                 color: Tema.Colors.GNP,),
               onPressed: () {
                 Inactivity(context:context).cancelInactivity();
-                // handleUserInteraction(context,CallbackInactividad);
                 Navigator.pop(context);
               },
             ),
@@ -163,7 +162,6 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
           activeColor: Tema.Colors.Rectangle_PA,
           groupValue: _character,
           onChanged: (int value) {
-            //handleUserInteraction(context,CallbackInactividad);
             setState(() {
               _character = value;
             });
@@ -190,7 +188,6 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
               textAlign: TextAlign.center),
         ),
         onPressed: () async {
-          //handleUserInteraction(context,CallbackInactividad);
           if(_character != 99999){
             print("lista -> ${widget.lista[_character]}");
             print("indice ${_character}");
@@ -206,7 +203,6 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
       print("CallbackInactividad listaRamosPage");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

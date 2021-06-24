@@ -270,10 +270,6 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
             return null;
           },
           onChanged: (value) {
-            if (prefs.getBool("esPerfil") != null &&
-                prefs.getBool("esPerfil")){
-             // handleUserInteraction(context,CallbackInactividad);
-            }
             setState(() {
               focusCodigo.hasFocus;
               controllerNumero.text;
@@ -291,28 +287,19 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
             });
           },
           onEditingComplete: () {
-            if (prefs.getBool("esPerfil") != null &&
-                prefs.getBool("esPerfil")){
-              //handleUserInteraction(context,CallbackInactividad);
-            }
+
             setState(() {
               focusCodigo.unfocus();
             });
           },
           onFieldSubmitted: (s) {
-            if (prefs.getBool("esPerfil") != null &&
-                prefs.getBool("esPerfil")){
-             // handleUserInteraction(context,CallbackInactividad);
-            }
+
             setState(() {
               focusCodigo.unfocus();
             });
           },
           onTap: () {
-            if (prefs.getBool("esPerfil") != null &&
-                prefs.getBool("esPerfil")){
-             // handleUserInteraction(context,CallbackInactividad);
-            }
+
             setState(() {
               focusCodigo.requestFocus();
             });
@@ -413,10 +400,6 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         onPressed: () async {
           _validNumber = formKey.currentState.validate();
           setState(() {});
-          if (prefs.getBool("esPerfil") != null &&
-              prefs.getBool("esPerfil")){
-           // handleUserInteraction(context,CallbackInactividad);
-          }
           if (formKey.currentState.validate()) {
             if (prefs.getBool("esPerfil") != null &&
                 prefs.getBool("esPerfil") &&
@@ -641,7 +624,6 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       print("CallbackInactividad Actualizar numero");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-     // handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

@@ -62,7 +62,6 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
         onTap: () {
           if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil"))
             Inactivity(context:context).initialInactivity(functionInactivity);
-          //handleUserInteraction(context, CallbackInactividad);
         },child:WillPopScope(
       onWillPop: () async => false,
       child: OrientationBuilder(builder: (context, orientation) {
@@ -87,9 +86,6 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
                                 onTap: () {
                                   if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil"))
                                     Inactivity(context:context).initialInactivity(functionInactivity);
-
-                                 // validateIntenetstatus(context, widget.responsive,functionConnectivity);                            Inactivity(context:context).initialInactivity(functionInactivity);
-
                           },child: DefaultTabController(
                           length: 5,
                           child: TabBarView(

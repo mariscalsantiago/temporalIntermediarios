@@ -54,7 +54,6 @@ class _VerFotoPageState extends State<VerFotoPage> {
     validateIntenetstatus(context, widget.responsive, functionConnectivity);
     //updateFoto();
    // obtenerImagen();
-   // validateIntenetstatus(context, widget.responsive,CallbackInactividad);
     skeletonLoad();
     super.initState();
   }
@@ -75,7 +74,6 @@ class _VerFotoPageState extends State<VerFotoPage> {
 
 
   Future<void>  skeletonLoad() async {
-   // handleUserInteraction(context,CallbackInactividad);
     setState(() {
       _loading = true;
     });
@@ -346,7 +344,6 @@ class _VerFotoPageState extends State<VerFotoPage> {
     setState(() {
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

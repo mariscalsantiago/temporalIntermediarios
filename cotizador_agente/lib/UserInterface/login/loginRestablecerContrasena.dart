@@ -95,7 +95,6 @@ class _LoginRestablecerContrasenaState
         focusContrasenaInactividad.unfocus();
       }
     });
-    //validateIntenetstatus(context, widget.responsive);
     super.initState();
 
     focusNuevaContrasena.addListener(() {

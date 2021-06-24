@@ -106,7 +106,6 @@ class _AutosPageState extends State<AutosPage> {
                 Inactivity(context:context).initialInactivity(functionInactivity);
                 print("onPrint ${x}");
                 print("onPrint ${y}");
-                //handleUserInteraction(context,CallbackInactividad);
               },
               androidOnPermissionRequest: (controller, origin, resources) async {
                 return PermissionRequestResponse(
@@ -130,7 +129,6 @@ class _AutosPageState extends State<AutosPage> {
               },
               onConsoleMessage: (controller, consoleMessage) {
                 Inactivity(context:context).initialInactivity(functionInactivity);
-                //handleUserInteraction(context,CallbackInactividad);
                 print("consoleMessage");
                 print(consoleMessage);
               },

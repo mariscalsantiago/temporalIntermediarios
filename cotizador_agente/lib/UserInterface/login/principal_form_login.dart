@@ -78,6 +78,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   final _formKeyPass = GlobalKey<FormState>();
   bool contrasena = true;
   bool _biometricos = false;
+  bool isActiveBiometric = true ;
   //TODO 238
   bool _subSecuentaIngresoCorreo = false;
   bool existeUsuario = false;
@@ -109,7 +110,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   @override
   void initState() {
     validateIntenetstatus(context, widget.responsive,functionConnectivity);
-    //initializeTimerWifi(context, widget.responsive, CallbackInactividad);
     initPlatformState(updateDeviceData);
 
     Future.delayed(Duration.zero, () {
@@ -124,6 +124,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   }
 
   void arranque() async {
+    isActiveBiometric = await validSystemDevice();
     Platform.isIOS ? getVersionApp("24", "1") : getVersionApp("24", "2");
     controllerCorreoCambioContrasena.text = prefs.getString("correoUsuario");
     WidgetsBinding.instance.addObserver(this);
@@ -295,9 +296,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               margin: EdgeInsets.symmetric(horizontal: responsive.width * 0.05),
               child: botonInicioSesion(responsive)),
           separacion(responsive, 1),
-          is_available_finger ||
-                  is_available_face ||
-                  (prefs != null && prefs.get("localAuthCount") == 100)
+          is_available_finger || is_available_face || (prefs != null && prefs.get("localAuthCount") == 100)
               ? activarHuella(responsive)
               : Container(
                   height: 10,
@@ -1179,7 +1178,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 respuestaServicioCorreo = await consultaUsuarioPorCorreo(context, correoUsuario);
               }
 
-              if (datosUsuario != null && respuestaServicioCorreo != null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario == "ACTIVO") {
+              if (datosUsuario != null && respuestaServicioCorreo != null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse !=null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS !=null &&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO !=null&&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario!=null&& respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario == "ACTIVO") {
                 //Roles
                 validarRolesUsuario();
                 //Medio de contacto
@@ -1268,8 +1267,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
                 if (prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
 
-                } else if (respuestaServicioCorreo != null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario != "ACTIVO") {
-                  if(datosUsuario!=null) {
+                } else if (respuestaServicioCorreo != null &&  respuestaServicioCorreo != null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse !=null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS !=null &&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO !=null&&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario!=null&& respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario != "ACTIVO") {                  if(datosUsuario!=null) {
                     customAlert(AlertDialogType.Cuenta_inactiva, context, "", "", responsive, funcionAlertaHullaLogin);
                   }
                   prefs.setBool("regitroDatosLoginExito", false);
@@ -1680,7 +1678,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   }
 
   Widget activarHuella(Responsive responsive) {
-    return Container(
+    print("isActiveB $isActiveBiometric");
+    return isActiveBiometric?Container(
       margin: EdgeInsets.symmetric(horizontal: responsive.width * 0.02),
       padding: EdgeInsets.only(top: 28, bottom: 32),
       child: Row(
@@ -1727,7 +1726,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               ),
             ),
           ]),
-    );
+    ):Container();
   }
 
   Widget version(Responsive responsive) {
@@ -1979,7 +1978,6 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     //setState(() {
     //print("CallbackInactividad login");
     showInactividad;
-    //handleUserInteraction(context,CallbackInactividad);
     //contrasenaInactividad = !contrasenaInactividad;
     // });
   }

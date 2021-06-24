@@ -98,7 +98,6 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
         actions: [
           IconButton(
             onPressed: () {
-              //handleUserInteraction(context,CallbackInactividad);
               setState(() {
                 if (!flagRotate && angle == 0) {
                   angle = 270;
@@ -122,7 +121,6 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
           ),
           IconButton(
             onPressed: () {
-              //handleUserInteraction(context,CallbackInactividad);
               setState(() {
                 if (flagRotate && angle == 360) {
                   angle = 90;
@@ -168,7 +166,6 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
             bottom: 0.0,
             child: GestureDetector(
                 onTap: () async {
-                  //handleUserInteraction(context,CallbackInactividad);
                  // widget.callback();
                   File fotoPerfil;
                   final crop = cropKey.currentState;
@@ -247,7 +244,6 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
       print("CallbackInactividad editarfoto");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

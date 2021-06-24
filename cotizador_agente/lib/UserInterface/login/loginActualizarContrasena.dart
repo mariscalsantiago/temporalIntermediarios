@@ -98,7 +98,6 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     focusConfirmarContrasena = new FocusNode();
     if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {
       Inactivity(context:context).initialInactivity(functionInactivity);
-      //handleUserInteraction(context, CallbackInactividad);
     } else {
       controllerActualContrasena.text = prefs.getString("contrasenaUsuario");
     }
@@ -488,10 +487,6 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
               return null;
             },
             onChanged: (value) {
-              if (prefs.getBool("esPerfil") != null &&
-                  prefs.getBool("esPerfil")) {
-              //  handleUserInteraction(context, CallbackInactividad);
-              }
               _validActualPass = _formKeyPass.currentState.validate();
               setState(() {
                 try {
@@ -659,9 +654,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
         return null;
       },
       onChanged: (value) {
-        if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {
-         // handleUserInteraction(context, CallbackInactividad);
-        }
+
         setState(() {
           controllerNuevaContrasena.text;
           _validNewPass = _formKeyNewPass.currentState.validate();
@@ -1125,9 +1118,6 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
         return null;
       },
       onChanged: (value) {
-        if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {
-         //handleUserInteraction(context, CallbackInactividad);
-        }
         setState(() {
           _validConfirmPass = _formKeyConfirmPass.currentState.validate();
           print(value);
@@ -2057,10 +2047,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
             ),
           ),
           onPressed: () async {
-            if (prefs.getBool("esPerfil") != null &&
-                prefs.getBool("esPerfil")) {
-             // handleUserInteraction(context, CallbackInactividad);
-            }
+
             focusActualContrasena.unfocus();
             focusNuevaContrasena.unfocus();
             focusConfirmarContrasena.unfocus();
@@ -2151,7 +2138,6 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
       print("CallbackInactividad Actualizar contraseñ");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      //handleUserInteraction(context, CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

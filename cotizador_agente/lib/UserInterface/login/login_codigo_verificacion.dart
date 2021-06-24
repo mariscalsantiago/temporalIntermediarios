@@ -325,9 +325,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       ),
       onTap: () {
         setState(() {
-          if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
-            //handleUserInteraction(context,CallbackInactividad);
-          }
+
           focusCodigo.requestFocus();
         });
       },
@@ -359,11 +357,6 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
               String tem = controllerCodigo.text;
               controllerCodigo.text = tem.substring(0, 7);
               focusCodigo.unfocus();
-            }
-
-            if (prefs.getBool("esPerfil") != null &&
-                prefs.getBool("esPerfil")){
-             // handleUserInteraction(context,CallbackInactividad);
             }
           } catch (e) {
             print(e);
@@ -469,11 +462,6 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
           ),
           GestureDetector(
             onTap: () async {
-
-              if (prefs.getBool("esPerfil") != null &&
-                  prefs.getBool("esPerfil")){
-               // handleUserInteraction(context,CallbackInactividad);
-              }
 
               sendTag("appinter_otp_reenvio");
               controllerCodigo.text = "";
@@ -936,7 +924,6 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       print("CallbackInactividad codigo de verificacion");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

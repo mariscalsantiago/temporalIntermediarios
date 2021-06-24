@@ -51,7 +51,6 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
           body: GestureDetector(
               onTap: (){
                 Inactivity(context: context).cancelInactivity();
-                //handleUserInteraction(context,CallbackInactividad);
               },
               child: getBody()),
           bottomNavigationBar: Visibility(
@@ -136,7 +135,6 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
       print("CallbackInactividad AP");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-      //handleUserInteraction(context,CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

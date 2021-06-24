@@ -76,11 +76,12 @@ class _PerfilPageState extends State<PerfilPage> {
   bool _loading = false;
   Timer timerLoading;
   File imagePefil;
-
+  bool isActiveBiometric = true;
   @override
   void initState() {
     Inactivity(context: context).initialInactivity(functionInactivity);
     validateIntenetstatus(context, widget.responsive, functionConnectivity);
+    systemDeviceInit();
     _saving = false;
     super.initState();
     listadoDA = [];
@@ -94,14 +95,17 @@ class _PerfilPageState extends State<PerfilPage> {
     getDeasCuas(context);
     getCuas(context);
     posicionCUA = 0;
-   // handleUserInteraction(context, CallbackInactividad);
-   // validateIntenetstatus(context, widget.responsive, CallbackInactividad);
     imagePefil = datosFisicos.personales.photoFile;
     //skeletonLoad();
   }
 
+  Future<void> systemDeviceInit() async {
+    print("systemDeviceInit $isActiveBiometric");
+    isActiveBiometric = await validSystemDevice();
+    setState(() {});
+    print("systemDeviceInit $isActiveBiometric");
+  }
   Future<void> skeletonLoad() async {
-   // handleUserInteraction(context, CallbackInactividad);
     print("skeletoLoad");
     setState(() {
       _loading = true;
@@ -272,7 +276,6 @@ class _PerfilPageState extends State<PerfilPage> {
                       icon: Icon(Icons.arrow_back, color: Theme.Colors.GNP),
                       onPressed: () {
                           Inactivity(context:context).cancelInactivity();
-                       // handleUserInteraction(context, CallbackInactividad);
                         if (_saving) {
                         } else {
                           Navigator.pop(context, true);
@@ -329,7 +332,6 @@ class _PerfilPageState extends State<PerfilPage> {
                           flex: 2,
                           child: GestureDetector(
                             onTap: () {
-                             // handleUserInteraction(context, CallbackInactividad);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -579,7 +581,6 @@ class _PerfilPageState extends State<PerfilPage> {
                                               child: showDea
                                                   ? GestureDetector(
                                                       onTap: () {
-                                                       // handleUserInteraction(context, CallbackInactividad);
                                                         Navigator.push(
                                                             context,
                                                             new MaterialPageRoute(
@@ -700,7 +701,6 @@ class _PerfilPageState extends State<PerfilPage> {
                                             child: showCua
                                                 ? GestureDetector(
                                                     onTap: () {
-                                                    //  handleUserInteraction(context, CallbackInactividad);
                                                       //getCuas(context);
                                                       Navigator.push(
                                                           context,
@@ -821,7 +821,6 @@ class _PerfilPageState extends State<PerfilPage> {
                               : responsive.wp(11),
                       child: GestureDetector(
                         onTap: () async {
-                          //handleUserInteraction(context, CallbackInactividad);
                           _showPicker(context);
                         },
                         child: _loading
@@ -947,7 +946,6 @@ class _PerfilPageState extends State<PerfilPage> {
                               child: showDea
                                   ? GestureDetector(
                                       onTap: () {
-                                       // handleUserInteraction(context, CallbackInactividad);
                                         Navigator.push(
                                             context,
                                             new MaterialPageRoute(
@@ -1043,7 +1041,6 @@ class _PerfilPageState extends State<PerfilPage> {
                             child: showCua
                                 ? GestureDetector(
                                     onTap: () {
-                                      //handleUserInteraction(context, CallbackInactividad);
                                       getCuas(context);
                                       Navigator.push(
                                           context,
@@ -1133,7 +1130,6 @@ class _PerfilPageState extends State<PerfilPage> {
                 padding: EdgeInsets.zero,
                 onPressed: () async {
                   sendTag("appinter_perfil_cambio_pwd");
-                 // handleUserInteraction(context, CallbackInactividad);
                   prefs.setBool("seActualizarNumero", false);
                   prefs.setBool("esPerfil", true);
                   prefs.setBool("actualizarContrasenaPerfil", true);
@@ -1204,7 +1200,6 @@ class _PerfilPageState extends State<PerfilPage> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   sendTag("appinter_perfil_cambio_tel");
-                 // handleUserInteraction(context, CallbackInactividad);
                   prefs.setBool("seActualizarNumero", false);
                   prefs.setBool("esPerfil", true);
                   prefs.setBool("esActualizarNumero", true);
@@ -1248,7 +1243,6 @@ class _PerfilPageState extends State<PerfilPage> {
                 padding: EdgeInsets.zero,
                 onPressed: () {
                   sendTag("appinter_perfil_onboarding");
-                 // handleUserInteraction(context, CallbackInactividad);
                   setState(() {
                     prefs.setBool("primeraVez", false);
                     prefs.setBool("esPerfil", true);
@@ -1293,7 +1287,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 color: Theme.Colors.divider_color,
                 thickness: widget.responsive.hp(0.15),
               ),
-              is_available_finger != false || is_available_face != false
+              isActiveBiometric && (is_available_finger != false || is_available_face != false)
                   ? Row(
                       children: [
                         Container(
@@ -1304,7 +1298,6 @@ class _PerfilPageState extends State<PerfilPage> {
                           child: Switch(
                             value: isSwitchedPerfill,
                             onChanged: (on) {
-                             // handleUserInteraction(context, CallbackInactividad);
                               setState(() {
                                 prefs.setBool("primeraVez", false);
                                 prefs.setBool("esPerfil", true);
@@ -1450,14 +1443,14 @@ class _PerfilPageState extends State<PerfilPage> {
                       ],
                     )
                   : Container(),
-              Container(
-                height:
-                    prefs.getBool("useMobileLayout") ? 0 : responsive.hp(30),
+             Container(
+                height: prefs.getBool("useMobileLayout") ? 0 : responsive.hp(30),
               ),
-              Divider(
+              isActiveBiometric && (is_available_finger != false || is_available_face != false)
+                  ?Divider(
                 color: Theme.Colors.divider_color,
                 thickness: widget.responsive.hp(0.15),
-              ),
+              ):Container(),
               TextButton(
                 onPressed: () {
                   Inactivity(context: context).cancelInactivity();
@@ -1570,7 +1563,6 @@ class _PerfilPageState extends State<PerfilPage> {
                         style: TextStyle(fontSize: responsive.ip(1.5)),
                       ),
                       onTap: () {
-                        //handleUserInteraction(context, CallbackInactividad);
                         _imgFromGallery();
                         Navigator.of(context).pop();
                       }),
@@ -1581,7 +1573,6 @@ class _PerfilPageState extends State<PerfilPage> {
                       style: TextStyle(fontSize: responsive.ip(1.5)),
                     ),
                     onTap: () {
-                      //handleUserInteraction(context, CallbackInactividad);
                       _imgFromCamera();
                       Navigator.of(context).pop();
                     },
@@ -1753,7 +1744,6 @@ class _PerfilPageState extends State<PerfilPage> {
       print("CallbackInactividad perfiles");
       focusContrasenaInactividad.hasFocus;
       showInactividad;
-     // handleUserInteraction(context, CallbackInactividad);
       //contrasenaInactividad = !contrasenaInactividad;
     });
   }

@@ -8515,7 +8515,6 @@ class _MyDialogContrasenaInactividadState
                                   showInactividad = false;
                                   widget.callback();
                                   //initializeTimer(context,widget.callback);
-                                  //handleUserInteraction(context, widget.callback);
                                 } else {
                                   Navigator.pop(context, true);
                                   AlertaContraseniaErronea();
@@ -8715,8 +8714,6 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
 
     if (authenticated) {
       callback();
-      //initializeTimer(context,callback);
-      //handleUserInteraction(context, callback);
       showInactividad = false;
       Navigator.pop(context, true);
     } else {

@@ -443,6 +443,15 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(
           } else if (_response.statusCode == 500) {
             print("StatusCode 500");
             Map<String, dynamic> map = json.decode(_response.body);
+
+            if(map.containsKey("detail")){
+              print("${map["detail"]}");
+              if(map["detail"].containsKey("eotException"))
+                if(map["detail"]["eotException"].containsKey("mensajeTecnico"))
+                  if(map["detail"]["eotException"]["mensajeTecnico"].contains("Usuario inconsistente"))
+                    customAlert(AlertDialogType.errorServicio, context, "", "", Responsive.of(context), funcionAlerta);
+            }
+
             UsuarioPorCorreo _datosConsulta = UsuarioPorCorreo.fromJson(map);
             if (_datosConsulta != null) {
               return _datosConsulta;

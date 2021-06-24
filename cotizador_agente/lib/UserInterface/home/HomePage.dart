@@ -46,7 +46,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  String dropdownValue =  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos" : prefs.getBool("showAP") ? "AP" : "";
+  String dropdownValue =  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos" : prefs.getBool("showAP") ? "Gastos Médicos" : "";
 
   List<String> listaCotizadores = [];
   bool showRamos;
@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
       print("showAP ${prefs.getBool("showAP")}");
       if(prefs.getBool("showAP")!= null && prefs.getBool("showAP")){
         showRamos = true;
-        listaCotizadores = ['AP', "Autos"];
+        listaCotizadores = ['Gastos Médicos', "Autos"];
         dropdownValue = "Autos";
       }else{
         showRamos = false;
@@ -77,8 +77,8 @@ class _HomePageState extends State<HomePage> {
       }
     } else if(prefs.getBool("showAP")!= null && prefs.getBool("showAP")){
       showRamos = false;
-      listaCotizadores = ['AP'];
-      dropdownValue = "AP";
+      listaCotizadores = ['Gastos Médicos'];
+      dropdownValue = "Gastos Médicos";
     }else{
       showRamos = false;
       //Todo Alerta y retorno login
@@ -289,7 +289,6 @@ class _HomePageState extends State<HomePage> {
                       onTap: (){
                         setState(() {
                           showInactividad = false;
-                          // handleUserInteraction(context, callback);
                         });
                         Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
                           Inactivity(context:context).initialInactivity(functionInactivity);
@@ -306,7 +305,6 @@ class _HomePageState extends State<HomePage> {
                         setState(() {
                           opcionElegida = HomeSelection.None;
                           showInactividad = false;
-                          //handleUserInteraction(context, callback);
                         });
                         Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
                           Inactivity(context:context).initialInactivity(functionInactivity);
@@ -348,7 +346,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ) : Container(),
-                  dropdownValue == "AP" ?  Container(
+                  dropdownValue == "Gastos Médicos" ?  Container(
                     height: responsive.hp(35),
                     width: responsive.width,
                     margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
@@ -386,13 +384,13 @@ class _HomePageState extends State<HomePage> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset('assets/images/Group_435.png'),
+                              Image.asset('assets/images/gmm_cotizador.png'),
                               Container(
                                 margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text("AP", style: TextStyle(
+                                    Text("Accidentes Personales", style: TextStyle(
                                         letterSpacing: 0.15,
                                         fontWeight: FontWeight.w600,
                                         fontSize: responsive.ip(2),

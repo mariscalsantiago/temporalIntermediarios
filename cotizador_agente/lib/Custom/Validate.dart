@@ -283,6 +283,18 @@ Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,F
 
 }
 
+Future<bool> validSystemDevice()async{
+  bool _isactiveBiometric = true;
+  if (Platform.isAndroid) {
+    var androidInfo = await DeviceInfoPlugin().androidInfo;
+    var release = androidInfo.version.release;
+    print("release $release");
+    if(release=="8")
+      _isactiveBiometric = false;
+  }
+  return _isactiveBiometric;
+}
+
 void validateBiometricstatus( Function callback) {
   _getAvailableBiometrics(callback);
 }
