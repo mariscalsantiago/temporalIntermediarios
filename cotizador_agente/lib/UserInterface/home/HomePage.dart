@@ -58,10 +58,17 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _databaseReference=FirebaseDatabase.instance.reference();
+    _runAsyncInit();
     Inactivity(context:context).initialInactivity(functionInactivity);
     validateIntenetstatus(context,widget.responsive,functionConnectivity);
-    _runAsyncInit();
 
+
+    ultimoAcceso();
+    prefs.setInt("localAuthCount", 0);
+    super.initState();
+  }
+
+  createCotizadoresRamo(){
     pressRamo = false;
     if( prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo")){
       print("auto ${prefs.getBool("rolAutoscotizarActivo")}");
@@ -71,23 +78,21 @@ class _HomePageState extends State<HomePage> {
         listaCotizadores = ['Gastos Médicos', "Autos"];
         dropdownValue = "Autos";
       }else{
-        showRamos = false;
-        listaCotizadores = ['Autos'];
-        dropdownValue = "Autos";
+          showRamos = false;
+          listaCotizadores = _isActiveAutos?['Autos']:[];
+          dropdownValue = "Autos";
       }
     } else if(prefs.getBool("showAP")!= null && prefs.getBool("showAP")){
-      showRamos = false;
-      listaCotizadores = ['Gastos Médicos'];
-      dropdownValue = "Gastos Médicos";
+    showRamos = false;
+    listaCotizadores = ['Gastos Médicos'];
+    dropdownValue = "Gastos Médicos";
     }else{
-      showRamos = false;
-      //Todo Alerta y retorno login
-      listaCotizadores=[""];
-      dropdownValue = "";
+    showRamos = false;
+    //Todo Alerta y retorno login
+    listaCotizadores=[];
+    dropdownValue = "";
     }
-    ultimoAcceso();
-    prefs.setInt("localAuthCount", 0);
-    super.initState();
+
   }
 
   functionInactivity(){
@@ -101,7 +106,6 @@ class _HomePageState extends State<HomePage> {
   void _runAsyncInit() {
 
     _databaseReference.child("AutosAvailable").onValue.listen((Event event) async {
-
       _isActiveAutos = validateNotEmptyBool(event.snapshot.value["dataAutos"]["show"]);
       if(!_isActiveAutos){
         List _whiteList = event.snapshot.value["dataAutos"]["whitelist"];
@@ -111,9 +115,11 @@ class _HomePageState extends State<HomePage> {
         }
       }
       if(mounted) setState(() { });
+      createCotizadoresRamo();
     }, onError: (Object o) {
       final DatabaseError error = o;
       print('Error: ${error.code} ${error.message}');
+      createCotizadoresRamo();
     });
   }
 
@@ -184,228 +190,7 @@ class _HomePageState extends State<HomePage> {
                         fontSize: responsive.ip(2.8)
                     ), textAlign: TextAlign.center,),
                   ),
-                  Row(
-                    children: [
-                      Center(
-                        child: Container(
-                          margin: EdgeInsets.only(left: responsive.wp(4), top: responsive.hp(2), bottom: responsive.hp(0.5)),
-                          child: Text("RAMO",
-                            style: TextStyle(
-                              color: Theme.Colors.Encabezados,
-                              fontSize: responsive.ip(1.3),
-                              fontWeight: FontWeight.bold,
-
-
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: responsive.wp(4), right: responsive.wp(4)),
-                    height: 10,
-                    decoration: BoxDecoration(
-                        border:  Border(
-                          bottom: BorderSide( //                   <--- left side
-                            color: Theme.Colors.torneosContenedorSP,
-                            width: 1.2,
-                          ),
-                        )
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: pressRamo ? Theme.Colors.gnpOrange : Theme.Colors.borderInput,
-                        width: 1,
-                      ),
-                      color: showRamos ? Theme.Colors.backgroud : Theme.Colors.botonlogin,
-                      borderRadius:BorderRadius.circular(6),
-                    ),
-                    margin: EdgeInsets.only(left: responsive.wp(4), right: responsive.wp(4), top: responsive.hp(2),  bottom: responsive.hp(2)),
-                    padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: responsive.hp(1.6)),
-                    child: showRamos ? GestureDetector(
-                        onTap: () {
-                          Navigator.push( context,
-                              new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
-                            Inactivity(context:context).initialInactivity(functionInactivity);
-                          });
-                        },
-                        onLongPressStart: (p) {
-                          setState(() {
-                            pressRamo = true;
-                          });
-                        },
-                        onLongPressEnd: (p) {
-                          setState(() {
-                            pressRamo = false;
-                          });
-
-                          Navigator.push( context,
-                              new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
-                            Inactivity(context:context).initialInactivity(functionInactivity);
-                          });
-                        },
-                        child: Container(
-                          color: Theme.Colors.backgroud,
-                          margin: EdgeInsets.zero,
-                          child: Row(
-                            mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(dropdownValue,
-                                  style: TextStyle(
-                                      color: Theme.Colors.Azul_2,
-                                      fontSize: responsive.ip(1.5))),
-                              Icon(
-                                preesCua ? Icons.arrow_drop_up: Icons.arrow_drop_down,
-                                color: preesCua ? Theme.Colors.gnpOrange
-                                    : Theme.Colors.Funcional_Textos_Body,
-                              )
-                            ],
-                          ),
-                        )
-                    ) : Row(
-                      crossAxisAlignment:CrossAxisAlignment.center,
-                      mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(dropdownValue,
-                            style: TextStyle(
-                                color: Theme
-                                    .Colors
-                                    .botonletra,
-                                fontSize: responsive
-                                    .ip(1.5))),
-                        Icon(
-                            Icons.arrow_drop_down)
-                      ],
-                    ),
-                  ),
-                  _isActiveAutos && prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") && dropdownValue == "Autos" ? Container(
-                    height: responsive.hp(36),
-                    width: responsive.width,
-                    margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
-                    child: GestureDetector(
-                      onTap: (){
-                        setState(() {
-                          showInactividad = false;
-                        });
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
-                          Inactivity(context:context).initialInactivity(functionInactivity);
-                        });
-
-                        //opcionElegida = HomeSelection.Atuos;
-                      },
-                      onLongPressStart: (j){
-                        setState(() {
-                          opcionElegida = HomeSelection.Atuos;
-                        });
-                      },
-                      onLongPressEnd: (j){
-                        setState(() {
-                          opcionElegida = HomeSelection.None;
-                          showInactividad = false;
-                        });
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
-                          Inactivity(context:context).initialInactivity(functionInactivity);
-                        });
-                      },
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                            side: BorderSide(
-                              color:  opcionElegida == HomeSelection.Atuos ? (Colors.orange): (Colors.white),
-                            ),
-                            borderRadius: BorderRadius.circular(5)
-                        ),
-                        elevation: 4,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(child:Image.asset('assets/images/autosymotos.png')),
-                            Container(
-                              color: Theme.Colors.White,
-                              margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text("Autos y motos", style: TextStyle(
-                                      letterSpacing: 0.15,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: responsive.ip(2),
-                                      color: Theme.Colors.Azul_gnp
-                                  ),
-                                    textAlign: TextAlign.right,
-                                  ),
-                                  Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
-                                ],
-                              ),
-                            ),
-
-                          ],
-                        ),
-                      ),
-                    ),
-                  ) : Container(),
-                  dropdownValue == "Gastos Médicos" ?  Container(
-                    height: responsive.hp(35),
-                    width: responsive.width,
-                    margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
-                    child: GestureDetector(
-                      onTap: (){
-                        Navigator.pushNamed(context, "/cotizadorUnicoAP");
-                        setState(() {
-                        });
-                        //opcionElegida = HomeSelection.AP;
-                      },
-                      onLongPressStart: (j){
-                        setState(() {
-                          opcionElegida = HomeSelection.AP;
-                        });
-                      },
-                      onLongPressEnd: (j){
-                        setState(() {
-                          opcionElegida = HomeSelection.None;
-                        });
-                        Navigator.pushNamed(context, "/cotizadorUnicoAP");
-                      },
-                      child: Container(
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                color: opcionElegida == HomeSelection.AP ? (Colors.orange): (Colors.white),
-                              ),
-                              borderRadius: BorderRadius.circular(5)
-                          ),
-                          /*decoration: BoxDecoration(
-                              border: selectAP ?Border.all(color: Colors.orange): Border.all(color: Colors.white)
-                          ),*/
-
-                          elevation: 4,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset('assets/images/gmm_cotizador.png'),
-                              Container(
-                                margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text("Accidentes Personales", style: TextStyle(
-                                        letterSpacing: 0.15,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: responsive.ip(2),
-                                        color: Theme.Colors.Azul_gnp
-                                    ), textAlign: TextAlign.right,),
-                                    Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
-                                  ],
-                                ),
-                              ),
-
-                            ],),
-                        ),
-                      ),
-                    ),
-                  ): Container(),
+                  listaCotizadores.isNotEmpty?cotizadoresView(responsive):sinAccesoRamo(responsive, false),
                 ],
               ),
             ),
@@ -415,6 +200,238 @@ class _HomePageState extends State<HomePage> {
     ));
   }
 
+  Widget cotizadoresView(Responsive responsive){
+
+    return Container(child: Column(children: [
+      //titulo Ramo
+      Row(
+        children: [
+          Center(
+            child: Container(
+              margin: EdgeInsets.only(left: responsive.wp(4), top: responsive.hp(2), bottom: responsive.hp(0.5)),
+              child: Text("RAMO",
+                style: TextStyle(
+                  color: Theme.Colors.Encabezados,
+                  fontSize: responsive.ip(1.3),
+                  fontWeight: FontWeight.bold,
+
+
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+      //Borde Ramo
+      Container(
+        margin: EdgeInsets.only(left: responsive.wp(4), right: responsive.wp(4)),
+        height: 10,
+        decoration: BoxDecoration(
+            border:  Border(
+              bottom: BorderSide( //                   <--- left side
+                color: Theme.Colors.torneosContenedorSP,
+                width: 1.2,
+              ),
+            )
+        ),
+      ),
+      //dropdown
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: pressRamo ? Theme.Colors.gnpOrange : Theme.Colors.borderInput,
+            width: 1,
+          ),
+          color: showRamos ? Theme.Colors.backgroud : Theme.Colors.botonlogin,
+          borderRadius:BorderRadius.circular(6),
+        ),
+        margin: EdgeInsets.only(left: responsive.wp(4), right: responsive.wp(4), top: responsive.hp(2),  bottom: responsive.hp(2)),
+        padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: responsive.hp(1.6)),
+        child: showRamos ? GestureDetector(
+            onTap: () {
+              Navigator.push( context,
+                  new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
+                Inactivity(context:context).initialInactivity(functionInactivity);
+              });
+            },
+            onLongPressStart: (p) {
+              setState(() {
+                pressRamo = true;
+              });
+            },
+            onLongPressEnd: (p) {
+              setState(() {
+                pressRamo = false;
+              });
+
+              Navigator.push( context,
+                  new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
+                Inactivity(context:context).initialInactivity(functionInactivity);
+              });
+            },
+            child: Container(
+              color: Theme.Colors.backgroud,
+              margin: EdgeInsets.zero,
+              child: Row(
+                mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(dropdownValue,
+                      style: TextStyle(
+                          color: Theme.Colors.Azul_2,
+                          fontSize: responsive.ip(1.5))),
+                  Icon(
+                    preesCua ? Icons.arrow_drop_up: Icons.arrow_drop_down,
+                    color: preesCua ? Theme.Colors.gnpOrange
+                        : Theme.Colors.Funcional_Textos_Body,
+                  )
+                ],
+              ),
+            )
+        ) : Row(
+          crossAxisAlignment:CrossAxisAlignment.center,
+          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+          children: [
+            Text(dropdownValue,
+                style: TextStyle(
+                    color: Theme
+                        .Colors
+                        .botonletra,
+                    fontSize: responsive
+                        .ip(1.5))),
+            Icon(
+                Icons.arrow_drop_down)
+          ],
+        ),
+      ),
+      prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") && dropdownValue == "Autos" ? _isActiveAutos ?  Container(
+        height: responsive.hp(36),
+        width: responsive.width,
+        margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
+        child: GestureDetector(
+          onTap: (){
+            setState(() {
+              showInactividad = false;
+            });
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
+              Inactivity(context:context).initialInactivity(functionInactivity);
+            });
+
+            //opcionElegida = HomeSelection.Atuos;
+          },
+          onLongPressStart: (j){
+            setState(() {
+              opcionElegida = HomeSelection.Atuos;
+            });
+          },
+          onLongPressEnd: (j){
+            setState(() {
+              opcionElegida = HomeSelection.None;
+              showInactividad = false;
+            });
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
+              Inactivity(context:context).initialInactivity(functionInactivity);
+            });
+          },
+          child: Card(
+            shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color:  opcionElegida == HomeSelection.Atuos ? (Colors.orange): (Colors.white),
+                ),
+                borderRadius: BorderRadius.circular(5)
+            ),
+            elevation: 4,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(child:Image.asset('assets/images/autosymotos.png')),
+                Container(
+                  color: Theme.Colors.White,
+                  margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Autos y motos", style: TextStyle(
+                          letterSpacing: 0.15,
+                          fontWeight: FontWeight.w600,
+                          fontSize: responsive.ip(2),
+                          color: Theme.Colors.Azul_gnp
+                      ),
+                        textAlign: TextAlign.right,
+                      ),
+                      Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
+                    ],
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        ),
+      ) : sinAccesoRamo(responsive,true):Container(),
+      dropdownValue == "Gastos Médicos" ?  Container(
+        height: responsive.hp(35),
+        width: responsive.width,
+        margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
+        child: GestureDetector(
+          onTap: (){
+            Navigator.pushNamed(context, "/cotizadorUnicoAP");
+            setState(() {
+            });
+            //opcionElegida = HomeSelection.AP;
+          },
+          onLongPressStart: (j){
+            setState(() {
+              opcionElegida = HomeSelection.AP;
+            });
+          },
+          onLongPressEnd: (j){
+            setState(() {
+              opcionElegida = HomeSelection.None;
+            });
+            Navigator.pushNamed(context, "/cotizadorUnicoAP");
+          },
+          child: Container(
+            child: Card(
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                    color: opcionElegida == HomeSelection.AP ? (Colors.orange): (Colors.white),
+                  ),
+                  borderRadius: BorderRadius.circular(5)
+              ),
+              /*decoration: BoxDecoration(
+                              border: selectAP ?Border.all(color: Colors.orange): Border.all(color: Colors.white)
+                          ),*/
+
+              elevation: 4,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/gmm_cotizador.png'),
+                  Container(
+                    margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Accidentes Personales", style: TextStyle(
+                            letterSpacing: 0.15,
+                            fontWeight: FontWeight.w600,
+                            fontSize: responsive.ip(2),
+                            color: Theme.Colors.Azul_gnp
+                        ), textAlign: TextAlign.right,),
+                        Icon(Icons.arrow_forward_ios, color: Theme.Colors.gnpOrange)
+                      ],
+                    ),
+                  ),
+
+                ],),
+            ),
+          ),
+        ),
+      ): Container(),
+    ]));
+
+  }
+
   void cambioRamo(int indice){
     setState(() {
       dropdownValue = listaCotizadores[indice];
@@ -422,6 +439,31 @@ class _HomePageState extends State<HomePage> {
 
   }
 
+  Widget sinAccesoRamo(Responsive responsive, bool unico){
+    return Container(margin: EdgeInsets.all(responsive.wp(6)),child: Column(children: [
+      Container(margin: EdgeInsets.only(top:responsive.wp(6), bottom: responsive.wp(6)),child: Icon(Icons.info_outline_rounded, color: Theme.Colors.rowColor, size: responsive.ip(5),)),
+      Container(margin: EdgeInsets.only(bottom: responsive.wp(7)),child: Row(children: [
+        Expanded(child: Text(unico?"Sin acceso a herramienta de cotización.":"Sin acceso a herramientas de cotización.", textAlign: TextAlign.center, style: TextStyle(
+            fontSize: prefs.getBool(
+                "useMobileLayout")
+                ? responsive.hp(2.0)
+                : responsive.hp(2.2),
+            color: Theme.Colors.Azul_gnp,
+            fontWeight: FontWeight.w400)))
+      ])),
+      Container(child: Row(children: [
+        Expanded(child: Text(unico?"Debido a tus permisos asignados no es posible ingresar a la herramienta de cotización":"Debido a tus permisos asignados no es posible ingresar a las herramientas de cotización", style: TextStyle(
+    fontSize: prefs.getBool(
+    "useMobileLayout")
+    ? responsive.hp(1.8)
+        : responsive.hp(2.0),
+            height: 1.5,
+    color: Theme.Colors.Funcional_Textos_Body,
+    fontWeight: FontWeight.w400)))
+      ])),
+      
+    ],));
+  }
   AppBar getAppBar(BuildContext context, Responsive responsive) {
     bool tablet = false;
     tablet = prefs.getBool("useMobileLayout");
