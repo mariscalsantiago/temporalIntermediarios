@@ -144,7 +144,7 @@ class UsuarioDos{
         migrado: data['migrado'],
         estatusUsuario: data['estatusUsuario'],
         codigoAfiliacion: data['codigoAfiliacion'],
-        contactos: data['contactos'],
+        //contactos: data['contactos'],
         rolesOrganizativos: data['rolesOrganizativos'],
         idParticipante: data['idParticipante'],
         telefono: data['telefono'],

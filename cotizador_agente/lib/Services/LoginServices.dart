@@ -837,19 +837,23 @@ Future<DatosFisicosModel> getPersonaFisica(BuildContext context, String idPartic
                   return datosFisicos;
                 }
               } else {
+                print("uno");
                 //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
               }
             } else {
+              print("dos");
               //throw Exception(ErrorLoginMessageModel().responseNotBodyErrorTextException);
             }
           } else {
-            throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+            print("tres");
+            //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
           }
         } else {
-          throw Exception(
-              ErrorLoginMessageModel().responseNullErrorTextException);
+          print("cuatro");
+          //throw Exception(ErrorLoginMessageModel().responseNullErrorTextException);
         }
       } catch (e) {
+        print("cinco");
         ErrorLoginMessageModel().serviceErrorAlert(
             "$_serviceID - ${_response != null ? _response.statusCode : "null"}");
         print(

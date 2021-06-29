@@ -135,7 +135,6 @@ class _PerfilPageState extends State<PerfilPage> {
 
     print("Da Y Cua");
     print(valorDA);
-    print(datosPerfilador.daList);
     print(datosUsuario.idparticipante);
     for (int i = 0; i < datosPerfilador.daList.length; i++) {
       listadoDA.add("${datosPerfilador.daList.elementAt(i).cveDa}");
@@ -150,13 +149,7 @@ class _PerfilPageState extends State<PerfilPage> {
 
     // valorCUA = datosPerfilador.intermediarios[0];
     //dropdownValue2 = datosPerfilador.intermediarios[0];
-    for (int j = 0;
-        j <
-            datosPerfilador.daList
-                .elementAt(posicionDA)
-                .codIntermediario
-                .length;
-        j++) {
+    for (int j = 0; j < datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++) {
       if (datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] ==
           datosPerfilador.agenteInteresadoList.elementAt(j).codIntermediario) {
         if (datosPerfilador.agenteInteresadoList.elementAt(j).nombres != null &&
@@ -189,42 +182,32 @@ class _PerfilPageState extends State<PerfilPage> {
   void getCuas(BuildContext context) async {
     listadoCUA = [];
     print("getCuas");
+    print(datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length);
     // valorCUA = datosPerfilador.intermediarios[0];
     //dropdownValue2 = datosPerfilador.intermediarios[0];
-    for (int j = 0;
-        j <
-            datosPerfilador.daList
-                .elementAt(posicionDA)
-                .codIntermediario
-                .length;
-        j++) {
-      print(
-          "getCuas daList en J: ${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
+    for (int j = 0; j < datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++) {
+      print("getCuas daList en J: ${datosPerfilador.daList.elementAt(posicionDA).cveDa}");
+      print("getCuas daList en J: ${datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length}");
       bool inlist = false;
 
       for (int n = 0; n < datosPerfilador.agenteInteresadoList.length; n++) {
-        print(
-            "getCuas datosPerfilador en N ${datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario}");
-        if (datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] ==
-            datosPerfilador.agenteInteresadoList
-                .elementAt(n)
-                .codIntermediario) {
-          print("getCuas if1");
-          if (datosPerfilador.agenteInteresadoList.elementAt(j).nombres !=
-                  null &&
-              datosPerfilador.agenteInteresadoList
-                  .elementAt(n)
-                  .nombres
-                  .isNotEmpty) {
-            print("getCuas if2");
-            listadoCUA.add(
-                "${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(n).apellidoPaterno}");
-            inlist = true;
+        print("getCuas datosPerfilador en ${n} ${datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario}");
+        if (datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] == datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario) {
+          //print("getCuas if1");
+          
+          if (datosPerfilador.agenteInteresadoList.elementAt(j).nombres != null && datosPerfilador.agenteInteresadoList.elementAt(n).nombres.isNotEmpty) {
+            //print("getCuas if2");
+            if(!listadoCUA.contains("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(n).apellidoPaterno}")){
+              listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).nombres} ${datosPerfilador.agenteInteresadoList.elementAt(n).apellidoPaterno}");
+              inlist = true;
+            }else{}
+           
           } else {
-            print("getCuas else1");
-            listadoCUA.add(
-                "${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).razonSocial}");
-            inlist = true;
+            //print("getCuas else1");
+            if(!listadoCUA.contains("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).razonSocial}")){
+              listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]} - ${datosPerfilador.agenteInteresadoList.elementAt(n).razonSocial}");
+              inlist = true;
+            }
           }
         }
       }
@@ -1705,24 +1688,15 @@ class _PerfilPageState extends State<PerfilPage> {
   void updateDea(int i) {
     setState(() {
       listadoCUA = [];
-      for (int j = 0;
-          j <
-              datosPerfilador.daList
-                  .elementAt(posicionDA)
-                  .codIntermediario
-                  .length;
-          j++) {
+      for (int j = 0; j < datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++) {
         for (int n = 0; n < datosPerfilador.agenteInteresadoList.length; n++) {
-          print(
-              "getCuas datosPerfilador en N ${datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario}");
-          if (datosPerfilador.daList
-                  .elementAt(posicionDA)
-                  .codIntermediario[j] ==
-              datosPerfilador.agenteInteresadoList
-                  .elementAt(n)
-                  .codIntermediario) {
-            listadoCUA.add(
-                "${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
+          print("getCuas datosPerfilador en N ${datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario}");
+          if (datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j] == datosPerfilador.agenteInteresadoList.elementAt(n).codIntermediario) {
+            print("contains:");
+            print(!listadoCUA.contains("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}"));
+            if(!listadoCUA.contains("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}")){
+              listadoCUA.add("${datosPerfilador.daList.elementAt(posicionDA).codIntermediario[j]}");
+            }else{}
           }
         }
       }

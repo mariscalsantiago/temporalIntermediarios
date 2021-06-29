@@ -369,7 +369,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ) : sinAccesoRamo(responsive,true):Container(),
       dropdownValue == "Gastos Médicos" ?  Container(
-        height: responsive.hp(35),
+        height: responsive.hp(36),
         width: responsive.width,
         margin: EdgeInsets.only(left: responsive.wp(3), right: responsive.wp(3)),
         child: GestureDetector(
@@ -406,7 +406,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset('assets/images/gmm_cotizador.png'),
+                  Expanded(child:Image.asset('assets/images/gmm_cotizador.png')),
                   Container(
                     margin: EdgeInsets.only(left: responsive.wp(5), right: responsive.wp(5), top: responsive.hp(3), bottom: responsive.hp(2)),
                     child: Row(

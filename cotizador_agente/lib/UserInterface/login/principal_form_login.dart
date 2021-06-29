@@ -1176,6 +1176,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               if (datosUsuario != null) {
                 prefs.setString("contrasenaUsuario", contrasenaUsuario);
                 respuestaServicioCorreo = await consultaUsuarioPorCorreo(context, correoUsuario);
+                if(respuestaServicioCorreo == null){
+                  customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
+                }
+
               }
 
               if (datosUsuario != null && respuestaServicioCorreo != null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse !=null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS !=null &&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO !=null&&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario!=null&& respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario == "ACTIVO") {
