@@ -82,6 +82,7 @@ class _PerfilPageState extends State<PerfilPage> {
     Inactivity(context: context).initialInactivity(functionInactivity);
     validateIntenetstatus(context, widget.responsive, functionConnectivity);
     systemDeviceInit();
+    posicionDA = 0;
     _saving = false;
     super.initState();
     listadoDA = [];

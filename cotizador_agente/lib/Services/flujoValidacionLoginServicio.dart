@@ -408,7 +408,7 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(
           Uri.parse(_appEnvironmentConfig.consultaUsuarioPorCorreo),
           body: _loginJSON,
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json;  charset=utf-8",
             'apiKey': _appEnvironmentConfig.apiKey
           });
 
