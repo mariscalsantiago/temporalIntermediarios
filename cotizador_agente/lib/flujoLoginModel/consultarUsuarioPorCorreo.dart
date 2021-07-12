@@ -215,3 +215,44 @@ class RolesUsuarioModel{
     };
   }
 }
+
+class consultaPorCorreoNuevoServicio{
+  String idParticipante;
+  List<dynamic> roles;
+  String estatus;
+  String nombre;
+  String primerApellido;
+  String segundoApellido;
+  String uid;
+  String requestId;
+  String error;
+  consultaPorCorreoNuevoServicio({this.idParticipante, this.roles, this.estatus, this.nombre, this.primerApellido, this.segundoApellido, this.uid, this.requestId, this.error});
+
+  factory consultaPorCorreoNuevoServicio.fromJson(Map<dynamic, dynamic> data){
+    var list = data.containsKey('roles') ? data['roles'] : [] as List;
+    return consultaPorCorreoNuevoServicio(
+      idParticipante: data.containsKey('idParticipante') ? data["idParticipante"]:"",
+      roles:  list.length > 0 ? list : [],
+      estatus: data.containsKey('estatus') ? data["estatus"]: "",
+      nombre: data.containsKey('nombre') ? data["nombre"] : "",
+      primerApellido: data.containsKey('primerApellido') ? data["primerApellido"] : "",
+      segundoApellido: data.containsKey('segundoApellido') ? data["segundoApellido"] : "",
+      uid: data.containsKey('uid') ? data["uid"] : "",
+      requestId: data.containsKey('requestId') ? data["requestId"] : "",
+      error: data.containsKey('error') ? data["error"] : ""
+    );
+  }
+
+  toJson() {
+    return{
+      'idParticipante': idParticipante,
+      'estatus': estatus,
+      'nombre': nombre,
+      'primerApellido': primerApellido,
+      'segundoApellido': segundoApellido,
+      'uid': uid
+    };
+  }
+}
+
+

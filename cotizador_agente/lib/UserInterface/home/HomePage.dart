@@ -540,19 +540,9 @@ class _HomePageState extends State<HomePage> {
                     backgroundColor: Colors.transparent,
                   )
                       : Text(
-                    respuestaServicioCorreo
-                        .consultaUsuarioPorCorreoResponse
-                        .USUARIOS
-                        .USUARIO
-                        .apellidoPaterno !=
-                        null &&
-                        respuestaServicioCorreo
-                            .consultaUsuarioPorCorreoResponse
-                            .USUARIOS
-                            .USUARIO
-                            .nombre !=
-                            null
-                        ? "${(respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre[0] : "")} ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno[0] : ""}"
+                    respuestaServicioCorreo.primerApellido != null &&
+                        respuestaServicioCorreo.nombre != null
+                        ? "${(respuestaServicioCorreo.nombre != "" ? respuestaServicioCorreo.nombre[0] : "")} ${respuestaServicioCorreo.primerApellido != "" ? respuestaServicioCorreo.primerApellido[0] : ""}"
                         : "",
                     style: TextStyle(
                         fontSize: prefs.getBool(

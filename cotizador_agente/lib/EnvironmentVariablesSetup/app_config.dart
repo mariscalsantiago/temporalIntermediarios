@@ -36,6 +36,7 @@ class AppConfig extends InheritedWidget {
     @required this.orquestadorOtpJwt,
     @required this.consultaPersonaIdParticipante,
     @required this.cotizadorAutos,
+    @required this.servicioNuevoConsultaPorCorreo
 
   }) : super(child: child);
 
@@ -65,6 +66,7 @@ class AppConfig extends InheritedWidget {
   final String orquestadorOtpJwt;
   final String consultaPersonaIdParticipante;
   final String cotizadorAutos;
+  final String servicioNuevoConsultaPorCorreo;
 
   static AppConfig of(BuildContext context) {
     return context.inheritFromWidgetOfExactType(AppConfig);

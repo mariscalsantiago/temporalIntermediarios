@@ -587,9 +587,6 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
             respuestaServicioCorreo = await  consultaUsuarioPorCorreo(context, prefs.getString("correoUsuario"));
             //Validacion Roles
             validarRolesUsuario();
-
-            print("roles ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol.length}" );
-            print("respuesta  ${respuestaServicioCorreo}");
             setState(() {
               _saving = false;
             });

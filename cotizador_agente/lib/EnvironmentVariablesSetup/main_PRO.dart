@@ -41,6 +41,7 @@ void main() {
     orquestadorOtpJwt:'https://app-inter.gnp.com.mx/intermediario/enviarOtp/me',
     consultaPersonaIdParticipante:"https://api.service.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
     cotizadorAutos: "https://gnp-appcontratacionautos-pro.uc.r.appspot.com/",
+    servicioNuevoConsultaPorCorreo:"",
 
     child: new MyApp(),
 

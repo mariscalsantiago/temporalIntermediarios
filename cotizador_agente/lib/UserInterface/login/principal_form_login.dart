@@ -60,7 +60,7 @@ double longitud;
 
 bool _validolvide = false;
 String _address = "";
-UsuarioPorCorreo respuestaServicioCorreo;
+consultaPorCorreoNuevoServicio respuestaServicioCorreo;
 Responsive _generalResponsive;
 
 final _formKeyOlvideContrasena = GlobalKey<FormState>();
@@ -934,7 +934,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     prefs.setBool('flujoOlvideContrasena', true);
     prefs.setString(
         "correoCambioContrasena", controllerCorreoCambioContrasena.text);
-    UsuarioPorCorreo respuesta = await consultaUsuarioPorCorreo(
+    consultaPorCorreoNuevoServicio respuesta = await consultaUsuarioPorCorreo(
         context, prefs.getString("correoCambioContrasena"));
 
     print("UsuarioPorCorreo ${respuesta}");
@@ -944,21 +944,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     if (conecxion) {
       try {
         if (respuesta != null) {
-          if (respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO !=
-                  null &&
-              respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO
-                      .idParticipante !=
-                  null &&
-              respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO
-                      .idParticipante !=
-                  "") {
+          if (respuesta != null && respuesta.idParticipante != null && respuesta.idParticipante != "") {
             //print("UsuarioPorCorreo if1");
-            if (respuesta.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO
-                    .idParticipante !=
-                "") {
+            if (respuesta.idParticipante != "") {
               // print("UsuarioPorCorreo if2");
-              idParticipanteValidaPorCorre = respuesta
-                  .consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.uid;
+              idParticipanteValidaPorCorre = respuesta.uid;
 
               mediosContacto = await consultaMediosContactoServicio(
                   context, idParticipanteValidaPorCorre);
@@ -1049,22 +1039,17 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               customAlert(AlertDialogType.Correo_no_registrado, context, "", "",
                   responsive, funcionAlerta);
             }
-          } else {
-            // print("UsuarioPorCorreo else7");
-            //print("${respuesta.consultaUsuarioPorCorreoResponse.ErrorData.toJson()}");
+          }
+          else {
+            //TODO validar nuevo servicio
             setState(() {
               _saving = false;
             });
-            if (respuesta
-                    .consultaUsuarioPorCorreoResponse.ErrorData.codigoError !=
-                null) {
+            if (respuesta.requestId != null) {
               //print("UsuarioPorCorreo if8");
-              if (respuesta
-                      .consultaUsuarioPorCorreoResponse.ErrorData.codigoError ==
-                  "eCl00014") {
+              if (respuesta.requestId != "") {
                 //print("UsuarioPorCorreo if9");
-                customAlert(AlertDialogType.Correo_no_registrado, context, "",
-                    "", responsive, funcionAlerta);
+                customAlert(AlertDialogType.Correo_no_registrado, context, "", "", responsive, funcionAlerta);
               }
             }
           }
@@ -1182,7 +1167,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
               }
 
-              if (datosUsuario != null && respuestaServicioCorreo != null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse !=null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS !=null &&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO !=null&&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario!=null&& respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario == "ACTIVO") {
+              if (datosUsuario != null && respuestaServicioCorreo != null && respuestaServicioCorreo !=null && respuestaServicioCorreo.estatus !=null && respuestaServicioCorreo.estatus == "Activo") {
                 //Roles
                 validarRolesUsuario();
                 //Medio de contacto
@@ -1258,7 +1243,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
                 prefs.setBool("seHizoLogin", true);
                 prefs.setBool("regitroDatosLoginExito", true);
-                prefs.setString("nombreUsuario", respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno != null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre != null ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre : "");
+                prefs.setString("nombreUsuario", respuestaServicioCorreo.primerApellido != null && respuestaServicioCorreo.nombre != null ? respuestaServicioCorreo.nombre : "");
                 prefs.setString("currentDA", datosPerfilador.daList.length > 0 ? datosPerfilador.daList.elementAt(0).cveDa : "");
                 prefs.setString("currentCUA", datosPerfilador.daList.length > 0 ? datosPerfilador.daList.elementAt(0).codIntermediario[0] : "");
 
@@ -1271,7 +1256,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
                 if (prefs.getBool("regitroDatosLoginExito") != null && prefs.getBool("regitroDatosLoginExito")) {
 
-                } else if (respuestaServicioCorreo != null &&  respuestaServicioCorreo != null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse !=null && respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS !=null &&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO !=null&&respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario!=null&& respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.estatusUsuario != "ACTIVO") {                  if(datosUsuario!=null) {
+                } else if (respuestaServicioCorreo != null &&  respuestaServicioCorreo != null && respuestaServicioCorreo.estatus !=null && respuestaServicioCorreo.estatus != "Activo") {
+                  if(datosUsuario!=null) {
                     customAlert(AlertDialogType.Cuenta_inactiva, context, "", "", responsive, funcionAlertaHullaLogin);
                   }
                   prefs.setBool("regitroDatosLoginExito", false);
@@ -2272,19 +2258,18 @@ void validarRolesUsuario() {
   String campo = "";
   bool activoCotizarAutos = false;
 
-  if (respuestaServicioCorreo
-          .consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol.length >
+  if (respuestaServicioCorreo.roles.length >
       0) {
-    List<dynamic> rol = respuestaServicioCorreo
-        .consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.roles.rol;
+    List<dynamic> rol = respuestaServicioCorreo.roles;
     for (int i = 0; i < rol.length; i++) {
-      String rolAux = rol[i].toString().substring(3, rol[i].length);
-
-      campo = cotizarAutos
-          .where((element) =>
-              element.toString().toLowerCase() == rolAux.toLowerCase())
-          .toString();
-
+      print("rooool --> ${rol[i].toString().split(",")}");
+      List<String> listaRoles = rol[i].toString().split(",");
+      print("listaRoles -->${listaRoles[0]}");
+      String rolCadena = listaRoles[0].substring(3, listaRoles[0].length);
+      //String rolAux = rol[i].toString().substring(3, rol[i].length);
+      print("rolCadena ${rolCadena}");
+      campo = cotizarAutos.where((element) => element.toString().toLowerCase() == rolCadena.toLowerCase()).toString();
+      print("campo ${campo}");
       if (campo != "" && campo != "()") {
         activoAutoCotizar.add(campo);
       }
@@ -2292,6 +2277,7 @@ void validarRolesUsuario() {
     activoAutoCotizar.length > 0
         ? activoCotizarAutos = true
         : activoCotizarAutos = false;
+    print("activoAutoCotizar ${activoCotizarAutos}");
     prefs.setBool("rolAutoscotizarActivo", activoCotizarAutos);
   }
 }

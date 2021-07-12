@@ -38,6 +38,7 @@ void main() {
     orquestadorOtpJwt:'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/intermediario/enviarOtp/me',
     consultaPersonaIdParticipante:"https://api-qa.oscp.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
     cotizadorAutos: "https://gnp-appcontratacionautos-qa.appspot.com/",
+    servicioNuevoConsultaPorCorreo:"https://api-qa.oscp.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
 
     child: new MyApp(),
   );

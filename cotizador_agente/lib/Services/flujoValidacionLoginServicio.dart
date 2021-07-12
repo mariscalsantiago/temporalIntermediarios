@@ -384,7 +384,7 @@ Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(
   }
 }
 
-Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(
+Future<consultaPorCorreoNuevoServicio> consultaUsuarioPorCorreo(
     BuildContext context, String correo) async {
   print("consultaUsuarioPorCorreo");
   _appEnvironmentConfig = AppConfig.of(context);
@@ -395,18 +395,16 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(
   if (_connectivityStatus.available) {
     http.Response _response;
 
-    Map _loginBody = {
+    /*Map _loginBody = {
       "consultaUsuarioPorCorreo": {
         "perfil": "Intermediario",
         "correoElectronico": correo
       }
-    };
-    String _loginJSON = json.encode(_loginBody);
+    };*/
+    //String _loginJSON = json.encode(_loginBody);
 
     try {
-      _response = await http.post(
-          Uri.parse(_appEnvironmentConfig.consultaUsuarioPorCorreo),
-          body: _loginJSON,
+      _response = await http.get(Uri.parse(_appEnvironmentConfig.servicioNuevoConsultaPorCorreo+"${correo}"),
           headers: {
             "Content-Type": "application/json;  charset=utf-8",
             'apiKey': _appEnvironmentConfig.apiKey
@@ -427,8 +425,8 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(
       if (_response != null) {
         if (_response.body != null) {
           if (_response.statusCode == 200) {
-            Map<String, dynamic> map = json.decode(_response.body);
-            UsuarioPorCorreo _datosConsulta = UsuarioPorCorreo.fromJson(map);
+            Map<String, dynamic> map = json.decode(_response.body.substring(1,_response.body.length-1));
+            consultaPorCorreoNuevoServicio _datosConsulta = consultaPorCorreoNuevoServicio.fromJson(map);
             if (_datosConsulta != null) {
               return _datosConsulta;
             } else {
@@ -452,7 +450,7 @@ Future<UsuarioPorCorreo> consultaUsuarioPorCorreo(
                     customAlert(AlertDialogType.errorServicio, context, "", "", Responsive.of(context), funcionAlerta);
             }
 
-            UsuarioPorCorreo _datosConsulta = UsuarioPorCorreo.fromJson(map);
+            consultaPorCorreoNuevoServicio _datosConsulta = consultaPorCorreoNuevoServicio.fromJson(map);
             if (_datosConsulta != null) {
               return _datosConsulta;
             } else {

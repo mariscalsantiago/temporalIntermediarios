@@ -51,9 +51,8 @@ bool isPortrait = false;
 String valorCUA;
 
 String valorDA;
-
 int posicionCUA;
-int posicionDA = 0;
+int posicionDA;
 bool internet;
 var _image;
 bool isSwitchedPerfill;
@@ -182,10 +181,7 @@ class _PerfilPageState extends State<PerfilPage> {
 
   void getCuas(BuildContext context) async {
     listadoCUA = [];
-    print("getCuas");
-    print(datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length);
-    // valorCUA = datosPerfilador.intermediarios[0];
-    //dropdownValue2 = datosPerfilador.intermediarios[0];
+
     for (int j = 0; j < datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length; j++) {
       print("getCuas daList en J: ${datosPerfilador.daList.elementAt(posicionDA).cveDa}");
       print("getCuas daList en J: ${datosPerfilador.daList.elementAt(posicionDA).codIntermediario.length}");
@@ -403,19 +399,11 @@ class _PerfilPageState extends State<PerfilPage> {
                                                   Colors.transparent,
                                             )
                                           : Text(
-                                              respuestaServicioCorreo
-                                                              .consultaUsuarioPorCorreoResponse
-                                                              .USUARIOS
-                                                              .USUARIO
-                                                              .apellidoPaterno !=
+                                              respuestaServicioCorreo.primerApellido !=
                                                           null &&
-                                                      respuestaServicioCorreo
-                                                              .consultaUsuarioPorCorreoResponse
-                                                              .USUARIOS
-                                                              .USUARIO
-                                                              .nombre !=
+                                                      respuestaServicioCorreo.nombre !=
                                                           null
-                                                  ? "${(respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre[0] : "")} ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno != "" ? respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno[0] : ""}"
+                                                  ? "${(respuestaServicioCorreo.nombre != "" ? respuestaServicioCorreo.nombre[0] : "")} ${respuestaServicioCorreo.primerApellido != "" ? respuestaServicioCorreo.primerApellido[0] : ""}"
                                                   : "",
                                               style: TextStyle(
                                                   fontSize: prefs.getBool(
@@ -434,7 +422,7 @@ class _PerfilPageState extends State<PerfilPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.nombre} ${respuestaServicioCorreo.consultaUsuarioPorCorreoResponse.USUARIOS.USUARIO.apellidoPaterno}",
+                                "${respuestaServicioCorreo.nombre} ${respuestaServicioCorreo.primerApellido}",
                                 style: TextStyle(
                                     fontSize: prefs.getBool("useMobileLayout")
                                         ? responsive.ip(3)
