@@ -1,7 +1,11 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
+import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -27,10 +31,12 @@ class _listaCUAState extends State<listaCUA> {
   bool _saving;
   int _character = 99999;
 
+
   @override
   void initState() {
     Inactivity(context:context).initialInactivity(functionInactivity);
-    validateIntenetstatus(context, widget.responsive,functionConnectivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
 
     _saving = false;
     // TODO: implement initState
@@ -49,6 +55,11 @@ class _listaCUAState extends State<listaCUA> {
     super.initState();
   }
 
+  @override
+  dispose() {
+    super.dispose();
+  }
+
   functionInactivity(){
     print("functionInactivity");
     Inactivity(context:context).initialInactivity(functionInactivity);
@@ -60,12 +71,11 @@ class _listaCUAState extends State<listaCUA> {
 
   @override
   Widget build(BuildContext context) {
+
     return  GestureDetector(
         onTap: () {
           Inactivity(context:context).initialInactivity(functionInactivity);
-        },child: WillPopScope(
-        onWillPop: () async => false,
-    child: Scaffold(
+        },child:  Scaffold(
       backgroundColor: Tema.Colors.backgroud,
       appBar: AppBar(
         centerTitle: false,
@@ -88,7 +98,7 @@ class _listaCUAState extends State<listaCUA> {
       body: Stack(
           children: builData(widget.responsive)
       ),
-    )));
+    ));
   }
 
   List<Widget> builData(Responsive responsive){

@@ -1,6 +1,11 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:connectivity/connectivity.dart';
+import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:http/http.dart' as http;
 bool isInternet;
+bool hasInternetFirebase = true;
 
 void internetStatus()  async {
 
@@ -35,23 +40,46 @@ class ConnectivityServices{
     }
     available = await detectConnection();
     ConnectivityStatus connectivityStatus= new ConnectivityStatus(type: type ,available: available);
-    debuggable??print("Connectivity Type: ${connectivityStatus.type}"
-        "\nAvailable: ${connectivityStatus.available}"
-        "\n=> Connectivity <=");
+    debuggable??print("Connectivity Type: ${connectivityStatus.type}""\nAvailable: ${connectivityStatus.available}""\n=> Connectivity <=");
     return connectivityStatus;
   }
 
   Future<bool> detectConnection() async {
-    bool _connectionAvailable=false;
-    try{
-      final _result = await http.get("https://www.google.com").catchError((_error){
-        print("Error detectConnection: $_error");
-      }).timeout(Duration(seconds: 2));
-      if(_result!=null){
-        _connectionAvailable=true;
+    try {
+      var res = await http.get("https://www.google.com");
+      var code = res.statusCode;
+      if (code != null) {
+        return true;
+      } else {
+        return false;
       }
-    }catch(e){}
-    return _connectionAvailable;
+    } on SocketException catch (_) {
+      //SIN CONEXION
+      return false;
+    } catch (ex) {
+      return false;
+    }
+  }
+
+  Future<ConnectivityStatus> isInternet() async {
+
+    var connectivityResult = await (Connectivity().checkConnectivity());
+
+    ConnectionType type;
+    bool  available;
+
+    if (connectivityResult == ConnectivityResult.mobile) {
+      type=ConnectionType.mobile;
+    } else if (connectivityResult == ConnectivityResult.wifi) {
+      type=ConnectionType.wifi;
+    } else {
+      type=ConnectionType.none;
+    }
+    available = await detectConnection();
+    ConnectivityStatus connectivityStatus= new ConnectivityStatus(type: type ,available: available);
+    print("Connectivity Type: ${connectivityStatus.type}""\nAvailable: ${connectivityStatus.available}""\n=> Connectivity <=");
+
+    return connectivityStatus;
   }
 }
 

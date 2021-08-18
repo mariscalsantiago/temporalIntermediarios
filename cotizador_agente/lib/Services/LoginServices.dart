@@ -1,12 +1,17 @@
 
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
+import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
+import 'package:cotizador_agente/Functions/Database.dart';
+import 'package:cotizador_agente/Functions/FirebaseAuthenticationServices.dart';
 import 'package:cotizador_agente/RequestHandler/MyRequest.dart';
 import 'package:cotizador_agente/RequestHandler/MyResponse.dart';
 import 'package:cotizador_agente/RequestHandler/RequestHandler.dart';
@@ -37,12 +42,13 @@ int errorTimes = 0;
 var temporalCVE;
 String uMail;
 String uPass;
+String _address = "";
 var appEnvironmentConfig;
 Responsive _responsive;
 List<dynamic> cotizarAutos = [];
 List<dynamic> emitirAutos = [];
 List<dynamic> pagarAutos = [];
-
+int intento;
 Map accesoFirebase;
 
 void funcionAlerta(){
@@ -53,7 +59,13 @@ Future<LoginDatosModel> logInServices(BuildContext context, String mail, String 
   bool conecxion = false;
   _responsive = responsive;
   print("== Log In Interactor==");
-  conecxion = await validatePinig();
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_login_error");
+    conecxion = false;
+  }
+
   print("== Log In ${conecxion}");
   //prefs=await SharedPreferences.getInstance();
   if(conecxion) {
@@ -68,9 +80,8 @@ Future<LoginDatosModel> logInServices(BuildContext context, String mail, String 
       print(e);
       //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
     }
-  }
-  else{
-    customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "", responsive, callback);
+  } else{
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
   }
   Map<String, dynamic> datos = {
@@ -149,6 +160,27 @@ void getTimer() async {
 }
 
 void consultaBitacora() async {
+
+  DateTime now = DateTime.now();
+  DateFormat formatter = DateFormat('yyyy-MM-dd');
+  DateTime nowH = DateTime.now();
+  //String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+  String formattedDate = DateFormat('kk:mm:ss').format(now);
+  String formatted = formatter.format(now);
+  String deviceName= prefs.getString("deviceName");
+  try{
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {
+      await _getPlace();
+    }else{
+      _address=" ";
+    }
+  }catch(e){
+    _address=" ";
+    print("LoginServices getPlaces");
+    print(e);
+  }
+
   DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
   await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
     var jsoonn = json.encode(_snapshot.value);
@@ -156,14 +188,16 @@ void consultaBitacora() async {
 
     print("-- response -- ${response}");
     if(response!= null && response.isNotEmpty){
-
+      print("id ${response["deviceID"]}");
     } else{
-
       print("id ${deviceData["id"]}");
-
       Map<String, dynamic> mapa = {
         '${datosUsuario.idparticipante}': {
           'deviceID' : deviceData["id"],
+          'hora':"${formattedDate}",
+          'ciudad':_address,
+          'dispositivo':Platform.isAndroid?"Android" + " ${deviceName}":"IOS" + " ${deviceName}",
+          'isActive':true,
         }
       };
 
@@ -172,6 +206,22 @@ void consultaBitacora() async {
     }
 
   });
+}
+
+void _getPlace() async {
+
+  List<Placemark> newPlace = await placemarkFromCoordinates(userLocation.latitude, userLocation.longitude);
+  // this is all you need
+  Placemark placeMark  = newPlace[0];
+  String name = placeMark.name;
+  String subLocality = placeMark.subLocality;
+  String locality = placeMark.locality;
+  String administrativeArea = placeMark.administrativeArea;
+  String postalCode = placeMark.postalCode;
+  String country = placeMark.country;
+  //String address = "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+  String address = "${locality}";
+  _address = address; // update _address
 }
 
 void consultarRolesFirebase()  async {
@@ -213,7 +263,7 @@ void getNegociosOperables(BuildContext context) async {
 
   MyResponse response = await RequestHandlerDio.httpRequest(request);
 
-  print("response  ${response.response}");
+  print("response:getNegociosOperables  ${response.response}");
 
   if(response.success){
     try {
@@ -247,11 +297,11 @@ Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String 
   if (!await ConnectionManager.isConnected()) {
     //output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
     if (deviceType == ScreenType.phone) {
-      customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive, funcionAlerta);
+     // customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive, funcionAlerta);
     }
     else{
       //TODO customAlertTablet
-      customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive, funcionAlerta);
+     // customAlert(AlertDialogType.errorConexion, context, "",  "", _responsive, funcionAlerta);
       // customAlertTablet(AlertDialogTypeTablet.errorConexion, context, "",  "", _responsive, funcionAlerta);
     }
   }
@@ -272,7 +322,7 @@ Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String 
   //output?.showLoader();
   http.Response response = await http.post(config.serviceLogin,
       body: _loginJSONData,
-      headers: headers).timeout(const Duration(seconds: 10));
+      headers: headers);
 
   print("response ${response.body}");
   print("response ${response.statusCode}");
@@ -284,71 +334,78 @@ Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String 
   http.Request("Login", Uri.parse(config.serviceLogin));
   metricsPerformance.send(request);
 
-  if(response != null){
-    if(response.body != null && response.body.isNotEmpty){
+  await FirebaseAuthenticationServices().getIntentosUser(user);
+
+  if(response != null) {
+    if (response.body != null && response.body.isNotEmpty) {
       if (response.statusCode == 200) {
         Map map2 = json.decode(response.body);
         //output?.hideLoader();
         loginData = LoginModel.fromJson(map2);
         List<String> jwt = loginData.jwt.split(".");
-        var response64 = base64Decode(base64.normalize(jwt[1], 0, jwt[1].length));
+        var response64 = base64Decode(
+            base64.normalize(jwt[1], 0, jwt[1].length));
         var responseLatin = latin1.decode(response64);
         Map map3 = json.decode(responseLatin.toString());
-        LoginDatosModel _datosUsuario = LoginDatosModel.fromJson(map3["claims"]);
+        LoginDatosModel _datosUsuario = LoginDatosModel.fromJson(
+            map3["claims"]);
         _datosUsuario.emaillogin = emailApp;
-        print("emaillogin: ${_datosUsuario.emaillogin} emailApp: $emailApp 4${_datosUsuario.mail}");
+        print("emaillogin: ${_datosUsuario
+            .emaillogin} emailApp: $emailApp 4${_datosUsuario.mail}");
         idParticipanteMoral = _datosUsuario.idparticipante;
         String emailSesion;
         emailSesion = _datosUsuario.emaillogin;
 
-        if(emailSesion==_datosUsuario.emaillogin){
+        if (emailSesion == _datosUsuario.emaillogin) {
           _datosUsuario.iscurrentUser = false;
-        }else{
+        } else {
           _datosUsuario.iscurrentUser = true;
         }
-        print("emailSesion: $emailSesion datos: ${_datosUsuario.emaillogin} ");
-        print("emailSesion: ${_datosUsuario.iscurrentUser} ");
-        emailSesion = _datosUsuario.emaillogin;
-        //output.showHome();
         return _datosUsuario;
-      }
-      else if (response.statusCode == 401) {
+      } else if (response.statusCode == 401) {
         //output?.hideLoader();
-        if (deviceType == ScreenType.phone) {
-          customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive, funcionAlerta);
+        print("401: intento: $intento");
+
+        if (intento != null) {
+          if (intento < 3) {
+            intento = intento + 1;
+            writeUserIntentos(user, intento);
+            customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "", "$intento", _responsive, funcionAlerta);
+          } else if (intento == 3) {
+            writeUserIntentos(user, 0);
+            customAlert(AlertDialogType.Cuenta_temporalmente_bloqueada_temporizador, context, "", "", _responsive, funcionAlerta);
+          }
+        } else {
+          writeUserIntentos(user, 1);
+          customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "", "$intento", _responsive, funcionAlerta);
         }
-        else{
-          customAlert(AlertDialogType.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive, funcionAlerta);
-          //TODO customAlertTablet
-          //customAlertTablet(AlertDialogTypeTablet.Correo_electronico_o_contrasena_no_coinciden, context, "",  "", _responsive, funcionAlerta);
-        }
+
 
         //output.showAlert(Constants.tlt_nocoinciden, Constants.ms_nocoinciden, TipoDialogo.ADVERTENCIA, "CERRAR");
         return null;
-      }
-      else if (response.statusCode == 404) {
-        if (deviceType == ScreenType.phone) {
-          customAlert(AlertDialogType.Correo_no_registrado, context, "",  "", _responsive, funcionAlerta);
-        }
-        else{
-          customAlert(AlertDialogType.Correo_no_registrado, context, "",  "", _responsive, funcionAlerta);
-          //TODO customAlertTablet
-          //customAlertTablet(AlertDialogTypeTablet.Correo_no_registrado, context, "",  "", _responsive, funcionAlerta);
-        }
+      } else if (response.statusCode == 404) {
+        customAlert(
+            AlertDialogType.Correo_no_registrado, context, "", "", _responsive,
+            funcionAlerta);
+
         return null;
-      }
-      else{
+      } else {
         //output?.hideLoader();
         //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
         return null;
       }
-    }else{
+    } else {
       //output?.hideLoader();
       //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
       return null;
     }
+      } else {
+        //output?.hideLoader();
+        //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
+        return null;
+      }
   }
-}
+
 
 Future<PerfiladorModel> getPerfiladorAcceso(BuildContext context ,String idParticipante) async {
   String _service = "Perfilador";
@@ -410,7 +467,13 @@ Future<PerfiladorModel> getPerfiladorAcceso(BuildContext context ,String idParti
 
 Future<http.Response> getVersionApp(String idApp,String idOs, BuildContext context) async {
   bool conecxion = false;
-  conecxion = await validatePinig();
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_login_error");
+    conecxion = false;
+  }
+
   print("getVersionApp ${conecxion}");
   Responsive responsive = Responsive.of(context);
   if(conecxion) {
@@ -449,8 +512,7 @@ Future<http.Response> getVersionApp(String idApp,String idOs, BuildContext conte
           responsive, funcionAlerta);
     }
   }else{
-    customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "",
-        responsive, funcionAlerta);
+    //customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlerta);
   }
 
 
@@ -686,7 +748,7 @@ _launchURL() async {
 
 
 _onTimeout(BuildContext context, Responsive responsive){
-  customAlert(AlertDialogType.timeOut, context, "",  "", responsive, funcionAlerta);
+  customAlert(AlertDialogType.errorServicio, context, "",  "", responsive, funcionAlerta);
   return null;
 }
 
@@ -797,7 +859,13 @@ Future<bool> fetchFotoDelete(BuildContext context) async {
 Future<DatosFisicosModel> getPersonaFisica(BuildContext context, String idParticipante, bool isImport) async {
   var config = AppConfig.of(context);
   bool conecxion = false;
-  conecxion = await validatePinig();
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_login_error");
+    conecxion = false;
+  }
+
   print("getPersonaFisica ${conecxion}");
   Responsive responsive = Responsive.of(context);
   if(conecxion) {
@@ -868,8 +936,7 @@ Future<DatosFisicosModel> getPersonaFisica(BuildContext context, String idPartic
           responsive, funcionAlerta);
     }
   }else{
-    customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "", "",
-        responsive, funcionAlerta);
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "",responsive, funcionAlerta);
   }
 }
 

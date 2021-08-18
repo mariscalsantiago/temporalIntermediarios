@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
@@ -12,12 +13,15 @@ import 'package:cotizador_agente/UserInterface/perfil/editarImagenPage.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:device_info/device_info.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:skeleton_animation/skeleton_animation.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 import 'package:cotizador_agente/Custom/skeleton_container.dart';
@@ -44,14 +48,17 @@ class _VerFotoPageState extends State<VerFotoPage> {
   bool _loading = false;
   Timer timerLoading;
   File imagePefil;
+  bool _imagePefilSaving = false;
 
   Responsive _responsiveMainTablet;
   bool isPortrait = false;
+  final PermissionHandler _permissionHandler = PermissionHandler();
+
 
   @override
   void initState() {
-    Inactivity(context: context).initialInactivity(functionInactivity);
-    validateIntenetstatus(context, widget.responsive, functionConnectivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
     //updateFoto();
    // obtenerImagen();
     skeletonLoad();
@@ -112,11 +119,10 @@ class _VerFotoPageState extends State<VerFotoPage> {
     Responsive responsive = Responsive.of(context);
     return  GestureDetector(onTap: (){
       Inactivity(context:context).initialInactivity(functionInactivity);
-    },child:WillPopScope(
-    onWillPop: () async => false,
+    },
     child: SafeArea(
-    bottom: true,
-    child: Scaffold(
+        bottom: false,
+        child: Scaffold(
         appBar: AppBar(
           elevation: 0.0,
           backgroundColor: Colors.white,
@@ -130,7 +136,8 @@ class _VerFotoPageState extends State<VerFotoPage> {
             onPressed: () {
               Inactivity(context:context).cancelInactivity();
               Navigator.pop(context,true);
-              widget.callback(imagePefil);
+              if(_imagePefilSaving)
+                widget.callback(imagePefil);
             },
           ),
         ),
@@ -148,7 +155,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                 children: builData(responsive)
             ),
           );})
-        ))));
+        )));
   }
 
   List<Widget> builData(Responsive responsive){
@@ -184,6 +191,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
             children: [
               GestureDetector(
                   onTap: (){
+                    _imagePefilSaving = true;
                     if(imagePefil != null ){
                       Navigator.push(context, MaterialPageRoute(builder: (context) => SimpleCropRoute(responsive: widget.responsive,image: imagePefil, callback: editFoto,)),).then((value){
                         Inactivity(context:context).initialInactivity(functionInactivity);
@@ -193,11 +201,13 @@ class _VerFotoPageState extends State<VerFotoPage> {
                   child: Icon(Icons.create_outlined, color: imagePefil!=null?Tema.Colors.GNP:Tema.Colors.Light2,)),
               GestureDetector(
                   onTap: (){
+                    _imagePefilSaving = true;
                     _showPicker(context);
                   },
                   child: Icon(Icons.camera_alt_outlined, color: Tema.Colors.GNP,)),
               GestureDetector(
                   onTap: () async{
+                    _imagePefilSaving = true;
                     if(imagePefil!=null) {
                         skeletonLoadDelete();
                     }
@@ -229,6 +239,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
         context: context,
         builder: (BuildContext bc) {
           return SafeArea(
+            bottom: false,
             child: Container(
               child: new Wrap(
                 children: <Widget>[
@@ -287,14 +298,38 @@ class _VerFotoPageState extends State<VerFotoPage> {
    }
   }
 
+  Future<bool> _requestPermission(PermissionGroup permission) async {
+    var permissionStatus = await _permissionHandler.checkPermissionStatus(permission);
+    return permissionStatus == PermissionStatus.granted;
+  }
+
+  Future<bool> requestContactsPermission() async {
+    return _requestPermission(PermissionGroup.photos);
+  }
+
   _imgFromGallery() async {
-    File _image;
-    final picker = ImagePicker();
-    //TODO revisar doble intento y validacion de null
-    if (picker != null) {
       try {
-        final pickedFile = await picker.getImage(source: ImageSource.gallery);
-        _image = File(pickedFile.path);
+        var release = "0";
+        File _image;
+        if(Platform.isIOS){
+          var iosDataInfo = await DeviceInfoPlugin().iosInfo;
+          release = iosDataInfo.systemVersion;
+        }
+
+          print("release: $release");
+
+        if(Platform.isAndroid||(Platform.isIOS && !release.contains("14"))) {
+          final picker = ImagePicker();
+          final pickedFile = await picker.getImage(source: ImageSource.gallery);
+          _image = File(pickedFile.path);
+        }else {
+         // if(await requestContactsPermission()) {
+            final FilePickerResult result = await FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: false);
+            final platformFile = result.files.first;
+            _image = File(platformFile.path);
+          //}
+        }
+
         //fetchFoto(context, _image, widget.callback);
         if (_image != null) {
           Navigator.push(
@@ -307,12 +342,13 @@ class _VerFotoPageState extends State<VerFotoPage> {
                     )),
           ).then((value){
             Inactivity(context:context).initialInactivity(functionInactivity);
+
           });
         }
       } catch (e) {
         print(e);
       }
-    }
+
 
   }
   void imageSimilar(){

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
@@ -28,14 +29,24 @@ import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:device_info/device_info.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:permission_handler/permission_handler.dart';
 import 'package:skeleton_animation/skeleton_animation.dart';
 import 'editarImagenPage.dart';
 import 'package:skeleton_text/skeleton_text.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 
 List<String> listadoDA = [];
 List<String> listadoCUA = [];
@@ -76,10 +87,15 @@ class _PerfilPageState extends State<PerfilPage> {
   Timer timerLoading;
   File imagePefil;
   bool isActiveBiometric = true;
+  final PermissionHandler _permissionHandler = PermissionHandler();
+
+
   @override
   void initState() {
     Inactivity(context: context).initialInactivity(functionInactivity);
-    validateIntenetstatus(context, widget.responsive, functionConnectivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+    initializeTimerOtroUsuario(context,callback);
+
     systemDeviceInit();
     posicionDA = 0;
     _saving = false;
@@ -229,18 +245,26 @@ class _PerfilPageState extends State<PerfilPage> {
     print("functionInactivity");
     Inactivity(context:context).initialInactivity(functionInactivity);
   }
+
+  @override
+  dispose() {
+
+    super.dispose();
+  }
+
   void functionConnectivity() {
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+
+
     isSwitchedPerfill = prefs.getBool("activarBiometricos");
     return  GestureDetector(onTap: (){
       Inactivity(context:context).initialInactivity(functionInactivity);
-    },child:WillPopScope(
-    onWillPop: () async => false,
-    child: SafeArea(
+    },child: SafeArea(
+      bottom: false,
       child:Scaffold(
             appBar: _saving
                 ? null
@@ -287,7 +311,7 @@ class _PerfilPageState extends State<PerfilPage> {
                     );
                   })),
       ),
-    ));
+    );
   }
 
   List<Widget> builData(Responsive responsive) {
@@ -318,7 +342,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                       builder: (context) =>
                                           VerFotoPage(responsive: widget.responsive,callback: loadingImage))).then((value){
                                 Inactivity(context:context).initialInactivity(functionInactivity);
-                              });
+                               // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+                               });
                             },
                             child: _loading
                                 ? Container(
@@ -557,17 +583,11 @@ class _PerfilPageState extends State<PerfilPage> {
                                                             context,
                                                             new MaterialPageRoute(
                                                                 builder: (_) =>
-                                                                    new listaCUA(
-                                                                      responsive:
-                                                                          responsive,
-                                                                      list:
-                                                                          listadoDA,
-                                                                      isDA:
-                                                                          true,
-                                                                      callback:
-                                                                          updateDea,
+                                                                    new listaCUA(responsive: responsive, list: listadoDA, isDA: true, callback: updateDea,
                                                                     ))).then((value){
                                                           Inactivity(context:context).initialInactivity(functionInactivity);
+                                                        //  validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                                                         });
                                                       },
                                                       onLongPressStart: (p) {
@@ -594,6 +614,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                                                           updateDea,
                                                                     ))).then((value){
                                                           Inactivity(context:context).initialInactivity(functionInactivity);
+                                                         // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                                                         });
                                                       },
                                                       child: Row(
@@ -688,6 +710,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                                                         updateDeaCUA,
                                                                   ))).then((value){
                                                         Inactivity(context:context).initialInactivity(functionInactivity);
+                                                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                                                       });
                                                     },
                                                     onLongPressStart: (p) {
@@ -718,6 +742,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                                                         updateDeaCUA,
                                                                   ))).then((value){
                                                         Inactivity(context:context).initialInactivity(functionInactivity);
+                                                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                                                       });
                                                     },
                                                     child: Row(
@@ -929,6 +955,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                                       callback: updateDea,
                                                     ))).then((value){
                                           Inactivity(context:context).initialInactivity(functionInactivity);
+                                          //validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                                         });
                                       },
                                       onLongPressStart: (p) {
@@ -951,6 +979,9 @@ class _PerfilPageState extends State<PerfilPage> {
                                                       callback: updateDea,
                                                     ))).then((value){
                                           Inactivity(context:context).initialInactivity(functionInactivity);
+                                         // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+
                                         });
                                       },
                                       child: Row(
@@ -1025,6 +1056,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                                     callback: updateDeaCUA,
                                                   ))).then((value){
                                         Inactivity(context:context).initialInactivity(functionInactivity);
+                                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                                       });
                                     },
                                     onLongPressStart: (p) {
@@ -1048,6 +1081,8 @@ class _PerfilPageState extends State<PerfilPage> {
                                                     callback: updateDeaCUA,
                                                   ))).then((value){
                                         Inactivity(context:context).initialInactivity(functionInactivity);
+                                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                                       });
                                     },
                                     child: Row(
@@ -1083,7 +1118,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                               color: Theme.Colors.botonletra,
                                               fontSize:
                                                   widget.responsive.ip(1.8))),
-                                      Icon(Icons.arrow_drop_down)
+                                      Expanded(child:Icon(Icons.arrow_drop_down))
                                     ],
                                   ),
                           )),
@@ -1129,10 +1164,17 @@ class _PerfilPageState extends State<PerfilPage> {
                                     isNumero: false,
                                   ))).then((value){
                         Inactivity(context:context).initialInactivity(functionInactivity);
+                        //validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                       });
                     } else {
-                      customAlert(AlertDialogType.errorServicio, context, "",
-                          "", responsive, funcion);
+                      if(optRespuesta.idError == "015"){
+                        customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                            responsive, funcion);
+                      } else{
+                        customAlert(AlertDialogType.errorServicio, context, "",
+                            "", responsive, funcion);
+                      }
                     }
                   } else {
                     customAlert(AlertDialogType.errorServicio, context, "", "",
@@ -1183,6 +1225,8 @@ class _PerfilPageState extends State<PerfilPage> {
                             responsive: widget.responsive)),
                   ).then((value){
                     Inactivity(context:context).initialInactivity(functionInactivity);
+                  //  validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                   });
                 },
                 child: Container(
@@ -1225,6 +1269,8 @@ class _PerfilPageState extends State<PerfilPage> {
                         builder: (context) => OnBoardingAppAutos())
                   ).then((value){
                     Inactivity(context:context).initialInactivity(functionInactivity);
+                   // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
                   });
                 },
                 child: Container(
@@ -1426,6 +1472,7 @@ class _PerfilPageState extends State<PerfilPage> {
               TextButton(
                 onPressed: () {
                   Inactivity(context: context).cancelInactivity();
+                  inactiveFirebaseDivice();
                   //TODO 238
                   prefs.setBool("subSecuentaIngresoCorreo", false);
                   prefs.setBool("esPerfil", false);
@@ -1525,6 +1572,7 @@ class _PerfilPageState extends State<PerfilPage> {
         context: context,
         builder: (BuildContext bc) {
           return SafeArea(
+            bottom: false,
             child: Container(
               child: new Wrap(
                 children: <Widget>[
@@ -1574,6 +1622,8 @@ class _PerfilPageState extends State<PerfilPage> {
                   )),
         ).then((value){
           Inactivity(context:context).initialInactivity(functionInactivity);
+         // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
         });
       }
     } catch (e) {
@@ -1581,13 +1631,25 @@ class _PerfilPageState extends State<PerfilPage> {
     }
   }
 
+
   _imgFromGallery() async {
-    File _image;
-    final picker = ImagePicker();
-    //TODO revisar doble intento y validacion de null
+print("_imgFromGallery");
     try {
-      final pickedFile = await picker.getImage(source: ImageSource.gallery);
-      _image = File(pickedFile.path);
+      File _image;
+      var release = "0";
+      if(Platform.isIOS){
+        var iosDataInfo = await DeviceInfoPlugin().iosInfo;
+        release = iosDataInfo.systemVersion;
+      }
+      final picker = ImagePicker();
+      if(Platform.isAndroid||(Platform.isIOS && !release.contains("14"))) {
+        final pickedFile = await picker.getImage(source: ImageSource.gallery);
+        _image = File(pickedFile.path);
+      }else {
+        final FilePickerResult result = await FilePicker.platform.pickFiles(type: FileType.image, allowMultiple: false);
+        final platformFile = result.files.first;
+        _image = File(platformFile.path);
+      }
 
       //fetchFoto(context, _image, widget.callback);
 
@@ -1601,10 +1663,12 @@ class _PerfilPageState extends State<PerfilPage> {
                   )),
         ).then((value){
           Inactivity(context:context).initialInactivity(functionInactivity);
+          //(context, widget.responsive, functionConnectivity, false);
+
         });
       }
     } catch (e) {
-      print(e);
+      print("catch $e");
     }
   }
 
@@ -1708,6 +1772,64 @@ class _PerfilPageState extends State<PerfilPage> {
       focusContrasenaInactividad.hasFocus;
       showInactividad;
       //contrasenaInactividad = !contrasenaInactividad;
+    });
+  }
+  void inactiveFirebaseDivice() async {
+    cancelTimerDosApps();
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    DateTime now = DateTime.now();
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
+    DateTime nowH = DateTime.now();
+    //String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+    String formattedDate = DateFormat('kk:mm:ss').format(now);
+    String formatted = formatter.format(now);
+    List<Placemark> newPlace;
+    String locality="";
+    String address;
+    String deviceName= prefs.getString("deviceName");
+    try{
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {
+        userLocation= await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+        newPlace = await placemarkFromCoordinates(userLocation.latitude, userLocation.longitude);
+        Placemark placeMark  = newPlace[0];
+        String name = placeMark.name;
+        String subLocality = placeMark.subLocality;
+        String locality = placeMark.locality;
+        String administrativeArea = placeMark.administrativeArea;
+        String postalCode = placeMark.postalCode;
+        String country = placeMark.country;
+        String address = "${locality}";
+        // this is all you need
+        //String address = "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+      }else{
+        address=" ";
+      }
+    }catch(e){
+      address=" ";
+      print("interactions Places perfil");
+      print(e);
+    }
+
+    print("deviceID: ${deviceData["id"]}");
+    await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+      print("-- response -- ${response}");
+
+        print("id ${deviceData["id"]}");
+        Map<String, dynamic> mapa = {
+          '${datosUsuario.idparticipante}': {
+            'deviceID' : deviceData["id"],
+            'hora':"${formattedDate}",
+            'ciudad':address,
+            'dispositivo':Platform.isAndroid?"Android" + " ${deviceName}" :"IOS" + " ${deviceName}",
+            'isActive':false,
+          }
+        };
+        _dataBaseReference.child("bitacora").update(mapa);
+
     });
   }
 }

@@ -22,6 +22,8 @@ import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/Services/metricsPerformance.dart';
 import 'package:firebase_performance/firebase_performance.dart';
 
+import 'package:cotizador_agente/Functions/Analytics.dart';
+
 AppConfig _appEnvironmentConfig;
 
 Future<consultaPreguntasSecretasModel> consultarPreguntaSecretaServicio(
@@ -425,7 +427,8 @@ Future<consultaPorCorreoNuevoServicio> consultaUsuarioPorCorreo(
       if (_response != null) {
         if (_response.body != null) {
           if (_response.statusCode == 200) {
-            Map<String, dynamic> map = json.decode(_response.body.substring(1,_response.body.length-1));
+            dynamic respons = jsonDecode(utf8.decode(_response.bodyBytes));
+            Map<String, dynamic> map = respons[0];
             consultaPorCorreoNuevoServicio _datosConsulta = consultaPorCorreoNuevoServicio.fromJson(map);
             if (_datosConsulta != null) {
               return _datosConsulta;
@@ -683,7 +686,12 @@ Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(
   Responsive responsive = Responsive.of(context);
 
   bool conecxion = false;
-  conecxion = await validatePinig();
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_login_error");
+    conecxion = false;
+  }
   print("consultaMediosContactoServicio ${conecxion}");
   if (conecxion) {
     try {
@@ -769,8 +777,7 @@ Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(
       return null;
     }
   } else {
-    customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
-        "", responsive, funcionAlerta);
+    //customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlerta);
     return null;
   }
 }

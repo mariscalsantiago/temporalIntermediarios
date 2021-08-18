@@ -5,7 +5,7 @@ final FirebaseAnalytics analytics = new FirebaseAnalytics();
 
 Future<Null> sendTag(String tag) async {
   print(tag);
- // await analytics.logEvent(name: "$tag", parameters: <String, dynamic>{});
+  await analytics.logEvent(name: "$tag", parameters: <String, dynamic>{});
 }
 
 Future<Null> sendTagInteractionWithANamedParam(String tag,String paramName,String paramData) async {

@@ -1,12 +1,20 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:connectivity/connectivity.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/Functions/Database.dart';
+import 'package:cotizador_agente/Functions/FirebaseAuthenticationServices.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
+import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
 import 'package:cotizador_agente/UserInterface/home/listaRamosPage.dart';
@@ -19,6 +27,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
+import 'package:geocoding/geocoding.dart';
 import 'package:skeleton_animation/skeleton_animation.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -47,7 +56,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   String dropdownValue =  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos" : prefs.getBool("showAP") ? "Gastos Médicos" : "";
-
+  String _address = "";
   List<String> listaCotizadores = [];
   bool showRamos;
   bool pressRamo;
@@ -57,14 +66,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    _databaseReference=FirebaseDatabase.instance.reference();
+
     _runAsyncInit();
     Inactivity(context:context).initialInactivity(functionInactivity);
-    validateIntenetstatus(context,widget.responsive,functionConnectivity);
-
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
 
     ultimoAcceso();
     prefs.setInt("localAuthCount", 0);
+    saveDiviceIDFirebase();
+    saveSesionUsuario();
+    initializeTimerOtroUsuario(context,callback);
+    doTimerOther=true;
     super.initState();
   }
 
@@ -83,36 +95,117 @@ class _HomePageState extends State<HomePage> {
           dropdownValue = "Autos";
       }
     } else if(prefs.getBool("showAP")!= null && prefs.getBool("showAP")){
-    showRamos = false;
-    listaCotizadores = ['Gastos Médicos'];
-    dropdownValue = "Gastos Médicos";
+      showRamos = false;
+      listaCotizadores = ['Gastos Médicos'];
+      dropdownValue = "Gastos Médicos";
     }else{
-    showRamos = false;
-    //Todo Alerta y retorno login
-    listaCotizadores=[];
-    dropdownValue = "";
+      showRamos = false;
+      //Todo Alerta y retorno login
+      listaCotizadores=[];
+      dropdownValue = "";
+    }
+  }
+  void saveDiviceIDFirebase()async {
+    print("== saveDiviceIDFirebase ==");
+    DateTime now = DateTime.now();
+    DateFormat formatter = DateFormat('yyyy-MM-dd');
+    DateTime nowH = DateTime.now();
+    //String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+    String formattedDate = DateFormat('kk:mm:ss').format(now);
+    String formatted = formatter.format(now);
+    try{
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {
+      await _getPlace();
+    }else{
+      _address=" ";
+    }
+    }catch(e){
+      _address=" ";
+      print("Home getPlaces");
+      print(e);
+    }
+    print("deviceID: ${deviceData["id"]}");
+    String deviceName= prefs.getString("deviceName");
+    try{
+      DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+      Map<String, dynamic> mapa = {
+        '${datosUsuario.idparticipante}': {
+          'deviceID': deviceData["id"],
+          //'hora':formatted + " ${formattedDate}",
+          'hora':"${formattedDate}",
+          'ciudad':_address,
+          'dispositivo':Platform.isAndroid?"Android" + " ${deviceName}":"IOS" + " ${deviceName}",
+          'isActive':true,
+        }
+      };
+      print("mapa $mapa");
+      _dataBaseReference.child("bitacora").update(mapa);
+    }catch(e){
+      print("== saveDiviceIDFirebase catch ==");
+      print(e);
     }
 
+
+    //});
   }
 
   functionInactivity(){
     print("functionInactivity");
     Inactivity(context:context).initialInactivity(functionInactivity);
   }
+
+  void _getPlace() async {
+
+      userLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+    print("_getPlace");
+    List<Placemark> newPlace = await placemarkFromCoordinates(userLocation.latitude, userLocation.longitude);
+    // this is all you need
+    Placemark placeMark  = newPlace[0];
+    String name = placeMark.name;
+    String subLocality = placeMark.subLocality;
+    String locality = placeMark.locality;
+    String administrativeArea = placeMark.administrativeArea;
+    String postalCode = placeMark.postalCode;
+    String country = placeMark.country;
+    //String address = "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+    String address = "${locality}";
+
+    setState(() {
+      _address = address; // update _address
+    });
+  }
+
+  Future<Position> _getLocation() async {
+    print("_getLocation");
+    var currentLocation;
+    try {
+      currentLocation = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+    } catch (e) {
+      print("e _getLocation ${e}");
+      currentLocation = null;
+    }
+    return currentLocation;
+  }
   void functionConnectivity() {
     setState(() {});
   }
 
-  void _runAsyncInit() {
-
+  void _runAsyncInit() async {
+    _databaseReference=FirebaseDatabase.instance.reference();
     _databaseReference.child("AutosAvailable").onValue.listen((Event event) async {
       _isActiveAutos = validateNotEmptyBool(event.snapshot.value["dataAutos"]["show"]);
       if(!_isActiveAutos){
         List _whiteList = event.snapshot.value["dataAutos"]["whitelist"];
-        bool _whiteListMember = _whiteList.contains(datosUsuario.emaillogin.toLowerCase());
-        if(_whiteListMember){
-          _isActiveAutos=true;
+        for(String name in _whiteList){
+          bool _whiteListMember = datosUsuario.emaillogin!=null ? name.toLowerCase() == datosUsuario.emaillogin.toLowerCase()? true : false:false;
+          if(_whiteListMember){
+            _isActiveAutos=true;
+          }
         }
+
       }
       if(mounted) setState(() { });
       createCotizadoresRamo();
@@ -128,6 +221,7 @@ class _HomePageState extends State<HomePage> {
   dispose() {
     super.dispose();
   }
+
 
   void  skeletonLoad(){
     setState(() {
@@ -153,6 +247,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+
+
     return OrientationBuilder(builder: (context, orientation) {
       if (orientation == Orientation.portrait) {
         _responsiveMainTablet = Responsive.of(context);
@@ -166,6 +263,7 @@ class _HomePageState extends State<HomePage> {
 
   }
 
+
   Widget builData(Responsive responsive) {
     return GestureDetector(
         onTap: (){
@@ -173,9 +271,11 @@ class _HomePageState extends State<HomePage> {
         },child:WillPopScope(
       onWillPop: () async => false,
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
           appBar: getAppBar(context, responsive),
-          body: SingleChildScrollView(
+          body:
+           SingleChildScrollView(
             child: Center(
               child: Column(
                 children: [
@@ -195,7 +295,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-        ),
+        )
+
       ),
     ));
   }
@@ -252,7 +353,8 @@ class _HomePageState extends State<HomePage> {
               Navigator.push( context,
                   new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
                 Inactivity(context:context).initialInactivity(functionInactivity);
-              });
+
+                  });
             },
             onLongPressStart: (p) {
               setState(() {
@@ -267,6 +369,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push( context,
                   new MaterialPageRoute(builder: (_) => new ListaRamosPage(responsive: responsive, lista: listaCotizadores, callback: cambioRamo,))).then((value){
                 Inactivity(context:context).initialInactivity(functionInactivity);
+
               });
             },
             child: Container(
@@ -312,10 +415,9 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               showInactividad = false;
             });
-            Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive),settings:RouteSettings(name: "CotizadorAutos") ), ).then((value){
               Inactivity(context:context).initialInactivity(functionInactivity);
             });
-
             //opcionElegida = HomeSelection.Atuos;
           },
           onLongPressStart: (j){
@@ -330,6 +432,7 @@ class _HomePageState extends State<HomePage> {
             });
             Navigator.push(context, MaterialPageRoute(builder: (context) => AutosPage(responsive: responsive)), ).then((value){
               Inactivity(context:context).initialInactivity(functionInactivity);
+
             });
           },
           child: Card(

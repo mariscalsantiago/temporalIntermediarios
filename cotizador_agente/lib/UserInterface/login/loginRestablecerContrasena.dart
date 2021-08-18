@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
+import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -75,6 +80,9 @@ class _LoginRestablecerContrasenaState
 
   @override
   void initState() {
+
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
     _saving = false;
     nuevaContrasena = true;
     confirmarnuevaContrasena = true;
@@ -169,10 +177,20 @@ class _LoginRestablecerContrasenaState
   }
 
   @override
+  dispose() {
+
+    super.dispose();
+  }
+
+  void functionConnectivity() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => Future.value(false),
-      child: SafeArea(
+
+    return SafeArea(
+        bottom: false,
         child: Scaffold(
             backgroundColor: Tema.Colors.backgroud,
             appBar: _saving
@@ -208,7 +226,6 @@ class _LoginRestablecerContrasenaState
                     ),
                   ),
             body: Stack(children: builData(widget.responsive))),
-      ),
     );
   }
 

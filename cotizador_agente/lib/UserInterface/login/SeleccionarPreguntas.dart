@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/UserInterface/login/loginPreguntasSecretas.dart';
+import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
@@ -47,16 +51,26 @@ class _SeleccionarPreguntasState extends State<SeleccionarPreguntas> {
 
   @override
   void initState() {
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
     _character = 99999;
     _saving = false;
     // TODO: implement initState
     super.initState();
   }
+  void functionConnectivity() {
+    setState(() {});
+  }
+  @override
+  dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
 
+    return SafeArea(
+      bottom: false,
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar:_saving  ? null : AppBar(

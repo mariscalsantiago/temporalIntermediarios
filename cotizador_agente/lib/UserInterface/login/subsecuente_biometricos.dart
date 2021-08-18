@@ -1,7 +1,10 @@
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:alt_sms_autofill/alt_sms_autofill.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Downloads.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
@@ -34,6 +37,7 @@ import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:http/http.dart' as http;
 import 'package:cotizador_agente/Services/metricsPerformance.dart';
 import 'package:firebase_performance/firebase_performance.dart';
+import 'package:cotizador_agente/Functions/Analytics.dart';
 
 
 String _authorized = 'Not Authorized';
@@ -43,6 +47,7 @@ class BiometricosPage extends StatefulWidget {
   BiometricosPage({Key key, this.responsive}) : super(key: key);
   final Responsive responsive;
 
+
   @override
   _BiometricosPage createState() => _BiometricosPage();
 }
@@ -50,11 +55,23 @@ class BiometricosPage extends StatefulWidget {
 class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserver  {
   bool showBio = false;
   bool showBio_available = false;
+  bool _showFinOtro = false;
   var localAuth = new LocalAuthentication();
   bool _saving;
+
+
   @override
   void initState() {
-    validateIntenetstatus(context, widget.responsive,functionConnectivity);
+    cancelTimerDosApps();
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+    print("onConnectivityChanged: connectivitySubscription: biometricos $connectivitySubscription");
+    if(connectivitySubscription==null) {
+      print("onConnectivityChanged: biometriometricos init");
+      connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+        print("onConnectivityChanged:Biometricos");
+        validateIntenetstatus(navigatorKey.currentContext, widget.responsive, functionConnectivity, true);
+      });
+    }
     showBio_available = is_available_finger;
     _saving = false;
     // TODO: implement initState
@@ -66,30 +83,27 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     validateBiometricstatus(funcionCanselBiometrics);
 
   }
+  @override
+  dispose() {
+    super.dispose();
+  }
   void functionConnectivity() {
     setState(() {});
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("didChangeAppLifecycleState subsecuentes");
-    if(state == AppLifecycleState.resumed){
-      print(state);
-      validateBiometricstatus(funcionCanselBiometrics);
-      Inactivity(context:context).backgroundTimier(functionInactivity);
-    }
-  }
-
-  functionInactivity(){
-    print("functionInactivity");
-    Inactivity(context:context).initialInactivity(functionInactivity);
-  }
-
-  @override
   Widget build(BuildContext context) {
+
+
     if(!is_available_face && !is_available_finger){
       print("face y finger");
-      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+      Inactivity(context: context).cancelInactivity();
+      if(connectivitySubscription!=null) {
+        connectivitySubscription.cancel();
+        connectivitySubscription = null;
+      }
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive),settings: RouteSettings(name: "Login"))).then((value) {
+      });
     }else{
       if(is_available_face && is_available_finger){
         showBio = true;
@@ -142,34 +156,16 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
                   }*/
                   // }
                 },
-                child: Icon(showBio_available ? Icons.fingerprint : Tema.Icons.facial, size: widget.responsive.ip(9), color: Tema.Colors.GNP,))),
+                child:is_available_finger && is_available_face ? Image.asset("assets/login/face&figer.png", width: widget.responsive.ip(9), color: Tema.Colors.GNP,)  : is_available_finger ?  Icon(Icons.fingerprint, size: widget.responsive.ip(9), color: Tema.Colors.GNP,) :  Icon(Tema.Icons.facial, size: widget.responsive.ip(9), color: Tema.Colors.GNP,))),
         Container(
-          margin: EdgeInsets.only(top: widget.responsive.hp(3), bottom: widget.responsive.hp(4), left: widget.responsive.wp(30), right: widget.responsive.wp(30)),
+          margin: EdgeInsets.only(top: widget.responsive.hp(3), bottom: widget.responsive.hp(4), left: widget.responsive.wp(25), right: widget.responsive.wp(25)),
           child:
-          Text(showBio_available?"Toca para activar el inicio de sesión con tu huella.": "Toca para activar el inicio de sesión con tu rostro",
+          Text(is_available_finger && is_available_face ? "Toca para activar el inicio de sesión con biométricos"  : is_available_finger ? "Coloca tu huella en el lector de tu dispositivo": "Mira fijamente a la cámara de tu dispositivo",
             textAlign: TextAlign.center,
             style: TextStyle(color: Tema.Colors.Funcional_Textos_Body, fontSize: widget.responsive.ip(1.5)),
           ),
         ),
-        showBio? CupertinoButton(
-            padding: EdgeInsets.zero,
-            child: Container(
-              margin: EdgeInsets.only(bottom: widget.responsive.hp(2)),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(3),
-              ),
-              padding: EdgeInsets.only(top: widget.responsive.hp(2), bottom: widget.responsive.hp(2)),
-              width: widget.responsive.width,
-              child: Text(showBio_available ?"INGRESAR CON RECONOCIMIENTO FACIAL":"INGRESAR CON LECTOR DE HUELLA", style: TextStyle(
-                color: Tema.Colors.gnpOrange,
-              ),
-                  textAlign: TextAlign.center),
-            ),
-            onPressed: () {
-              showBio_available = !showBio_available;
-              setState(() {});
-            }
-        ):Container(),
+
         CupertinoButton(
             padding: EdgeInsets.zero,
             child: Container(
@@ -188,7 +184,15 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               //TODO 238
               prefs.setBool("bloqueoDespuesSubBio", false);
               prefs.setBool("subSecuentaIngresoCorreo", true);
-              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+              Inactivity(context: context).cancelInactivity();
+              if(connectivitySubscription!=null) {
+                connectivitySubscription.cancel();
+                connectivitySubscription = null;
+              }
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive),settings: RouteSettings(name: "Login"))).then((value) {
+                validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+              });
             }
         ),
         CupertinoButton(
@@ -215,7 +219,14 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               prefs.setBool("regitroDatosLoginExito", false);
               prefs.setBool("flujoCompletoLogin", false);
               cancelTimers();
-              Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+              Inactivity(context: context).cancelInactivity();
+              if(connectivitySubscription!=null) {
+                connectivitySubscription.cancel();
+                connectivitySubscription = null;
+              }
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive),settings: RouteSettings(name: "Login"))).then((value) {
+
+              });
             }
         ),
         Center(
@@ -268,12 +279,65 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     );
   }
 
+  void functionBiometrics(){
+    setState(() {});
+
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("didChangeAppLifecycleState login $state");
+    super.didChangeAppLifecycleState(state);
+    switch(state){
+      case AppLifecycleState.inactive:
+        print("AppLifecycleState.inactive");
+        //validateIntenetBackgroundClosestatus(context, widget.responsive,functionConnectivity);
+        validateBiometricstatus(functionBiometrics);
+        break;
+      case AppLifecycleState.resumed:
+        print("AppLifecycleState.resumed");
+       // validateIntenetBackgroundstatus(context, widget.responsive,functionConnectivity);
+        validateIntenetstatus(navigatorKey.currentContext, widget.responsive,functionConnectivity,false);
+
+        if(screenName!=null) {
+          print("settings:biometricos ${screenName}");
+          if (screenName == "Login" || screenName == "Biometricos") {
+            print("settings: ${screenName}");
+            Inactivity(context: context).cancelInactivity();
+          } else {
+            print("settings:else");
+            Inactivity(context: context).backgroundTimier(functionInactivity);
+          }
+        }else{
+          Inactivity(context: context).backgroundTimier(functionInactivity);
+        }
+        break;
+      case AppLifecycleState.paused:
+        print("AppLifecycleState.paused");
+        AltSmsAutofill().unregisterListener();
+        break;
+      case AppLifecycleState.detached:
+        print("AppLifecycleState.detached");
+        break;
+    }
+
+  }
+
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+  }
 
   Future<http.Response> getVersionApp(String idApp, String idOs) async {
     print("getVersionApp");
     AppConfig _appEnvironmentConfig = AppConfig.of(context);
     bool conecxion = false;
-    conecxion = await validatePinig();
+    try{
+      conecxion = await validatePinig();
+    } catch(e){
+      sendTag("appinter_login_error");
+      conecxion = false;
+    }
     print("getVersionApp ${conecxion}");
     Responsive responsive = Responsive.of(context);
 
@@ -321,8 +385,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
             funcionAlerta);
       }
     } else {
-      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
-          "", responsive, funcionAlerta);
+     // customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlerta);
     }
   }
 
@@ -504,6 +567,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
 
   Future<void> _authenticateHuella(Responsive responsive) async {
+    validateBiometricstatus(funcion);
 
     if( prefs != null && prefs.getInt("localAuthCountIOS") != null && prefs.getInt("localAuthCountIOS")>0) {
       switch(prefs.getInt("localAuthCountIOS")){
@@ -541,7 +605,11 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
         bool authenticated = false;
         if (Platform.isIOS) {
           authenticated = await localAuth.authenticateWithBiometrics(
-              localizedReason:is_available_finger ?  'Coloca tu dedo para continuar.' : 'Mira fijamente a la cámara para continuar.',
+              localizedReason: is_available_finger && is_available_face
+                  ? 'Coloca tu dedo o mira fijamente a la cámara para continuar'
+                  : is_available_finger
+                  ? 'Coloca tu dedo para continuar'
+                  : 'Mira fijamente a la cámara para continuar ',
               iOSAuthStrings: new IOSAuthMessages (
                   lockOut: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
                   goToSettingsDescription:  is_available_finger
@@ -579,6 +647,13 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
         }
 
         if(authenticated){
+          if(is_available_finger || is_available_face){
+            if(is_available_face){
+              sendTag("appinter_login_facial");
+            }else{
+              sendTag("appinter_login_huella");
+            }
+          }
           setState(() {
             _saving = true;
           });
@@ -590,7 +665,21 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
             setState(() {
               _saving = false;
             });
-            Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+            await consultaBitacora();
+            if(_showFinOtro){
+              customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, "title", "message", responsive, callback);
+            }else{
+              sendTag("appinter_login_ok");
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                        responsive: responsive,
+                      ),settings: RouteSettings(name: "Home"))).then((value) {
+
+
+              });
+            }
           } else{
 
 
@@ -602,7 +691,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
           }
         } else{
-
+          sendTag("appinter_login_error");
           localAuth.stopAuthentication();
           bool localAuths = await localAuth.canCheckBiometrics;
           print("didAuthenticate not $localAuths ${prefs.getInt("localAuthCountIOS")}");
@@ -688,24 +777,46 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               responsive, funcionDenegadoBiometric) :
           customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
               responsive, funcionDenegadoBiometric);
-        }else{
-          prefs.setInt("localAuthCountIOS", 102);
-          localAuth.stopAuthentication();
-          Navigator.pop(context, true);
-          is_available_finger && is_available_face ? customAlert(
-              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive, funcionDenegadoBiometric) :
-          is_available_finger ? customAlert(
-              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive, funcionDenegadoBiometric) :
-          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
-              responsive, funcionDenegadoBiometric);
-
         }
       }
 
     }
 
+  }
+
+
+  void consultaBitacora() async {
+
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+
+      print("-- response -- ${response}");
+      if(response!= null && response.isNotEmpty){
+        if(deviceData["id"]==response["deviceID"]){
+          setState(() {
+            _showFinOtro = false;
+          });
+        }else{
+          if(response["isActive"]!= null && response["isActive"] ){
+            setState(() {
+              _showFinOtro = true;
+            });
+          }
+          else{
+            setState(() {
+              _showFinOtro = false;
+            });
+          }
+        }
+      } else{
+        setState(() {
+          _showFinOtro = false;
+        });
+      };
+
+    });
   }
 
   void ErrorServicio(){
@@ -717,13 +828,28 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
   }
 
   void funcionAlerta(){
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+    Inactivity(context: context).cancelInactivity();
+    if(connectivitySubscription!=null) {
+      connectivitySubscription.cancel();
+      connectivitySubscription = null;
+    }
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive),settings: RouteSettings(name: "Login"))).then((value) {
+      validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+    });
   }
   void funcionCanselBiometrics(){
     setState(() {
       prefs.setBool("activarBiometricos", false);
     });
-    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive)));
+    Inactivity(context: context).cancelInactivity();
+    if(connectivitySubscription!=null) {
+      connectivitySubscription.cancel();
+      connectivitySubscription = null;
+    }
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => PrincipalFormLogin(responsive: widget.responsive),settings: RouteSettings(name: "login"))).then((value) {
+
+    });
   }
   void funcionDenegadoBiometric(){
 

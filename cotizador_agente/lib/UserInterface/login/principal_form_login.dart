@@ -1,5 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/Functions/Analytics.dart';
+import 'package:alt_sms_autofill/alt_sms_autofill.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Downloads.dart';
@@ -7,6 +11,7 @@ import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
+import 'package:cotizador_agente/Models/CounterOTP.dart';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
@@ -33,6 +38,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import '../../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'loginActualizarNumero.dart';
@@ -48,6 +54,8 @@ import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:cotizador_agente/Services/metricsPerformance.dart';
 import 'package:firebase_performance/firebase_performance.dart';
+import 'package:flutter/foundation.dart';
+
 
 double tamano;
 String idParticipanteValidaPorCorre;
@@ -62,6 +70,8 @@ bool _validolvide = false;
 String _address = "";
 consultaPorCorreoNuevoServicio respuestaServicioCorreo;
 Responsive _generalResponsive;
+StreamSubscription<ConnectivityResult> connectivitySubscription;
+
 
 final _formKeyOlvideContrasena = GlobalKey<FormState>();
 
@@ -91,6 +101,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   bool _validEmailOlvide = true;
   bool _saving = false;
   bool _enable = true;
+  bool _showFinOtro = false;
+  bool _ShowgetLocation = true;
 
   FocusNode focusCorreo = new FocusNode();
   FocusNode focusContrasena = new FocusNode();
@@ -99,6 +111,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   TextEditingController controllerCorreo = new TextEditingController();
   TextEditingController controllerCorreoCambioContrasena =
       new TextEditingController();
+  final Connectivity _connectivity = Connectivity();
 
   GlobalKey<ScaffoldState> _key;
   //KeyboardVisibilityNotification _keyboardVisibility = new KeyboardVisibilityNotification();
@@ -109,18 +122,39 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
   @override
   void initState() {
-    validateIntenetstatus(context, widget.responsive,functionConnectivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+    Inactivity(context: context).cancelInactivity();
+    print("onConnectivityChanged: connectivitySubscription: login $connectivitySubscription");
+    if(connectivitySubscription==null) {
+      print("onConnectivityChanged: connectivitySubscription: login init");
+      connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
+        print("onConnectivityChanged: login");
+        validateIntenetstatus(navigatorKey.currentContext, widget.responsive, functionConnectivity, true);
+      });
+    }
     initPlatformState(updateDeviceData);
 
     Future.delayed(Duration.zero, () {
       arranque();
     });
     cancelTimers();
-
     super.initState();
+  }
+  @override
+  dispose() {
+    print("connectivitySubscription: principal");
+    super.dispose();
   }
   void functionConnectivity() {
     setState(() {});
+  }
+
+  void functionBiometrics(){
+    setState(() {});
+
+  }
+  void bloqueTemporal() {
+    Navigator.pop(context);
   }
 
   void arranque() async {
@@ -176,12 +210,32 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       prefs.setBool("primeraVez", true);
     }
 
-    /*_getLocation().then((position) {
-      userLocation = position;
-      latitude = userLocation.latitude;
-      longitud = userLocation.longitude;
-      _getPlace();
-    });*/
+    try {
+      _ShowgetLocation = prefs.getBool("ShowgetLocation");
+      if(_ShowgetLocation!=null){}else{_ShowgetLocation=true;}
+    }catch(e){
+      _ShowgetLocation = true;
+      print(e);
+    }
+    //if(_ShowgetLocation){
+     // _permissionRequest();
+    _getLocation().then((position) {
+      //TODO null
+      try{
+        userLocation = position;
+        latitude = userLocation.latitude;
+        longitud = userLocation.longitude;
+        _getPlace();
+      }catch(e){
+        print("error en position Login");
+        setState(() {});
+        print(e);
+      }
+
+
+
+      });
+  //}
     //canceltimer();
 
     focusCorreo.addListener(() {
@@ -193,6 +247,64 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               emailReplace.replaceAll(new RegExp(r"\s+"), "");
           _validEmail = _formKey.currentState.validate();
         }
+
+        if (controllerCorreo.text.contains("á")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'á'), 'a');
+        }
+        if (controllerCorreo.text.contains("Á")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'Á'), 'A');
+        }
+
+        if (controllerCorreo.text.contains("é")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'é'), 'e');
+        }
+
+        if (controllerCorreo.text.contains("É")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'É'), 'E');
+        }
+
+        if (controllerCorreo.text.contains("í")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'í'), 'i');
+        }
+
+        if (controllerCorreo.text.contains("Í")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'Í'), 'I');
+        }
+
+        if (controllerCorreo.text.contains("ó")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'ó'), 'o');
+        }
+
+        if (controllerCorreo.text.contains("Ó")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'Ó'), 'O');
+        }
+
+        if (controllerCorreo.text.contains("ú")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'ú'), 'u');
+        }
+
+        if (controllerCorreo.text.contains("Ú")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'Ú'), 'U');
+        }
+
+        if (controllerCorreo.text.contains("ü")) {
+          controllerCorreo.text =
+              controllerCorreo.text.replaceAll(RegExp(r'ü'), 'u');
+        }
+
+        if (controllerCorreo.text.contains("Ü")) {
+          controllerCorreo.text = controllerCorreo.text.replaceAll(RegExp(r'Ü'), 'U');
+        }
       });
     });
 
@@ -200,8 +312,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       if (controllerContrasena.text.contains(" ")) {
         String password = controllerContrasena.text.trimRight();
         String passwordReplace = password.trimLeft();
-        controllerContrasena.text =
-            passwordReplace.replaceAll(new RegExp(r"\s+"), "");
+        controllerContrasena.text = passwordReplace.replaceAll(new RegExp(r"\s+"), "");
         _validPass = _formKeyPass.currentState.validate();
         setState(() {});
       }
@@ -216,38 +327,138 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               emailReplace.replaceAll(new RegExp(r"\s+"), "");
           _validEmailOlvide = _formKeyOlvideContrasena.currentState.validate();
         }
+
+        if (controllerCorreoCambioContrasena.text.contains("á")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'á'), 'a');
+        }
+        if (controllerCorreoCambioContrasena.text.contains("Á")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'Á'), 'A');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("é")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'é'), 'e');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("É")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'É'), 'E');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("í")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'í'), 'i');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("Í")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'Í'), 'I');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("ó")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'ó'), 'o');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("Ó")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'Ó'), 'O');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("ú")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'ú'), 'u');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("Ú")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'Ú'), 'U');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("ü")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'ü'), 'u');
+        }
+
+        if (controllerCorreoCambioContrasena.text.contains("Ü")) {
+          controllerCorreoCambioContrasena.text =
+              controllerCorreoCambioContrasena.text
+                  .replaceAll(RegExp(r'Ü'), 'U');
+        }
       });
     });
+  }
+
+  ReloadCounter(){
+    setState(() {});
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print("didChangeAppLifecycleState login $state");
-    if (state == AppLifecycleState.inactive) {
-      validateBiometricstatus(funcion);
-      try {
-        setState(() {});
-      } catch (e) {
-        print("error set biometric");
-      }
+    super.didChangeAppLifecycleState(state);
+    switch(state){
+      case AppLifecycleState.inactive:
+       // validateIntenetBackgroundClosestatus(context, widget.responsive,functionConnectivity);
+        print("AppLifecycleState.inactive");
+        break;
+      case AppLifecycleState.resumed:
+        print("AppLifecycleState.resumed");
+        validateIntenetstatus(navigatorKey.currentContext, widget.responsive,functionConnectivity,false);
+        if(screenName!=null) {
+          print("settings:login ${screenName}");
+          if (screenName == "Login" || screenName == "Biometricos") {
+            print("settings: ${screenName}");
+            Inactivity(context: context).cancelInactivity();
+          } else {
+            print("settings:else");
+            Inactivity(context: context).backgroundTimier(functionInactivity);
+          }
+        }else{
+          print("settings: null");
+          Inactivity(context: context).backgroundTimier(functionInactivity);
+        }
+        break;
+      case AppLifecycleState.paused:
+        print("AppLifecycleState.paused");
+        AltSmsAutofill().unregisterListener();
+        break;
+      case AppLifecycleState.detached:
+        print("AppLifecycleState.detached");
+        break;
     }
-    if (state == AppLifecycleState.resumed) {
-      Inactivity(context:context).backgroundTimier(functionInactivity);
-    }
+
   }
 
   functionInactivity(){
     print("functionInactivity");
-    Inactivity(context:context).initialInactivity(functionInactivity);
+   Inactivity(context:context).initialInactivity(functionInactivity);
   }
+
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: () => Future.value(false),
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
-            key: _key, body: Stack(children: builData(widget.responsive))),
+        key: _key,
+    body:  Stack(children: builData(widget.responsive))),
       ),
     );
   }
@@ -347,7 +558,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       child: TextFormField(
         inputFormatters: [
           LengthLimitingTextInputFormatter(50),
-          FilteringTextInputFormatter.allow(RegExp("[A-Z a-z0-9-_@.ñÑ]")),
+          FilteringTextInputFormatter.allow(
+              RegExp("[A-Z a-z0-9-_@.ñÑáÁéÉíÍóÓúÚüÜ]")),
           // FilteringTextInputFormatter.allow(RegExp("[A-Za-z0-9-_@.ñÑ]]")),
         ],
         keyboardType: TextInputType.emailAddress,
@@ -361,6 +573,65 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
             String emailReplace = email.trimLeft();
             controllerCorreo.text =
                 emailReplace.replaceAll(new RegExp(r"\s+"), "");
+          }
+
+          if (controllerCorreo.text.contains("á")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'á'), 'a');
+          }
+          if (controllerCorreo.text.contains("Á")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'Á'), 'A');
+          }
+
+          if (controllerCorreo.text.contains("é")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'é'), 'e');
+          }
+
+          if (controllerCorreo.text.contains("É")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'É'), 'E');
+          }
+
+          if (controllerCorreo.text.contains("í")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'í'), 'i');
+          }
+
+          if (controllerCorreo.text.contains("Í")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'Í'), 'I');
+          }
+
+          if (controllerCorreo.text.contains("ó")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'ó'), 'o');
+          }
+
+          if (controllerCorreo.text.contains("Ó")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'Ó'), 'O');
+          }
+
+          if (controllerCorreo.text.contains("ú")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'ú'), 'u');
+          }
+
+          if (controllerCorreo.text.contains("Ú")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'Ú'), 'U');
+          }
+
+          if (controllerCorreo.text.contains("ü")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'ü'), 'u');
+          }
+
+          if (controllerCorreo.text.contains("Ü")) {
+            controllerCorreo.text =
+                controllerCorreo.text.replaceAll(RegExp(r'Ü'), 'U');
           }
         },
         obscureText: false,
@@ -542,6 +813,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       ),
       onFocusChange: (hasFocus) {
         print("hasFocus $hasFocus $_validEmail $_validPass");
+        _validPass = _formKeyPass.currentState.validate();
+        setState(() {});
       },
     );
   }
@@ -670,8 +943,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                                 key: _formKeyOlvideContrasena,
                                 child: TextFormField(
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp("[A-Z a-z0-9-_@.ñÑ]")),
+                                    FilteringTextInputFormatter.allow(RegExp(
+                                        "[A-Z a-z0-9-_@.ñÑáÁéÉíÍóÓúÚüÜ]")),
                                     LengthLimitingTextInputFormatter(50),
                                   ],
                                   keyboardType: TextInputType.emailAddress,
@@ -701,6 +974,101 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                                             _formKeyOlvideContrasena
                                                 .currentState
                                                 .validate();
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("á")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'á'), 'a');
+                                      }
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("Á")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'Á'), 'A');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("é")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'é'), 'e');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("É")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'É'), 'E');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("í")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'í'), 'i');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("Í")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'Í'), 'I');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("ó")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'ó'), 'o');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("Ó")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'Ó'), 'O');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("ú")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'ú'), 'u');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("Ú")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'Ú'), 'U');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("ü")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'ü'), 'u');
+                                      }
+
+                                      if (controllerCorreoCambioContrasena.text
+                                          .contains("Ü")) {
+                                        controllerCorreoCambioContrasena.text =
+                                            controllerCorreoCambioContrasena
+                                                .text
+                                                .replaceAll(RegExp(r'Ü'), 'U');
                                       }
                                     });
                                   },
@@ -874,7 +1242,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     print("getVersionApp");
     AppConfig _appEnvironmentConfig = AppConfig.of(context);
     bool conecxion = false;
-    conecxion = await validatePinig();
+    try{
+      conecxion = await validatePinig();
+    } catch(e){
+      sendTag("appinter_login_error");
+      conecxion = false;
+    }
     print("getVersionApp ${conecxion}");
     Responsive responsive = Responsive.of(context);
 
@@ -918,12 +1291,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       } catch (e) {
         print("getVersionApp catch");
         print(e);
-        customAlert(AlertDialogType.errorServicio, context, "", "", responsive,
-            funcionAlerta);
+
       }
-    } else {
-      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
-          "", responsive, funcionAlerta);
     }
   }
 
@@ -939,7 +1308,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
     print("UsuarioPorCorreo ${respuesta}");
     bool conecxion = false;
-    conecxion = await validatePinig();
+    try{
+      conecxion = await validatePinig();
+    } catch(e){
+      sendTag("appinter_login_error");
+      conecxion = false;
+    }
     print("UsuarioPorCorreo ${conecxion}");
     if (conecxion) {
       try {
@@ -1020,11 +1394,19 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                               LoginCodigoVerificaion(
                                 responsive: responsive,
                                 isNumero: false,
-                              )));
+                              ))).then((value) {
+                    Inactivity(context: context).cancelInactivity();
+
+                  });
                 } else {
-                  // print("UsuarioPorCorreo else4");
-                  customAlert(AlertDialogType.errorServicio, context, "", "",
-                      responsive, funcionAlerta);
+                  if(optRespuesta.idError == "015"){
+                    customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                        responsive, funcionAlerta);
+                  } else{
+                    customAlert(AlertDialogType.errorServicio, context, "", "",
+                        responsive, funcionAlerta);
+                  }
+
                 }
               } else {
                 //print("UsuarioPorCorreo else5");
@@ -1075,8 +1457,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       setState(() {
         _saving = false;
       });
-      customAlert(AlertDialogType.DatosMoviles_Activados_comprueba, context, "",
-          "", responsive, funcionAlerta);
+      customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, funcionAlerta);
     }
   }
 
@@ -1377,12 +1758,20 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         } else {
           if (prefs.getBool("flujoCompletoLogin") != null &&
               prefs.getBool("flujoCompletoLogin")) {
-            Navigator.push(
-                context,
-                new MaterialPageRoute(
-                    builder: (_) => new HomePage(
-                          responsive: responsive,
-                        )));
+            await consultaBitacora();
+            if(_showFinOtro){
+              customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, "title", "message", responsive, callback);
+            }else{
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                        responsive: responsive,
+                      ))).then((value) {
+                Inactivity(context: context).cancelInactivity();
+
+              });
+            }
           } else {
             primerAccesoUsuario();
             if (prefs.getBool('primeraVezIntermediario') != null &&
@@ -1393,9 +1782,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => CondicionesPage(
+                          builder: (BuildContext context) => CondicionesPage(responsive: widget.responsive,
                                 callback: funcionAlerta,
-                              )));
+                              ))).then((value) {
+                    Inactivity(context: context).cancelInactivity();
+
+
+                  });
                 } else {
                   Navigator.push(
                       context,
@@ -1403,7 +1796,9 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                           builder: (BuildContext context) =>
                               LoginActualizarContrasena(
                                 responsive: responsive,
-                              )));
+                              ))).then((value) {
+                    Inactivity(context: context).cancelInactivity();
+                  });
                 }
               } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
                   prefs.getBool("aceptoCondicionesDeUso")) {
@@ -1412,9 +1807,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => CondicionesPage(
+                          builder: (BuildContext context) => CondicionesPage(responsive: widget.responsive,
                                 callback: funcionAlerta,
-                              )));
+                              ))).then((value) {
+                    Inactivity(context: context).cancelInactivity();
+                  });
                 } else {
                   Navigator.push(
                       context,
@@ -1422,7 +1819,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                           builder: (BuildContext context) =>
                               LoginActualizarContrasena(
                                 responsive: responsive,
-                              )));
+                              ))).then((value) {
+                    Inactivity(context: context).cancelInactivity();
+
+
+                  });
                 }
               } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
                   !prefs.getBool("aceptoCondicionesDeUso")) {
@@ -1431,9 +1832,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => CondicionesPage(
+                          builder: (BuildContext context) => CondicionesPage(responsive: widget.responsive,
                                 callback: funcionAlerta,
-                              )));
+                              ))).then((value) {
+                    Inactivity(context: context).cancelInactivity();
+
+
+                  });
                 } else {
                   Navigator.push(
                       context,
@@ -1441,7 +1846,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                           builder: (BuildContext context) =>
                               LoginActualizarContrasena(
                                 responsive: responsive,
-                              )));
+                              ))).then((value) {
+                    Inactivity(context: context).cancelInactivity();
+
+
+                  });
                 }
               } else {
                 // validamos si el usuario ya inicio sesión por primera vez
@@ -1449,9 +1858,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (BuildContext context) => CondicionesPage(
+                          builder: (BuildContext context) => CondicionesPage(responsive: widget.responsive,
                                 callback: funcionAlerta,
-                              )));
+                              ))).then((value) {
+                    Inactivity(context: context).cancelInactivity();
+                    //(context, widget.responsive, functionConnectivity, false);
+
+                  });
                 } else {
                   Navigator.push(
                       context,
@@ -1459,7 +1872,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                           builder: (BuildContext context) =>
                               LoginActualizarContrasena(
                                 responsive: responsive,
-                              )));
+                              ))).then((value) {
+                                Inactivity(context: context).cancelInactivity();
+
+
+                  });
                 }
               }
             } else {
@@ -1483,7 +1900,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                         builder: (BuildContext context) =>
                             LoginActualizarNumero(
                               responsive: responsive,
-                            )));
+                            ))).then((value) {
+                              Inactivity(context: context).cancelInactivity();
+
+                });
               }
             }
           }
@@ -1521,9 +1941,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => CondicionesPage(
+                        builder: (BuildContext context) => CondicionesPage(responsive: widget.responsive,
                               callback: funcionAlerta,
-                            )));
+                            ))).then((value) {
+                  Inactivity(context: context).cancelInactivity();
+
+
+                });
               } else {
                 Navigator.push(
                     context,
@@ -1531,7 +1955,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                         builder: (BuildContext context) =>
                             LoginActualizarContrasena(
                               responsive: responsive,
-                            )));
+                            ))).then((value) {
+                  Inactivity(context: context).cancelInactivity();
+
+                });
               }
             } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
                 prefs.getBool("aceptoCondicionesDeUso")) {
@@ -1540,9 +1967,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => CondicionesPage(
+                        builder: (BuildContext context) => CondicionesPage(responsive: widget.responsive,
                               callback: funcionAlerta,
-                            )));
+                            ))).then((value) {
+                  Inactivity(context: context).cancelInactivity();
+
+
+                });
               } else {
                 Navigator.push(
                     context,
@@ -1550,7 +1981,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                         builder: (BuildContext context) =>
                             LoginActualizarContrasena(
                               responsive: responsive,
-                            )));
+                            ))).then((value) {
+                  Inactivity(context: context).cancelInactivity();
+
+
+                });
               }
             } else if (prefs.getBool("aceptoCondicionesDeUso") != null &&
                 !prefs.getBool("aceptoCondicionesDeUso")) {
@@ -1559,9 +1994,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => CondicionesPage(
+                        builder: (BuildContext context) => CondicionesPage(responsive: widget.responsive,
                               callback: funcionAlerta,
-                            )));
+                            ))).then((value) {
+                  Inactivity(context: context).cancelInactivity();
+
+
+                });
               } else {
                 Navigator.push(
                     context,
@@ -1569,7 +2008,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                         builder: (BuildContext context) =>
                             LoginActualizarContrasena(
                               responsive: responsive,
-                            )));
+                            ))).then((value) {
+                  Inactivity(context: context).cancelInactivity();
+
+
+                });
               }
             } else {
               // validamos si el usuario ya inicio sesión por primera vez
@@ -1577,9 +2020,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (BuildContext context) => CondicionesPage(
+                        builder: (BuildContext context) => CondicionesPage(responsive: widget.responsive,
                               callback: funcionAlerta,
-                            )));
+                            ))).then((value) {
+                  Inactivity(context: context).cancelInactivity();
+
+
+                });
               } else {
                 Navigator.push(
                     context,
@@ -1587,7 +2034,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                         builder: (BuildContext context) =>
                             LoginActualizarContrasena(
                               responsive: responsive,
-                            )));
+                            ))).then((value) {
+                  Inactivity(context: context).cancelInactivity();
+
+
+                });
               }
             }
           } else {
@@ -1609,7 +2060,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   MaterialPageRoute(
                       builder: (BuildContext context) => LoginActualizarNumero(
                             responsive: responsive,
-                          )));
+                          ))).then((value) {
+                Inactivity(context: context).cancelInactivity();
+
+              });
             }
           }
         }
@@ -1643,11 +2097,15 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
           prefs.setBool("regitroDatosLoginExito", false);
           prefs.setBool("flujoCompletoLogin", false);
           cancelTimers();
+          Inactivity(context: context).cancelInactivity();
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (BuildContext context) =>
-                      PrincipalFormLogin(responsive: widget.responsive)));
+                      PrincipalFormLogin(responsive: widget.responsive),settings: RouteSettings(name: "Login"))).then((value) {
+            Inactivity(context: context).cancelInactivity();
+
+          });
         });
   }
 
@@ -1658,17 +2116,23 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         if (prefs.getBool("userRegister") == true) {
         } else {
           Navigator.push(context,
-              new MaterialPageRoute(builder: (_) => OnBoardingAppAutos()));
+              new MaterialPageRoute(builder: (_) => OnBoardingAppAutos())).then((value) {
+            Inactivity(context: context).cancelInactivity();
+
+
+          });
         }
       } else {
         Navigator.push(context,
-            new MaterialPageRoute(builder: (_) => OnBoardingAppAutos()));
+            new MaterialPageRoute(builder: (_) => OnBoardingAppAutos())).then((value) {
+          Inactivity(context: context).cancelInactivity();
+
+        });
       }
     }
   }
 
   Widget activarHuella(Responsive responsive) {
-    print("isActiveB $isActiveBiometric");
     return isActiveBiometric?Container(
       margin: EdgeInsets.symmetric(horizontal: responsive.width * 0.02),
       padding: EdgeInsets.only(top: 28, bottom: 32),
@@ -1725,20 +2189,24 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         //margin: EdgeInsets.only( top: responsive.hp(0.5), bottom: responsive.hp(0.5)),
         child: GestureDetector(
           onTap: () {
-            initPlatformState(updateDeviceData);
+            //initPlatformState(updateDeviceData);
             customAlert(AlertDialogType.versionTag, context, "", "", responsive,
                 funcionAlertaCodVerificacion);
             //initPlatformState(updateDeviceData);
           },
           onLongPress: () {
             if (deviceType == ScreenType.phone) {
+              customAlert(AlertDialogType.versionTag, context, "", "", responsive,
+                  funcionAlertaCodVerificacion);
+              /*
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (BuildContext context) =>
                           TerminosYCondicionesPage(
                             callback: callback,
-                          )));
+
+                          )));*/
 
               // customAlert(AlertDialogType.Sesionfinalizada_por_inactividad, context, "",  "", responsive, CallbackInactividad);
             } else {
@@ -1995,10 +2463,19 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 builder: (BuildContext context) => LoginCodigoVerificaion(
                       responsive: responsive,
                       isNumero: false,
-                    )));
+                    ))).then((value){
+          Inactivity(context: context).cancelInactivity();
+
+        });
       } else {
-        customAlert(AlertDialogType.errorServicio, context, "", "", responsive,
-            funcion);
+        if(optRespuesta.idError == "015"){
+          customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+              responsive, funcionAlerta);
+        } else{
+          customAlert(AlertDialogType.errorServicio, context, "", "", responsive,
+              funcion);
+        }
+
       }
     } else {
       print("Error Servicio OTP");
@@ -2044,10 +2521,20 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                       builder: (BuildContext context) => LoginCodigoVerificaion(
                             responsive: responsive,
                             isNumero: false,
-                          )));
+                          ))).then((value) {
+                Inactivity(context: context).cancelInactivity();
+
+
+              });
             } else {
-              customAlert(AlertDialogType.errorServicio, context, "", "",
-                  responsive, funcion);
+              if(optRespuesta.idError == "015"){
+                customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                    responsive, funcionAlerta);
+              } else{
+                customAlert(AlertDialogType.errorServicio, context, "", "",
+                    responsive, funcion);
+              }
+
             }
           } else {
             customAlert(AlertDialogType.errorServicio, context, "", "",
@@ -2060,7 +2547,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               MaterialPageRoute(
                   builder: (BuildContext context) => LoginActualizarNumero(
                         responsive: responsive,
-                      )));
+                      ))).then((value) {
+            Inactivity(context: context).cancelInactivity();
+
+
+          });
         }
       }
     }
@@ -2089,6 +2580,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   }
 
   Future<Position> _getLocation() async {
+    prefs.setBool("ShowgetLocation", false);
     var currentLocation;
     try {
       currentLocation = await Geolocator.getCurrentPosition(
@@ -2101,8 +2593,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   }
 
   void _getPlace() async {
-    List<Placemark> newPlace = await placemarkFromCoordinates(
-        userLocation.latitude, userLocation.longitude);
+    if(userLocation!=null&&userLocation.latitude!=null&&userLocation.longitude!=null){
+    List<Placemark> newPlace = await placemarkFromCoordinates(userLocation.latitude, userLocation.longitude);
     // this is all you need
     Placemark placeMark = newPlace[0];
     String name = placeMark.name;
@@ -2118,6 +2610,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     setState(() {
       _address = address; // update _address
     });
+    }
   }
 
   void primerAccesoUsuario() async {
@@ -2171,6 +2664,39 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
           .child(email.toLowerCase())
           .set({'isFirstMobileSession': true});
     }
+  }
+  void consultaBitacora() async {
+
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+
+      print("-- response -- ${response}");
+      if(response!= null && response.isNotEmpty){
+        if(deviceData["id"]==response["deviceID"]){
+          setState(() {
+            _showFinOtro = false;
+          });
+        }else{
+          if(response["isActive"]!= null && response["isActive"]){
+            setState(() {
+              _showFinOtro = true;
+            });
+          }
+          else{
+            setState(() {
+              _showFinOtro = false;
+            });
+          }
+        }
+      } else{
+        setState(() {
+          _showFinOtro = false;
+        });
+      };
+
+    });
   }
 }
 
@@ -2251,6 +2777,8 @@ void validacionAcceso(String dataFirebase, String dateNow) {
 }
 
 void funcion() {}
+
+
 
 void validarRolesUsuario() {
   prefs.setBool("rolAutoscotizarActivo", false);

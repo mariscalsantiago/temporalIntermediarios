@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/home/autos.dart';
@@ -30,8 +31,6 @@ import 'package:url_launcher/url_launcher.dart';
 var isShowAlert = false;
 
 enum AlertDialogTypeTablet {
-  errorConexion,
-  timeOut,
   inactividad,
   testUno,
   archivoInvalido,
@@ -47,8 +46,6 @@ enum AlertDialogTypeTablet {
   activacionExitosa_Reconocimiento_facial,
   //terminosYcondiciones_reconocimiento_facial,
   EnOtroMomento_reconocimiento_facial,
-  Sesionfinalizada_por_dispositivo,
-  Sesionfinalizada_por_inactividad,
   Sesionfinalizada_por_intentos_huella,
   Sesionafinalizada_por_contrasena_debeserdiferente,
   Correo_electronico_o_contrasena_no_coinciden,
@@ -64,12 +61,9 @@ enum AlertDialogTypeTablet {
   Numero_de_celular_actualizado_correctamente,
   AjustesSinGuardar_camara,
   ArchivoInvalido_imagen,
-  Tienes_una_sesion_activa,
   Desactivar_huella_digital,
   Desactivar_recoFacial,
   DatosMoviles_Activados,
-  DatosMoviles_Activados_comprueba,
-  CerrarSesion,
   En_mantenimiento_cel,
   En_mantenimiento_llave,
   Sin_acceso_herramientas_cotizacion,
@@ -89,80 +83,6 @@ enum AlertDialogTypeTablet {
 void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
     String title, String message, Responsive responsive, Function callback) {
   switch (type) {
-    case AlertDialogTypeTablet.errorConexion:
-      if (!isShowAlert) {
-        isShowAlert = true;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: new Text("Error de conexión.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              content: new Text(
-                  "Se produjo un error en la red, verifica tu conexión e intenta nuevamente.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("ACEPTAR",
-                      style: TextStyle(
-                          color: Theme.Colors.primary,
-                          fontSize: 16.0,
-                          fontFamily: "Roboto")),
-                  onPressed: () {
-                    isShowAlert = false;
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else {}
-      break;
-    case AlertDialogTypeTablet.timeOut:
-      if (!isShowAlert) {
-        isShowAlert = true;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: new Text("Error de conexión.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              content: new Text(
-                  "Se produjo un error en la red por el tiempo de espera, verifica tu conexión e intenta nuevamente.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("ACEPTAR",
-                      style: TextStyle(
-                          color: Theme.Colors.primary,
-                          fontSize: 16.0,
-                          fontFamily: "Roboto")),
-                  onPressed: () {
-                    isShowAlert = false;
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else {}
-      break;
     case AlertDialogTypeTablet.inicio_de_sesion_active_faceID:
       showDialog(
           context: context,
@@ -821,6 +741,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   TerminosYCondicionesPage(
+                                                    responsive: responsive,
                                                     callback: callback,
                                                   )));
                                     },
@@ -1056,7 +977,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
                                                   builder: (context) =>
                                                       HomePage(
                                                         responsive: responsive,
-                                                      )));
+                                                      ),settings: RouteSettings(name: "Home")));
                                         }
                                       }
                                       prefs.setBool(
@@ -1777,7 +1698,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
                                                         HomePage(
                                                           responsive:
                                                               responsive,
-                                                        )));
+                                                        ),settings: RouteSettings(name: "Home")));
                                           }
                                         }
                                         prefs.setBool(
@@ -2088,218 +2009,6 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
                                         style: TextStyle(
                                             color: Theme.Colors.GNP,
                                             fontSize: responsive.ip(1.4)),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          });
-      break;
-
-    case AlertDialogTypeTablet.Sesionfinalizada_por_dispositivo:
-      showDialog(
-          context: context,
-          builder: (context) {
-            Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: responsive.width,
-                      color: Theme.Colors.White,
-                      child: Center(
-                        child: Container(
-                          width: responsive.wp(60),
-                          height: responsive.hp(40),
-                          child: Card(
-                            shape: null,
-                            elevation: 0,
-                            color: Theme.Colors.White,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                    child: Container(
-                                        margin: EdgeInsets.only(
-                                            top: responsive.hp(3)),
-                                        child: Icon(
-                                          Icons.warning_amber_outlined,
-                                          color: Colors.red,
-                                          size: responsive.ip(5),
-                                        ))),
-                                Container(
-                                  margin:
-                                      EdgeInsets.only(top: responsive.hp(5)),
-                                  child: Center(
-                                    child: Text(
-                                      "Sesión finalizada",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Theme.Colors.Encabezados,
-                                          fontSize: responsive.ip(2.3)),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.height * 0.04,
-                                      left: responsive.width * 0.04,
-                                      bottom: responsive.height * 0.03),
-                                  child: Text(
-                                    "Has iniciado sesión en otro dispositivo.",
-                                    style: TextStyle(
-                                        color:
-                                            Theme.Colors.Funcional_Textos_Body,
-                                        fontSize: responsive.ip(1.8)),
-                                  ),
-                                ),
-                                Center(
-                                  child: Container(
-                                    height: responsive.hp(6.25),
-                                    width: responsive.wp(90),
-                                    margin: EdgeInsets.only(
-                                      bottom: responsive.height * 0.02,
-                                      top: responsive.height * 0.02,
-                                    ),
-                                    child: RaisedButton(
-                                      elevation: 0,
-                                      color: Theme.Colors.White,
-                                      onPressed: () {
-                                        Navigator.pop(context, true);
-                                      },
-                                      child: Text(
-                                        "CERRAR",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Theme.Colors.GNP,
-                                            fontSize: responsive.ip(1.8)),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          });
-      break;
-
-    case AlertDialogTypeTablet.Sesionfinalizada_por_inactividad:
-      showDialog(
-          context: context,
-          builder: (context) {
-            Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: responsive.width,
-                      color: Theme.Colors.White,
-                      child: Center(
-                        child: Container(
-                          width: responsive.wp(50),
-                          height: responsive.hp(40),
-                          child: Card(
-                            shape: null,
-                            elevation: 0,
-                            color: Theme.Colors.White,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                    child: Container(
-                                        margin: EdgeInsets.only(
-                                            top: responsive.hp(3)),
-                                        child: Icon(
-                                          Icons.warning_amber_outlined,
-                                          color: Colors.red,
-                                          size: responsive.ip(5),
-                                        ))),
-                                Container(
-                                  margin:
-                                      EdgeInsets.only(top: responsive.hp(5)),
-                                  child: Center(
-                                    child: Text(
-                                      "Sesión finalizada",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          color: Theme.Colors.Encabezados,
-                                          fontSize: responsive.ip(2.3)),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.height * 0.04,
-                                      left: responsive.width * 0.04,
-                                      bottom: responsive.height * 0.03),
-                                  child: Text(
-                                    "Sesión finalizada por inactividad.",
-                                    style: TextStyle(
-                                        color:
-                                            Theme.Colors.Funcional_Textos_Body,
-                                        fontSize: responsive.ip(1.8)),
-                                  ),
-                                ),
-                                Center(
-                                  child: Container(
-                                    height: responsive.hp(6.25),
-                                    width: responsive.wp(90),
-                                    margin: EdgeInsets.only(
-                                      bottom: responsive.height * 0.02,
-                                      top: responsive.height * 0.02,
-                                    ),
-                                    child: RaisedButton(
-                                      elevation: 0,
-                                      color: Theme.Colors.White,
-                                      onPressed: () {
-                                        Navigator.pop(context, true);
-                                      },
-                                      child: Text(
-                                        "CERRAR",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Theme.Colors.GNP,
-                                            fontSize: responsive.ip(1.8)),
                                       ),
                                     ),
                                   ),
@@ -4026,252 +3735,6 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
           });
       break;
 
-    case AlertDialogTypeTablet.ArchivoInvalido_imagen:
-      showDialog(
-          context: context,
-          builder: (context) {
-            Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: responsive.width,
-                      color: Theme.Colors.White,
-                      child: Center(
-                        child: Container(
-                          width: responsive.wp(50),
-                          height: responsive.hp(40),
-                          child: Card(
-                            shape: null,
-                            elevation: 0,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Container(
-                                    margin:
-                                        EdgeInsets.only(top: responsive.hp(2)),
-                                    child: Icon(
-                                      Icons.warning_amber_outlined,
-                                      color: Colors.redAccent,
-                                      size: responsive.ip(4),
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Container(
-                                    margin:
-                                        EdgeInsets.only(top: responsive.hp(2)),
-                                    child: Text(
-                                      "Archivo inválido",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Theme.Colors.Azul_gnp,
-                                        fontSize: responsive.ip(1.8),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.hp(4.1),
-                                      left: responsive.width * 0.05),
-                                  child: Text(
-                                    "Debe ser formato imágen",
-                                    style: TextStyle(
-                                      color: Theme.Colors.Funcional_Textos_Body,
-                                      fontSize: responsive.ip(1.6),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    top: responsive.height * 0.07,
-                                    left: responsive.wp(12),
-                                    bottom: responsive.height * 0.04,
-                                  ),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.pop(context, true);
-                                      customAlertTablet(
-                                          AlertDialogTypeTablet
-                                              .Tienes_una_sesion_activa,
-                                          context,
-                                          "",
-                                          "",
-                                          responsive,
-                                          callback);
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Icon(
-                                          Icons.camera_alt_outlined,
-                                          color: Theme.Colors.GNP,
-                                        ),
-                                        Container(
-                                            margin: EdgeInsets.only(),
-                                            child: Text(
-                                              "SELECCIONAR FOTO",
-                                              style: TextStyle(
-                                                  color: Theme.Colors.GNP,
-                                                  fontSize: responsive.ip(1.4)),
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          });
-      break;
-
-    case AlertDialogTypeTablet.Tienes_una_sesion_activa:
-      showDialog(
-          context: context,
-          builder: (context) {
-            Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: responsive.width,
-                      color: Theme.Colors.White,
-                      child: Center(
-                        child: Container(
-                          width: responsive.wp(50),
-                          height: responsive.hp(30),
-                          child: Card(
-                            shape: null,
-                            elevation: 0,
-                            color: Theme.Colors.White,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Center(
-                                  child: Container(
-                                    margin:
-                                        EdgeInsets.only(top: responsive.hp(1)),
-                                    child: Text(
-                                      "Tienes una sesión activa",
-                                      style: TextStyle(
-                                        color: Theme.Colors.Encabezados,
-                                        fontSize: responsive.ip(1.4),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.hp(3.5),
-                                      left: responsive.wp(2),
-                                      right: responsive.wp(2),
-                                      bottom: responsive.hp(2)),
-                                  child: Text(
-                                    "Iniciada a las {hora} en {ciudad} desde\n {dispositivo}. ¿Deseas cerrar esa sesión e iniciar\n en este dispositivo?",
-                                    style: TextStyle(
-                                      color: Theme.Colors.Funcional_Textos_Body,
-                                      fontSize: responsive.ip(1.2),
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Container(
-                                    height: responsive.hp(3),
-                                    width: responsive.wp(50),
-                                    margin: EdgeInsets.only(
-                                        top: responsive.hp(1),
-                                        right: responsive.wp(2),
-                                        left: responsive.wp(2)),
-                                    child: RaisedButton(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(6.0),
-                                      ),
-                                      color: Theme.Colors.GNP,
-                                      onPressed: () {
-                                        Navigator.pop(context, true);
-                                        customAlertTablet(
-                                            AlertDialogTypeTablet
-                                                .DatosMoviles_Activados,
-                                            context,
-                                            "",
-                                            "",
-                                            responsive,
-                                            callback);
-                                      },
-                                      child: Text(
-                                        "SÍ",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Theme.Colors.White,
-                                            fontSize: responsive.ip(1.5)),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.height * 0.015,
-                                      bottom: responsive.height * 0.025),
-                                  child: Center(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.pop(context, true);
-                                      },
-                                      child: Text(
-                                        "NO",
-                                        style: TextStyle(
-                                            color: Theme.Colors.GNP,
-                                            fontSize: responsive.ip(1.5)),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          });
-      break;
-
     case AlertDialogTypeTablet.Desactivar_huella_digital:
       showDialog(
           context: context,
@@ -4608,248 +4071,6 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
                                       },
                                       child: Text(
                                         "CERRAR",
-                                        style: TextStyle(
-                                            color: Theme.Colors.GNP,
-                                            fontSize: responsive.ip(1.4)),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          });
-      break;
-
-    case AlertDialogTypeTablet.DatosMoviles_Activados_comprueba:
-      showDialog(
-          context: context,
-          builder: (context) {
-            Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: responsive.width,
-                      color: Theme.Colors.White,
-                      child: Center(
-                        child: Container(
-                          width: responsive.wp(50),
-                          height: responsive.hp(40),
-                          child: Card(
-                            shape: null,
-                            elevation: 0,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.height * 0.01),
-                                  child: Center(
-                                    child: Icon(
-                                      Icons.wifi_off_outlined,
-                                      color: Theme.Colors.azul_apoyo,
-                                      size: responsive.ip(4),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.height * 0.02),
-                                  child: Center(
-                                    child: Text(
-                                      "Sin conexión a internet",
-                                      style: TextStyle(
-                                          color: Theme.Colors.Encabezados,
-                                          fontSize: responsive.ip(1.6)),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    top: responsive.height * 0.02,
-                                    left: responsive.width * 0.03,
-                                  ),
-                                  child: Text(
-                                    "Comprueba que tienes acceso a una red Wi-Fi o que cuentas con datos móviles activados.",
-                                    style: TextStyle(
-                                        color:
-                                            Theme.Colors.Funcional_Textos_Body,
-                                        fontSize: responsive.ip(1.6)),
-                                  ),
-                                ),
-                                /*Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.height * 0.04,
-                                      bottom: responsive.height * 0.02),
-                                  child: Center(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.pop(context,true);
-                                        customAlertTablet(
-                                            AlertDialogTypeTablet.CerrarSesion,
-                                            context,
-                                            "",
-                                            "",
-                                            responsive, callback);
-                                      },
-                                      child: Text(
-                                        "CERRAR",
-                                        style: TextStyle(
-                                            color: Theme.Colors.GNP,
-                                            fontSize: responsive.ip(1.4)),
-                                      ),
-                                    ),
-                                  ),
-                                )*/
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          });
-      break;
-
-    case AlertDialogTypeTablet.CerrarSesion:
-      showDialog(
-          context: context,
-          builder: (context) {
-            Responsive responsive = Responsive.of(context);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: 0.6,
-                  child: Container(
-                    height: responsive.height,
-                    width: responsive.width,
-                    color: Theme.Colors.Azul_gnp,
-                  ),
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Container(
-                      width: responsive.width,
-                      color: Theme.Colors.White,
-                      child: Center(
-                        child: Container(
-                          width: responsive.wp(50),
-                          height: responsive.hp(40),
-                          child: Card(
-                            shape: null,
-                            elevation: 0,
-                            color: Theme.Colors.White,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Container(
-                                    margin: EdgeInsets.only(
-                                        top: responsive.hp(2),
-                                        bottom: responsive.hp(2)),
-                                    child: Text(
-                                      "Cerrar sesión",
-                                      style: TextStyle(
-                                        color: Theme.Colors.Encabezados,
-                                        fontSize: responsive.ip(1.8),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.hp(1),
-                                      left: responsive.width * 0.03,
-                                      bottom: responsive.hp(1)),
-                                  child: Text(
-                                    "¿Estás seguro de que deseas salir de tu App Intermediario GNP?",
-                                    style: TextStyle(
-                                      color: Theme.Colors.Funcional_Textos_Body,
-                                      fontSize: responsive.ip(1.6),
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Container(
-                                    height: responsive.hp(6.25),
-                                    width: responsive.wp(90),
-                                    margin:
-                                        EdgeInsets.only(top: responsive.hp(2)),
-                                    child: RaisedButton(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(6.0),
-                                      ),
-                                      color: Theme.Colors.GNP,
-                                      onPressed: () {
-                                        if (prefs
-                                            .getBool("activarBiometricos")) {
-                                          Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          BiometricosPage(
-                                                              responsive:
-                                                                  responsive)));
-                                        } else {
-                                          Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          PrincipalFormLogin(
-                                                              responsive:
-                                                                  responsive)));
-                                        }
-                                      },
-                                      child: Text(
-                                        "CERRAR SESIÓN",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            color: Theme.Colors.White,
-                                            fontSize: responsive.ip(1.4)),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(
-                                      top: responsive.height * 0.03,
-                                      bottom: responsive.height * 0.05),
-                                  child: Center(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        Navigator.pop(context, true);
-                                      },
-                                      child: Text(
-                                        "CONTINUAR TRABAJANDO",
                                         style: TextStyle(
                                             color: Theme.Colors.GNP,
                                             fontSize: responsive.ip(1.4)),
@@ -5516,6 +4737,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
       break;
 
     case AlertDialogTypeTablet.contrasena_actualiza_correctamente:
+      Inactivity(context: context).cancelInactivity();
       showDialog(
           context: context,
           builder: (context) {
@@ -5625,7 +4847,7 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
                                                       (BuildContext context) =>
                                                           PrincipalFormLogin(
                                                               responsive:
-                                                                  responsive)));
+                                                                  responsive),settings: RouteSettings(name: "Login")));
                                         } else {
                                           Navigator.pop(context);
                                           Navigator.push(

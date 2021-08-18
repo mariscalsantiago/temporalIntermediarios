@@ -1,10 +1,15 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/login/SeleccionarPreguntas.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/login_codigo_verificacion.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
+import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,8 +54,12 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
   bool _validQuestionTwo = true;
   bool _validAnswerTwo = true;
 
+
   @override
   void initState() {
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+
     _saving = false;
     respuestaUno = true;
     respuestaDos = true;
@@ -118,6 +127,10 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
     });
   }
 
+  void functionConnectivity() {
+    setState(() {});
+  }
+
   @override
   void dispose() {
     // Clean up the focus node when the Form is disposed.
@@ -143,7 +156,9 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
+      bottom: false,
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar: _saving
@@ -342,7 +357,9 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
                     typeResponse: tipoDePregunta.respuestaUno,
                     callback: funcionUnfocus,
                   )),
-        );
+        ).then((value) {
+
+        });
       },
     );
   }
@@ -581,7 +598,9 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
                     typeResponse: tipoDePregunta.respuestaDos,
                     callback: funcionUnfocus,
                   )),
-        );
+        ).then((value) {
+
+        });
       },
     );
   }
@@ -834,10 +853,17 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
                   builder: (BuildContext context) => LoginCodigoVerificaion(
                         responsive: responsive,
                         isNumero: false,
-                      )));
+                      ))).then((value) {
+
+          });
         } else {
-          customAlert(AlertDialogType.errorServicio, context, "", "",
-              responsive, funcionAlerta);
+          if(optRespuesta.idError == "015"){
+            customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                responsive, funcionAlerta);
+          } else {
+            customAlert(AlertDialogType.errorServicio, context, "", "",
+                responsive, funcionAlerta);
+          }
         }
       } else {
         customAlert(AlertDialogType.errorServicio, context, "", "", responsive,

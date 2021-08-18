@@ -19,6 +19,7 @@ import '../../../main.dart';
 bool useMobileLayout;
 SharedPreferences prefs;
 bool showOnBoardingFirebase = false;
+String RouteName;
 
 class SplashMain extends StatefulWidget {
   @override
@@ -31,6 +32,7 @@ class _SplashMainState extends State<SplashMain> {
   @override
   void initState() {
     showOnBoardingFirebase = false;
+    isMessageMobileClose = true;
     validateBiometricstatus(callback);
     super.initState();
   }
@@ -309,19 +311,23 @@ class _SplashMainState extends State<SplashMain> {
     prefs.setBool("actualizarContrasenaPerfil", false);
     prefs.setBool("esActualizarNumero", false);
     prefs.setBool("rolAutoscotizarActivo", false);
+    prefs.setBool("showAP", false);
 
     if(prefs != null && prefs.getBool("activarBiometricos") != null && prefs.getBool("seHizoLogin") != null){
 
       if(prefs.getBool("activarBiometricos") && prefs.getBool("seHizoLogin") && (prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin"))){
           tipoVista = Vistas.biometricos;
+          RouteName = "Biometricos";
       } else {
           prefs.setBool("activarBiometricos", false);
           tipoVista = Vistas.login;
+          RouteName = "Login";
       }
 
     } else {
       prefs.setBool("activarBiometricos", false);
       tipoVista = Vistas.login;
+      RouteName = "Login";
     }
 
     try{
@@ -347,12 +353,15 @@ class _SplashMainState extends State<SplashMain> {
               builder: (BuildContext context) => useMobileLayout ?
               MobileContainerPage(ParentView: Responsive.of(context), vista: tipoVista)
                 //:  Todo Tablet
-                :  TabletContainerPage(ParentView: Responsive.of(context), vista: tipoVista,)))
+                :  TabletContainerPage(ParentView: Responsive.of(context), vista: tipoVista,),settings: RouteSettings(name: RouteName)))
                  // :  MobileContainerPage(ParentView: Responsive.of(context), vista:tipoVista,)))
       );
-    }
-    else{
+    } else{
       print("else showOnBoardingFirebase ${showOnBoardingFirebase}");
+      if(prefs!=null&&prefs.getBool("showAP")!=null)
+        prefs.setBool("showAP", false);
+      if(prefs!=null&&prefs.getBool("rolAutoscotizarActivo")!=null)
+        prefs.setBool("rolAutoscotizarActivo", false);
       showOnboarding();
     }
 

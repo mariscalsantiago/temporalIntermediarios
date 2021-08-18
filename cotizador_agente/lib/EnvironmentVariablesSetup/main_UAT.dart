@@ -36,8 +36,9 @@ void main() {
     altaMediosContactoAgentes:'https://api-uat.oscpuat.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
     orquestadorOtpJwt:'https://gnp-accidentespersonales-uat.uc.r.appspot.com/intermediario/enviarOtp/me',
     consultaPersonaIdParticipante:"https://api-uat.oscpuat.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
-    cotizadorAutos: "https://gnp-appcontratacionautos-uat.appspot.com/",
+    cotizadorAutos: "https://gnp-appcontratacionautos-uat.uc.r.appspot.com/",
     servicioNuevoConsultaPorCorreo:"https://api-uat.oscpuat.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
+
     child: new MyApp(),
 
   );

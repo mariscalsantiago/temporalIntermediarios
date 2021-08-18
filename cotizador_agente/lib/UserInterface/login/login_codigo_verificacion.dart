@@ -1,30 +1,47 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
+import 'package:cotizador_agente/Models/CounterOTP.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:countdown_flutter/countdown_flutter.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:flutter/services.dart';
+import 'package:otp_autofill/otp_interactor.dart';
+import 'package:otp_autofill/otp_text_edit_controller.dart';
+import 'package:provider/provider.dart';
+//import 'package:sms/sms.dart';
 import '../../main.dart';
 import 'loginRestablecerContrasena.dart';
-
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+//import 'package:sms_maintained/sms.dart';
+import 'package:alt_sms_autofill/alt_sms_autofill.dart';
+
+
 
 bool timerEnd = false;
 Widget timer;
+String BackgroundRemaining;
+String BackgroundRemainingDate;
 
 class LoginCodigoVerificaion extends StatefulWidget {
   final isNumero;
@@ -35,22 +52,65 @@ class LoginCodigoVerificaion extends StatefulWidget {
   _LoginCodigoVerificaionState createState() => _LoginCodigoVerificaionState();
 }
 
-class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
+class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with WidgetsBindingObserver {
   bool _saving;
   bool _validCode = true;
   bool _validCodeForm = true;
+  bool _showFinOtro = false;
   final _formKey = GlobalKey<FormState>();
   TextEditingController controllerCodigo;
   FocusNode focusCodigo;
   String codigoValidacion;
+  //SmsReceiver receiver = new SmsReceiver();
+
+
+
+  Future<void> initSmsListener() async {
+
+    if(mounted){
+      AltSmsAutofill().unregisterListener();
+    }
+
+    try {
+      await consultaBitacora();
+    }catch(e){
+      print("consultaBitacora codigoV");
+      print(e);
+    }
+
+    print("Sms star");
+    String commingSms;
+    try {
+      commingSms = await AltSmsAutofill().listenForSms;
+      print("recive Sms ${commingSms}");
+    } catch(e) {
+      print("Sms Failed to get Sms. ${e}");
+      commingSms = 'Failed to get Sms.';
+    }
+    if (!mounted) return;
+
+
+    setState(() {
+      if(controllerCodigo != null){
+      controllerCodigo.text="";
+      print("Sms codigoValidacion${commingSms.substring(0,8)}");
+      controllerCodigo.text = commingSms.substring(0,8);
+      print("Sms codigoValidacion${controllerCodigo.text}");
+      }
+    });
+
+  }
+
 
   @override
   void initState() {
 
+    BackgroundRemainingDate = "${DateTime.now()}";
+    WidgetsBinding.instance.addObserver(this);
     if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
       Inactivity(context:context).initialInactivity(functionInactivity);
     }
-    validateIntenetstatus(context,widget.responsive,functionConnectivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
 
     _saving = false;
     timerEnd = false;
@@ -70,6 +130,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
         });
       }
     });
+
+    if(Platform.isAndroid)
+      initSmsListener();
     super.initState();
 
     // Validate unfocus TextField
@@ -80,6 +143,12 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
     });
   }
 
+  @override
+  void dispose() {
+    AltSmsAutofill().unregisterListener();
+    super.dispose();
+  }
+
   functionInactivity(){
     print("functionInactivity");
     Inactivity(context:context).initialInactivity(functionInactivity);
@@ -87,9 +156,21 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   void functionConnectivity() {
     setState(() {});
   }
+
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: (){
+
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<CounterOTP>(create: (context) => CounterOTP(),
+          ),
+        ],
+        builder: (BuildContext context, Widget child) {
+          Provider.of<CounterOTP>(context, listen: true).doSomething();
+          return child;
+        },
+    child: GestureDetector(onTap: (){
       setState(() {
         focusCodigo.unfocus();
         focusContrasenaInactividad.unfocus();
@@ -97,9 +178,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
           Inactivity(context:context).initialInactivity(functionInactivity);
         }
-      },child:WillPopScope(
-      onWillPop: () async => false,
+      },
       child: SafeArea(
+        bottom: false,
         child: Scaffold(
             backgroundColor: Tema.Colors.backgroud,
             appBar: _saving
@@ -152,6 +233,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+
             Container(
               margin: EdgeInsets.only(top: responsive.hp(2.5)),
               child: Text(
@@ -268,6 +350,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   Widget inputTextCodigo(Responsive responsive) {
     return TextFormField(
       controller: controllerCodigo,
+      autofillHints: [AutofillHints.oneTimeCode],
       focusNode: focusCodigo,
       obscureText: false,
       keyboardType: TextInputType.number,
@@ -367,65 +450,80 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   }
 
   Widget validacionCodigo(Responsive responsive) {
-    return Container(
-      width: responsive.width,
-      color:
-          !timerEnd ? Tema.Colors.dialogoExpiro : Tema.Colors.dialogoExpiradoBG,
-      margin: EdgeInsets.only(top: responsive.hp(6.5)),
-      child: Container(
-        margin:
-            EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
-        child: Row(
-          children: [
-            Container(
-                margin: EdgeInsets.only(
-                    left: responsive.wp(6), right: responsive.wp(3)),
-                //Todo cambiar icono y tamaño
-                child: !timerEnd
-                    ? Image.asset("assets/login/alertVerificaNumero.png",
-                        height: 20, width: 20)
-                    : Image.asset("assets/login/errorCodigo.png",
-                        height: 20, width: 20)),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  child: Text(
-                    "Código de verificación",
-                    style: TextStyle(
-                      color: !timerEnd
-                          ? Tema.Colors.textoExpiro
-                          : Tema.Colors.validarCampo,
-                      fontWeight: FontWeight.w500,
-                      fontSize: responsive.ip(1.2),
-                    ),
-                  ),
-                ),
-                !timerEnd
-                    ? new CountdownFormatted(
-                        duration: Duration(minutes: 3),
-                        onFinish: () {
-                          setState(() {
-                            timerEnd = true;
-                            controllerCodigo.text = "";
-                          });
-                        },
-                        builder: (BuildContext ctx, String remaining) {
-                          return Text(
-                            "Válido por ${remaining} minutos",
-                            style: TextStyle(
-                                color: Tema.Colors.Azul_2,
-                                fontWeight: FontWeight.normal,
-                                fontSize: prefs.getBool("useMobileLayout")
-                                    ? responsive.ip(2)
-                                    : responsive.ip(1.5)),
-                          ); // 01:00:00
-                        },
-                      )
-                    : Container(
+
+    return Consumer<CounterOTP>( //                    <--- Consumer
+        builder: (context, myModel, child) {
+          return Container(
+            width: responsive.width,
+            color: !timerEnd || (myModel!=null&&myModel.minuts!=null&&myModel.minuts!="00" && myModel.seconds!=null&&myModel.seconds!="00") ? Tema.Colors.dialogoExpiro : Tema.Colors.dialogoExpiradoBG,
+            margin: EdgeInsets.only(top: responsive.hp(6.5)),
+            child: Container(
+              margin:
+              EdgeInsets.only(top: responsive.hp(2), bottom: responsive.hp(2)),
+              child: Row(
+                children: [
+                  Container(
+                      margin: EdgeInsets.only(
+                          left: responsive.wp(6), right: responsive.wp(3)),
+                      //Todo cambiar icono y tamaño
+                      child: !timerEnd || (myModel.minuts!="00" && myModel.seconds!="00")
+                          ? Image.asset("assets/login/alertVerificaNumero.png",
+                          height: 20, width: 20)
+                          : Image.asset("assets/login/errorCodigo.png",
+                          height: 20, width: 20)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
                         child: Text(
-                          "Expirado",
+                          "Código de verificación",
                           style: TextStyle(
+                            color: !timerEnd || (myModel.minuts!="00" && myModel.seconds!="00")
+                                ? Tema.Colors.textoExpiro
+                                : Tema.Colors.validarCampo,
+                            fontWeight: FontWeight.w500,
+                            fontSize: responsive.ip(1.2),
+                          ),
+                        ),
+                      ),
+                      !timerEnd || (myModel.minuts!="00" && myModel.seconds!="00")
+                          ? CountdownFormatted(
+                          duration: Duration(minutes: int.parse(context.watch<CounterOTP>().minuts), seconds: int.parse(context.watch<CounterOTP>().seconds)),
+                          onFinish: () {
+                            setState(() {
+                              timerEnd = true;
+                              controllerCodigo.text = "";
+                            });
+                            Provider.of<CounterOTP>(context, listen: false).doSomething();
+                            Provider.of<CounterOTP>(context, listen: false).dispose();
+                          },
+                          builder: (BuildContext ctx, String remaining) {
+                            Provider.of<CounterOTP>(context, listen: true).doSomething();
+
+                            if(timerEnd || (myModel.minuts=="00" && myModel.seconds=="00")){
+                              Future.delayed(Duration.zero, () async {
+                                setState(() {
+                                  timerEnd = true;
+                                  controllerCodigo.text = "";
+                                });
+                                try{
+                                  Provider.of<CounterOTP>(context, listen: false).dispose();
+                                } catch (e){
+
+                                }
+
+                              });
+                            }
+                            return Text("Válido por ${myModel.minuts}:${myModel.seconds} minutos",
+                                style: TextStyle(
+                                    color: Tema.Colors.Azul_2,
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: prefs.getBool("useMobileLayout")
+                                        ? responsive.ip(2)
+                                        : responsive.ip(1.5)));
+                          }
+                      )
+                          : Container(child: Text("Expirado", style: TextStyle(
                               color: Tema.Colors.Azul_2,
                               fontWeight: FontWeight.normal,
                               fontSize: prefs.getBool("useMobileLayout")
@@ -433,15 +531,18 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                                   : responsive.ip(1.2)),
                         ),
                       )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
+                    ],
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 
+
   Widget reenviarCodigo(Responsive responsive) {
+    //AltSmsAutofill().unregisterListener();
     return Container(
       margin: prefs.getBool('flujoOlvideContrasena') != null &&
               !prefs.getBool('flujoOlvideContrasena')
@@ -464,9 +565,17 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
             onTap: () async {
 
               sendTag("appinter_otp_reenvio");
-              controllerCodigo.text = "";
+
+              BackgroundRemainingDate = "${DateTime.now()}";
+              if(Platform.isAndroid){
+                AltSmsAutofill().unregisterListener();
+                initSmsListener();
+              }
+
               focusCodigo.unfocus();
               setState(() {
+
+                controllerCodigo.text = "";
                 timerEnd = true;
                 codigoValidacion = "";
                 _formKey.currentState.reset();
@@ -483,9 +592,10 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                 setState(() {
                   _saving = false;
                 });
-                print("optRespuesta  ${optRespuesta}");
+
                 if (optRespuesta != null) {
                   setState(() {
+                    controllerCodigo.text = "";
                     timerEnd = false;
                   });
 
@@ -496,6 +606,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     //prefs.setBool('flujoOlvideContrasena', true);
                     //Navigator.pop(context,true);
                     //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
+                  } else if ( optRespuesta.idError == "015" ) {
+                    customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                        responsive, funcionAlerta);
                   } else {
                     //TODO validar Dali
                     sendTag("appinter_otp_error");
@@ -518,12 +631,16 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   if (prefs.getBool("esActualizarNumero")) {
                     optRespuesta = await orquestadorOTPJwtServicio(context,
                         prefs.getString("medioContactoTelefono"), true);
+                  } else if(prefs.getBool("seActualizarNumero")){
+                    optRespuesta = await orquestadorOTPJwtServicio(context,
+                        prefs.getString("medioContactoTelefono"), true);
                   } else {
                     optRespuesta = await orquestadorOTPJwtServicio(context,
                         prefs.getString("medioContactoTelefono"), false);
                   }
 
                   setState(() {
+                    controllerCodigo.text = "";
                     _saving = false;
                   });
                   if (optRespuesta != null) {
@@ -538,8 +655,13 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     } else {
                       //TODO validar Dali
                       sendTag("appinter_otp_error");
-                      customAlert(AlertDialogType.errorServicio, context, "",
-                          "", responsive, funcion);
+                      if(optRespuesta.idError == "015"){
+                        customAlert(AlertDialogType.error_codigo_verificacion, context, "",
+                            "", responsive, funcion);
+                      } else {
+                        customAlert(AlertDialogType.errorServicio, context, "", "",
+                            responsive, funcion);
+                      }
                     }
                   } else {
                     //TODO validar Dali
@@ -549,6 +671,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                   }
                 } else {
                   setState(() {
+                    controllerCodigo.text = "";
                     _saving = true;
                   });
                   OrquestadorOTPModel optRespuesta =
@@ -567,6 +690,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                       prefs.setString("idOperacion", optRespuesta.idOperacion);
                       //TODO validar Dali
                       sendTag("appinter_otp_ok");
+                    }else if ( optRespuesta.idError == "015" ) {
+                      customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                          responsive, funcionAlerta);
                     } else {
                       //TODO validar Dali
                       sendTag("appinter_otp_error");
@@ -623,7 +749,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
           ? EdgeInsets.only(
               top: prefs.getBool('flujoOlvideContrasena') != null &&
                       !prefs.getBool('flujoOlvideContrasena')
-                  ? responsive.hp(20)
+                  ? responsive.hp(17)
                   : responsive.hp(25),
               bottom: prefs.getBool('flujoOlvideContrasena') != null &&
                       !prefs.getBool('flujoOlvideContrasena')
@@ -674,7 +800,6 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     prefs.getString("idOperacion"),
                     controllerCodigo.text);
 
-                print("validarOTP ${validarOTP}");
 
                 if (validarOTP != null) {
                   if (validarOTP.resultado) {
@@ -767,7 +892,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => LoginActualizarContrasena(
-                                    responsive: widget.responsive)));
+                                    responsive: widget.responsive))).then((value){
+
+                        });
                       }
                     } else {
                       if (prefs.getBool("seActualizarNumero") != null &&
@@ -832,16 +959,23 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                               MaterialPageRoute(
                                   builder: (BuildContext context) =>
                                       LoginRestablecerContrasena(
-                                          responsive: widget.responsive)));
+                                          responsive: widget.responsive))).then((value){
+                             });
                         } else {
                           print("Flujoo completo");
                           prefs.setBool("flujoCompletoLogin", true);
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (BuildContext context) => HomePage(
-                                        responsive: responsive,
-                                      )));
+                          if(_showFinOtro){
+                            customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, "title", "message", responsive, callback);
+                          }else{
+                            sendTag("appinter_login_ok");
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => HomePage(
+                                      responsive: responsive,
+                                    ),settings: RouteSettings(name: "Home"))).then((value){
+                              });
+                          }
                         }
                       }
                     }
@@ -892,7 +1026,9 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            LoginActualizarNumero(responsive: responsive)));
+                            LoginActualizarNumero(responsive: responsive))).then((value){
+
+                            });
               } else if (prefs.getBool("esPerfil") != null &&
                   prefs.getBool("esPerfil") &&
                   prefs.getBool("actualizarContrasenaPerfil")) {
@@ -901,7 +1037,8 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            LoginActualizarNumero(responsive: responsive)));
+                            LoginActualizarNumero(responsive: responsive))).then((value){
+                              });
               } else {
                 if (prefs.getBool("esActualizarNumero")) {
                 } else {}
@@ -910,7 +1047,8 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
                     context,
                     MaterialPageRoute(
                         builder: (BuildContext context) =>
-                            LoginActualizarNumero(responsive: responsive)));
+                            LoginActualizarNumero(responsive: responsive))).then((value){
+                               });
               }
             },
           )
@@ -918,6 +1056,106 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> {
   }
 
   void funcionAlerta() {}
+
+  void consultaBitacora() async {
+    print("consultaBitacora - loginCodigoV");
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+
+      print("-- response -- ${response}");
+      if(response!= null && response.isNotEmpty){
+        if(deviceData["id"]==response["deviceID"]){
+          setState(() {
+            _showFinOtro = false;
+          });
+        }else{
+          if(response["isActive"]!= null && response["isActive"]){
+            setState(() {
+              _showFinOtro = true;
+            });
+          }
+          else{
+            setState(() {
+              _showFinOtro = false;
+            });
+          }
+        }
+      } else{
+        setState(() {
+          _showFinOtro = false;
+      });
+      };
+    });
+  }
+/*
+  backgroundTimierCounter(){
+    //final codeState = _LoginCodigoVerificaionState();
+
+    print("backgroundTimierCounter");
+    print("BackgroundRemainingDate inicio: $BackgroundRemainingDate segundoOcupados:$BackgroundRemaining");
+
+    if(BackgroundRemainingDate!="0") {
+      DateTime nowInicio = DateTime.parse(BackgroundRemainingDate);
+      DateTime backgroundTermino = new DateTime.now();
+      DateTime stopInicio = nowInicio.add(Duration(minutes: 3));
+
+      print("BackgroundRemainingDate:1 $nowInicio");
+      print("BackgroundRemainingDate:2 $backgroundTermino");
+      print("BackgroundRemainingDate:3 $stopInicio");
+
+      if (backgroundTermino.isAfter(stopInicio)) {
+        timerEnd = true;
+        print("timerEnd:3 $timerEnd");
+        print("minuts: ${CounterOTP().minuts}");
+        print("seconds: ${CounterOTP().minuts}");
+        //codeState.functionConnectivity();
+        //BackgroundRemaining = nowInicio.subtract(Duration(minutes: backgroundTermino.second);
+      }else{
+
+        //cuanto tiempo paso afuera
+        var BackgroundTime = backgroundTermino.difference(nowInicio);
+
+        int minutesBackground = 0;
+        int secondsBackground = 0;
+        int minutesFinal = 0;
+        int secondsFinal = 0;
+
+        List<String> parts = "$BackgroundTime".split(':');
+        print("parts: $BackgroundTime  $parts ${parts.length}");
+
+        minutesBackground = int.parse(parts[1]);
+        if(parts[2].contains("."))
+          secondsBackground = int.parse(parts[2].split('.')[0]);
+        else
+          secondsBackground = int.parse(parts[2]);
+
+        print("parts:next $minutesBackground - $secondsBackground");
+
+
+        DateTime DateInicio = nowInicio.add(Duration(minutes: minutesBackground, seconds: secondsBackground));
+
+        var BackgroundTimeFinal = stopInicio.difference(DateInicio);
+
+        print("BackgroundRemaining:5 $DateInicio - $BackgroundTimeFinal");
+
+
+        List<String> partsFinal = "$BackgroundTimeFinal".split(':');
+
+        minutesFinal = int.parse(partsFinal[1]);
+        if(partsFinal[2].contains("."))
+          secondsFinal = int.parse(partsFinal[2].split('.')[0]);
+        else
+          secondsFinal = int.parse(partsFinal[2]);
+
+        BackgroundRemaining = "$minutesFinal:$secondsFinal";
+        //codeState.functionConnectivity();
+        print("BackgroundRemaining:5 $BackgroundRemaining");
+      }
+    }
+
+  }*/
 
   void CallbackInactividad(){
     setState(() {

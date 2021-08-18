@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:alt_sms_autofill/alt_sms_autofill.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -6,52 +8,55 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
-  bool _isStart = true;
-  String _stopwatchText = '3:00:00';
-  final _stopWatch = new Stopwatch();
-  final _timeout = const Duration(seconds: 1);
+class _HomeState extends State<Home> with WidgetsBindingObserver {
 
-  void _startTimeout() {
-    new Timer(_timeout, _handleTimeout);
-  }
+  Future<void> initSmsListener() async {
 
-  void _handleTimeout() {
-    if (_stopWatch.isRunning) {
-      _startTimeout();
+    print("Sms star");
+    String commingSms;
+    try {
+      commingSms = await AltSmsAutofill().listenForSms;
+      print("recive Sms ${commingSms}");
+    } catch(e) {
+      print("Sms Failed to get Sms. ${e}");
+      commingSms = 'Failed to get Sms.';
     }
-    setState(() {
-      _setStopwatchText();
-    });
+    if (!mounted) return;
+
   }
 
-  void _startStopButtonPressed() {
-    setState(() {
-      if (_stopWatch.isRunning) {
-        _isStart = true;
-        _stopWatch.stop();
-      } else {
-        _isStart = false;
-        _stopWatch.start();
-        _startTimeout();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    initSmsListener();
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("didChangeAppLifecycleState codigo $state");
+    if(state == AppLifecycleState.resumed){
+      print("resumed");
+
+      if(Platform.isAndroid){
+        AltSmsAutofill().unregisterListener();
+        //initSmsListener();
       }
-    });
-  }
-
-  void _resetButtonPressed(){
-    if(_stopWatch.isRunning){
-      _startStopButtonPressed();
     }
-    setState(() {
-      _stopWatch.reset();
-      _setStopwatchText();
-    });
-  }
+    else if(state == AppLifecycleState.inactive){
+      // app is inactive
+      print("inactive");
 
-  void _setStopwatchText(){
-    _stopwatchText = _stopWatch.elapsed.inHours.toString().padLeft(2,'0') + ':'+
-        (_stopWatch.elapsed.inMinutes%60).toString().padLeft(2,'0') + ':' +
-        (_stopWatch.elapsed.inSeconds%60).toString().padLeft(2,'0');
+      AltSmsAutofill().unregisterListener();
+    }
+    else if(state == AppLifecycleState.paused){
+      // user is about quit our app temporally
+      print("paused");
+      //Navigator.pop(context);
+      //Navigator.pop(context);
+      AltSmsAutofill().unregisterListener();
+      //initSmsListener();
+    }
   }
 
   @override
@@ -70,24 +75,9 @@ class _HomeState extends State<Home> {
         Expanded(
           child: FittedBox(
             fit: BoxFit.none,
-            child: Text(
-              _stopwatchText,
+            child: Text("Prueba",
               style: TextStyle(fontSize: 72),
             ),
-          ),
-        ),
-        Center(
-          child: Column(
-            children: <Widget>[
-              RaisedButton(
-                child: Icon(_isStart ? Icons.play_arrow : Icons.stop),
-                onPressed: _startStopButtonPressed,
-              ),
-              RaisedButton(
-                child: Text('Reset'),
-                onPressed: _resetButtonPressed,
-              ),
-            ],
           ),
         ),
 

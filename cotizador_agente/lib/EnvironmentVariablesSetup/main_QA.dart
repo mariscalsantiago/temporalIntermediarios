@@ -8,7 +8,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   var configuredApp = new AppConfig(
-    ambient: Ambient.prod,
+    ambient: Ambient.qa,
     serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
     apikeyAppAgentes: 'l7xxfb568d77704046d0b5a80256fe00f829',
     service_perfilador: "https://api-qa.oscp.gnp.com.mx/Consulta-Agentes/consulta-perfil-app-int",
@@ -37,9 +37,8 @@ void main() {
     altaMediosContactoAgentes:'https://api-qa.oscp.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
     orquestadorOtpJwt:'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/intermediario/enviarOtp/me',
     consultaPersonaIdParticipante:"https://api-qa.oscp.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
-    cotizadorAutos: "https://gnp-appcontratacionautos-qa.appspot.com/",
+    cotizadorAutos: "https://gnp-appcontratacionautos-qa.uc.r.appspot.com/",
     servicioNuevoConsultaPorCorreo:"https://api-qa.oscp.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
-
     child: new MyApp(),
   );
 

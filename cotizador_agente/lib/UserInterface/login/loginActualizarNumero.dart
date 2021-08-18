@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
@@ -31,12 +34,14 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
   TextEditingController controllerNumero;
   FocusNode focusCodigo = FocusNode();
 
+
   @override
   void initState() {
     if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
       Inactivity(context:context).initialInactivity(functionInactivity);
     }
-    validateIntenetstatus(context, widget.responsive,functionConnectivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
     super.initState();
     var keyboardVisibilityController = KeyboardVisibilityController();
     // Query
@@ -46,8 +51,12 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       print('Keyboard visibility update. Is visible: ${visible}');
       if (!visible) {
         setState(() {
-          focusCodigo.unfocus();
-          focusContrasenaInactividad.unfocus();
+          if(focusCodigo!=null)
+            focusCodigo.unfocus();
+
+          if(focusContrasenaInactividad!=null)
+            focusContrasenaInactividad.unfocus();
+
         });
       }
     });
@@ -64,6 +73,12 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
   }
 
+  @override
+  dispose() {
+
+    super.dispose();
+  }
+
   functionInactivity(){
     print("functionInactivity");
     Inactivity(context:context).initialInactivity(functionInactivity);
@@ -74,6 +89,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
   @override
   Widget build(BuildContext context) {
+
     return  GestureDetector(onTap: (){
       setState(() {
         focusCodigo.unfocus();
@@ -82,9 +98,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
           Inactivity(context:context).initialInactivity(functionInactivity);
         }
-      },child:WillPopScope(
-        onWillPop: () async => false,
-    child: SafeArea(
+      },child:SafeArea(
+      bottom: false,
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar: _saving
@@ -119,7 +134,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                   ),
                 ),
           body: Stack(children: builData(widget.responsive))),
-    )));
+    ));
   }
 
   List<Widget> builData(Responsive responsive) {
@@ -437,10 +452,17 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
                               LoginCodigoVerificaion(
-                                  responsive: responsive, isNumero: false)));
+                                  responsive: responsive, isNumero: false))).then((value){
+
+                  });
                 } else {
-                  customAlert(AlertDialogType.errorServicio, context, "", "",
-                      responsive, funcionAlerta);
+                  if(optRespuesta.idError == "015"){
+                    customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                        responsive, funcionAlerta);
+                  } else{
+                    customAlert(AlertDialogType.errorServicio, context, "", "",
+                        responsive, funcionAlerta);
+                  }
                   return;
                 }
               } else {
@@ -486,10 +508,18 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                               LoginCodigoVerificaion(
                                 responsive: responsive,
                                 isNumero: false,
-                              )));
+                              ))).then((value){
+
+                  });
                 } else {
-                  customAlert(AlertDialogType.errorServicio, context, "", "",
-                      responsive, funcionAlerta);
+                  if(optRespuesta.idError == "015"){
+                    customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                        responsive, funcionAlerta);
+                  } else{
+                    customAlert(AlertDialogType.errorServicio, context, "", "",
+                        responsive, funcionAlerta);
+                  }
+
                 }
               } else {
                 customAlert(AlertDialogType.errorServicio, context, "", "",
@@ -525,7 +555,6 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                 _saving = false;
               });
 
-              print("optRespuesta ${optRespuesta}");
               if (optRespuesta != null) {
                 if (optRespuesta.error == "" && optRespuesta.idError == "") {
                   prefs.setBool("seActualizarNumero", true);
@@ -543,7 +572,9 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                                 LoginCodigoVerificaion(
                                   responsive: responsive,
                                   isNumero: false,
-                                )));
+                                ))).then((value){
+
+                    });
                   } else {
                     Navigator.pop(context);
                     Navigator.push(
@@ -553,8 +584,13 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                                 LoginCodigoVerificaion(
                                   responsive: responsive,
                                   isNumero: false,
-                                )));
+                                ))).then((value){
+
+                    });
                   }
+                } else if ( optRespuesta.idError == "015" ) {
+                  customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+                      responsive, funcionAlerta);
                 } else {
                   customAlert(AlertDialogType.errorServicio, context, "", "",
                       responsive, funcionAlerta);
@@ -584,7 +620,6 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
       _saving = false;
     });
 
-    print("optRespuesta ${optRespuesta}");
     if (optRespuesta != null) {
       if (optRespuesta.error == "" && optRespuesta.idError == "") {
         prefs.setString("idOperacion", optRespuesta.idOperacion);
@@ -599,7 +634,9 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                   builder: (BuildContext context) => LoginCodigoVerificaion(
                         responsive: responsive,
                         isNumero: false,
-                      )));
+                      ))).then((value){
+
+          });
         } else {
           Navigator.pop(context);
           Navigator.push(
@@ -608,8 +645,14 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                   builder: (BuildContext context) => LoginCodigoVerificaion(
                         responsive: responsive,
                         isNumero: false,
-                      )));
+                      ))).then((value){
+            validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+          });
         }
+      } else if ( optRespuesta.idError == "015" ) {
+        customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
+            responsive, funcionAlerta);
       } else {
         customAlert(AlertDialogType.errorServicio, context, "", "", responsive,
             funcionAlerta);

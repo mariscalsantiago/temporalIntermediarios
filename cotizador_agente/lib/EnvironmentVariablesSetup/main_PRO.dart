@@ -42,6 +42,7 @@ void main() {
     consultaPersonaIdParticipante:"https://api.service.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
     cotizadorAutos: "https://gnp-appcontratacionautos-pro.uc.r.appspot.com/",
     servicioNuevoConsultaPorCorreo:"https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
+//https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo
     child: new MyApp(),
 
   );

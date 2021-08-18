@@ -6,8 +6,9 @@ class OrquetadorOtpJwtModel{
   String path;
   String uid;
   String idOperacion;
+  String idError;
 
-  OrquetadorOtpJwtModel({this.timestamp, this.status, this.error, this.message,  this.path, this.uid, this.idOperacion});
+  OrquetadorOtpJwtModel({this.timestamp, this.status, this.error, this.message,  this.path, this.uid, this.idOperacion, this.idError});
 
   factory OrquetadorOtpJwtModel.fromJson(Map<dynamic, dynamic> data){
     return OrquetadorOtpJwtModel(
@@ -18,6 +19,7 @@ class OrquetadorOtpJwtModel{
       path: data.containsKey('path') && data['path'] != null ? data['path'] : "",
       uid: data.containsKey('uid') && data['uid'] != null ? data['uid'] : "",
       idOperacion: data.containsKey('idOperacion') && data['idOperacion'] != null ? data['idOperacion'] : "",
+      idError: data.containsKey('idError') && data['idError'] != null ? data['idError'] : "",
 
     );
   }
@@ -28,7 +30,8 @@ class OrquetadorOtpJwtModel{
       'status':status,
       'error': error,
       'message': message,
-      'path': path
+      'path': path,
+      'idError': idError
     };
   }
 

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
@@ -85,7 +88,8 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
   @override
   void initState() {
 
-    validateIntenetstatus(context,widget.responsive,functionConnectivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
     _saving = false;
     actualContrasena = true;
     nuevaContrasena = true;
@@ -106,7 +110,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     // Query
     //print('Keyboard visibility direct query: ${keyboardVisibilityController.isVisible}');
     // Subscribe
-    keyboardVisibilityController.onChange.listen((bool visible) {
+   keyboardVisibilityController.onChange.listen((bool visible) {
       print('Keyboard visibility update. Is visible: ${visible}');
       if (!visible) {
         setState(() {
@@ -190,6 +194,11 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     });
   }
 
+  @override
+  dispose() {
+    super.dispose();
+  }
+
   functionInactivity(){
     print("functionInactivity");
     Inactivity(context:context).initialInactivity(functionInactivity);
@@ -200,6 +209,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
 
   @override
   Widget build(BuildContext context) {
+
     return  GestureDetector(onTap: (){
           setState(() {
             focusActualContrasena.unfocus();
@@ -210,10 +220,8 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
           if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
             Inactivity(context:context).initialInactivity(functionInactivity);
           }
-      },child:WillPopScope(
-      onWillPop: () async => false,
-      child: SafeArea(
-        bottom: true,
+      },child:SafeArea(
+        bottom: false,
         child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar: _saving
@@ -267,7 +275,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                 }),
         ),
       ),
-    ));
+    );
   }
 
   List<Widget> builData(Responsive responsive) {

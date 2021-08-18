@@ -1,19 +1,26 @@
 
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/Constantes.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustumFuntions.dart';
 import 'package:cotizador_agente/Custom/DinamicCustumWidget.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarNumero.dart';
+import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/UserInterface/login/subsecuente_biometricos.dart';
 import 'package:cotizador_agente/UserInterface/perfil/condiciones_uso.dart';
 import 'package:cotizador_agente/main.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -24,15 +31,17 @@ import 'package:local_auth/auth_strings.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
 import 'package:system_settings/system_settings.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';import 'package:cotizador_agente/Functions/Analytics.dart';
 
 
 bool checkedValue = false;
+bool _showFinOtro = false;
 var localAuth = new LocalAuthentication();
 
 class TerminosYCondicionesPage extends StatefulWidget {
   Function callback;
-  TerminosYCondicionesPage({Key key, this.callback}) : super(key: key);
+  Responsive responsive;
+  TerminosYCondicionesPage({Key key, this.callback, this.responsive}) : super(key: key);
 
 
   @override
@@ -47,12 +56,22 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
     if (prefs.getBool("esPerfil") != null &&prefs.getBool("esPerfil")){
       Inactivity(context:context).initialInactivity(functionInactivity);
     }
-    checkedValue = false;
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
 
+    checkedValue = false;
   }
+
+  @override
+  dispose() {
+    super.dispose();
+  }
+
   functionInactivity(){
     print("functionInactivity");
     Inactivity(context:context).initialInactivity(functionInactivity);
+  }
+  void functionConnectivity() {
+    setState(() {});
   }
 
 
@@ -60,17 +79,16 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
   double height = 150.0;
   @override
   Widget build(BuildContext context) {
+
     Responsive responsive = Responsive.of(context);
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: SafeArea(
-        bottom: true,
+    return  SafeArea(
+        bottom: false,
         child: Scaffold(
           appBar: AppBar(
             elevation: 0.0,
             leading: IconButton(
               icon:Icon(Icons.close, color: Theme.Colors.GNP,),
-              onPressed: (){
+              onPressed: () async {
                 if(prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")){
                   Inactivity(context:context).cancelInactivity();
                   prefs.setBool("activarBiometricos", false);
@@ -81,19 +99,45 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                   widget.callback(false, responsive);
                   Navigator.pop(context,true);
                   if(prefs.getBool("flujoCompletoLogin") != null && prefs.getBool("flujoCompletoLogin")){
-                    Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,)));
+                    await consultaBitacora();
+                    if(_showFinOtro){
+                      customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, "title", "message", responsive, (){});
+                    }else{
+                      sendTag("appinter_login_ok");
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePage(
+                                responsive: responsive,
+                              ),settings: RouteSettings(name: "Home"))).then((value) {
+                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+                      });
+                    }
                   } else if(prefs.getBool('primeraVezIntermediario') != null && prefs.getBool('primeraVezIntermediario')){
 
                     print("-----IntermediarioPrimeraVez TerminosYCondiciones------");
 
                     if(prefs.getBool("aceptoCondicionesDeUso") == null ){
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => CondicionesPage(callback:FuncionAlerta ,)));
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => CondicionesPage(callback:FuncionAlerta ,))).then((value) {
+                        // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+                      });
                     } else if(prefs.getBool("aceptoCondicionesDeUso") != null && prefs.getBool("aceptoCondicionesDeUso")){
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,))).then((value) {
+                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+                      });
                     } else if(prefs.getBool("aceptoCondicionesDeUso") != null && !prefs.getBool("aceptoCondicionesDeUso")){
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => CondicionesPage(callback:FuncionAlerta ,)));
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => CondicionesPage(callback:FuncionAlerta ,))).then((value) {
+                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+                      });
                     } else{
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,))).then((value) {
+                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+                      });
                     }
 
                   } else{
@@ -107,7 +151,11 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                               builder: (BuildContext context) =>
                                   LoginActualizarNumero(
                                     responsive: responsive,
-                                  )));
+                                  ))).then((value) {
+                       // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+
+                      });
                     }
                   }
                 }
@@ -201,7 +249,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                                         recognizer: new TapGestureRecognizer()..onTap = () {
                                           print("gnp");
                                           launch('https://www.gnp.com.mx');},
-                                        text: 'www.gnp.com.mx ',
+                                          text: 'www.gnp.com.mx ',
                                         style: TextStyle(fontSize: responsive.ip(1.65), fontWeight: FontWeight.normal, color: Theme.Colors.GNP),
                                       ),
 
@@ -304,13 +352,48 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
             ),
           ),
         ),
-      ),
     );
   }
 
+  void consultaBitacora() async {
+
+    DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+    await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+
+      print("-- response -- ${response}");
+      if(response!= null && response.isNotEmpty){
+        if(deviceData["id"]==response["deviceID"]){
+          setState(() {
+            _showFinOtro = false;
+          });
+        }else{
+          if(response["isActive"]!= null && response["isActive"]){
+            setState(() {
+              _showFinOtro = true;
+            });
+          }
+          else{
+            setState(() {
+              _showFinOtro = false;
+            });
+          }
+        }
+      } else{
+        setState(() {
+          _showFinOtro = false;
+        });
+      };
+
+    });
+  }
+
   Future<void> _authenticateHuella(Responsive responsive) async {
-    
-        if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {
+
+      validateBiometricstatus(funcion);
+
+    if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {
           widget.callback();
         } else {
           widget.callback(false, responsive);
@@ -529,8 +612,67 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
       }
   }
 
-
   void funcionAlerta(){
+  }
 
+  TextSpan getTextSpan(BuildContext context,Responsive responsive ,int type, String texto, String accion ){
+
+    switch(type){
+
+      case 0:
+        //Texto en negritas
+        return TextSpan(
+          text: texto,
+          style: TextStyle(fontSize: responsive.ip(1.8), fontWeight: FontWeight.bold, color: Theme.Colors.letragris),
+        );
+        break;
+      case 1:
+        // Texto normal
+        return TextSpan(
+          text: texto,
+          style: TextStyle(fontSize: responsive.ip(1.65),fontWeight: FontWeight.normal, color: Theme.Colors.letragris),
+        );
+        break;
+      case 2:
+      // Texto URL web
+        return TextSpan(
+          recognizer: new TapGestureRecognizer()..onTap = () {
+            print("gnp");
+            launch(accion);},
+          text: texto,
+          style: TextStyle(fontSize: responsive.ip(1.65), fontWeight: FontWeight.normal, color: Theme.Colors.GNP),
+        );
+        break;
+      case 3:
+      // Texto numero
+        return TextSpan(
+          recognizer: new TapGestureRecognizer()..onTap = () {
+            print("numero");
+            launch(accion);},
+          text: texto,
+          style: TextStyle(fontSize: responsive.ip(1.65), fontWeight: FontWeight.normal, color: Theme.Colors.GNP),
+        );
+        break;
+      case 4:
+      // Texto correo
+        return TextSpan(
+          recognizer: new TapGestureRecognizer()..onTap = () {
+            print("correo");
+            launch(accion);},
+          text: texto,
+          style: TextStyle(fontSize: responsive.ip(1.65), fontWeight: FontWeight.normal, color: Theme.Colors.GNP),
+        );
+        break;
+      case 5:
+      // Texto accion
+        return TextSpan(
+          recognizer: new TapGestureRecognizer()..onTap = () {
+            print("accion ${accion}");
+            launch(accion);},
+          text: texto,
+          style: TextStyle(fontSize: responsive.ip(1.65), fontWeight: FontWeight.normal, color: Theme.Colors.GNP),
+        );
+        break;
+    }
   }
 }

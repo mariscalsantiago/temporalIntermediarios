@@ -63,7 +63,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Conceder permisos</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Intermediarios GNP no tiene acceso a tu Galería de fotos. Permitir acceso a tu Galería2.</string>
+	<string>Intermediarios GNP no tiene acceso a tu Galería de fotos. Permitir acceso a tu Galería.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Conceder permisos</string>
 	<key>UIBackgroundModes</key>
@@ -77,6 +77,8 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleLightContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
@@ -58,6 +60,8 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
 
   @override
   Widget build(BuildContext context) {
+
+
     try {
       if (widget.image != null || widget.image.isAbsolute == false) {
       } else {
@@ -71,11 +75,9 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
     return  GestureDetector(
         onTap: (){
       Inactivity(context:context).initialInactivity(functionInactivity);
-    },child:WillPopScope(
-    onWillPop: () async => false,
-    child: SafeArea(
-    bottom: true,
-    child:Scaffold(
+    },child:SafeArea(
+        bottom: false,
+        child:Scaffold(
       appBar: AppBar(
         elevation: 0,
         title: Text(
@@ -221,14 +223,19 @@ class _SimpleCropRouteState extends State<SimpleCropRoute> {
               })
         ]),
       ),
-    ))));
+    )));
   }
 
 
   @override
   void initState() {
     Inactivity(context: context).initialInactivity(functionInactivity);
-    validateIntenetstatus(context, widget.responsive, functionConnectivity);
+
+  }
+  @override
+  dispose() {
+
+    super.dispose();
   }
 
   functionInactivity(){

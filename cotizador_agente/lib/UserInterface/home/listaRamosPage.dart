@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
@@ -25,7 +28,8 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
   @override
   void initState() {
     Inactivity(context:context).initialInactivity(functionInactivity);
-    validateIntenetstatus(context,widget.responsive,functionConnectivity);
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
     _saving = false;
     // TODO: implement initState
     super.initState();
@@ -37,15 +41,19 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
   void functionConnectivity() {
     setState(() {});
   }
+  @override
+  dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+
     return   GestureDetector(
         onTap: (){
       Inactivity(context:context).initialInactivity(functionInactivity);
-    },child:WillPopScope(
-    onWillPop: () async => false,
-    child: SafeArea(
+    },child:SafeArea(
+      bottom: false,
       child: Scaffold(
           backgroundColor: Tema.Colors.backgroud,
           appBar: AppBar(
@@ -69,7 +77,7 @@ class _ListaRamosPageState extends State<ListaRamosPage> {
               children: builData(widget.responsive)
           )
       ),
-    )));
+    ));
   }
 
   List<Widget> builData(Responsive responsive){

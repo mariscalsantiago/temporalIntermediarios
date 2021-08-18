@@ -1,5 +1,9 @@
 
+import 'dart:async';
+
+import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/loginActualizarContrasena.dart';
 import 'package:cotizador_agente/main.dart';
@@ -19,8 +23,9 @@ bool _checkedValue = false;
 
 
 class CondicionesPage extends StatefulWidget {
+  Responsive responsive;
   Function callback;
-  CondicionesPage({Key key, this.callback}) : super(key: key);
+  CondicionesPage({Key key, this.responsive, this.callback}) : super(key: key);
 
 
   @override
@@ -32,20 +37,29 @@ class _CondicionesPageState extends State<CondicionesPage> {
 
   @override
   void initState() {
+    validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
     _checkedValue = false;
 
 
+  }
+  @override
+  dispose() {
+    super.dispose();
+  }
+
+  void functionConnectivity() {
+    setState(() {});
   }
 
   double width = 300.0;
   double height = 150.0;
   @override
   Widget build(BuildContext context) {
+
     Responsive responsive = Responsive.of(context);
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: SafeArea(
-        bottom: true,
+    return  SafeArea(
+        bottom: false,
         child: Scaffold(
           appBar: AppBar(
             elevation: 0.0,
@@ -346,7 +360,10 @@ class _CondicionesPageState extends State<CondicionesPage> {
                                 if(_checkedValue) {
                                   prefs.setBool("aceptoCondicionesDeUso", true);
                                   Navigator.pop(context);
-                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,)));
+                                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginActualizarContrasena(responsive: responsive,))).then((value) {
+                                   // validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+
+                                  });
                                 } else {
                                   prefs.setBool("aceptoCondicionesDeUso", false);
                                 }
@@ -362,7 +379,6 @@ class _CondicionesPageState extends State<CondicionesPage> {
             ),
           ),
         ),
-      ),
     );
   }
 

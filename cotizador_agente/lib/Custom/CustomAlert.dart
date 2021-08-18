@@ -1,10 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/Custom/Constantes.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
+import 'package:cotizador_agente/Custom/Validate.dart';
+import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Functions/Interactios.dart';
@@ -23,7 +25,9 @@ import 'package:cotizador_agente/UserInterface/perfil/Terminos_y_condiciones.dar
 import 'package:cotizador_agente/UserInterface/perfil/condiciones_uso.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/main.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -31,6 +35,8 @@ import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Theme;
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/services.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:local_auth/auth_strings.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:cotizador_agente/UserInterface/perfil/perfiles.dart';
@@ -38,16 +44,16 @@ import 'package:device_info/device_info.dart';
 import 'package:system_settings/system_settings.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
+import 'package:intl/intl.dart';
 
 FocusNode focusContrasenaInactividad = new FocusNode();
 bool contrasenaInactividad = true;
 bool _didAuthenticate = true;
 var isShowAlert = false;
 bool _firstSession = true;
+bool _showFinOtro = false;
 
 enum AlertDialogType {
-  errorConexion,
-  timeOut,
   inactividad,
   testUno,
   archivoInvalido,
@@ -66,6 +72,7 @@ enum AlertDialogType {
   activacionExitosa_Reconocimiento_facial,
   //terminosYcondiciones_reconocimiento_facial,
   EnOtroMomento_reconocimiento_facial,
+  finalizar_seccion_en_otro_dispositivo,
   Sesionfinalizada_por_dispositivo,
   Sesionfinalizada_por_inactividad,
   Sesionfinalizada_por_inactividad_contrasenia,
@@ -76,6 +83,7 @@ enum AlertDialogType {
   Cuenta_inactiva,
   Cuenta_bloqueada,
   Cuenta_temporalmente_bloqueada,
+  Cuenta_temporalmente_bloqueada_temporizador,
   Contrasena_invalida_debeserdiferente_a_la_actual,
   Rostro_no_reconocido,
   Rostro_huella_no_reconocido,
@@ -93,13 +101,15 @@ enum AlertDialogType {
   FACE_HUELLA_PERMISS_DECLINADO,
   Desactivar_recoFacial,
   DatosMoviles_Activados,
-  DatosMoviles_Activados_comprueba,
+  Sin_acceso_wifi,
+  Sin_acceso_wifi_cerrar,
   CerrarSesion,
   En_mantenimiento_cel,
   En_mantenimiento_llave,
   Sin_acceso_herramientas_cotizacion,
   menu_home,
   errorServicio,
+  error_codigo_verificacion,
   contrasena_actualiza_correctamente,
   preguntasSecretasActualizadas,
   inicio_de_sesion_inactivo_contador,
@@ -112,85 +122,12 @@ enum AlertDialogType {
   Contrasena_diferente_a_las_3_anteriores_nueva
 }
 
-void customAlert(AlertDialogType type, BuildContext context, String title,
-    String message, Responsive responsive, Function callback) {
+Future<void> customAlert(AlertDialogType type, BuildContext context, String title,
+    String message, Responsive responsive, Function callback) async {
   switch (type) {
-    case AlertDialogType.errorConexion:
-      if (!isShowAlert) {
-        isShowAlert = true;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: new Text("Error de conexión.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              content: new Text(
-                  "Se produjo un error en la red, verifica tu conexión e intenta nuevamente.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("ACEPTAR",
-                      style: TextStyle(
-                          color: Theme.Colors.primary,
-                          fontSize: 16.0,
-                          fontFamily: "Roboto")),
-                  onPressed: () {
-                    isShowAlert = false;
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else {}
-      break;
-    case AlertDialogType.timeOut:
-      if (!isShowAlert) {
-        isShowAlert = true;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: new Text("Error de conexión.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              content: new Text(
-                  "Se produjo un error en la red por el tiempo de espera, verifica tu conexión e intenta nuevamente.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("ACEPTAR",
-                      style: TextStyle(
-                          color: Theme.Colors.primary,
-                          fontSize: 16.0,
-                          fontFamily: "Roboto")),
-                  onPressed: () {
-                    isShowAlert = false;
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else {}
-      break;
     case AlertDialogType.inicio_de_sesion_active_faceID:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -295,6 +232,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.inactividad:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) => AlertDialog(
                 title: new Text("Cierre de sesión.",
@@ -324,6 +262,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.testUno:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             return Opacity(
@@ -364,6 +303,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.archivoInvalido:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -428,6 +368,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.acesso_camara_galeria:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -488,6 +429,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.ajustes_sin_guardar:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -537,6 +479,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.opciones_de_inicio_de_sesion:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -664,6 +607,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               TerminosYCondicionesPage(
+                                                responsive: responsive,
                                                 callback: callback,
                                               )));
                                 },
@@ -724,6 +668,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.huella:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -807,6 +752,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               TerminosYCondicionesPage(
+                                                responsive: responsive,
                                                 callback: callback,
                                               )));
                                 },
@@ -910,6 +856,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;*/
     case AlertDialogType.activacionExitosa_Huella_Face:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -980,7 +927,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   bottom: responsive.height * 0.05),
                               child: Center(
                                 child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     print(
                                         "-----------Exito----------------------");
                                     primerAccesoUsuario();
@@ -1009,6 +956,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1036,6 +984,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1063,6 +1012,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1075,6 +1025,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                       builder: (BuildContext
                                                               context) =>
                                                           CondicionesPage(
+                                                            responsive: responsive,
                                                             callback:
                                                                 FuncionAlerta,
                                                           )));
@@ -1099,6 +1050,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1169,13 +1121,20 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         Navigator.pop(context, true);
                                       } else {
                                         print("Exito----------------------");
+                                        await consultaBitacora();
                                         Navigator.pop(context, true);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                      responsive: responsive,
-                                                    )));
+                                        if(_showFinOtro){
+                                          customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                        }else{
+                                          sendTag("appinter_login_ok");
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                    responsive: responsive,
+                                                  ),settings: RouteSettings(name: "Home")));
+                                        }
+
                                       }
                                     }
                                     prefs.setBool(
@@ -1202,6 +1161,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.activacionExitosa_Huella:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -1272,7 +1232,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   bottom: responsive.height * 0.05),
                               child: Center(
                                 child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     print(
                                         "-----------Exito----------------------");
                                     if (prefs.getBool("primeraVez") ||
@@ -1300,6 +1260,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1340,6 +1301,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1363,6 +1325,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1433,13 +1396,19 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         Navigator.pop(context, true);
                                       } else {
                                         print("Exito----------------------");
+                                        await consultaBitacora();
                                         Navigator.pop(context, true);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                      responsive: responsive,
-                                                    )));
+                                        if(_showFinOtro){
+                                          customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                        }else{
+                                          sendTag("appinter_login_ok");
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                    responsive: responsive,
+                                                  ),settings: RouteSettings(name: "Home")));
+                                        }
                                       }
                                     }
                                     prefs.setBool(
@@ -1466,6 +1435,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.activacionExitosa_Face:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -1537,7 +1507,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   bottom: responsive.height * 0.05),
                               child: Center(
                                 child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     print(
                                         "-----------Exito----------------------");
                                     if (prefs.getBool("primeraVez") ||
@@ -1565,6 +1535,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1605,6 +1576,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                     builder: (BuildContext
                                                             context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -1682,14 +1654,20 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         Navigator.pop(context, true);
                                         Navigator.pop(context, true);
                                       } else {
+                                        await consultaBitacora();
                                         print("Exito----------------------");
                                         Navigator.pop(context, true);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                      responsive: responsive,
-                                                    )));
+                                        if(_showFinOtro){
+                                          customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                        }else{
+                                          sendTag("appinter_login_ok");
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                    responsive: responsive,
+                                                  ),settings: RouteSettings(name: "Home")));
+                                        }
                                       }
                                     }
                                     prefs.setBool(
@@ -1716,6 +1694,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.EnOtroMomento_Huella:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -1782,7 +1761,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     borderRadius: BorderRadius.circular(6.0),
                                   ),
                                   color: Theme.Colors.GNP,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (prefs.getBool("esPerfil") != null &&
                                         prefs.getBool("esPerfil")) {
                                       prefs.setBool(
@@ -1793,13 +1772,20 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 "flujoCompletoLogin") !=
                                             null &&
                                         prefs.getBool("flujoCompletoLogin")) {
+                                       await consultaBitacora();
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else if (prefs.getBool(
                                                 'primeraVezIntermediario') !=
                                             null &&
@@ -1821,6 +1807,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                   builder:
                                                       (BuildContext context) =>
                                                           CondicionesPage(
+                                                            responsive: responsive,
                                                             callback:
                                                                 FuncionAlerta,
                                                           )));
@@ -1860,6 +1847,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                   builder:
                                                       (BuildContext context) =>
                                                           CondicionesPage(
+                                                            responsive: responsive,
                                                             callback:
                                                                 FuncionAlerta,
                                                           )));
@@ -1963,6 +1951,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.EnOtroMomento_Huella_face:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -2029,7 +2018,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     borderRadius: BorderRadius.circular(6.0),
                                   ),
                                   color: Theme.Colors.GNP,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (prefs.getBool("esPerfil") != null &&
                                         prefs.getBool("esPerfil")) {
                                       prefs.setBool(
@@ -2040,13 +2029,20 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 "flujoCompletoLogin") !=
                                             null &&
                                         prefs.getBool("flujoCompletoLogin")) {
+                                      await consultaBitacora();
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else if (prefs.getBool(
                                                 'primeraVezIntermediario') !=
                                             null &&
@@ -2068,6 +2064,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                   builder:
                                                       (BuildContext context) =>
                                                           CondicionesPage(
+                                                            responsive: responsive,
                                                             callback:
                                                                 FuncionAlerta,
                                                           )));
@@ -2107,6 +2104,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                   builder:
                                                       (BuildContext context) =>
                                                           CondicionesPage(
+                                                            responsive: responsive,
                                                             callback:
                                                                 FuncionAlerta,
                                                           )));
@@ -2216,6 +2214,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.verificaTuNumeroCelular:
       showDialog(
+          useSafeArea: false,
           barrierDismissible: true,
           context: context,
           builder: (context) {
@@ -2355,6 +2354,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Reconocimiento_facial:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -2438,6 +2438,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       MaterialPageRoute(
                                           builder: (context) =>
                                               TerminosYCondicionesPage(
+                                                responsive: responsive,
                                                 callback: callback,
                                               )));
                                 },
@@ -2490,6 +2491,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Reconocimiento_facial:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -2526,7 +2528,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Theme.Colors.Encabezados,
-                                        fontSize: responsive.ip(2.3)),
+                                        fontSize: responsive.ip(2.0)),
                                   ),
                                 ),
                               ),
@@ -2548,7 +2550,6 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   height: responsive.hp(6.25),
                                   width: responsive.wp(90),
                                   margin: EdgeInsets.only(
-                                    bottom: responsive.height * 0.02,
                                     top: responsive.height * 0.02,
                                   ),
                                   child: RaisedButton(
@@ -2571,7 +2572,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               ),
                               Container(
                                 margin: EdgeInsets.only(
-                                    top: responsive.height * 0.01,
+                                    top: responsive.height * 0.02,
                                     bottom: responsive.height * 0.04),
                                 child: Center(
                                   child: GestureDetector(
@@ -2601,6 +2602,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.activacionExitosa_Reconocimiento_facial:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -2673,7 +2675,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   bottom: responsive.height * 0.05),
                               child: Center(
                                 child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     print(
                                         "-----------Exito----------------------");
                                     if (prefs.getBool("primeraVez") ||
@@ -2701,6 +2703,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                   builder:
                                                       (BuildContext context) =>
                                                           CondicionesPage(
+                                                            responsive: responsive,
                                                             callback:
                                                                 FuncionAlerta,
                                                           )));
@@ -2728,6 +2731,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                   builder:
                                                       (BuildContext context) =>
                                                           CondicionesPage(
+                                                            responsive: responsive,
                                                             callback:
                                                                 FuncionAlerta,
                                                           )));
@@ -2788,13 +2792,19 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         Navigator.pop(context, true);
                                       } else {
                                         print("Exito----------------------");
+                                        await consultaBitacora();
                                         Navigator.pop(context, true);
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => HomePage(
-                                                      responsive: responsive,
-                                                    )));
+                                        if(_showFinOtro){
+                                          customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                        }else{
+                                          sendTag("appinter_login_ok");
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                    responsive: responsive,
+                                                  ),settings: RouteSettings(name: "Home")));
+                                        }
                                       }
                                     }
                                     prefs.setBool(
@@ -2987,6 +2997,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.EnOtroMomento_reconocimiento_facial:
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -3020,11 +3031,11 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   bottom: responsive.hp(3)),
                               child: Center(
                                 child: Text(
-                                  "El inicio de sesión con reconocimiento facial es más rápido",
+                                  "El inicio de sesión con reconocimiento\nfacial es más rápido",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
-                                      fontSize: responsive.ip(2.3)),
+                                      fontSize: responsive.ip(2.0)),
                                 ),
                               ),
                             ),
@@ -3032,12 +3043,12 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               margin: EdgeInsets.only(
                                   left: responsive.wp(4),
                                   right: responsive.wp(4),
-                                  bottom: responsive.hp(1)),
+                                  bottom: responsive.hp(2)),
                               child: Text(
                                 "¿Deseas cancelar la configuración?",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
-                                    fontSize: responsive.ip(2.0)),
+                                    fontSize: responsive.ip(1.9)),
                               ),
                             ),
                             Center(
@@ -3045,7 +3056,6 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 height: responsive.hp(6.25),
                                 width: responsive.wp(90),
                                 margin: EdgeInsets.only(
-                                  bottom: responsive.height * 0.02,
                                   top: responsive.height * 0.02,
                                 ),
                                 child: RaisedButton(
@@ -3053,7 +3063,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     borderRadius: BorderRadius.circular(6.0),
                                   ),
                                   color: Theme.Colors.GNP,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if (prefs.getBool("esPerfil") != null &&
                                         prefs.getBool("esPerfil")) {
                                       prefs.setBool(
@@ -3064,13 +3074,22 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 "flujoCompletoLogin") !=
                                             null &&
                                         prefs.getBool("flujoCompletoLogin")) {
+
+                                      await consultaBitacora();
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else if (prefs.getBool(
                                                 'primeraVezIntermediario') !=
                                             null &&
@@ -3090,6 +3109,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 builder:
                                                     (BuildContext context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -3117,6 +3137,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 builder:
                                                     (BuildContext context) =>
                                                         CondicionesPage(
+                                                          responsive: responsive,
                                                           callback:
                                                               FuncionAlerta,
                                                         )));
@@ -3214,8 +3235,151 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
           });
       break;
 
-    case AlertDialogType.Sesionfinalizada_por_dispositivo:
+    case AlertDialogType.finalizar_seccion_en_otro_dispositivo:
+
+      bool showCiudad = false;
+      String hora ="";
+      String ciudad ="";
+      String dispositivo ="";
+      DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+      await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+        var jsoonn = json.encode(_snapshot.value);
+        Map response = json.decode(jsoonn);
+        if(response!= null && response.isNotEmpty){
+          print("id ${response["deviceID"]}");
+          hora = response["hora"];
+          ciudad = response["ciudad"];
+          dispositivo = response["dispositivo"];
+        }
+      });
+      if(ciudad!= null && ciudad.isNotEmpty && ciudad!="" && ciudad!=" "){
+        showCiudad = true;
+      }else{
+        showCiudad = false;
+      }
+
       showDialog(
+          useSafeArea: false,
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: responsive.hp(2),
+                                  left: responsive.wp(4),
+                                  right: responsive.wp(4),
+                                  bottom: responsive.hp(3)),
+                              child: Center(
+                                child: Text(
+                                  "Tienes una sesión activa",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  left: responsive.wp(4),
+                                  right: responsive.wp(4),
+                                  bottom: responsive.hp(1)),
+                              child: Text(
+                                showCiudad==true ?"Iniciada a las ${hora} en ${ciudad} desde ${dispositivo}. ¿Deseas cerrar esa sesión e iniciar en este dispositivo?":"Iniciada a las ${hora} desde ${dispositivo}. ¿Deseas cerrar esa sesión e iniciar en este dispositivo?",
+                                //"¿Deseas cerrar esa sesión e iniciar en este dispositivo?",
+                                style: TextStyle(
+                                    color: Theme.Colors.Funcional_Textos_Body,
+                                    fontSize: responsive.ip(2.0)),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                 // bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
+                                  color: Theme.Colors.GNP,
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                    Navigator.push(context, new MaterialPageRoute(builder: (_) => new HomePage(responsive: responsive,),settings: RouteSettings(name: "Home")));
+                                  },
+                                  child: Text(
+                                    "SÍ",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.White,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                 // bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: CupertinoButton(
+                                  padding: EdgeInsets.zero,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                  child: Text(
+                                    "NO",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });
+      break;
+
+    case AlertDialogType.Sesionfinalizada_por_dispositivo:
+      Inactivity(context: context).cancelInactivity();
+      showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -3265,17 +3429,19 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 ),
                               ),
                               Container(
-                                margin: EdgeInsets.only(
-                                    top: responsive.height * 0.04,
-                                    left: responsive.width * 0.04,
-                                    bottom: responsive.height * 0.03),
-                                child: Text(
-                                  "Has iniciado sesión en otro dispositivo",
-                                  style: TextStyle(
-                                      color: Theme.Colors.Funcional_Textos_Body,
-                                      fontSize: responsive.ip(1.8)),
-                                ),
-                              ),
+                                  margin: EdgeInsets.only(
+                                      top: responsive.height * 0.04,
+                                      left: responsive.width * 0.04,
+                                      bottom: responsive.height * 0.03),
+                                  child: Center(
+                                    child: Text(
+                                      "Has iniciado sesión en otro dispositivo",
+                                      style: TextStyle(
+                                          color: Theme
+                                              .Colors.Funcional_Textos_Body,
+                                          fontSize: responsive.ip(1.8)),
+                                    ),
+                                  )),
                               Center(
                                 child: Container(
                                   height: responsive.hp(6.25),
@@ -3288,15 +3454,24 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     elevation: 0,
                                     color: Theme.Colors.White,
                                     onPressed: () {
+                                      //TODO subsecuentes
                                       Navigator.pop(context, true);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  PrincipalFormLogin(
-                                                    responsive:
-                                                        Responsive.of(context),
-                                                  )));
+                                      if (prefs.getBool("activarBiometricos")) {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (BuildContext context) =>
+                                                    BiometricosPage(
+                                                        responsive: responsive),settings: RouteSettings(name: "Biometricos")));
+                                      } else {
+
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (BuildContext context) =>
+                                                    PrincipalFormLogin(
+                                                        responsive: responsive),settings: RouteSettings(name: "Login")));
+                                      }
                                     },
                                     child: Text(
                                       "CERRAR",
@@ -3321,7 +3496,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
 
     case AlertDialogType.Sesionfinalizada_por_inactividad:
+      inactiveFirebaseDivice(false);
       showDialog(
+          useSafeArea: false,
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -3434,6 +3611,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
           });
       break;
     case AlertDialogType.Sesionfinalizada_por_inactividad_contrasenia:
+      initializeTimerOtroUsuario(context,callback);
       if (prefs.getBool("activarBiometricos")) {
         doLoginBiometrics(context, callback);
       } else {
@@ -3448,6 +3626,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Sesionfinalizada_por_intentos_huella:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -3553,6 +3734,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Sesionafinalizada_por_contrasena_debeserdiferente:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -3651,6 +3835,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.contrasena_actualiza_correctamente:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -3785,6 +3972,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Contrasena_invalida_debeserdiferente_a_la_actual:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -3883,6 +4073,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Correo_electronico_o_contrasena_no_coinciden:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -3921,7 +4114,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               margin: EdgeInsets.only(top: responsive.hp(5)),
                               child: Center(
                                 child: Text(
-                                  "No se puede iniciar sesión",
+                                  "Correo electrónico o contraseña no coinciden",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
@@ -3941,7 +4134,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "Correo electrónico o contraseña no coinciden",
+                                    "Por seguridad, tu cuenta se bloqueará después de 3 intentos.",
                                     style: TextStyle(
                                         color:
                                             Theme.Colors.Funcional_Textos_Body,
@@ -3987,6 +4180,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Correo_no_registrado:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -4093,6 +4289,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Cuenta_inactiva:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -4219,6 +4418,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Cuenta_bloqueada:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -4344,6 +4546,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Cuenta_temporalmente_bloqueada:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -4470,9 +4675,250 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
             );
           });
       break;
+    case AlertDialogType.Cuenta_temporalmente_bloqueada_temporizador:
+     // initializeTimerBloqueo(context, callback);
+      showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+            children: [
+              Opacity(
+                opacity: 0.6,
+                child: Container(
+                  height: responsive.height,
+                  width: responsive.width,
+                  color: Theme.Colors.Azul_gnp,
+                ),
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    width: responsive.width,
+                    child: Card(
+                      color: Theme.Colors.White,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                              child: Container(
+                                  margin:
+                                  EdgeInsets.only(top: responsive.hp(3)),
+                                  child: Icon(
+                                    Icons.warning_amber_outlined,
+                                    color: Colors.red,
+                                    size: responsive.ip(5),
+                                  ))),
+                          Container(
+                            margin: EdgeInsets.only(
+                              top: responsive.hp(5),
+                              left: responsive.wp(8),
+                              right: responsive.wp(8),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Inicio de sesión inactivo",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Theme.Colors.Encabezados,
+                                    fontSize: responsive.ip(2.3)),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                                top: responsive.height * 0.04,
+                                left: responsive.width * 0.04,
+                                bottom: responsive.height * 0.03),
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                top: responsive.height * 0.04,
+                                left: responsive.width * 0.04,
+                                bottom: responsive.height * 0.03,
+                              ),
+                              child: Center(
+                                  child: Text.rich(TextSpan(
+                                      text:
+                                      'Has superado el número permitido de intentos para iniciar sesión, en un momento podrás intentarlo de nuevo',
+                                      style: TextStyle(
+                                          color: Theme
+                                              .Colors.Funcional_Textos_Body,
+                                          fontSize: responsive.ip(1.8)),
+                                      children: <InlineSpan>[
+                                        TextSpan(
+                                          text: '',
+                                          style: TextStyle(
+                                              color: Theme.Colors.GNP,
+                                              fontSize: responsive.ip(1.8)),
+                                        ),
+                                      ]))),
+                            ),
+                          ),
+                          Center(child:Container(margin: EdgeInsets.only(bottom:40),child:CountdownFormatted(
+                            duration: Duration(seconds: 15),
+                            onFinish: () {
+                              Navigator.pop(context);
+                            },
+                            builder: (BuildContext ctx, String remaining) {
+                              return Text("${remaining}",
+                                style: TextStyle(
+                                    color: int.parse(remaining)<=5?Colors.green:Colors.red,
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: prefs.getBool("useMobileLayout")
+                                        ? responsive.ip(3.8)
+                                        : responsive.ip(2.5)),
+                              ); // 01:00:00
+                            },
+                          ))),
 
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
+     /* showDialog(
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                                child: Container(
+                                    margin:
+                                    EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Icon(
+                                      Icons.warning_amber_outlined,
+                                      color: Colors.red,
+                                      size: responsive.ip(5),
+                                    ))),
+                            Container(
+                              margin: EdgeInsets.only(
+                                top: responsive.hp(5),
+                                left: responsive.wp(8),
+                                right: responsive.wp(8),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "Tu cuenta está temporalmente bloqueada",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  left: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.03),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  left: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.03,
+                                ),
+                                child: Center(
+                                    child: Text.rich(TextSpan(
+                                        text:
+                                        'Para desbloquearla, comunicate a Soporte GNP al ',
+                                        style: TextStyle(
+                                            color: Theme
+                                                .Colors.Funcional_Textos_Body,
+                                            fontSize: responsive.ip(1.8)),
+                                        children: <InlineSpan>[
+                                          TextSpan(
+                                            recognizer: new TapGestureRecognizer()
+                                              ..onTap = () {
+                                                print("numero");
+                                                launch('tel:5552273966');
+                                              },
+                                            text: '55 5227 3966 ',
+                                            style: TextStyle(
+                                                color: Theme.Colors.GNP,
+                                                fontSize: responsive.ip(1.8)),
+                                          ),
+                                          TextSpan(
+                                            text:
+                                            'en un horario de lunes a viernes de 8:00 a 20:00 hrs y sábados de 8:00 a 14:00 hrs.',
+                                            style: TextStyle(
+                                                color: Theme
+                                                    .Colors.Funcional_Textos_Body,
+                                                fontSize: responsive.ip(1.8)),
+                                          ),
+                                        ]))),
+                              ),
+                            ),
+                            Center(child:Container(child: Text(""))),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () {
+                                    Navigator.pop(context, true);
+                                  },
+                                  child: Text(
+                                    "CERRAR",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          });*/
+      break;
     case AlertDialogType.FACE_PERMISS_DECLINADO:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -4583,7 +5029,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if ((prefs.getBool("esPerfil") != null &&
                                             prefs.getBool("esPerfil")) ||
                                         (prefs.getBool(
@@ -4604,13 +5050,21 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 "flujoCompletoLogin") !=
                                             null &&
                                         prefs.getBool("flujoCompletoLogin")) {
+                                      await consultaBitacora();
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else {
                                       prefs.setBool(
                                           "activarBiometricos", false);
@@ -4649,6 +5103,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.HUELLA_PERMISS_DECLINADO:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -4759,7 +5216,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if ((prefs.getBool("esPerfil") != null &&
                                             prefs.getBool("esPerfil")) ||
                                         (prefs.getBool(
@@ -4780,13 +5237,21 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                                 "flujoCompletoLogin") !=
                                             null &&
                                         prefs.getBool("flujoCompletoLogin")) {
+                                      await consultaBitacora();
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else {
                                       prefs.setBool(
                                           "activarBiometricos", false);
@@ -4825,6 +5290,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -4939,7 +5407,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if ((prefs.getBool("esPerfil") != null &&
                                             prefs.getBool("esPerfil")) ||
                                         (prefs.getBool(
@@ -4961,12 +5429,20 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                             null &&
                                         prefs.getBool("flujoCompletoLogin")) {
                                       Navigator.pop(context, true);
+                                      await consultaBitacora();
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else {
                                       prefs.setBool(
                                           "activarBiometricos", false);
@@ -5004,6 +5480,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.Rostro_no_reconocido:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -5084,7 +5563,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 child: RaisedButton(
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if ((prefs.getBool("esPerfil") != null &&
                                             prefs.getBool("esPerfil")) ||
                                         (prefs.getBool(
@@ -5107,11 +5586,20 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         prefs.getBool("flujoCompletoLogin")) {
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+
+                                      await consultaBitacora();
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else {
                                       prefs.setBool(
                                           "activarBiometricos", false);
@@ -5149,6 +5637,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.Rostro_huella_no_reconocido:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -5229,7 +5720,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 child: RaisedButton(
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if ((prefs.getBool("esPerfil") != null &&
                                             prefs.getBool("esPerfil")) ||
                                         (prefs.getBool(
@@ -5252,11 +5743,19 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         prefs.getBool("flujoCompletoLogin")) {
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      await consultaBitacora();
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+
+                                        sendTag("appinter_login_ok");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else {
                                       prefs.setBool(
                                           "activarBiometricos", false);
@@ -5294,6 +5793,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.Rostro_no_reconocido_2:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -5401,6 +5903,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Huella_no_reconocida:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -5483,7 +5988,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   child: RaisedButton(
                                     elevation: 0,
                                     color: Theme.Colors.White,
-                                    onPressed: () {
+                                    onPressed: () async {
                                       if ((prefs.getBool("esPerfil") != null &&
                                               prefs.getBool("esPerfil")) ||
                                           (prefs.getBool(
@@ -5509,11 +6014,18 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                           prefs.getBool("flujoCompletoLogin")) {
                                         Navigator.pop(context, true);
                                         callback(false, responsive);
-                                        Navigator.push(
-                                            context,
-                                            new MaterialPageRoute(
-                                                builder: (_) => new HomePage(
-                                                    responsive: responsive)));
+                                        await consultaBitacora();
+                                        if(_showFinOtro){
+                                          customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                        }else{
+                                          sendTag("appinter_login_ok");
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => HomePage(
+                                                    responsive: responsive,
+                                                  ),settings: RouteSettings(name: "Home")));
+                                        }
                                       } else {
                                         prefs.setBool(
                                             "activarBiometricos", false);
@@ -5553,6 +6065,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Numero_de_celular_verificado:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -5659,6 +6174,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Numero_de_celular_actualizado_correctamente:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -5774,13 +6292,18 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                       Navigator.pop(context);
                                       print("Flujoo completo");
                                       prefs.setBool("flujoCompletoLogin", true);
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  HomePage(
-                                                    responsive: responsive,
-                                                  )));
+                                      await consultaBitacora();
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                       //callback(responsive);
                                     }
                                   },
@@ -5807,6 +6330,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.AjustesSinGuardar_camara:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -5913,6 +6439,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.ArchivoInvalido_imagen:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -6024,6 +6553,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Tienes_una_sesion_activa:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -6135,6 +6667,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.Desactivar_huella_digital_face:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -6250,6 +6785,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.Desactivar_huella_digital:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -6368,6 +6906,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Desactivar_recoFacial:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -6454,8 +6995,8 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   height: responsive.hp(6.25),
                                   width: responsive.wp(90),
                                   margin: EdgeInsets.only(
-                                      top: responsive.height * 0.03,
-                                      bottom: responsive.height * 0.05),
+                                      top: responsive.height * 0.02,
+                                      bottom: responsive.height * 0.02),
                                   child: TextButton(
                                     onPressed: () {
                                       prefs.setBool("activarBiometricos", true);
@@ -6487,8 +7028,12 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.DatosMoviles_Activados:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
+              dialogMobileContext = context;
             Responsive responsive = Responsive.of(context);
             return WillPopScope(
               onWillPop: () async => false,
@@ -6564,6 +7109,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                     onTap: () {
                                       callback();
                                       Navigator.pop(context, true);
+                                      isMessageMobileClose = false;
                                     },
                                     child: Text(
                                       "CERRAR",
@@ -6586,10 +7132,14 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
           });
       break;
 
-    case AlertDialogType.DatosMoviles_Activados_comprueba:
+    case AlertDialogType.Sin_acceso_wifi:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
+            dialogConnectivityContext = context;
             Responsive responsive = Responsive.of(context);
             return WillPopScope(
               onWillPop: () async => false,
@@ -6683,8 +7233,115 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
           });
       break;
 
-    case AlertDialogType.CerrarSesion:
+    case AlertDialogType.Sin_acceso_wifi_cerrar:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
+          context: context,
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return WillPopScope(
+              onWillPop: () async => false,
+              child: Stack(
+                children: [
+                  Opacity(
+                    opacity: 0.6,
+                    child: Container(
+                      height: responsive.height,
+                      width: responsive.width,
+                      color: Theme.Colors.Azul_gnp,
+                    ),
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Container(
+                        width: responsive.width,
+                        child: Card(
+                          color: Theme.Colors.White,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.03),
+                                child: Center(
+                                  child: Icon(
+                                    Icons.wifi_off_outlined,
+                                    color: Theme.Colors.azul_apoyo,
+                                    size: 57,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.05),
+                                child: Center(
+                                  child: Text(
+                                    "Sin conexión a internet",
+                                    style: TextStyle(
+                                        color: Theme.Colors.Encabezados,
+                                        fontSize: responsive.ip(2.3)),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: responsive.height * 0.05,
+                                  left: responsive.width * 0.04,
+                                  right: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.05,
+                                ),
+                                child: Text(
+                                  "Comprueba que tienes acceso a una red Wi-Fi o que cuentas con datos móviles activados.",
+                                  style: TextStyle(
+                                      color: Theme.Colors.Funcional_Textos_Body,
+                                      fontSize: responsive.ip(2.0)),
+                                ),
+                              ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.06,
+                                    bottom: responsive.height * 0.05),
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context,true);
+
+                                    },
+                                    child: Text(
+                                      "CERRAR",
+                                      style: TextStyle(
+                                          color: Theme.Colors.GNP,
+                                          fontSize: responsive.ip(2.2)),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          });
+      break;
+
+
+
+
+    case AlertDialogType.CerrarSesion:
+      Inactivity(context:context).cancelInactivity();
+      showDialog(
+          useSafeArea: false,
+          barrierDismissible: false,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -6703,7 +7360,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      width: responsive.width,
+                      //width: responsive.width,
                       child: Card(
                         color: Theme.Colors.White,
                         child: Column(
@@ -6712,8 +7369,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                           children: [
                             Center(
                               child: Container(
-                                margin:
-                                    EdgeInsets.only(top: responsive.hp(3.5)),
+                                margin: EdgeInsets.only(top: responsive.hp(3.5)),
                                 child: Text(
                                   "Cerrar sesión",
                                   style: TextStyle(
@@ -6747,23 +7403,28 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                   ),
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    Inactivity(context:context).cancelInactivity();
-
+                                    isMessageMobileClose = false;
+                                    sendTag("appinter_perfil_cerrar");
+                                    prefs.setBool("showAP", null);
+                                    prefs.setBool("rolAutoscotizarActivo", null);
+                                    inactiveFirebaseDivice(false);
+                                    connectivitySubscription.cancel();
+                                    connectivitySubscription = null;
                                     if (prefs.getBool("activarBiometricos")) {
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (BuildContext context) =>
                                                   BiometricosPage(
-                                                      responsive: responsive)));
-                                    } else {
-
+                                                      responsive: responsive),settings: RouteSettings(name: "Biometricos")));
+                                    }
+                                    else {
                                       Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(
                                               builder: (BuildContext context) =>
                                                   PrincipalFormLogin(
-                                                      responsive: responsive)));
+                                                      responsive: responsive),settings: RouteSettings(name: "Login")));
                                     }
                                   },
                                   child: Text(
@@ -6807,6 +7468,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.En_mantenimiento_cel:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -6905,6 +7569,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.En_mantenimiento_llave:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -6996,6 +7663,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Sin_acceso_herramientas_cotizacion:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -7091,6 +7761,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.menu_home:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -7176,9 +7849,108 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
           });
       break;
 
+
+    case AlertDialogType.error_codigo_verificacion:
+      showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
+        context: context,
+        builder: (context) {
+          Responsive responsive = Responsive.of(context);
+          return Stack(children: [
+            Opacity(
+              opacity: 0.6,
+              child: Container(
+                height: responsive.height,
+                width: responsive.width,
+                color: Theme.Colors.Azul_gnp,
+              ),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  width: responsive.width,
+                  child: Card(
+                    color: Theme.Colors.White,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            margin: EdgeInsets.only(
+                                top: responsive.hp(2),
+                                bottom: responsive.hp(2)),
+                            child: Icon(
+                              Icons.warning_amber_outlined,
+                              color: Colors.redAccent,
+                              size: responsive.ip(6),
+                            ),
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            "Servicio no disponible",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                color: Theme.Colors.Encabezados,
+                                fontSize: responsive.ip(2.2)),
+                          ),
+                        ),
+                        Container(
+                            margin: EdgeInsets.only(
+                                top: responsive.height * 0.04,
+                                bottom: responsive.height * 0.05,
+                                right: responsive.wp(5),
+                                left: responsive.wp(5)),
+                            child: Text.rich(TextSpan(
+                                text:
+                                "Has superado el límite de envío de códigos de verificación. En 7 min podrás solicitar su envío nuevamente",
+                                style: TextStyle(
+                                    color: Theme.Colors.Funcional_Textos_Body,
+                                    fontSize: responsive.ip(1.7))
+                            ))),
+                        Center(
+                          child: Container(
+                            height: responsive.hp(6.25),
+                            width: responsive.wp(90),
+                            margin: EdgeInsets.only(
+                              bottom: responsive.height * 0.03,
+                            ),
+                            child: RaisedButton(
+                              elevation: 0,
+                              color: Colors.white,
+                              onPressed: () {
+                                Navigator.pop(context, true);
+                              },
+                              child: Text(
+                                "Aceptar",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Theme.Colors.GNP,
+                                    fontSize: responsive.ip(2.0)),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )
+          ]);
+        });
+      break;
+
     case AlertDialogType.errorServicio:
       showDialog(
-          barrierDismissible: false,
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -7292,6 +8064,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.preguntasSecretasActualizadas:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -7434,6 +8209,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.inicio_de_sesion_inactivo_contador:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -7537,7 +8315,11 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
 
     case AlertDialogType.versionTag:
+      config = AppConfig.of(context);
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -7582,7 +8364,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                               margin: EdgeInsets.only(top: responsive.hp(5)),
                               child: Center(
                                 child: Text(
-                                  "Tag : 2.2.5",
+                                  "Ambiente : ${config.ambient}",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                       color: Theme.Colors.Encabezados,
@@ -7636,6 +8418,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -7714,7 +8499,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 child: RaisedButton(
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if ((prefs.getBool("esPerfil") != null &&
                                             prefs.getBool("esPerfil")) ||
                                         (prefs.getBool(
@@ -7737,11 +8522,19 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         prefs.getBool("flujoCompletoLogin")) {
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
+
+                                      await consultaBitacora();
+                                          if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                            sendTag("appinter_login_ok");
                                       Navigator.push(
                                           context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                          MaterialPageRoute(
+                                              builder: (context) => HomePage(
+                                                responsive: responsive,
+                                              ),settings: RouteSettings(name: "Home")));
+                                    }
                                     } else {
                                       prefs.setBool(
                                           "activarBiometricos", false);
@@ -7780,6 +8573,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.inicio_de_sesion_con_huella_bloqueado:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -7858,7 +8654,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 child: RaisedButton(
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if ((prefs.getBool("esPerfil") != null &&
                                             prefs.getBool("esPerfil")) ||
                                         (prefs.getBool(
@@ -7884,11 +8680,18 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         prefs.getBool("flujoCompletoLogin")) {
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      await consultaBitacora();
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else {
                                       prefs.setBool(
                                           "activarBiometricos", false);
@@ -7927,6 +8730,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.inicio_de_sesion_con_facial_bloqueado:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -8005,7 +8811,7 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                 child: RaisedButton(
                                   elevation: 0,
                                   color: Theme.Colors.White,
-                                  onPressed: () {
+                                  onPressed: () async {
                                     if ((prefs.getBool("esPerfil") != null &&
                                             prefs.getBool("esPerfil")) ||
                                         (prefs.getBool(
@@ -8031,11 +8837,18 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
                                         prefs.getBool("flujoCompletoLogin")) {
                                       Navigator.pop(context, true);
                                       callback(false, responsive);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (_) => new HomePage(
-                                                  responsive: responsive)));
+                                      await consultaBitacora();
+                                      if(_showFinOtro){
+                                        customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, title, message, responsive, callback);
+                                      }else{
+                                        sendTag("appinter_login_ok");
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => HomePage(
+                                                  responsive: responsive,
+                                                ),settings: RouteSettings(name: "Home")));
+                                      }
                                     } else {
                                       prefs.setBool(
                                           "activarBiometricos", false);
@@ -8074,6 +8887,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
 
     case AlertDialogType.Contrasena_diferente_a_las_3_anteriores:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -8171,6 +8987,9 @@ void customAlert(AlertDialogType type, BuildContext context, String title,
       break;
     case AlertDialogType.Contrasena_diferente_a_las_3_anteriores_nueva:
       showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
           builder: (context) {
             Responsive responsive = Responsive.of(context);
@@ -8511,11 +9330,15 @@ class _MyDialogContrasenaInactividadState
                                   controllerContrasena.text.isNotEmpty) {
                                 if (controllerContrasena.text ==
                                     prefs.getString("contrasenaUsuario")) {
+                                  sendTag("appinter_inactividad_login");
+                                  inactiveFirebaseDivice(true);
+                                  initializeTimerOtroUsuario(context,(){});
                                   Navigator.pop(context, true);
                                   showInactividad = false;
                                   widget.callback();
                                   //initializeTimer(context,widget.callback);
                                 } else {
+                                  cancelTimerDosApps();
                                   Navigator.pop(context, true);
                                   AlertaContraseniaErronea();
                                 }
@@ -8551,6 +9374,7 @@ class _MyDialogContrasenaInactividadState
   }
 
   void AlertaContraseniaErronea() {
+    Inactivity(context: context).cancelInactivity();
     showDialog(
         context: context,
         builder: (context) {
@@ -8635,7 +9459,7 @@ class _MyDialogContrasenaInactividadState
                                   onPressed: () {
                                     prefs.setBool("esPerfil", false);
                                     sendTag("appinter_inactividad");
-                                    Inactivity(context: context).cancelInactivity();
+
                                     Navigator.pop(context, true);
                                     Navigator.push(
                                         context,
@@ -8644,7 +9468,7 @@ class _MyDialogContrasenaInactividadState
                                                 PrincipalFormLogin(
                                                   responsive:
                                                       Responsive.of(context),
-                                                )));
+                                                ),settings: RouteSettings(name: "Login")));
                                   },
                                   child: Text(
                                     "CERRAR",
@@ -8713,6 +9537,7 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
     }
 
     if (authenticated) {
+      inactiveFirebaseDivice(true);
       callback();
       showInactividad = false;
       Navigator.pop(context, true);
@@ -8723,12 +9548,13 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
           "didAuthenticate not $localAuths ${prefs.getInt("localAuthCountIOS")}");
 
       if (!localAuths) {
+        Inactivity(context: context).cancelInactivity();
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (BuildContext context) => BiometricosPage(
                       responsive: Responsive.of(context),
-                    )));
+                    ),settings: RouteSettings(name: "Biometricos")));
         if (prefs != null &&
             prefs.getInt("localAuthCountIOS") != null &&
             prefs.getInt("localAuthCountIOS") == 102) {
@@ -8773,13 +9599,13 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
     print("PlatformException: code ${e.code}");
     print("PlatformException: message ${e.message}");
     print("PlatformException: stacktrace ${e.stacktrace}");
-
+    Inactivity(context: context).cancelInactivity();
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (BuildContext context) => BiometricosPage(
                   responsive: Responsive.of(context),
-                )));
+                ),settings: RouteSettings(name: "Biometricos")));
     prefs.setBool("subSecuentaIngresoCorreo", true);
 
     if (e.code == auth_error.lockedOut) {
@@ -8845,6 +9671,36 @@ String numero() {
   }
 }
 
+void consultaBitacora() async {
+print("consultaBitacora CustomAlerts");
+  DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+  try{
+    await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+      print("-- response -- ${response}");
+      if(response!= null && response.isNotEmpty){
+        if(deviceData["id"]==response["deviceID"]){
+          _showFinOtro = false;
+        }else{
+          if(response["isActive"]!= null && response["isActive"]){
+              _showFinOtro = true;
+          }
+          else{
+              _showFinOtro = false;
+          }
+        }
+      } else{
+        _showFinOtro = false;
+      };
+
+    });
+  }catch(e){
+    print(e);
+  }
+
+}
+
 void primerAccesoUsuario() async {
   Map userInfo;
   DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
@@ -8883,5 +9739,70 @@ void primerAccesoUsuario() async {
         .child("firstSessionUser")
         .child(email.toLowerCase())
         .set({'isFirstMobileSession': true});
+  }
+}
+
+void inactiveFirebaseDivice(bool active) async {
+  //cancelTimerDosApps();
+  DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
+  DateTime now = DateTime.now();
+  DateFormat formatter = DateFormat('yyyy-MM-dd');
+  DateTime nowH = DateTime.now();
+  //String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
+  String formattedDate = DateFormat('kk:mm:ss').format(now);
+  String formatted = formatter.format(now);
+  List<Placemark> newPlace;
+  String locality="";
+  String address;
+  String deviceName= prefs.getString("deviceName");
+  try{
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {
+      userLocation= await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+      newPlace = await placemarkFromCoordinates(userLocation.latitude, userLocation.longitude);
+      Placemark placeMark  = newPlace[0];
+      String name = placeMark.name;
+      String subLocality = placeMark.subLocality;
+      String locality = placeMark.locality;
+      String administrativeArea = placeMark.administrativeArea;
+      String postalCode = placeMark.postalCode;
+      String country = placeMark.country;
+      String address = "${locality}";
+      // this is all you need
+      //String address = "${name}, ${subLocality}, ${locality}, ${administrativeArea} ${postalCode}, ${country}";
+    }else{
+      address=" ";
+    }
+  }catch(e){
+    address=" ";
+    print("interactions Places costum");
+    print(e);
+  }
+
+  print("deviceID: ${deviceData["id"]}");
+  try{
+    await _dataBaseReference.child("bitacora").child(datosUsuario.idparticipante).once().then((DataSnapshot _snapshot) {
+
+      var jsoonn = json.encode(_snapshot.value);
+      Map response = json.decode(jsoonn);
+      print("-- response -- ${response}");
+
+      print("id ${deviceData["id"]}");
+      print("isActive $active");
+      Map<String, dynamic> mapa = {
+        '${datosUsuario.idparticipante}': {
+          'deviceID' : deviceData["id"],
+          'hora':"${formattedDate}",
+          'ciudad':address,
+          'dispositivo':Platform.isAndroid?"Android" + " ${deviceName}":"IOS" + " ${deviceName}",
+          'isActive':active,
+        }
+      };
+      _dataBaseReference.child("bitacora").update(mapa);
+
+    });
+  }catch(e){
+    print("inactiveFirebaseDivice");
+    print(e);
   }
 }
