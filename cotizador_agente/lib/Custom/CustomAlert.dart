@@ -54,6 +54,9 @@ bool _firstSession = true;
 bool _showFinOtro = false;
 
 enum AlertDialogType {
+  errorPermisosGeneric,
+  errorConexion,
+  timeOut,
   inactividad,
   testUno,
   archivoInvalido,
@@ -125,6 +128,116 @@ enum AlertDialogType {
 Future<void> customAlert(AlertDialogType type, BuildContext context, String title,
     String message, Responsive responsive, Function callback) async {
   switch (type) {
+    case AlertDialogType.errorPermisosGeneric:
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: new Text("Error de permisos.",
+                  style: TextStyle(
+                      color: Theme.Colors.appBarTextBlueDark,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              content: new Text(
+                  "Se produjo un error verifica tus permisos otorgados ve a configuraciones y valida que esten habilitados para esta aplicacion",
+                  style: TextStyle(
+                      color: Theme.Colors.appBarTextBlueDark,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("ACEPTAR",
+                      style: TextStyle(
+                          color: Theme.Colors.primary,
+                          fontSize: 16.0,
+                          fontFamily: "Roboto")),
+                  onPressed: () {
+                    isShowAlert = false;
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
+      break;
+
+      case AlertDialogType.errorConexion:
+      if (!isShowAlert) {
+        isShowAlert = true;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: new Text("Error de conexión.",
+                  style: TextStyle(
+                      color: Theme.Colors.appBarTextBlueDark,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              content: new Text(
+                  "Se produjo un error en la red, verifica tu conexión e intenta nuevamente.",
+                  style: TextStyle(
+                      color: Theme.Colors.appBarTextBlueDark,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("ACEPTAR",
+                      style: TextStyle(
+                          color: Theme.Colors.primary,
+                          fontSize: 16.0,
+                          fontFamily: "Roboto")),
+                  onPressed: () {
+                    isShowAlert = false;
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {}
+      break;
+    case AlertDialogType.timeOut:
+      if (!isShowAlert) {
+        isShowAlert = true;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: new Text("Error de conexión.",
+                  style: TextStyle(
+                      color: Theme.Colors.appBarTextBlueDark,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              content: new Text(
+                  "Se produjo un error en la red por el tiempo de espera, verifica tu conexión e intenta nuevamente.",
+                  style: TextStyle(
+                      color: Theme.Colors.appBarTextBlueDark,
+                      fontSize: 16.0,
+                      fontFamily: "Roboto")),
+              actions: <Widget>[
+                new FlatButton(
+                  child: new Text("ACEPTAR",
+                      style: TextStyle(
+                          color: Theme.Colors.primary,
+                          fontSize: 16.0,
+                          fontFamily: "Roboto")),
+                  onPressed: () {
+                    isShowAlert = false;
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {}
+      break;
     case AlertDialogType.inicio_de_sesion_active_faceID:
       showDialog(
           useSafeArea: false,

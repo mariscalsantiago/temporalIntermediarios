@@ -140,9 +140,9 @@ class _AutosPageState extends State<AutosPage> {
                 Inactivity(context:context).initialInactivity(functionInactivity);
               },
               onLoadError: (controller, url, code, message) {
-                print("onLoadError: $url, $code, $message");
+                print("onLoadError:  $code $url,, $message");
                 if(code!=null) {
-                  if ("$code" == "-1004") {
+                  if ("$code" == "-1004" || "$code" == "-5") {
                     hasInternetFirebase = false;
                     hasAutosError = true;
                     hasAutosErrorUrl = url;

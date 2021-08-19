@@ -1583,7 +1583,7 @@ class _PerfilPageState extends State<PerfilPage> {
                         style: TextStyle(fontSize: responsive.ip(1.5)),
                       ),
                       onTap: () {
-                        _imgFromGallery();
+                        _imgFromGallery(responsive);
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
@@ -1593,7 +1593,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       style: TextStyle(fontSize: responsive.ip(1.5)),
                     ),
                     onTap: () {
-                      _imgFromCamera();
+                      _imgFromCamera(responsive);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -1604,7 +1604,7 @@ class _PerfilPageState extends State<PerfilPage> {
         });
   }
 
-  _imgFromCamera() async {
+  _imgFromCamera(Responsive responsive) async {
     File _image;
     final picker = ImagePicker();
     //TODO revisar doble intento y validacion de null
@@ -1627,12 +1627,15 @@ class _PerfilPageState extends State<PerfilPage> {
         });
       }
     } catch (e) {
+      print("_imgFromCamera_perfiles");
+      customAlert(AlertDialogType.errorPermisosGeneric, context, "", "",
+          responsive, funcion);
       print(e);
     }
   }
 
 
-  _imgFromGallery() async {
+  _imgFromGallery(Responsive responsive) async {
 print("_imgFromGallery");
     try {
       File _image;
@@ -1668,7 +1671,10 @@ print("_imgFromGallery");
         });
       }
     } catch (e) {
+      print("catch _imgFromGallery_perfiles");
       print("catch $e");
+      customAlert(AlertDialogType.errorPermisosGeneric, context, "", "",
+          responsive, funcion);
     }
   }
 

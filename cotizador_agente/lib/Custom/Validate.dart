@@ -172,16 +172,17 @@ Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,F
     print("msjCx: con wifi");
 
       print("msjCx: con wifi con tranferencia");
+    if (connectivityInitial.available || hasInternetFirebase) {
       if(isMessageWifi) {
         if(dialogConnectivityContext!=null) {
           isMessageWifi = false;
-          Navigator.pop(navigatorKey.currentContext);
+          Navigator.pop(navigatorKey.currentState.overlay.context);
         }
       }
       if(isMessageMobile){
         if(dialogMobileContext!=null){
           isMessageMobile = false;
-          Navigator.pop(navigatorKey.currentContext);
+          Navigator.pop(navigatorKey.currentState.overlay.context);
         }
       }
       if(screenName!=null) {
@@ -189,6 +190,17 @@ Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,F
           callback();
         }
       }
+    }else{
+      print("msjCx: con wifi sin tranferencia");
+      if(!isMobile){
+        if (!isMessageWifi) {
+          isMessageWifi = true;
+          customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentState.overlay.context, "", "", responsive, funcionAlertaWifi);
+        }
+      }
+
+    }
+
   }else if(!isWifi&&isMobile) {
     print("msjCx: con mobile");
 
@@ -197,7 +209,7 @@ Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,F
       if(isMessageWifi) {
         if(dialogConnectivityContext!=null) {
           isMessageWifi = false;
-          Navigator.pop(navigatorKey.currentContext);
+          Navigator.pop(navigatorKey.currentState.overlay.context);
         }
       }
       if(!isMessageMobile){
@@ -217,7 +229,7 @@ Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,F
       }
       if (!isMessageWifi) {
         isMessageWifi = true;
-        customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentContext, "", "", responsive, funcionAlertaWifi);
+        customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentState.overlay.context, "", "", responsive, funcionAlertaWifi);
       }
     }
   }else if(!isWifi&&!isMobile&&!connectivityInitial.available) {
@@ -226,12 +238,12 @@ Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,F
       if (isMessageMobile) {
         if (dialogMobileContext != null) {
           isMessageMobile = false;
-          Navigator.pop(navigatorKey.currentContext);
+          Navigator.pop(navigatorKey.currentState.overlay.context);
         }
       }
       if (!isMessageWifi) {
         isMessageWifi = true;
-        customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentContext, "", "", responsive, funcionAlertaWifi);
+        customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentState.overlay.context, "", "", responsive, funcionAlertaWifi);
       }
   }
 

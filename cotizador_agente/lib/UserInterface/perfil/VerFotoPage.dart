@@ -250,7 +250,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                         style: TextStyle(fontSize: responsive.ip(1.5)),
                       ),
                       onTap: () {
-                        _imgFromGallery();
+                        _imgFromGallery(responsive);
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
@@ -259,7 +259,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
                       style: TextStyle(fontSize: responsive.ip(1.5)),
                     ),
                     onTap: () {
-                      _imgFromCamera();
+                      _imgFromCamera(responsive);
                       Navigator.of(context).pop();
                     },
                   ),
@@ -270,7 +270,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
         });
   }
 
-  _imgFromCamera() async {
+  _imgFromCamera(Responsive responsive) async {
     File _image;
     final picker = ImagePicker();
     //TODO revisar doble intento y validacion de null
@@ -294,6 +294,9 @@ class _VerFotoPageState extends State<VerFotoPage> {
         }
       }
       } catch (e) {
+      print("_imgFromCamera_verFoto");
+      customAlert(AlertDialogType.errorPermisosGeneric, context, "", "",
+          responsive, (){});
       print(e);
    }
   }
@@ -307,7 +310,7 @@ class _VerFotoPageState extends State<VerFotoPage> {
     return _requestPermission(PermissionGroup.photos);
   }
 
-  _imgFromGallery() async {
+  _imgFromGallery(Responsive responsive) async {
       try {
         var release = "0";
         File _image;
@@ -346,7 +349,10 @@ class _VerFotoPageState extends State<VerFotoPage> {
           });
         }
       } catch (e) {
-        print(e);
+        print("catch _imgFromGallery_verFoto");
+        print("catch $e");
+        customAlert(AlertDialogType.errorPermisosGeneric, context, "", "",
+            responsive, (){});
       }
 
 
