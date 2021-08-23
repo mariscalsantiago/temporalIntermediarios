@@ -313,13 +313,11 @@ class Utilidades {
    static void mostrarAlerta(
        String titulo, String mensaje, BuildContext context) {
       // flutter defined function
-     int tamanoMensaje = mensaje.length;
      showMaterialModalBottomSheet(
        barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
        backgroundColor: Colors.transparent,
        context: context,
        builder: (context, scrollController) => Container(
-         //height: tamanoMensaje >= 68 ? tamanoMensaje >= 141 ? tamanoMensaje >= 601 ? tamanoMensaje >= 1037 ? 708 : 498 : 246 : 204 : 192,
          padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
             decoration : new BoxDecoration(
                 color: Colors.white,
