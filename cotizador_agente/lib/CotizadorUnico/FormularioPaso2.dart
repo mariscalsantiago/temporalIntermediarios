@@ -1016,7 +1016,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                           leading: (isChangeicon1 == true) ? Image.asset("assets/icon/cotizador/expand_less.png", height: 24, width: 24,) : Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
                                           trailing: SizedBox.shrink(),
                                           initiallyExpanded: true,
-                                          title: Text(widget.secciones[index].seccion,
+                                          title: Text(widget.secciones[index].seccion.toString().replaceAll(" -", ""),
                                             style: new TextStyle(
                                               fontSize: 14.0,
                                               fontWeight: FontWeight.w700,
@@ -1164,7 +1164,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                               leading: (isChangeicon2 == true) ? Image.asset("assets/icon/cotizador/expand_less.png", height: 24, width: 24,) : Image.asset("assets/icon/cotizador/expand_more.png", height: 24, width: 24,),
                                               trailing: SizedBox.shrink(),
                                               initiallyExpanded: true,
-                                              title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].seccion,
+                                              title: Text(Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[index_paso2].seccion.toString().replaceAll(" -", ""),
                                                 style: new TextStyle(
                                                   fontSize: 14.0,
                                                   fontWeight: FontWeight.w700,
