@@ -179,6 +179,7 @@ class _listaCUAState extends State<listaCUA> {
             _character = posicion;
             if(widget.isDA){
               posicionDA = posicion;
+              prefs.setInt("posicionDA", posicionDA);
               valorDA = widget.list.elementAt(posicion);
             }else{
               posicionCUA = posicion;
@@ -204,6 +205,7 @@ class _listaCUAState extends State<listaCUA> {
             _character = value;
             if(widget.isDA){
               posicionDA = value;
+              prefs.setInt("posicionDA", posicionDA);
               valorDA = widget.list.elementAt(value);
 
             }else{

@@ -55,7 +55,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  String dropdownValue =  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos" : prefs.getBool("showAP") ? "Gastos Médicos" : "";
+  String dropdownValue =  prefs!=null&&prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos" : prefs.getBool("showAP") ? "Gastos Médicos" : "";
   String _address = "";
   List<String> listaCotizadores = [];
   bool showRamos;
@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
       dropdownValue = "Gastos Médicos";
     }else{
       showRamos = false;
-      //Todo º y retorno login
+      //Todo Alerta y retorno login
       listaCotizadores=[];
       dropdownValue = "";
     }
@@ -199,16 +199,13 @@ class _HomePageState extends State<HomePage> {
       _isActiveAutos = validateNotEmptyBool(event.snapshot.value["dataAutos"]["show"]);
       if(!_isActiveAutos){
         List _whiteList = event.snapshot.value["dataAutos"]["whitelist"];
-        final email = datosUsuario.emaillogin?.toLowerCase() ?? '';
-        if (email.isNotEmpty && _whiteList.contains(email)) {
-          _isActiveAutos = true;
-        }
-        /*for(String name in _whiteList){
+        for(String name in _whiteList){
           bool _whiteListMember = datosUsuario.emaillogin!=null ? name.toLowerCase() == datosUsuario.emaillogin.toLowerCase()? true : false:false;
           if(_whiteListMember){
             _isActiveAutos=true;
           }
-        }*/
+        }
+
       }
       if(mounted) setState(() { });
       createCotizadoresRamo();

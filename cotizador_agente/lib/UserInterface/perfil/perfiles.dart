@@ -26,6 +26,7 @@ import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/main.dart';
+import 'package:cotizador_agente/modelos/ConexionModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -97,7 +98,12 @@ class _PerfilPageState extends State<PerfilPage> {
     initializeTimerOtroUsuario(context,callback);
 
     systemDeviceInit();
-    posicionDA = 0;
+    if(prefs.get("posicionDA") != null){
+      posicionDA = prefs.get("posicionDA");
+    } else {
+      posicionDA = 0;
+    }
+
     _saving = false;
     super.initState();
     listadoDA = [];
@@ -193,6 +199,7 @@ class _PerfilPageState extends State<PerfilPage> {
     } else {
       showCua = false;
     }
+    print("showCUA uno ${showCua}");
   }
 
   void getCuas(BuildContext context) async {
@@ -238,6 +245,7 @@ class _PerfilPageState extends State<PerfilPage> {
     } else {
       showCua = false;
     }
+    print("showCUA dos ${showCua}");
   }
   
 
@@ -1145,9 +1153,7 @@ class _PerfilPageState extends State<PerfilPage> {
                     _saving = true;
                   });
 
-                  OrquetadorOtpJwtModel optRespuesta =
-                      await orquestadorOTPJwtServicio(context,
-                          prefs.getString("medioContactoTelefono"), false);
+                  OrquetadorOtpJwtModel optRespuesta = await orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"), false);
 
                   setState(() {
                     _saving = false;
@@ -1168,17 +1174,22 @@ class _PerfilPageState extends State<PerfilPage> {
 
                       });
                     } else {
+                      print(optRespuesta.idError);
+
                       if(optRespuesta.idError == "015"){
                         customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
                             responsive, funcion);
                       } else{
-                        customAlert(AlertDialogType.errorServicio, context, "",
-                            "", responsive, funcion);
+                        customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
                       }
                     }
                   } else {
-                    customAlert(AlertDialogType.errorServicio, context, "", "",
-                        responsive, funcion);
+                    if(conexionModel!=null&&conexionModel.status){
+                      customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
+                      conexionModel = null;
+                    }else{
+                      customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
+                    }
                   }
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginActualizarContrasena(responsive: widget.responsive)));
                 },
@@ -1336,8 +1347,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                       funcionAlertaBiometricos);
                                 } else if (on == false) {
                                   print("if3");
-                                  is_available_finger && is_available_face
-                                      ? customAlert(
+                                  Platform.isAndroid ? customAlert(
                                           AlertDialogType
                                               .Desactivar_huella_digital_face,
                                           context,
@@ -1381,7 +1391,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                 print("else3");
                                 if (isSwitchedPerfill == false) {
                                   print("if5");
-                                  is_available_finger && is_available_face
+                                  Platform.isAndroid
                                       ? customAlert(
                                           AlertDialogType
                                               .opciones_de_inicio_de_sesion,
@@ -1408,7 +1418,7 @@ class _PerfilPageState extends State<PerfilPage> {
                                               funcionAlertaBiometricos);
                                 } else if (on == false) {
                                   print("if8");
-                                  is_available_finger && is_available_face
+                                  Platform.isAndroid
                                       ? customAlert(
                                           AlertDialogType
                                               .Desactivar_huella_digital_face,
@@ -1628,8 +1638,9 @@ class _PerfilPageState extends State<PerfilPage> {
       }
     } catch (e) {
       print("_imgFromCamera_perfiles");
-      customAlert(AlertDialogType.errorPermisosGeneric, context, "", "",
-          responsive, funcion);
+      if(e.toString().contains("denied")){
+        customAlert(AlertDialogType.errorPermisosGeneric, context, "", "", responsive, (){});
+      }
       print(e);
     }
   }
@@ -1673,8 +1684,9 @@ print("_imgFromGallery");
     } catch (e) {
       print("catch _imgFromGallery_perfiles");
       print("catch $e");
-      customAlert(AlertDialogType.errorPermisosGeneric, context, "", "",
-          responsive, funcion);
+      if(e.toString().contains("denied")){
+        customAlert(AlertDialogType.errorPermisosGeneric, context, "", "", responsive, (){});
+      }
     }
   }
 
@@ -1769,6 +1781,7 @@ print("_imgFromGallery");
       } else {
         showCua = false;
       }
+      print("showCUA tres ${showCua}");
     });
   }
 

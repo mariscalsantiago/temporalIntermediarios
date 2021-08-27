@@ -13,6 +13,7 @@ import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
+import 'package:cotizador_agente/modelos/ConexionModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -27,14 +28,22 @@ import 'package:cotizador_agente/Functions/Analytics.dart';
 AppConfig _appEnvironmentConfig;
 
 Future<consultaPreguntasSecretasModel> consultarPreguntaSecretaServicio(
-    BuildContext context, String IdParticipante) async {
+    BuildContext context, String IdParticipante,Responsive responsive) async {
+
   print("consultarPreguntaSecretaServicio");
   _appEnvironmentConfig = AppConfig.of(context);
 
-  ConnectivityStatus _connectivityStatus =
-      await ConnectivityServices().getConnectivityStatus(false);
+  bool conecxion = false;
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_conexion_error");
+    conecxion = false;
+  }
 
-  if (_connectivityStatus.available) {
+  print("== Log In ${conecxion}");
+  //prefs=await SharedPreferences.getInstance();
+  if(conecxion) {
     http.Response _response;
 
     try {
@@ -65,7 +74,7 @@ Future<consultaPreguntasSecretasModel> consultarPreguntaSecretaServicio(
           if (_response.statusCode == 200) {
             Map map = json.decode(_response.body);
             consultaPreguntasSecretasModel _datosConsulta =
-                consultaPreguntasSecretasModel.fromJson(map);
+            consultaPreguntasSecretasModel.fromJson(map);
             if (_datosConsulta != null) {
               return _datosConsulta;
             } else {
@@ -98,8 +107,8 @@ Future<consultaPreguntasSecretasModel> consultarPreguntaSecretaServicio(
       print("loginValidaUsuario catch -- $e");
       return null;
     }
-  } else {
-    //errorConexion = true;
+  } else{
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
   }
 }
@@ -111,14 +120,23 @@ Future<consultaPreguntasSecretasModel> actualizarPreguntaSecretaServicio(
     String preguntaUno,
     String respuestaUno,
     String preguntaDos,
-    String respuestaDos) async {
+    String respuestaDos, Responsive responsive) async {
   print("actualizarPreguntaSecretaServicio");
   _appEnvironmentConfig = AppConfig.of(context);
 
-  ConnectivityStatus _connectivityStatus =
-      await ConnectivityServices().getConnectivityStatus(false);
 
-  if (_connectivityStatus.available) {
+  bool conecxion = false;
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_conexion_error");
+    conecxion = false;
+  }
+
+  print("== actualizarPreguntaSecretaServicio conecxion: ${conecxion}");
+
+
+  if (conecxion) {
     Map _loginBody = {
       "uid": IdParticipante,
       "password": contrasena,
@@ -196,7 +214,7 @@ Future<consultaPreguntasSecretasModel> actualizarPreguntaSecretaServicio(
       return null;
     }
   } else {
-    //errorConexion = true;
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
   }
 }
@@ -205,14 +223,21 @@ Future<cambioContrasenaModel> cambioContrasenaServicio(
     BuildContext context,
     String contrasenaActual,
     String contrasenaNueva,
-    String idIntermediario) async {
+    String idIntermediario,Responsive responsive) async {
   print("cambioContrasenaServicio");
   _appEnvironmentConfig = AppConfig.of(context);
 
-  ConnectivityStatus _connectivityStatus =
-      await ConnectivityServices().getConnectivityStatus(false);
+  bool conecxion = false;
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_conexion_error");
+    conecxion = false;
+  }
 
-  if (_connectivityStatus.available) {
+  print("== cambioContrasenaServicio conecxion: ${conecxion}");
+
+  if(conecxion) {
     http.Response _response;
 
     Map _loginBody = {"actual": contrasenaActual, "nueva": contrasenaNueva};
@@ -289,21 +314,27 @@ Future<cambioContrasenaModel> cambioContrasenaServicio(
       return null;
     }
   } else {
-    //errorConexion = true;
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
   }
 }
 
 Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(
-    BuildContext context, String IdParticipante, String password) async {
+    BuildContext context, String IdParticipante, String password, Responsive responsive) async {
   print("reestablecerContrasenaServicio");
   _appEnvironmentConfig = AppConfig.of(context);
 
-  ConnectivityStatus _connectivityStatus =
-      await ConnectivityServices().getConnectivityStatus(false);
+  bool conecxion = false;
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_conexion_error");
+    conecxion = false;
+  }
 
-  if (_connectivityStatus.available) {
-    print("available ${_connectivityStatus.available}");
+  print("== reestablecerContrasenaServicio conecxion: ${conecxion}");
+
+  if(conecxion) {
     http.Response _response;
 
     Map<String, dynamic> _loginBody = {
@@ -381,29 +412,29 @@ Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(
       return null;
     }
   } else {
-    //errorConexion = true;
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
   }
 }
 
 Future<consultaPorCorreoNuevoServicio> consultaUsuarioPorCorreo(
-    BuildContext context, String correo) async {
+    BuildContext context, String correo, Responsive responsive) async {
   print("consultaUsuarioPorCorreo");
   _appEnvironmentConfig = AppConfig.of(context);
 
-  ConnectivityStatus _connectivityStatus =
-      await ConnectivityServices().getConnectivityStatus(false);
 
-  if (_connectivityStatus.available) {
+  bool conecxion = false;
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_conexion_error");
+    conecxion = false;
+  }
+
+  print("== Log In ${conecxion}");
+
+  if(conecxion) {
     http.Response _response;
-
-    /*Map _loginBody = {
-      "consultaUsuarioPorCorreo": {
-        "perfil": "Intermediario",
-        "correoElectronico": correo
-      }
-    };*/
-    //String _loginJSON = json.encode(_loginBody);
 
     try {
       _response = await http.get(Uri.parse(_appEnvironmentConfig.servicioNuevoConsultaPorCorreo+"${correo}"),
@@ -481,22 +512,30 @@ Future<consultaPorCorreoNuevoServicio> consultaUsuarioPorCorreo(
       return null;
     }
   } else {
-    //errorConexion = true;
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
+
   }
 }
 
 Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context,
-    String correo, String celular, bool esReestablecer) async {
+    String correo, String celular, bool esReestablecer, Responsive responsive) async {
   print("orquestadorOTPServicio");
   _appEnvironmentConfig = AppConfig.of(context);
 
   if (context != null) DinamicCustumWidget(context: context).loadinGif();
 
-  ConnectivityStatus _connectivityStatus =
-      await ConnectivityServices().getConnectivityStatus(false);
+  bool conecxion = false;
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_conexion_error");
+    conecxion = false;
+  }
 
-  if (_connectivityStatus.available) {
+  print("== Log In ${conecxion}");
+
+  if(conecxion) {
     http.Response _response;
 
     Map _loginBody;
@@ -588,22 +627,27 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context,
     }
   } else {
     if (context != null) print("_connectivityStatus context");
-    //errorConexion = true;
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
   }
 }
 
-Future<ValidarOTPModel> validaOrquestadorOTPServicio(
-    BuildContext context, String idOperacion, String OTP) async {
+Future<ValidarOTPModel> validaOrquestadorOTPServicio(BuildContext context, String idOperacion, String OTP) async {
   print("validaOrquestadorOTPServicio");
   print("idOperacion ${idOperacion}");
-  print("OTP ${OTP}");
-  _appEnvironmentConfig = AppConfig.of(context);
+  print("OTP ${OTP}");_appEnvironmentConfig = AppConfig.of(context);
+  Responsive responsive = Responsive.of(context);
+  bool conecxion = false;
+  try{
+    conecxion = await validatePinig();
+  } catch(e){
+    sendTag("appinter_conexion_error");
+    conecxion = false;
+  }
 
-  ConnectivityStatus _connectivityStatus =
-      await ConnectivityServices().getConnectivityStatus(false);
+  print("== Log In ${conecxion}");
 
-  if (_connectivityStatus.available) {
+  if(conecxion) {
     http.Response _response;
 
     try {
@@ -671,8 +715,9 @@ Future<ValidarOTPModel> validaOrquestadorOTPServicio(
       return null;
     }
   } else {
-    //errorConexion = true;
+    customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
+
   }
 }
 
@@ -891,8 +936,7 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(
   print("orquestadorOTPJwtServicio");
   _appEnvironmentConfig = AppConfig.of(context);
 
-  ConnectivityStatus _connectivityStatus =
-      await ConnectivityServices().getConnectivityStatus(false);
+  ConnectivityStatus _connectivityStatus = await ConnectivityServices().getConnectivityStatus(false);
 
   if (_connectivityStatus.available) {
     http.Response _response;
@@ -969,6 +1013,8 @@ Future<OrquetadorOtpJwtModel> orquestadorOTPJwtServicio(
       return null;
     }
   } else {
+    print("OrquetadorOtpJwtModel");
+    conexionModel = ConexionModel.fromJson({"status":true, "messages":"Conexión en servicio de OTP"});
     //errorConexion = true;
     return null;
   }

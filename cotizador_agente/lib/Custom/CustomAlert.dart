@@ -129,38 +129,148 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
     String message, Responsive responsive, Function callback) async {
   switch (type) {
     case AlertDialogType.errorPermisosGeneric:
-        showDialog(
+      showDialog(
+          useSafeArea: false,
+          barrierDismissible: true,
+          barrierColor: Theme.Colors.Back.withOpacity(0),
           context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: new Text("Error de permisos.",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              content: new Text(
-                  "Se produjo un error verifica tus permisos otorgados ve a configuraciones y valida que esten habilitados para esta aplicacion",
-                  style: TextStyle(
-                      color: Theme.Colors.appBarTextBlueDark,
-                      fontSize: 16.0,
-                      fontFamily: "Roboto")),
-              actions: <Widget>[
-                new FlatButton(
-                  child: new Text("ACEPTAR",
-                      style: TextStyle(
-                          color: Theme.Colors.primary,
-                          fontSize: 16.0,
-                          fontFamily: "Roboto")),
-                  onPressed: () {
-                    isShowAlert = false;
-                    Navigator.of(context).pop();
-                  },
+          builder: (context) {
+            Responsive responsive = Responsive.of(context);
+            return Stack(
+              children: [
+                Opacity(
+                  opacity: 0.6,
+                  child: Container(
+                    height: responsive.height,
+                    width: responsive.width,
+                    color: Theme.Colors.Azul_gnp,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: responsive.width,
+                      child: Card(
+                        color: Theme.Colors.White,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            //Nuevo icono
+                            Center(
+                                child: Container(
+                                    margin: EdgeInsets.only(top: responsive.hp(3)),
+                                    child: Image.asset('assets/icon/phonelink.png'))),
+                            Container(
+                              margin: EdgeInsets.only(top: responsive.hp(5)),
+                              child: Center(
+                                child: Text("Configuración de permisos.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Theme.Colors.Encabezados,
+                                      fontSize: responsive.ip(2.3)),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                  left: responsive.width * 0.04,
+                                right: responsive.width * 0.04,
+                                  ),
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
+                                  left: responsive.wp(2),
+                                  right: responsive.wp(2),
+                                  bottom: responsive.height * 0.02,
+                                ),
+                                child: Center(
+                                  child: Text("No se logró realizar la configuración de los permisos que requiere tu App Intermediario GNP.",
+                                    style: TextStyle(
+                                        height:responsive.ip(0.2),
+                                        color:Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.5)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          Container(
+                          margin: EdgeInsets.only(
+                          left: responsive.width * 0.04,
+                              right: responsive.width * 0.04,
+                          bottom: responsive.height * 0.04),
+                          child: Container(
+                              margin: EdgeInsets.only(
+                                left: responsive.wp(2),
+                                right: responsive.wp(2),
+                              ),
+                              child: Center(
+                                child: Text("Ve a Ajustes y válida que los permisos están habilitados para tu App Intermediario GNP.",
+                                  style: TextStyle(
+                                      height:responsive.ip(0.2),
+                                      color:Theme.Colors.Funcional_Textos_Body,
+                                      fontSize: responsive.ip(1.5)),
+                                ),
+                              ),
+                            )),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.GNP,
+                                  onPressed: () {
+                                    SystemSettings.app();
+                                  },
+                                  child: Text("CONFIGURAR PERMISOS",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.White,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: responsive.hp(6.25),
+                                width: responsive.wp(90),
+                                margin: EdgeInsets.only(
+                                  bottom: responsive.height * 0.02,
+                                  top: responsive.height * 0.02,
+                                ),
+                                child: RaisedButton(
+                                  elevation: 0,
+                                  color: Theme.Colors.White,
+                                  onPressed: () async {
+                                      Navigator.pop(context, true);
+                                  },
+                                  child: Text(
+                                    "CERRAR",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Theme.Colors.GNP,
+                                        fontSize: responsive.ip(1.8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );
-          },
-        );
+          });
 
       break;
 
@@ -3466,6 +3576,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                   padding: EdgeInsets.zero,
                                   color: Theme.Colors.White,
                                   onPressed: () {
+                                    callback();
                                     Navigator.pop(context, true);
                                   },
                                   child: Text(
@@ -7144,7 +7255,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
           useSafeArea: false,
           barrierDismissible: true,
           barrierColor: Theme.Colors.Back.withOpacity(0),
-          context: context,
+          context: navigatorKey.currentState.overlay.context,
           builder: (context) {
               dialogMobileContext = context;
             Responsive responsive = Responsive.of(context);
@@ -7250,7 +7361,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
           useSafeArea: false,
           barrierDismissible: true,
           barrierColor: Theme.Colors.Back.withOpacity(0),
-          context: context,
+          context: navigatorKey.currentState.overlay.context,
           builder: (context) {
             dialogConnectivityContext = context;
             Responsive responsive = Responsive.of(context);
@@ -7306,7 +7417,6 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                   top: responsive.height * 0.05,
                                   left: responsive.width * 0.04,
                                   right: responsive.width * 0.04,
-                                  bottom: responsive.height * 0.05,
                                 ),
                                 child: Text(
                                   "Comprueba que tienes acceso a una red Wi-Fi o que cuentas con datos móviles activados.",
@@ -7315,6 +7425,25 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                       fontSize: responsive.ip(2.0)),
                                 ),
                               ),
+                              Container(
+                                margin: EdgeInsets.only(
+                                    top: responsive.height * 0.06,
+                                    bottom: responsive.height * 0.05),
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      callback();
+                                      Navigator.pop(context, true);
+                                    },
+                                    child: Text(
+                                      "CERRAR",
+                                      style: TextStyle(
+                                          color: Theme.Colors.GNP,
+                                          fontSize: responsive.ip(2.2)),
+                                    ),
+                                  ),
+                                ),
+                              )
                               /*Container(
                                 margin: EdgeInsets.only(
                                     top: responsive.height * 0.06,
@@ -7990,7 +8119,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                     color: Theme.Colors.White,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Center(
                           child: Container(
@@ -8006,7 +8135,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                         ),
                         Center(
                           child: Text(
-                            "Servicio no disponible",
+                            "Codigo de verificación",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Theme.Colors.Encabezados,
@@ -8021,7 +8150,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                 left: responsive.wp(5)),
                             child: Text.rich(TextSpan(
                                 text:
-                                "Has superado el límite de envío de códigos de verificación. En 7 min podrás solicitar su envío nuevamente",
+                                "Has superado el límite de envío de códigos de verificación. En 7 minutos podrás solicitar su envío nuevamente",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(1.7))
@@ -9612,7 +9741,7 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
 
     if (Platform.isIOS) {
       authenticated = await localAuth.authenticateWithBiometrics(
-          localizedReason:is_available_finger ?  'Coloca tu dedo para continuar.' : 'Mira fijamente a la cámara para continuar.',
+          localizedReason: is_available_finger ?  'Coloca tu dedo para continuar.' : 'Mira fijamente a la cámara para continuar.',
           iOSAuthStrings: new IOSAuthMessages (
               lockOut: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
               goToSettingsDescription:  is_available_finger
@@ -9624,26 +9753,14 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
           stickyAuth: false);
     } else {
       authenticated = await localAuth.authenticateWithBiometrics(
-          localizedReason: is_available_finger && is_available_face
-              ? "Coloca tu dedo o mira a la cámara para continuar."
-              : is_available_finger
-              ? "Coloca tu dedo para continuar"
-              : "Mira fijamente a la cámara",
+          localizedReason: "Coloca tu dedo o mira a la cámara para continuar.",
           androidAuthStrings: new AndroidAuthMessages(
               fingerprintNotRecognized: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
               signInTitle: "Inicio de sesión",
               fingerprintHint: '',
               cancelButton: "Cancelar",
-              fingerprintRequiredTitle: is_available_finger && is_available_face ?
-              "Solicitud de huella digital o reconocimiento facial"
-                  : is_available_finger
-                  ? "Solicitud de huella digital"
-                  : "Mira fijamente a la cámara",
-              goToSettingsDescription: is_available_finger && is_available_face ?
-              "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
-                  : is_available_finger
-                  ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
-                  : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
+              fingerprintRequiredTitle: "Solicitud de huella digital o reconocimiento facial",
+              goToSettingsDescription: "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla.",
               goToSettingsButton: "Ir a configuraciones"),
           useErrorDialogs: true,
           stickyAuth: false);
@@ -9673,7 +9790,7 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
             prefs.getInt("localAuthCountIOS") == 102) {
           prefs.setInt("localAuthCountIOS", 102);
           localAuth.stopAuthentication();
-          is_available_finger && is_available_face
+          Platform.isAndroid
               ? customAlert(
                   AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO,
                   context,
@@ -9694,7 +9811,7 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
         } else {
           prefs.setInt("localAuthCountIOS", 100);
           customAlert(
-              is_available_face && is_available_finger
+              Platform.isAndroid
                   ? AlertDialogType.Rostro_huella_no_reconocido
                   : is_available_face
                       ? AlertDialogType.Rostro_no_reconocido
@@ -9727,8 +9844,8 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
       prefs.setInt("localAuthCount", 5);
       localAuth.stopAuthentication();
       customAlert(
-          is_available_face && is_available_finger
-              ? AlertDialogType.Rostro_huella_no_reconocido
+            Platform.isAndroid ?
+               AlertDialogType.Rostro_huella_no_reconocido
               : is_available_face
                   ? AlertDialogType.Rostro_no_reconocido
                   : AlertDialogType.Huella_no_reconocida,
@@ -9744,8 +9861,8 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
       localAuth.stopAuthentication();
 
       customAlert(
-          is_available_face && is_available_finger
-              ? AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado
+Platform.isAndroid
+    ? AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado
               : is_available_finger
                   ? AlertDialogType.inicio_de_sesion_con_huella_bloqueado
                   : AlertDialogType.inicio_de_sesion_con_facial_bloqueado,
@@ -9757,7 +9874,7 @@ Future<void> doLoginBiometrics(BuildContext context, Function callback) async {
     } else if (e.code == auth_error.notAvailable) {
       prefs.setInt("localAuthCountIOS", 102);
       localAuth.stopAuthentication();
-      is_available_finger && is_available_face
+      Platform.isAndroid
           ? customAlert(AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context,
               "", "", Responsive.of(context), BiometricInactividadBack)
           : is_available_finger

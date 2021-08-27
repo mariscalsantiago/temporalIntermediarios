@@ -578,12 +578,6 @@ class _CampoDinamicoState extends State<CampoDinamico> {
           return ToggleConValores(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);
         }
 
-      case "toogle":
-        {
-          // return CheckBoxDinamicoDependiente(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);
-          return ToggleConValores(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);
-        }
-
       case "select_con_post":
         {
 

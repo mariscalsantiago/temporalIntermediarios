@@ -1288,7 +1288,7 @@ class _LoginRestablecerContrasenaState
                   await reestablecerContrasenaServicio(
                       context,
                       idParticipanteValidaPorCorre,
-                      controllerNuevaContrasena.text);
+                      controllerNuevaContrasena.text,responsive);
 
               print("restablecerContrasena     ${restablecerContrasena}");
 
