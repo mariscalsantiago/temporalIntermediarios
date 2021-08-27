@@ -295,8 +295,9 @@ class _VerFotoPageState extends State<VerFotoPage> {
       }
       } catch (e) {
       print("_imgFromCamera_verFoto");
-      customAlert(AlertDialogType.errorPermisosGeneric, context, "", "",
-          responsive, (){});
+      if(e.toString().contains("denied")){
+        customAlert(AlertDialogType.errorPermisosGeneric, context, "", "", responsive, (){});
+      }
       print(e);
    }
   }
@@ -351,8 +352,9 @@ class _VerFotoPageState extends State<VerFotoPage> {
       } catch (e) {
         print("catch _imgFromGallery_verFoto");
         print("catch $e");
-        customAlert(AlertDialogType.errorPermisosGeneric, context, "", "",
-            responsive, (){});
+        if(e.toString().contains("denied")){
+          customAlert(AlertDialogType.errorPermisosGeneric, context, "", "", responsive, (){});
+        }
       }
 
 

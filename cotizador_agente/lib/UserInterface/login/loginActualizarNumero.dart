@@ -549,7 +549,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                   context,
                   prefs.getString("correoUsuario"),
                   controllerNumero.text,
-                  prefs.getBool('flujoOlvideContrasena'));
+                  prefs.getBool('flujoOlvideContrasena'),responsive);
 
               setState(() {
                 _saving = false;
@@ -614,7 +614,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         context,
         prefs.getString("correoUsuario"),
         prefs.getString("medioContactoTelefono"),
-        prefs.getBool('flujoOlvideContrasena'));
+        prefs.getBool('flujoOlvideContrasena'),responsive);
 
     setState(() {
       _saving = false;

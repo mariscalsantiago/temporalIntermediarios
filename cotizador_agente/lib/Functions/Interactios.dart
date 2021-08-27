@@ -156,7 +156,6 @@ Future<void> logOutOtherUser(BuildContext context, Function callback) async {
     else{
       if(doTimerOther){
       print("logOutOtherUser reinicio timer");
-      hasInternetFirebase = true;
       initializeTimerOtroUsuario(context,  callback);
       }
     }

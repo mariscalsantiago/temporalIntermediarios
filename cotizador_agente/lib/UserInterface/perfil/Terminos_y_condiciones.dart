@@ -406,7 +406,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
             switch(prefs.getInt("localAuthCountIOS")){
               case 100:
                 Navigator.pop(context, true);
-                customAlert(is_available_face && is_available_finger
+                customAlert(Platform.isAndroid
                     ? AlertDialogType.Rostro_huella_no_reconocido :
                 is_available_face ? AlertDialogType.Rostro_no_reconocido
                     : AlertDialogType.Huella_no_reconocida, context, "", "",
@@ -414,7 +414,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                 break;
               case 101:
                 Navigator.pop(context, true);
-                customAlert(is_available_face && is_available_finger ?
+                customAlert(Platform.isAndroid ?
                 AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado :
                 is_available_finger ?
                 AlertDialogType.inicio_de_sesion_con_huella_bloqueado:
@@ -423,7 +423,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
               case 102:
               case 103:
               Navigator.pop(context, true);
-              is_available_finger && is_available_face ? customAlert(
+              Platform.isAndroid ? customAlert(
                     AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
                     responsive, widget.callback) :
                 is_available_finger ? customAlert(
@@ -453,26 +453,14 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
                   stickyAuth: false);
             } else {
               didAuthenticate = await localAuth.authenticateWithBiometrics(
-                  localizedReason: is_available_finger && is_available_face
-                      ? "Coloca tu dedo o mira a la cámara para continuar."
-                      : is_available_finger
-                      ? "Coloca tu dedo para continuar"
-                      : "Mira fijamente a la cámara",
+                  localizedReason: "Coloca tu dedo o mira a la cámara para continuar.",
                   androidAuthStrings: new AndroidAuthMessages(
                       fingerprintNotRecognized: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
                       signInTitle: "Inicio de sesión",
                       fingerprintHint: '',
                       cancelButton: "Cancelar",
-                      fingerprintRequiredTitle: is_available_finger && is_available_face ?
-                        "Solicitud de huella digital o reconocimiento facial"
-                        : is_available_finger
-                          ? "Solicitud de huella digital"
-                          : "Mira fijamente a la cámara",
-                      goToSettingsDescription: is_available_finger && is_available_face ?
-                      "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
-                      : is_available_finger
-                      ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
-                      : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
+                      fingerprintRequiredTitle: "Solicitud de huella digital o reconocimiento facial",
+                      goToSettingsDescription: "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla.",
                       goToSettingsButton: "Ir a configuraciones"),
                   useErrorDialogs: true,
                   stickyAuth: false);
@@ -490,9 +478,9 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
             prefs.setBool("activarBiometricos", true);
           });
 
-          is_available_finger && is_available_face ?
+          Platform.isAndroid ?
             customAlert(AlertDialogType.activacionExitosa_Huella_Face, context, "", "", responsive, widget.callback) :
-          is_available_finger ?
+          Platform.isIOS && is_available_finger ?
             customAlert(AlertDialogType.activacionExitosa_Huella, context, "", "", responsive, widget.callback)
           :
           customAlert(AlertDialogType.activacionExitosa_Face, context, "", "", responsive, widget.callback);
@@ -514,7 +502,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
               prefs.setInt("localAuthCountIOS", 102);
               localAuth.stopAuthentication();
               Navigator.pop(context, true);
-              is_available_finger && is_available_face ? customAlert(
+              Platform.isAndroid ? customAlert(
                   AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
                   responsive, widget.callback) :
               is_available_finger ? customAlert(
@@ -525,8 +513,8 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
             }else{
               prefs.setInt("localAuthCountIOS", 100);
               Navigator.pop(context, true);
-              customAlert(is_available_face && is_available_finger
-                  ? AlertDialogType.Rostro_huella_no_reconocido :
+              customAlert(Platform.isAndroid ?
+              AlertDialogType.Rostro_huella_no_reconocido :
               is_available_face ? AlertDialogType.Rostro_no_reconocido
                   : AlertDialogType.Huella_no_reconocida, context, "", "",
                   responsive, widget.callback);
@@ -553,8 +541,8 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
           prefs.setInt("localAuthCount", 5);
           localAuth.stopAuthentication();
           Navigator.pop(context, true);
-          customAlert(is_available_face && is_available_finger
-              ? AlertDialogType.Rostro_huella_no_reconocido :
+          customAlert(Platform.isAndroid ?
+               AlertDialogType.Rostro_huella_no_reconocido :
           is_available_face ? AlertDialogType.Rostro_no_reconocido
               : AlertDialogType.Huella_no_reconocida, context, "", "",
               responsive, widget.callback);
@@ -564,7 +552,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
           prefs.setInt("localAuthCount", 6);
           localAuth.stopAuthentication();
           Navigator.pop(context, true);
-          customAlert(is_available_face && is_available_finger ?
+          customAlert(Platform.isAndroid ?
           AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado :
           is_available_finger ?
           AlertDialogType.inicio_de_sesion_con_huella_bloqueado :
@@ -574,7 +562,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
           prefs.setInt("localAuthCountIOS", 102);
           localAuth.stopAuthentication();
           Navigator.pop(context, true);
-          is_available_finger && is_available_face ? customAlert(
+          Platform.isAndroid ? customAlert(
               AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
               responsive, widget.callback) :
           is_available_finger ? customAlert(
@@ -582,32 +570,7 @@ class _TerminosYCondicionesPageState extends State<TerminosYCondicionesPage> {
               responsive, widget.callback) :
           customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
               responsive, widget.callback);
-        }else if (e.code == auth_error.otherOperatingSystem ){
-          prefs.setInt("localAuthCountIOS", 102);
-          localAuth.stopAuthentication();
-          Navigator.pop(context, true);
-          is_available_finger && is_available_face ? customAlert(
-              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive, widget.callback) :
-          is_available_finger ? customAlert(
-              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive, widget.callback) :
-          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
-              responsive, widget.callback);
-          }else{
-          prefs.setInt("localAuthCountIOS", 102);
-          localAuth.stopAuthentication();
-          Navigator.pop(context, true);
-          is_available_finger && is_available_face ? customAlert(
-              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive, widget.callback) :
-          is_available_finger ? customAlert(
-              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive, widget.callback) :
-          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
-              responsive, widget.callback);
-
-          }
+        }
         }
       }
   }

@@ -7,6 +7,7 @@ import 'dart:typed_data';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
+import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:dio/dio.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -56,7 +57,7 @@ class _AutosPageState extends State<AutosPage> {
   final urlController = TextEditingController();
   bool hasAutosError = false;
   String hasAutosErrorUrl;
-
+  bool _saving;
 
   InAppWebViewGroupOptions options = InAppWebViewGroupOptions(
       crossPlatform: InAppWebViewOptions(
@@ -84,12 +85,12 @@ class _AutosPageState extends State<AutosPage> {
 
   @override
   void initState() {
+    _saving = false;
     print("cotizadorAutos");
     Inactivity(context:context).initialInactivity(functionInactivity);
     validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
 
     doReturn = true;
-
 
     super.initState();
   }
@@ -124,110 +125,159 @@ class _AutosPageState extends State<AutosPage> {
           child: Scaffold(
             resizeToAvoidBottomPadding:true,
             resizeToAvoidBottomInset:true,
-            body: InAppWebView(
-              key: webViewKey,
-              initialUrl: appEnvironmentConfig.cotizadorAutos+'?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}&cveDa=$DA&cveHerramienta=APP",
-              initialOptions: options,
-              onWebViewCreated: (InAppWebViewController controller) {
-                webViewController = controller;
-              },
-              onLoadStart: (controller, url) {
-                if (url.contains(returnToApp) || url.contains("ReturnToApp") || url.contains("returntoApp") || url.contains("returntoapp") ) {
-                  Inactivity(context:context).cancelInactivity();
-                  Navigator.pop(context,true);
-                }
-                print("onLoadStart ${url}");
-                Inactivity(context:context).initialInactivity(functionInactivity);
-              },
-              onLoadError: (controller, url, code, message) {
-                print("onLoadError:  $code $url,, $message");
-                if(code!=null) {
-                  if ("$code" == "-1004" || "$code" == "-5") {
-                    hasInternetFirebase = false;
-                    hasAutosError = true;
-                    hasAutosErrorUrl = url;
-                    if (!isMessageWifi) {
-                      isMessageWifi = true;
-                      customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentContext, "", "", widget.responsive, funcionAlertaWifi);
-                    }
-                    Future.delayed(const Duration(seconds: 5), () {
-                      Inactivity(context:context).cancelInactivity();
-                      if(isMessageWifi) {
-                        if(dialogConnectivityContext!=null) {
-                          isMessageWifi = false;
-                          Navigator.pop(navigatorKey.currentContext);
-                        }
-                      }
-                      Navigator.pop(context,true);
-                      return ShouldOverrideUrlLoadingAction.ALLOW;
-                    });
-
-                  }
-                }
-
-
-
-              },
-              onLoadHttpError: (InAppWebViewController controller, String url, int i, String s) async {
-                print('CUSTOM_HANDLER: $i, $s');
-                /** instead of printing the console message i want to render a static page or display static message **/
-              },
-              onLoadStop: (controller, url) {
-                print("onLoadStop ${url}");
-                Inactivity(context:context).initialInactivity(functionInactivity);
-              },
-              onPrint:(controller, url){
-                Inactivity(context:context).initialInactivity(functionInactivity);
-                print("---mUrl---");
-                String strWithDig =url;
-                String submUrl=strWithDig.replaceAll(RegExp(r'+'), '');
-                String submUrlSpace=submUrl.replaceAll(RegExp(r' '), '');
-                /// launch(submUrlSpace);
-
-              } ,
-              onScrollChanged: ( controller, x, y){
-                Inactivity(context:context).initialInactivity(functionInactivity);
-                print("onPrint ${x}");
-                print("onPrint ${y}");
-              },
-              androidOnPermissionRequest: (controller, origin, resources) async {
-                return PermissionRequestResponse(
-                    resources: resources,
-                    action: PermissionRequestResponseAction.GRANT);
-              },
-              shouldOverrideUrlLoading: (controller, shouldOverrideUrlLoadingRequest) async {
-                print("URL: ${shouldOverrideUrlLoadingRequest.url}");
-                if (shouldOverrideUrlLoadingRequest.url.contains(returnToApp) || shouldOverrideUrlLoadingRequest.url.contains("ReturnToApp") || shouldOverrideUrlLoadingRequest.url.contains("returntoApp") || shouldOverrideUrlLoadingRequest.url.contains("returntoapp") ) {
-                  Inactivity(context:context).cancelInactivity();
-                  Navigator.pop(context,true);
-                }
-                return ShouldOverrideUrlLoadingAction.ALLOW;
-              },
-              onConsoleMessage: (controller, consoleMessage) {
-                Inactivity(context:context).initialInactivity(functionInactivity);
-                print("consoleMessage");
-                print(consoleMessage);
-                print("#COMPARTIR_FORMATO#");
-                if(consoleMessage.message.contains("COMPARTIR_FORMATO")){
-                  print("#COMPARTIR_FORMATO#");
-                  String strWithDig =consoleMessage.message;
-                  String submUrl=strWithDig.substring(19);
-                  print("COMPARTIR_FORMATO : ${submUrl}");
-                  ShareFileBase64(submUrl,"Cotizacion");
-                }
-                if(consoleMessage.message.contains("ENLACE_LLAMADA")){
-                  print("#ENLACE_LLAMADA#");
-                  String strWithDig =consoleMessage.message;
-                  String submUrl=strWithDig.substring(16);
-                  print("ENLACE_LLAMADA : ${submUrl}");
-                  launch("tel:${submUrl.trim()}");
-                }
-                //downloadAndShowPDFB64(submUrl,"test");
-              },
-            ),
+            body: Stack(
+              children: buildData()
+            )
           ),
         )));
   }
+
+  List<Widget> buildData() {
+    Widget data = Container();
+
+    data =  InAppWebView(
+      key: webViewKey,
+      initialUrl: appEnvironmentConfig.cotizadorAutos+'?jwt='+loginData.jwt+"&codigoIntermediario=${codigoIntermediario}&cveDa=$DA&cveHerramienta=APP",
+      initialOptions: options,
+      onWebViewCreated: (InAppWebViewController controller) {
+        webViewController = controller;
+      },
+
+      onLoadStart: (controller, url,) {
+        print("loaderStart");
+        setState(() {
+          _saving = true;
+        });
+        Future.delayed(const Duration(seconds: 10), () {
+          if(_saving) {
+            setState(() {
+              _saving = false;
+            });
+            validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
+            print("=> ConnectivityAutos  $isMobile $isWifi<=");
+            Future.delayed(const Duration(seconds: 3), () {
+              Inactivity(context: context).cancelInactivity();
+              print("=> ConnectivityAutos  $isMobile $isWifi<=");
+              if(dialogConnectivityContext!=null) {
+                Navigator.pop(context);
+                isMessageWifi = false;
+                dialogConnectivityContext = null;
+              }
+              Navigator.pop(context, true);
+              return ShouldOverrideUrlLoadingAction.ALLOW;
+            });
+          }
+        });
+
+        if (url.contains(returnToApp) || url.contains("ReturnToApp") || url.contains("returntoApp") || url.contains("returntoapp") ) {
+          Inactivity(context:context).cancelInactivity();
+          Navigator.pop(context,true);
+        }
+        print("onLoadStart ${url}");
+        Inactivity(context:context).initialInactivity(functionInactivity);
+      },
+      onLoadStop: (controller, url) {
+        setState(() {
+          _saving = false;
+          hasInternetFirebase = true;
+        });
+        print("onLoadStop ${url}");
+        Inactivity(context:context).initialInactivity(functionInactivity);
+      },
+      onLoadError: (controller, url, code, message) {
+        print("onLoadError:  $code $url,, $message");
+       bool time = message.contains("timed out") ? true: message.contains("conexion") ? true : false;
+       print("time $time");
+        if(code!=null) {
+          if (time || "$code" == "-1004" || "$code" == "-5" || "$code" == "-1009"|| "$code" == "-2"|| "$code" == "-1001") {
+            setState(() {
+              _saving = false;
+            });
+            hasInternetFirebase = false;
+            hasAutosError = true;
+            hasAutosErrorUrl = url;
+            if (!isMessageWifi) {
+              isMessageWifi = true;
+              customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", widget.responsive, funcionAlertaWifi);
+            }
+            Future.delayed(const Duration(seconds: 3), () {
+              Inactivity(context:context).cancelInactivity();
+              if(isMessageWifi) {
+                  Navigator.pop(context);
+                  isMessageWifi = false;
+              }
+              Navigator.pop(context,true);
+              return ShouldOverrideUrlLoadingAction.ALLOW;
+            });
+
+          }
+        }
+      },
+      onLoadHttpError: (InAppWebViewController controller, String url, int i, String s) async {
+        print('CUSTOM_HANDLER: $i, $s');
+        /** instead of printing the console message i want to render a static page or display static message **/
+      },
+      onPrint:(controller, url){
+        Inactivity(context:context).initialInactivity(functionInactivity);
+        print("---mUrl---");
+        String strWithDig =url;
+        String submUrl=strWithDig.replaceAll(RegExp(r'+'), '');
+        String submUrlSpace=submUrl.replaceAll(RegExp(r' '), '');
+        /// launch(submUrlSpace);
+
+      } ,
+      onScrollChanged: ( controller, x, y){
+        Inactivity(context:context).initialInactivity(functionInactivity);
+        print("onPrint ${x}");
+        print("onPrint ${y}");
+      },
+      androidOnPermissionRequest: (controller, origin, resources) async {
+        return PermissionRequestResponse(
+            resources: resources,
+            action: PermissionRequestResponseAction.GRANT);
+      },
+      shouldOverrideUrlLoading: (controller, shouldOverrideUrlLoadingRequest) async {
+        print("URL: ${shouldOverrideUrlLoadingRequest.url}");
+        if (shouldOverrideUrlLoadingRequest.url.contains(returnToApp) || shouldOverrideUrlLoadingRequest.url.contains("ReturnToApp") || shouldOverrideUrlLoadingRequest.url.contains("returntoApp") || shouldOverrideUrlLoadingRequest.url.contains("returntoapp") ) {
+          Inactivity(context:context).cancelInactivity();
+          Navigator.pop(context,true);
+        }
+        return ShouldOverrideUrlLoadingAction.ALLOW;
+      },
+      onConsoleMessage: (controller, consoleMessage) {
+        Inactivity(context:context).initialInactivity(functionInactivity);
+        print("consoleMessage");
+        print(consoleMessage);
+        print("#COMPARTIR_FORMATO#");
+        if(consoleMessage.message.contains("COMPARTIR_FORMATO")){
+          print("#COMPARTIR_FORMATO#");
+          String strWithDig =consoleMessage.message;
+          String submUrl=strWithDig.substring(19);
+          print("COMPARTIR_FORMATO : ${submUrl}");
+          ShareFileBase64(submUrl,"Cotizacion");
+        }
+        if(consoleMessage.message.contains("ENLACE_LLAMADA")){
+          print("#ENLACE_LLAMADA#");
+          String strWithDig =consoleMessage.message;
+          String submUrl=strWithDig.substring(16);
+          print("ENLACE_LLAMADA : ${submUrl}");
+          launch("tel:${submUrl.trim()}");
+        }
+        //downloadAndShowPDFB64(submUrl,"test");
+      },
+    );
+
+    var l = new List<Widget>();
+    l.add(data);
+    if (_saving) {
+      var modal = Stack(
+        children: [LoadingController()],
+      );
+      l.add(modal);
+    }
+    return l;
+  }
+
   Future<void> downloadAndShowPDFB64(String dataB64, String title) async {
     Uint8List bytes = base64.decode(dataB64);
     String dir = (await getApplicationDocumentsDirectory()).path;

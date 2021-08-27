@@ -26,6 +26,7 @@ import 'package:cotizador_agente/flujoLoginModel/consultaPersonaIdParticipante.d
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
+import 'package:cotizador_agente/modelos/ConexionModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
@@ -417,7 +418,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         break;
       case AppLifecycleState.resumed:
         print("AppLifecycleState.resumed");
-        validateIntenetstatus(navigatorKey.currentContext, widget.responsive,functionConnectivity,false);
+        validateBiometricstatus(functionBiometrics);
+        try{
+          setState(() {});
+        }catch (e){}
+        validateIntenetstatus(navigatorKey.currentState.overlay.context, widget.responsive,functionConnectivity,false);
         if(screenName!=null) {
           print("settings:login ${screenName}");
           if (screenName == "Login" || screenName == "Biometricos") {
@@ -1304,7 +1309,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     prefs.setString(
         "correoCambioContrasena", controllerCorreoCambioContrasena.text);
     consultaPorCorreoNuevoServicio respuesta = await consultaUsuarioPorCorreo(
-        context, prefs.getString("correoCambioContrasena"));
+        context, prefs.getString("correoCambioContrasena"),responsive);
 
     print("UsuarioPorCorreo ${respuesta}");
     bool conecxion = false;
@@ -1374,7 +1379,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   prefs.getString("medioContactoTelefono") != null
                       ? prefs.getString("medioContactoTelefono")
                       : "",
-                  prefs.getBool('flujoOlvideContrasena'));
+                  prefs.getBool('flujoOlvideContrasena'),responsive);
 
               setState(() {
                 _saving = false;
@@ -1541,7 +1546,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
               if (datosUsuario != null) {
                 prefs.setString("contrasenaUsuario", contrasenaUsuario);
-                respuestaServicioCorreo = await consultaUsuarioPorCorreo(context, correoUsuario);
+                respuestaServicioCorreo = await consultaUsuarioPorCorreo(context, correoUsuario,responsive);
                 if(respuestaServicioCorreo == null){
                   customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
                 }
@@ -1590,7 +1595,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 }
 
                 if (!existeUsuario) {
-                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante);
+                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante,responsive);
 
                   setState(() {
                     _saving = false;
@@ -1606,7 +1611,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   }
                 } else {
 
-                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante);
+                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante,responsive);
 
                   setState(() {
                     _saving = false;
@@ -1713,7 +1718,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
             !_subSecuentaIngresoCorreo) {
           prefs.setBool("esFlujoBiometricos", true);
 
-          if (is_available_finger && is_available_face) {
+          if (Platform.isAndroid) {
             if (deviceType == ScreenType.phone) {
               customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
                   "", "", responsive, funcionAlertaHullaLogin);
@@ -1731,14 +1736,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 : customAlert(AlertDialogType.Reconocimiento_facial, context,
                     "", "", responsive, funcionAlertaHullaLogin);
           }
-        } else if (_biometricos &&
-            (prefs.getBool("flujoCompletoLogin") != null &&
-                !prefs.getBool("flujoCompletoLogin"))) {
+        } else if (_biometricos && (prefs.getBool("flujoCompletoLogin") != null && !prefs.getBool("flujoCompletoLogin"))) {
           print("flujo completo biometricos activos");
 
           prefs.setBool("esFlujoBiometricos", true);
 
-          if (is_available_finger && is_available_face) {
+          if (Platform.isAndroid) {
             if (deviceType == ScreenType.phone) {
               customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
                   "", "", responsive, funcionAlertaHullaLogin);
@@ -1913,7 +1916,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         if (_biometricos) {
           prefs.setBool("esFlujoBiometricos", true);
 
-          if (is_available_finger && is_available_face) {
+          if (Platform.isAndroid) {
             if (deviceType == ScreenType.phone) {
               customAlert(AlertDialogType.opciones_de_inicio_de_sesion, context,
                   "", "", responsive, funcionAlertaHullaLogin);
@@ -2448,7 +2451,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         context,
         prefs.getString("correoUsuario"),
         prefs.getString("medioContactoTelefono"),
-        prefs.getBool('flujoOlvideContrasena'));
+        prefs.getBool('flujoOlvideContrasena'),responsive);
 
     setState(() {
       _saving = false;
@@ -2478,9 +2481,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
       }
     } else {
-      print("Error Servicio OTP");
-      customAlert(
-          AlertDialogType.errorServicio, context, "", "", responsive, funcion);
+
+      if(conexionModel!=null&&conexionModel.status) {
+        customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcion);
+        conexionModel = null;
+      }else{
+        customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
+
+      }
     }
   }
 
@@ -2506,7 +2514,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               context,
               prefs.getString("correoUsuario"),
               prefs.getString("medioContactoTelefono"),
-              prefs.getBool('flujoOlvideContrasena'));
+              prefs.getBool('flujoOlvideContrasena',),responsive);
 
           setState(() {
             _saving = false;

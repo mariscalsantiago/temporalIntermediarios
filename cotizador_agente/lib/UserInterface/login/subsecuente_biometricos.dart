@@ -58,7 +58,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
   bool _showFinOtro = false;
   var localAuth = new LocalAuthentication();
   bool _saving;
-
+  AppConfig _appEnvironmentConfig;
 
   @override
   void initState() {
@@ -93,7 +93,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
   @override
   Widget build(BuildContext context) {
-
+    _appEnvironmentConfig = AppConfig.of(context);
 
     if(!is_available_face && !is_available_finger){
       print("face y finger");
@@ -156,11 +156,11 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
                   }*/
                   // }
                 },
-                child:is_available_finger && is_available_face ? Image.asset("assets/login/face&figer.png", width: widget.responsive.ip(9), color: Tema.Colors.GNP,)  : is_available_finger ?  Icon(Icons.fingerprint, size: widget.responsive.ip(9), color: Tema.Colors.GNP,) :  Icon(Tema.Icons.facial, size: widget.responsive.ip(9), color: Tema.Colors.GNP,))),
+                child:Platform.isAndroid ? Image.asset("assets/login/finger_face.png", width: widget.responsive.ip(9), color: Tema.Colors.GNP,)  : is_available_finger ?  Icon(Icons.fingerprint, size: widget.responsive.ip(9), color: Tema.Colors.GNP,) :  Icon(Tema.Icons.facial, size: widget.responsive.ip(9), color: Tema.Colors.GNP,))),
         Container(
           margin: EdgeInsets.only(top: widget.responsive.hp(3), bottom: widget.responsive.hp(4), left: widget.responsive.wp(25), right: widget.responsive.wp(25)),
           child:
-          Text(is_available_finger && is_available_face ? "Toca para activar el inicio de sesión con biométricos"  : is_available_finger ? "Coloca tu huella en el lector de tu dispositivo": "Mira fijamente a la cámara de tu dispositivo",
+          Text("Toca para activar el inicio de sesión con biométricos",
             textAlign: TextAlign.center,
             style: TextStyle(color: Tema.Colors.Funcional_Textos_Body, fontSize: widget.responsive.ip(1.5)),
           ),
@@ -330,7 +330,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
   Future<http.Response> getVersionApp(String idApp, String idOs) async {
     print("getVersionApp");
-    AppConfig _appEnvironmentConfig = AppConfig.of(context);
+
     bool conecxion = false;
     try{
       conecxion = await validatePinig();
@@ -572,14 +572,14 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
     if( prefs != null && prefs.getInt("localAuthCountIOS") != null && prefs.getInt("localAuthCountIOS")>0) {
       switch(prefs.getInt("localAuthCountIOS")){
         case 100:
-          customAlert(is_available_face && is_available_finger
+          customAlert(Platform.isAndroid
               ? AlertDialogType.Rostro_huella_no_reconocido :
           is_available_face ? AlertDialogType.Rostro_no_reconocido
               : AlertDialogType.Huella_no_reconocida, context, "", "",
               responsive, funcionDenegadoBiometric);
           break;
         case 101:
-          customAlert(is_available_face && is_available_finger ?
+          customAlert(Platform.isAndroid ?
           AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado :
           is_available_finger ?
           AlertDialogType.inicio_de_sesion_con_huella_bloqueado:
@@ -587,7 +587,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           break;
         case 102:
         case 103:
-          is_available_finger && is_available_face ? customAlert(
+        Platform.isAndroid ? customAlert(
               AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
               responsive, funcionDenegadoBiometric) :
           is_available_finger ? customAlert(
@@ -605,7 +605,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
         bool authenticated = false;
         if (Platform.isIOS) {
           authenticated = await localAuth.authenticateWithBiometrics(
-              localizedReason: is_available_finger && is_available_face
+              localizedReason: Platform.isAndroid
                   ? 'Coloca tu dedo o mira fijamente a la cámara para continuar'
                   : is_available_finger
                   ? 'Coloca tu dedo para continuar'
@@ -621,26 +621,14 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               stickyAuth: false);
         } else {
           authenticated = await localAuth.authenticateWithBiometrics(
-              localizedReason: is_available_finger && is_available_face
-                  ? "Coloca tu dedo o mira a la cámara para continuar."
-                  : is_available_finger
-                  ? "Coloca tu dedo para continuar"
-                  : "Mira fijamente a la cámara",
+              localizedReason: "Coloca tu dedo o mira a la cámara para continuar.",
               androidAuthStrings: new AndroidAuthMessages(
                   fingerprintNotRecognized: 'Has superado los intentos permitidos para usar biométricos, deberás bloquear y desbloquear tu dispositivo.',
                   signInTitle: "Inicio de sesión",
                   fingerprintHint: '',
                   cancelButton: "Cancelar",
-                  fingerprintRequiredTitle: is_available_finger && is_available_face ?
-                  "Solicitud de huella digital o reconocimiento facial"
-                      : is_available_finger
-                      ? "Solicitud de huella digital"
-                      : "Mira fijamente a la cámara",
-                  goToSettingsDescription: is_available_finger && is_available_face ?
-                  "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
-                      : is_available_finger
-                      ? "Tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla."
-                      : "Tu reconocimiento facial no está configurado en el dispositivo, ve a configuraciones para añadirla.",
+                  fingerprintRequiredTitle: "Solicitud de huella digital o reconocimiento facial",
+                  goToSettingsDescription: "Tu reconocimiento facial o tu huella no está configurada en el dispositivo, ve a configuraciones para añadirla.",
                   goToSettingsButton: "Ir a configuraciones"),
               useErrorDialogs: true,
               stickyAuth: false);
@@ -659,7 +647,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           });
           datosUsuario = await logInServices(context,prefs.getString("correoUsuario"), prefs.getString("contrasenaUsuario"), prefs.getString("correoUsuario"),responsive);
           if(datosUsuario != null){
-            respuestaServicioCorreo = await  consultaUsuarioPorCorreo(context, prefs.getString("correoUsuario"));
+            respuestaServicioCorreo = await  consultaUsuarioPorCorreo(context, prefs.getString("correoUsuario"),responsive);
             //Validacion Roles
             validarRolesUsuario();
             setState(() {
@@ -682,7 +670,6 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
             }
           } else{
 
-
             setState(() {
               _saving = false;
             });
@@ -701,7 +688,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
                 prefs.getInt("localAuthCountIOS") == 102) {
               prefs.setInt("localAuthCountIOS", 102);
               localAuth.stopAuthentication();
-              is_available_finger && is_available_face ? customAlert(
+              Platform.isAndroid ? customAlert(
                   AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "",
                   "",
                   responsive, funcionDenegadoBiometric) :
@@ -713,7 +700,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
                   responsive, funcionDenegadoBiometric);
             } else {
               prefs.setInt("localAuthCountIOS", 100);
-              customAlert(is_available_face && is_available_finger
+              customAlert(Platform.isAndroid
                   ? AlertDialogType.Rostro_huella_no_reconocido :
               is_available_face ? AlertDialogType.Rostro_no_reconocido
                   : AlertDialogType.Huella_no_reconocida, context, "", "",
@@ -737,7 +724,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           prefs.setInt("localAuthCountIOS", 100);
           prefs.setInt("localAuthCount", 5);
           localAuth.stopAuthentication();
-          customAlert(is_available_face && is_available_finger
+          customAlert(Platform.isAndroid
               ? AlertDialogType.Rostro_huella_no_reconocido :
           is_available_face ? AlertDialogType.Rostro_no_reconocido
               : AlertDialogType.Huella_no_reconocida, context, "", "",
@@ -747,7 +734,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           print("auth_error.permanentlyLockedOut");
           prefs.setInt("localAuthCount", 6);
           localAuth.stopAuthentication();
-          customAlert(is_available_face && is_available_finger ?
+          customAlert(Platform.isAndroid ?
           AlertDialogType.inicio_de_sesion_con_huella_facial_bloqueado :
           is_available_finger ?
           AlertDialogType.inicio_de_sesion_con_huella_bloqueado :
@@ -757,20 +744,8 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
         } else if (e.code == auth_error.notAvailable) {
           prefs.setInt("localAuthCountIOS", 102);
           localAuth.stopAuthentication();
-          is_available_finger && is_available_face ? customAlert(
+          Platform.isAndroid ? customAlert(
               AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive, funcionDenegadoBiometric) :
-          is_available_finger ? customAlert(
-              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
-              responsive, funcionDenegadoBiometric) :
-          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
-              responsive, funcionDenegadoBiometric);
-        }else if (e.code == auth_error.otherOperatingSystem ){
-          prefs.setInt("localAuthCountIOS", 102);
-          localAuth.stopAuthentication();
-          Navigator.pop(context, true);
-          is_available_finger && is_available_face ? customAlert(
-              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "otherOperatingSystem",
               responsive, funcionDenegadoBiometric) :
           is_available_finger ? customAlert(
               AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
