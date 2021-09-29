@@ -1006,18 +1006,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             child: Stack(
                                               children: <Widget>[
                                                 Container(
-                                                  height: 332,
-                                                  width: 312,
                                                   margin: EdgeInsets.only(top: 8.0,right: 8.0),
                                                   decoration: new BoxDecoration(
                                                       border: Border.all(color: AppColors.color_Bordes),
-                                                      color: Colors.white,
-                                                      borderRadius: new BorderRadius.only(
-                                                        topLeft: const Radius.circular(4.0),
-                                                        topRight: const Radius.circular(4.0),
-                                                        bottomLeft: const Radius.circular(4.0),
-                                                        bottomRight: const Radius.circular(4.0),
-                                                      )),
+                                                      borderRadius: new BorderRadius.all(Radius.circular(4.0))
+                                                  ),
                                                   child: Column(
                                                     children: <Widget>[
                                                       Padding(
@@ -1092,30 +1085,21 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                           ),
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
+                                                      Container(
+                                                        margin: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
+                                                        color: AppColors.color_background,
+                                                        height: 32,
                                                         child: Row(
                                                           children: <Widget>[
-                                                            Container(
-                                                              width: 144,
-                                                              height: 32,
-                                                              color: AppColors.color_background,
-                                                              child: Align(
-                                                                alignment: Alignment.center,
-                                                                child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
-                                                                  textAlign: TextAlign.center,),
-                                                              ),
+                                                            Expanded(
+                                                              child: Text("Prima total",  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                textAlign: TextAlign.center,),
                                                             ),
-                                                            Container(
-                                                              width: 148,
-                                                              height: 32,
-                                                              color: AppColors.color_background,
-                                                              child: Align(
-                                                                alignment: Alignment.center,
-                                                                child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
-                                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
-                                                                  textAlign: TextAlign.center,),
-                                                              ),
+                                                            Expanded(
+                                                              //padding: EdgeInsets.symmetric(horizontal: 16),
+                                                              child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
+                                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                textAlign: TextAlign.center,),
                                                             )
                                                           ],
                                                         ),
@@ -1159,22 +1143,17 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                           children: getFormatos(),),
                                                       ),
 
-                                                      Container(
-                                                        padding: const EdgeInsets.only(top: 8, left: 85.0, right: 85.0),
-                                                        alignment: Alignment.center,
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            IconButton(icon: Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),alignment: Alignment.centerRight, onPressed: null,),
-                                                            FlatButton(
-                                                              textColor: AppColors.secondary900,
-                                                              onPressed: (){
-                                                                editarDatos(index);
-                                                              },
-                                                              child: Text(Mensajes.edicion,
-                                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
-                                                            ),
-                                                          ],
-                                                        ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: <Widget>[
+                                                          Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),
+                                                          FlatButton(
+                                                            textColor: AppColors.secondary900,
+                                                            onPressed: () => editarDatos(index),
+                                                            child: Text(Mensajes.edicion,
+                                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),

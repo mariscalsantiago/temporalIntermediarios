@@ -629,7 +629,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
           child: Container(
             color: Colors.white,
             child: Column(
-
               children: <Widget>[
                 AppBar(
                   leading: IconButton(
@@ -640,7 +639,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                   ),
                   iconTheme: IconThemeData(color: AppColors.color_primario),
                   backgroundColor: Colors.white,
-                  title: Text("", style: TextStyle(fontSize: 24, color: AppColors.primary700)),
                 ),
                 Row(
                   children: <Widget>[
@@ -675,7 +673,6 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
                           ),
                         ),
                       ),
-                      Spacer(),
                       Expanded(
                         flex: 2,
                         child: FloatingActionButton(
