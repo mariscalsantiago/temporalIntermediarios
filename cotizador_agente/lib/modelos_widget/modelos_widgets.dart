@@ -1597,16 +1597,13 @@ class _ToggleConValoresState extends State<ToggleConValores> {
             return Row(
               children: <Widget>[
                 Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Text(
-                      widget.campo.etiqueta,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.color_appBar,
-                        fontFamily: 'OpenSansRegular',
-                      ),
+                  child: Text(
+                    widget.campo.etiqueta,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.color_appBar,
+                      fontFamily: 'OpenSansRegular',
                     ),
                   ),
                 ),
