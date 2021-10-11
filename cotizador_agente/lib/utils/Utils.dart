@@ -356,7 +356,9 @@ class Utilidades {
       );
    }
    static void mostrarAlertas(
-       String titulo, String mensaje, BuildContext context) {
+       String titulo, String mensaje, BuildContext context, {
+         Function onPressed,
+      }) {
       // flutter defined function
       showMaterialModalBottomSheet(
          barrierColor: AppColors.AzulGNP.withOpacity(0.6),
@@ -388,7 +390,7 @@ class Utilidades {
                          height: 40.0,
                          buttonColor: AppColors.secondary900,
                          child: RaisedButton(
-                            onPressed: () {
+                            onPressed: onPressed ?? () {
                                Navigator.pop(context);
                             },
                             child: Text(

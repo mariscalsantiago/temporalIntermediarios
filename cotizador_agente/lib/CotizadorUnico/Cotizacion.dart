@@ -332,7 +332,15 @@ class _CotizacionVistaState extends State<CotizacionVista> {
             String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
 
             success =  true;
-            Utilidades.mostrarAlertas(Mensajes.titleLoSentimos , message, context);
+            Utilidades.mostrarAlertas(
+              Mensajes.titleLoSentimos,
+              message,
+              context,
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            );
           }
 
         }else{
