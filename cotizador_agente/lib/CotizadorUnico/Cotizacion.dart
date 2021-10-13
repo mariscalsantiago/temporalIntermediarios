@@ -562,16 +562,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
 
   Widget showModalGuardar(int idFormato, int index, bool abrirPdf, bool mostrarFormato){
-    double altoModal = mostrarFormato ? (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 497 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 430 : 295) : (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 437 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 361 : 297);
-    int numeroPropuestasSinNombre = 0;
-    if(abrirPdf == false){
-      for(int i = 0; i< Utilidades.cotizacionesApp.listaCotizaciones.length; i++){
-        if(Utilidades.cotizacionesApp.listaCotizaciones[i].comparativa.nombre == null){
-          numeroPropuestasSinNombre++;
-        }
-      }
-      altoModal = numeroPropuestasSinNombre == 3 ? 429 : numeroPropuestasSinNombre == 2 ? 363 : 297;
-    }
      showModalBottomSheet(
       isScrollControlled: true,
       barrierColor: AppColors.AzulGNP.withOpacity(0.6),
@@ -581,7 +571,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         duration: Duration(milliseconds: 0),
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
-          height: altoModal,
           padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
           decoration : new BoxDecoration(
               color: Colors.white,
@@ -590,8 +579,10 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                 topRight: const Radius.circular(12.0),
               )
           ),
-          child:  Center(
-              child: Column(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Wrap(
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(top: 16.0, left: 24.0, right: 24.0),
@@ -626,7 +617,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                     ),
                   ),
                 ],
-              )),
+              ),
+            ],
+          ),
         ),
       ),
     );
