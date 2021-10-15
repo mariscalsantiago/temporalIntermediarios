@@ -332,7 +332,15 @@ class _CotizacionVistaState extends State<CotizacionVista> {
             String message = json.decode(response.body)['message'] != null ? json.decode(response.body)['message'] : json.decode(response.body)['errors'][0] != null ? json.decode(response.body)['errors'][0] : "Error del servidor";
 
             success =  true;
-            Utilidades.mostrarAlertas(Mensajes.titleLoSentimos , message, context);
+            Utilidades.mostrarAlertas(
+              Mensajes.titleLoSentimos,
+              message,
+              context,
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            );
           }
 
         }else{
@@ -554,16 +562,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
 
   Widget showModalGuardar(int idFormato, int index, bool abrirPdf, bool mostrarFormato){
-    double altoModal = mostrarFormato ? (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 497 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 430 : 295) : (Utilidades.cotizacionesApp.getCotizacionesCompletas() > 2 && abrirPdf == false ? 437 : Utilidades.cotizacionesApp.getCotizacionesCompletas() > 1 && abrirPdf == false ? 361 : 297);
-    int numeroPropuestasSinNombre = 0;
-    if(abrirPdf == false){
-      for(int i = 0; i< Utilidades.cotizacionesApp.listaCotizaciones.length; i++){
-        if(Utilidades.cotizacionesApp.listaCotizaciones[i].comparativa.nombre == null){
-          numeroPropuestasSinNombre++;
-        }
-      }
-      altoModal = numeroPropuestasSinNombre == 3 ? 429 : numeroPropuestasSinNombre == 2 ? 363 : 297;
-    }
      showModalBottomSheet(
       isScrollControlled: true,
       barrierColor: AppColors.AzulGNP.withOpacity(0.6),
@@ -573,7 +571,6 @@ class _CotizacionVistaState extends State<CotizacionVista> {
         duration: Duration(milliseconds: 0),
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
-          height: altoModal,
           padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
           decoration : new BoxDecoration(
               color: Colors.white,
@@ -582,8 +579,10 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                 topRight: const Radius.circular(12.0),
               )
           ),
-          child:  Center(
-              child: Column(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Wrap(
                 children: <Widget>[
                   Padding(
                     padding: EdgeInsets.only(top: 16.0, left: 24.0, right: 24.0),
@@ -618,7 +617,9 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                     ),
                   ),
                 ],
-              )),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1006,18 +1007,11 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                             child: Stack(
                                               children: <Widget>[
                                                 Container(
-                                                  height: 332,
-                                                  width: 312,
                                                   margin: EdgeInsets.only(top: 8.0,right: 8.0),
                                                   decoration: new BoxDecoration(
                                                       border: Border.all(color: AppColors.color_Bordes),
-                                                      color: Colors.white,
-                                                      borderRadius: new BorderRadius.only(
-                                                        topLeft: const Radius.circular(4.0),
-                                                        topRight: const Radius.circular(4.0),
-                                                        bottomLeft: const Radius.circular(4.0),
-                                                        bottomRight: const Radius.circular(4.0),
-                                                      )),
+                                                      borderRadius: new BorderRadius.all(Radius.circular(4.0))
+                                                  ),
                                                   child: Column(
                                                     children: <Widget>[
                                                       Padding(
@@ -1092,30 +1086,21 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                           ),
                                                         ),
                                                       ),
-                                                      Padding(
-                                                        padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
+                                                      Container(
+                                                        margin: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
+                                                        color: AppColors.color_background,
+                                                        height: 32,
                                                         child: Row(
                                                           children: <Widget>[
-                                                            Container(
-                                                              width: 144,
-                                                              height: 32,
-                                                              color: AppColors.color_background,
-                                                              child: Align(
-                                                                alignment: Alignment.center,
-                                                                child: Text("Prima total", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
-                                                                  textAlign: TextAlign.center,),
-                                                              ),
+                                                            Expanded(
+                                                              child: Text("Prima total",  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                textAlign: TextAlign.center,),
                                                             ),
-                                                            Container(
-                                                              width: 148,
-                                                              height: 32,
-                                                              color: AppColors.color_background,
-                                                              child: Align(
-                                                                alignment: Alignment.center,
-                                                                child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
-                                                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
-                                                                  textAlign: TextAlign.center,),
-                                                              ),
+                                                            Expanded(
+                                                              //padding: EdgeInsets.symmetric(horizontal: 16),
+                                                              child: Text("\$ " + Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formaspago[Utilidades.cotizacionesApp.getCotizacionElement(index).comparativa.formapagoseleccionada].ptotal.toString(),
+                                                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.color_appBar, letterSpacing: 0.4),
+                                                                textAlign: TextAlign.center,),
                                                             )
                                                           ],
                                                         ),
@@ -1159,22 +1144,17 @@ class _CotizacionVistaState extends State<CotizacionVista> {
                                                           children: getFormatos(),),
                                                       ),
 
-                                                      Container(
-                                                        padding: const EdgeInsets.only(top: 8, left: 85.0, right: 85.0),
-                                                        alignment: Alignment.center,
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            IconButton(icon: Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),alignment: Alignment.centerRight, onPressed: null,),
-                                                            FlatButton(
-                                                              textColor: AppColors.secondary900,
-                                                              onPressed: (){
-                                                                editarDatos(index);
-                                                              },
-                                                              child: Text(Mensajes.edicion,
-                                                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
-                                                            ),
-                                                          ],
-                                                        ),
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: <Widget>[
+                                                          Image.asset("assets/icon/cotizador/edit.png", height: 18, width: 18,),
+                                                          FlatButton(
+                                                            textColor: AppColors.secondary900,
+                                                            onPressed: () => editarDatos(index),
+                                                            child: Text(Mensajes.edicion,
+                                                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.25), textAlign: TextAlign.left,),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ],
                                                   ),

@@ -1596,8 +1596,17 @@ class _ToggleConValoresState extends State<ToggleConValores> {
           if(index==0){
             return Row(
               children: <Widget>[
-                Text(widget.campo.etiqueta, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.color_appBar, fontFamily: 'OpenSansRegular'),),
-                Spacer(flex: 2,),
+                Expanded(
+                  child: Text(
+                    widget.campo.etiqueta,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.color_appBar,
+                      fontFamily: 'OpenSansRegular',
+                    ),
+                  ),
+                ),
                 Switch(
                   value: widget.isSwitched,
                   onChanged: (value) {
