@@ -1,7 +1,8 @@
+import 'dart:io';
+
 import 'package:cotizador_agente/Functions/Validate.dart';
 
 var config;
-var prefs;
 LoginModel loginData;
 LoginDatosModel datosUsuario;
 Map mapPerfilador;
@@ -381,6 +382,7 @@ class DatosFisicosModel {
 
 class DatosFisicosPersonalesModel {
   String foto;
+  File photoFile;
   String nombre;
   String aPaterno;
   String aMaterno;
@@ -398,7 +400,7 @@ class DatosFisicosPersonalesModel {
   DatosFisicosPersonalesVPModel visa;
 
 
-  DatosFisicosPersonalesModel({this.foto, this.nombre, this.aPaterno, this.aMaterno, this.nickname, this.genero, this.fechaNacimiento, this.edad, this.nacionalidad, this.estadoCivil, this.rfc, this.curp, this.pasaporte, this.visa, this.polizaRC, this.talla});
+  DatosFisicosPersonalesModel({this.foto, this.photoFile, this.nombre, this.aPaterno, this.aMaterno, this.nickname, this.genero, this.fechaNacimiento, this.edad, this.nacionalidad, this.estadoCivil, this.rfc, this.curp, this.pasaporte, this.visa, this.polizaRC, this.talla});
 
   factory DatosFisicosPersonalesModel.fromJson(Map<String, dynamic> data) {
 
@@ -406,6 +408,7 @@ class DatosFisicosPersonalesModel {
     print("${data["foto"]}");
     return DatosFisicosPersonalesModel(
       foto: data["foto"],
+      photoFile: null,
       nombre: validateNotEmptyToString(data["nombre"],""),
       aPaterno: validateNotEmptyToString(data['aPaterno'],""),
       aMaterno: validateNotEmptyToString(data['aMaterno'],""),
@@ -418,14 +421,14 @@ class DatosFisicosPersonalesModel {
       rfc: data['rfc'],
       curp:data["curp"],
       talla:data["talla"],
-      pasaporte: DatosFisicosPersonalesVPModel.fromJson(data['pasaporte']),
-      polizaRC: DatosFisicosPolizaModel.fromJson(data["polizaRc"]),
-      visa: DatosFisicosPersonalesVPModel.fromJson(data['visa']),
+      polizaRC: data.containsKey('polizaRc') ? DatosFisicosPolizaModel.fromJson(data["polizaRc"]): DatosFisicosPolizaModel(),
+      visa: data.containsKey('visa') ? DatosFisicosPersonalesVPModel.fromJson(data['visa']): DatosFisicosPersonalesVPModel(),
     );
   }
   toJson() {
     return {
       'foto': foto,
+      'photoFile': photoFile,
       'nombre': nombre,
       'aPaterno': aPaterno,
       'aMaterno': aMaterno,

@@ -22,9 +22,11 @@ class TabsInteractor implements TabsUseCase {
     try{
       RemoteConfig remoteConfig = await RemoteConfigHandler.setupConfiguration(view.context);
       String footerString = remoteConfig.getString(Constants.CONFIG_FOOTER);
-      var footerJson = jsonDecode(footerString.replaceAll(" ", ""));
+      print("getfooter");
+      print(footerString);
+      var footerJson = jsonDecode(footerString);
       var footer = Footer.fromJson(footerJson);
-      return footer;
+      return defaultFooter();
     } catch(e){
       var footer = defaultFooter();
       return footer;
@@ -68,7 +70,9 @@ class TabsInteractor implements TabsUseCase {
           localIcon: "assets/menu.png",
           habilitado: true,
           accion: "flutter_app/menu"),
-    ]);
+
+    ]
+    );
   }
 
 

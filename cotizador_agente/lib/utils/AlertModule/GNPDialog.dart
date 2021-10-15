@@ -28,7 +28,7 @@ class GNPDialog extends StatelessWidget {
               title: textButtonOk != null ? textButtonOk :"CANCELAR",
               margin: EdgeInsets.fromLTRB(16, 24, 16, 24),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               })
         ];
       }else{
@@ -37,7 +37,7 @@ class GNPDialog extends StatelessWidget {
               title: textButtonOk != null ? textButtonOk :"Aceptar",
               margin: EdgeInsets.fromLTRB(16, 24, 16, 24),
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context,true);
               })
         ];
       }
@@ -64,7 +64,6 @@ class GNPDialog extends StatelessWidget {
               topLeft: Radius.circular(10), topRight: Radius.circular(10)),
         ),
         child: SafeArea(
-            top: false,
             child: Container(
               child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -89,7 +88,7 @@ class GNPDialog extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                   fontSize: 16,
                                   letterSpacing: 0.15,
-                                  color: AppColors.azulGNP)),
+                                  color: AppColors.AzulGNP)),
                         )),
                     Visibility(
                         visible: (this.description == null) ? false : true,

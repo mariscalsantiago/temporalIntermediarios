@@ -1,38 +1,45 @@
-
 import 'dart:async';
-import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
-import 'package:cotizador_agente/LoginModule/LoginController.dart';
-import 'package:cotizador_agente/SplashModule/SplashController.dart';
+import 'dart:io';
 import 'package:cotizador_agente/CotizadorUnico/Cotizacion.dart';
-import 'package:cotizador_agente/CotizadorUnico/FormularioPaso1.dart';
-import 'package:cotizador_agente/CotizadorUnico/SeleccionaCotizadorAP.dart';
+import 'package:cotizador_agente/Functions/ObserverRoute.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'CotizadorUnico/FormularioPaso1.dart';
+import 'CotizadorUnico/SeleccionaCotizadorAP.dart';
+import 'EnvironmentVariablesSetup/app_config.dart';
+import 'UserInterface/login/Splash/Splash.dart';
+import 'UserInterface/login/principal_form_login.dart';
+import 'UserInterface/login/subsecuente_biometricos.dart';
+import 'utils/responsive.dart';
 
+//int timerMinuts = 20;
 int timerMinuts = 20;
+enum Vistas { login, home, perfil, biometricos }
+enum ScreenType {phone,tabletLan, tabletPor}
+bool is_available_face=false;
+bool is_available_finger=false;
+bool showInactividad=false;
+Responsive responsiveMain;
+var screenName;
+ScreenType deviceType = ScreenType.phone;
+BuildContext dialogConnectivityContext;
+BuildContext dialogMobileContext;
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode);
-  Function originalOnError = FlutterError.onError;
-  FlutterError.onError = (FlutterErrorDetails errorDetails) async{
-    await FirebaseCrashlytics.instance.recordFlutterError(errorDetails);
-    originalOnError(errorDetails);
-  };
 
-  /*var configuredApp = new AppConfig(
+
+
+  var configuredApp = new AppConfig(
     ambient: Ambient.prod,
     serviceLogin: 'https://cuentas.gnp.com.mx/auth/login',
-    apikeyAppAgentes: 'l7xxed71b90a2ed941668463e3a01513d582',
-    service_perfilador: "https://api.service.oscp.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
+    apikeyAppAgentes: 'COLOCAR APIKEY GNP_Flutter_AppInter',
+    service_perfilador: "https://api.service.gnp.com.mx/Consulta-Agentes/consulta-perfil-app-int",
     proyectId: 'gnp-accidentespersonales-pro',
-    urlNotifierService:'https://api.service.gnp.com.mx',
+    // urlNotifierService:'https://api.service.gnp.com.mx',
 
     //COTIZADOR UNICO
     urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-pro.cloudfunctions.net/',
@@ -40,117 +47,113 @@ void main() async {
     urlSendAnalytics: 'https://www.google-analytics.com/',
     idContenedorAnalytics: 'UA-29272127-16',
 
-    child: new MyApp(),
-  );*/
-  /*var configuredApp = new AppConfig(
-    ambient: Ambient.qa,
-    serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
-    apikeyAppAgentes: 'l7xxfb568d77704046d0b5a80256fe00f829',
-    service_perfilador: "https://api-qa.oscp.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
-    proyectId: 'gnp-accidentespersonales-qa',
-    urlNotifierService:'https://api-qa.oscp.gnp.com.mx',
+    serviceBCA: 'https://bca-ws.gnp.com.mx',
+    apikeyBCA: '9a780a70-c5fc-4bee-86cf-5650cce16516',
 
-    //COTIZADOR UNICO
-    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/',
-    urlBase: 'https://gmm-cotizadores-qa.gnp.com.mx/',
-    urlSendAnalytics: 'https://www.google-analytics.com/',
-    idContenedorAnalytics: 'UA-146126625-2',
-
-    child: new MyApp(),
-  );*/
-  var configuredApp = new AppConfig(
-    ambient: Ambient.uat,
-    serviceLogin: 'https://cuentas-uat.gnp.com.mx/auth/login',
-    apikeyAppAgentes: 'l7xx526ec2d1bd9140a39ad15f72e1964bca',
-    service_perfilador: "https://api-uat.oscpuat.gnp.com.mx/cmn-intermediario/consulta-perfil-app",
-    proyectId: "gnp-accidentespersonales-uat",
-    // urlNotifierService:'https://api-uat.oscpuat.gnp.com.mx',
-    //COTIZADOR UNICO
-    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-uat.cloudfunctions.net/',
-    urlBase: 'https://gmm-cotizadores-uat.gnp.com.mx/',
-    urlSendAnalytics: 'https://www.google-analytics.com/',
-    idContenedorAnalytics: 'UA-146126625-1',
-
+    //Preguntas Secretas
+    apiKey: 'COLOCAR APIKEY GNP_Flutter_AppInter',
+    consultaPreguntasSecretas: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/preguntas/',
+    actualizarEstablecerPreguntasSecretas: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/preguntas',
+    cambioContrasenaPerfil: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/password/',
+    reestablecerContrasena: 'https://api.service.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
+    consultaUsuarioPorCorreo: 'https://api.service.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
+    orquestadorOTPSinSesion:'https://app-inter.gnp.com.mx/intermediario/enviarOtp/sinSesion',
+    validaOTP: 'https://api.service.gnp.com.mx/apr/otpLocalService/validateOtp/',
+    consultarMedioContactosAgentes :'https://api.service.gnp.com.mx/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
+    altaMediosContactoAgentes:'https://api.service.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
+    orquestadorOtpJwt:'https://app-inter.gnp.com.mx/intermediario/enviarOtp/me',
+    consultaPersonaIdParticipante:"https://api.service.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
+    cotizadorAutos: "https://gnp-appcontratacionautos-pro.uc.r.appspot.com/",
+    servicioNuevoConsultaPorCorreo:"https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
+//https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo
     child: new MyApp(),
 
   );
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((_) {
-    runZonedGuarded((){
-      runApp(configuredApp);
-    }, (error, stackTrace){
-      print('runZonedGuarded: Caught error in my root zone.');
-      FirebaseCrashlytics.instance.recordError(error, stackTrace);
-    });
+  runApp(configuredApp);
 
-  });
+
+
   // runApp(configuredApp);
 }
+final navigatorKey = GlobalKey<NavigatorState>();
 
-class MyApp extends StatefulWidget{
-  @override
-  _MyAppState  createState() => _MyAppState();
-}
+class MyApp extends StatelessWidget {
 
-class _MyAppState extends State<MyApp> {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  bool useMobileLayout;
+
+
+
+
+
   // This widget is the root of your application.
-  Future<FirebaseApp> _initialization = Firebase.initializeApp();
-
-  @override
-  void initState() {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.black,
-      statusBarIconBrightness: Brightness.light,
-      statusBarBrightness: Brightness.dark,
-    ));
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _initialization,
-      builder: (context, snapshot){
-        //Check for errors
-        if(snapshot.hasError){
-          //return SomethingWentWrong();
+        builder: (context, snapshot){
+          if (snapshot.hasError) {
+            return Container();
+          }
+          // Once complete, show your application
+          if (snapshot.connectionState == ConnectionState.done) {
+            return  GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+                if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+                  FocusManager.instance.primaryFocus.unfocus();
+                }
+              },
+              child: MaterialApp(
+                navigatorKey: navigatorKey,
+                localizationsDelegates: [
+                  // ... app-specific localization delegate[s] here
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: [
+                  const Locale('en'), // English
+                  const Locale('es'), // español
+                ],
+                initialRoute: '/',
+                navigatorObservers: [ObserverRoute()],
+                routes: {
+                  '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
+                  '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
+                  '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
+                  '/login': (context) => PrincipalFormLogin(),
+                  '/loginBiometricos': (context) => BiometricosPage(),
+                },
+                title: 'Intermediario GNP',
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+                  unselectedWidgetColor: Colors.indigo,
+                  primarySwatch: Colors.red,
+                ),
+                home: SplashMain(),
+              ),
+            );
+          }
+          return Container();
         }
-        //Once complete, show your application
-        if(snapshot.connectionState == ConnectionState.done){
-          return new MaterialApp(
-            localizationsDelegates: [
-              // ... app-specific localization delegate[s] here
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            supportedLocales: [
-              const Locale('en'), // English
-              const Locale('es'), // español
-            ],
-            initialRoute: '/',
-            routes: {
-              '/splash': (buildContext) => SplashController(),
-              '/login': (buildContext) => LoginController(),
-              '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
-              '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
-              '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
-            },
-            debugShowCheckedModeBanner: false,
-            title: 'Intermediario GNP',
-            theme: ThemeData(primaryColor: Colors.deepOrange,
-                textTheme: TextTheme(
-                    body1: TextStyle(fontSize: 18.0),
-                    body2: TextStyle(fontSize: 18.0))),
-            home: SplashController(),
-          );
-        }
-        //Otherwise, show something whilst waiting for initialization to complete
-        return CircularProgressIndicator();
-      },
     );
+
+  }
+
+}
+/*
+void setOrientation(Orientation sreen){
+  print(""+sreen.toString());
+  if(diviceType != ScreenType.phone && sreen == Orientation.landscape){
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight,DeviceOrientation.portraitUp]);
+  }else if(sreen == Orientation.portrait){
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
   }
 }
-
+*/

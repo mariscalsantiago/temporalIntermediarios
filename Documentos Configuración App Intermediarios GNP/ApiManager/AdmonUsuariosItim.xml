@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<exp:Export Version="3.0"
+    xmlns:L7p="http://www.layer7tech.com/ws/policy"
+    xmlns:exp="http://www.layer7tech.com/ws/policy/export" xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy">
+    <exp:References/>
+    <wsp:Policy xmlns:L7p="http://www.layer7tech.com/ws/policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2002/12/policy">
+        <wsp:All wsp:Usage="Required">
+            <L7p:ApiPortalIntegration>
+                <L7p:ApiGroup stringValue=""/>
+                <L7p:ApiId stringValue="be0e87d3-930b-4b82-9d44-5084bae0b135"/>
+                <L7p:Enabled booleanValue="false"/>
+                <L7p:PortalManagedApiFlag stringValue="L7p:ApiPortalManagedServiceAssertion"/>
+            </L7p:ApiPortalIntegration>
+            <L7p:SetVariable>
+                <L7p:Base64Expression stringValue="JHtyZXF1ZXN0LmNvbnRlbnRUeXBlfQ=="/>
+                <L7p:VariableToSet stringValue="contentType"/>
+            </L7p:SetVariable>
+            <wsp:OneOrMore wsp:Usage="Required">
+                <wsp:All wsp:Usage="Required">
+                    <L7p:ComparisonAssertion>
+                        <L7p:CaseSensitive booleanValue="false"/>
+                        <L7p:Expression1 stringValue="${contentType}"/>
+                        <L7p:MultivaluedComparison multivaluedComparison="FIRST"/>
+                        <L7p:Operator operatorNull="null"/>
+                        <L7p:Predicates predicates="included">
+                            <L7p:item dataType="included">
+                                <L7p:Type variableDataType="string"/>
+                            </L7p:item>
+                            <L7p:item binary="included">
+                                <L7p:CaseSensitive booleanValue="false"/>
+                                <L7p:Operator operator="CONTAINS"/>
+                                <L7p:RightValue stringValue="application/json"/>
+                            </L7p:item>
+                        </L7p:Predicates>
+                    </L7p:ComparisonAssertion>
+                    <L7p:JsonTransformation>
+                        <L7p:DestinationMessageTarget MessageTarget="included">
+                            <L7p:TargetModifiedByGateway booleanValue="true"/>
+                        </L7p:DestinationMessageTarget>
+                        <L7p:PrettyPrint booleanValue="true"/>
+                        <L7p:RootTagString stringValue="root"/>
+                        <L7p:Target target="REQUEST"/>
+                        <L7p:Transformation transformation="JSON_to_XML"/>
+                    </L7p:JsonTransformation>
+                    <L7p:HardcodedResponse>
+                        <L7p:Base64ResponseBody stringValue="JHtyZXF1ZXN0Lm1haW5wYXJ0fQ=="/>
+                        <L7p:EarlyResponse booleanValue="true"/>
+                        <L7p:Enabled booleanValue="false"/>
+                    </L7p:HardcodedResponse>
+                    <L7p:XslTransformation>
+                        <L7p:ResourceInfo staticResourceInfo="included">
+                            <L7p:Document stringValueReference="inline"><![CDATA[<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <!-- Identity transform -->
+  <xsl:template match="/root">
+            <xsl:apply-templates/>
+   </xsl:template>
+  
+<xsl:template match="/root/cambioContrasena">  
+<soapenv:Envelope xmlns:adm="http://gnp.com.mx/mw/gmm/lp/proceso/AdmonUsuariosItimService" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+   <soapenv:Header/>
+  <soapenv:Body>
+       <adm:CambioContrasena>   
+                        <uid>
+                            <xsl:value-of select="//*[contains(name(), 'uid')]"/>
+                        </uid>
+                        
+                         <adm:Perfil>
+                             <xsl:value-of select="//*[contains(name(), 'perfil')]"/>
+                         </adm:Perfil> 
+                        
+                        <PASSWORD>
+                                <xsl:value-of select="//*[contains(name(), 'password')]"/>
+                        </PASSWORD>                        
+                           
+     </adm:CambioContrasena>
+  </soapenv:Body>
+</soapenv:Envelope>
+</xsl:template>
+
+</xsl:stylesheet>]]></L7p:Document>
+                        </L7p:ResourceInfo>
+                        <L7p:TransformName stringValue=""/>
+                        <L7p:XsltVersion stringValue="1.0"/>
+                    </L7p:XslTransformation>
+                    <L7p:HardcodedResponse>
+                        <L7p:Base64ResponseBody stringValue="JHtyZXF1ZXN0Lm1haW5wYXJ0fQ=="/>
+                        <L7p:EarlyResponse booleanValue="true"/>
+                        <L7p:Enabled booleanValue="false"/>
+                    </L7p:HardcodedResponse>
+                    <L7p:HttpRoutingAssertion>
+                        <L7p:ProtectedServiceUrl stringValue="http://${gateway.APPSERVER}/AdmonUsuarioItimV2/AdmonUsuariosItimService"/>
+                        <L7p:ProxyPassword stringValueNull="null"/>
+                        <L7p:ProxyUsername stringValueNull="null"/>
+                        <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included">
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="Cookie"/>
+                                </L7p:item>
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="SOAPAction"/>
+                                </L7p:item>
+                            </L7p:Rules>
+                        </L7p:RequestHeaderRules>
+                        <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included"/>
+                        </L7p:RequestParamRules>
+                        <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included">
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="Set-Cookie"/>
+                                </L7p:item>
+                            </L7p:Rules>
+                        </L7p:ResponseHeaderRules>
+                    </L7p:HttpRoutingAssertion>
+                    <L7p:HardcodedResponse>
+                        <L7p:Base64ResponseBody stringValue="JHtyZXNwb25zZS5tYWlucGFydH0="/>
+                        <L7p:EarlyResponse booleanValue="true"/>
+                        <L7p:Enabled booleanValue="false"/>
+                    </L7p:HardcodedResponse>
+                    <L7p:XslTransformation>
+                        <L7p:Direction intValue="2"/>
+                        <L7p:ResourceInfo staticResourceInfo="included">
+                            <L7p:Document stringValueReference="inline"><![CDATA[<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:template match="/">
+     <xsl:apply-templates/>  
+</xsl:template>
+
+<xsl:template match="//*[contains(name(), 'CambioContrasenaResponse')]">  
+     <cambioContrasenaResponse>
+              <return>
+                   <xsl:value-of select="//*[contains(name(), 'return')]"/>
+              </return>            
+      </cambioContrasenaResponse>
+</xsl:template>
+
+
+<xsl:template match="//*[contains(name(), 'Fault')]"> 
+       <faultcode>
+           <xsl:value-of select="faultcode"/>
+       </faultcode>
+       <faultstring>
+           <xsl:value-of select="faultstring"/>
+       </faultstring>
+       <detail>
+           <eotException>
+               <codigoError>
+                   <xsl:value-of select="//*[contains(name(), 'CODIGO_ERROR')]"/>
+               </codigoError>
+               <sistemaOrigen>
+                   <xsl:value-of select="//*[contains(name(), 'SISTEMA_ORIGEN')]"/>
+               </sistemaOrigen>
+               <mensaje>
+                   <xsl:value-of select="MENSAJE"/>
+               </mensaje>
+               <mensajeLargo>
+                   <xsl:value-of select="//*[contains(name(), 'MENSAJE_LARGO')]"/>
+               </mensajeLargo>
+               <mensajeTecnico>
+                   <xsl:value-of select="//*[contains(name(), 'MENSAJE_TECNICO')]"/>
+               </mensajeTecnico>
+           </eotException>
+       </detail>
+</xsl:template>
+
+</xsl:stylesheet>]]></L7p:Document>
+                        </L7p:ResourceInfo>
+                        <L7p:Target target="RESPONSE"/>
+                        <L7p:TransformName stringValue=""/>
+                        <L7p:XsltVersion stringValue="1.0"/>
+                    </L7p:XslTransformation>
+                    <L7p:JsonTransformation>
+                        <L7p:PrettyPrint booleanValue="true"/>
+                        <L7p:RootTagString stringValue=""/>
+                    </L7p:JsonTransformation>
+                </wsp:All>
+                <wsp:All wsp:Usage="Required">
+                    <L7p:ComparisonAssertion>
+                        <L7p:CaseSensitive booleanValue="false"/>
+                        <L7p:Expression1 stringValue="${contentType}"/>
+                        <L7p:MultivaluedComparison multivaluedComparison="FIRST"/>
+                        <L7p:Operator operatorNull="null"/>
+                        <L7p:Predicates predicates="included">
+                            <L7p:item dataType="included">
+                                <L7p:Type variableDataType="string"/>
+                            </L7p:item>
+                            <L7p:item binary="included">
+                                <L7p:CaseSensitive booleanValue="false"/>
+                                <L7p:Operator operator="CONTAINS"/>
+                                <L7p:RightValue stringValue="text/xml"/>
+                            </L7p:item>
+                        </L7p:Predicates>
+                    </L7p:ComparisonAssertion>
+                    <L7p:HttpRoutingAssertion>
+                        <L7p:ProtectedServiceUrl stringValue="http://${gateway.APPSERVER}/AdmonUsuarioItimV2/AdmonUsuariosItimService"/>
+                        <L7p:ProxyPassword stringValueNull="null"/>
+                        <L7p:ProxyUsername stringValueNull="null"/>
+                        <L7p:RequestHeaderRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included">
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="Cookie"/>
+                                </L7p:item>
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="SOAPAction"/>
+                                </L7p:item>
+                            </L7p:Rules>
+                        </L7p:RequestHeaderRules>
+                        <L7p:RequestParamRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included"/>
+                        </L7p:RequestParamRules>
+                        <L7p:ResponseHeaderRules httpPassthroughRuleSet="included">
+                            <L7p:ForwardAll booleanValue="true"/>
+                            <L7p:Rules httpPassthroughRules="included">
+                                <L7p:item httpPassthroughRule="included">
+                                    <L7p:Name stringValue="Set-Cookie"/>
+                                </L7p:item>
+                            </L7p:Rules>
+                        </L7p:ResponseHeaderRules>
+                    </L7p:HttpRoutingAssertion>
+                </wsp:All>
+            </wsp:OneOrMore>
+        </wsp:All>
+    </wsp:Policy>
+</exp:Export>

@@ -1,7 +1,11 @@
 
 import 'package:cotizador_agente/Cotizar/CotizarContract.dart';
 import 'package:cotizador_agente/Cotizar/CotizarPresenter.dart';
+import 'package:cotizador_agente/Custom/CustomAlert.dart';
+import 'package:cotizador_agente/Functions/Inactivity.dart';
+import 'package:cotizador_agente/Functions/Interactios.dart';
 import 'package:cotizador_agente/TabsModule/TabsController.dart';
+import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +26,11 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
   CotizarControllerState() {
     this.presenter = CotizarPresenter(this);
   }
+  functionInactivity(){
+    print("functionInactivity");
+    Inactivity(context:context).initialInactivity(functionInactivity);
+
+  }
 
   @override
   void initState(){
@@ -31,19 +40,26 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
   @override
   Widget build(BuildContext context) {
 
-    return DefaultTabController(
+    return GestureDetector(
+        onTap: (){
+      Inactivity(context:context).initialInactivity(functionInactivity);
+    }, child:DefaultTabController(
         length: 5,
         child: Scaffold(
           appBar: getAppBar(context),
           backgroundColor: Colors.white,
-          body: getBody(),
+          body: GestureDetector(
+              onTap: (){
+                Inactivity(context: context).cancelInactivity();
+              },
+              child: getBody()),
           bottomNavigationBar: Visibility(
               visible: false,
               child: SafeArea(
                   child: TabsController(isSecondLevel: false,)
               )
           ),
-        ));
+        )));
   }
 
   AppBar getAppBar(BuildContext context) {
@@ -82,7 +98,7 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
             margin: EdgeInsets.fromLTRB(16, 16, 0, 0),
             child: ListTile(
               onTap: () {
-                presenter.showSegurosMasivos();
+                //presenter.showSegurosMasivos();
                 setState(() {
                   Utilidades.tabCotizarSelect = true;
                 });
@@ -112,5 +128,14 @@ class CotizarControllerState extends State<CotizarController> implements Cotizar
         ],
       ),
     );
+  }
+
+  void CallbackInactividad(){
+    setState(() {
+      print("CallbackInactividad AP");
+      focusContrasenaInactividad.hasFocus;
+      showInactividad;
+      //contrasenaInactividad = !contrasenaInactividad;
+    });
   }
 }

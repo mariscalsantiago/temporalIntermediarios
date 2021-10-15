@@ -312,14 +312,12 @@ class Utilidades {
 
    static void mostrarAlerta(
        String titulo, String mensaje, BuildContext context) {
-      // flutter defined function
-      showMaterialModalBottomSheet(
-         barrierColor: AppColors.AzulGNP.withOpacity(0.6),
-         backgroundColor: Colors.transparent,
-         context: context,
-         builder: (context, scrollController) => Container(
-            height: 192,
-            padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+     showMaterialModalBottomSheet(
+       barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
+       backgroundColor: Colors.transparent,
+       context: context,
+       builder: (context, scrollController) => Container(
+         padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
             decoration : new BoxDecoration(
                 color: Colors.white,
                 borderRadius: new BorderRadius.only(
@@ -327,37 +325,40 @@ class Utilidades {
                    topRight: const Radius.circular(12.0),
                 )
             ),
-            child:  Center(
-                child: Column(
-                   children: <Widget>[
-                      Padding(
-                         padding: EdgeInsets.only(top:0.0),
-                         child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
-                      ),
-                      Padding(
-                         padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
-                         child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
-                      ),
-                      ButtonTheme(
-                         minWidth: 340.0,
-                         height: 40.0,
-                         buttonColor: AppColors.secondary900,
-                         child: RaisedButton(
-                            onPressed: () {
-                               Navigator.pop(context);
-                            },
-                            child: Text(
-                               "Aceptar",
-                               style: TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                         ),
-                      ),
-                   ],
-                )),
+            child:  Column(
+              mainAxisSize: MainAxisSize.min,
+               children: <Widget>[
+                  Padding(
+                     padding: EdgeInsets.only(top:0.0),
+                     child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                  ),
+                  Padding(
+                     padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                     child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                  ),
+                  ButtonTheme(
+                     minWidth: 340.0,
+                     height: 40.0,
+                     buttonColor: AppColors.secondary900,
+                     child: RaisedButton(
+                        onPressed: () {
+                           Navigator.pop(context);
+                        },
+                        child: Text(
+                           "Aceptar",
+                           style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                     ),
+                  ),
+               ],
+            ),
          ),
       );
-   }static void mostrarAlertas(
-       String titulo, String mensaje, BuildContext context) {
+   }
+   static void mostrarAlertas(
+       String titulo, String mensaje, BuildContext context, {
+         Function onPressed,
+      }) {
       // flutter defined function
       showMaterialModalBottomSheet(
          barrierColor: AppColors.AzulGNP.withOpacity(0.6),
@@ -389,7 +390,7 @@ class Utilidades {
                          height: 40.0,
                          buttonColor: AppColors.secondary900,
                          child: RaisedButton(
-                            onPressed: () {
+                            onPressed: onPressed ?? () {
                                Navigator.pop(context);
                             },
                             child: Text(
