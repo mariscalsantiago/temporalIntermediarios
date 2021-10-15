@@ -1,302 +1,159 @@
 import 'dart:async';
-import 'dart:convert';
-import 'package:cotizador_agente/modelos_widget/modelo_seccion.dart';
-import 'package:cotizador_agente/utils/Utils.dart';
-import 'package:cotizador_agente/vistas/CotizacionesGuardadas.dart';
-import 'package:cotizador_agente/vistas/FormularioPaso2.dart';
-import 'package:cotizador_agente/vistas/SendEmail.dart';
-import 'package:flutter/cupertino.dart';
-
-import 'package:cotizador_agente/utils/validadores.dart';
-import 'package:http/http.dart' as http;
-import 'package:cotizador_agente/modelos/modelos.dart';
+import 'dart:io';
+import 'package:cotizador_agente/CotizadorUnico/Cotizacion.dart';
+import 'package:cotizador_agente/Functions/ObserverRoute.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:cotizador_agente/vistas/Cotizacion.dart';
-import 'package:load/load.dart';
-import 'package:localstorage/localstorage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'CotizadorUnico/FormularioPaso1.dart';
+import 'CotizadorUnico/SeleccionaCotizadorAP.dart';
+import 'EnvironmentVariablesSetup/app_config.dart';
+import 'UserInterface/login/Splash/Splash.dart';
+import 'UserInterface/login/principal_form_login.dart';
+import 'UserInterface/login/subsecuente_biometricos.dart';
+import 'utils/responsive.dart';
 
-void main() {
-  runApp(
-    LoadingProvider(
-      child: MyApp(),
-    ),
+//int timerMinuts = 20;
+int timerMinuts = 20;
+enum Vistas { login, home, perfil, biometricos }
+enum ScreenType {phone,tabletLan, tabletPor}
+bool is_available_face=false;
+bool is_available_finger=false;
+bool showInactividad=false;
+Responsive responsiveMain;
+var screenName;
+ScreenType deviceType = ScreenType.phone;
+BuildContext dialogConnectivityContext;
+BuildContext dialogMobileContext;
+
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+
+
+  var configuredApp = new AppConfig(
+    ambient: Ambient.prod,
+    serviceLogin: 'https://cuentas.gnp.com.mx/auth/login',
+    apikeyAppAgentes: 'COLOCAR APIKEY GNP_Flutter_AppInter',
+    service_perfilador: "https://api.service.gnp.com.mx/Consulta-Agentes/consulta-perfil-app-int",
+    proyectId: 'gnp-accidentespersonales-pro',
+    // urlNotifierService:'https://api.service.gnp.com.mx',
+
+    //COTIZADOR UNICO
+    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-pro.cloudfunctions.net/',
+    urlBase: 'https://gmm-cotizadores.gnp.com.mx/',
+    urlSendAnalytics: 'https://www.google-analytics.com/',
+    idContenedorAnalytics: 'UA-29272127-16',
+
+    serviceBCA: 'https://bca-ws.gnp.com.mx',
+    apikeyBCA: '9a780a70-c5fc-4bee-86cf-5650cce16516',
+
+    //Preguntas Secretas
+    apiKey: 'COLOCAR APIKEY GNP_Flutter_AppInter',
+    consultaPreguntasSecretas: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/preguntas/',
+    actualizarEstablecerPreguntasSecretas: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/preguntas',
+    cambioContrasenaPerfil: 'https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/password/',
+    reestablecerContrasena: 'https://api.service.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
+    consultaUsuarioPorCorreo: 'https://api.service.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
+    orquestadorOTPSinSesion:'https://app-inter.gnp.com.mx/intermediario/enviarOtp/sinSesion',
+    validaOTP: 'https://api.service.gnp.com.mx/apr/otpLocalService/validateOtp/',
+    consultarMedioContactosAgentes :'https://api.service.gnp.com.mx/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
+    altaMediosContactoAgentes:'https://api.service.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
+    orquestadorOtpJwt:'https://app-inter.gnp.com.mx/intermediario/enviarOtp/me',
+    consultaPersonaIdParticipante:"https://api.service.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
+    cotizadorAutos: "https://gnp-appcontratacionautos-pro.uc.r.appspot.com/",
+    servicioNuevoConsultaPorCorreo:"https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
+//https://api.service.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo
+    child: new MyApp(),
+
   );
+
+  runApp(configuredApp);
+
+
+
+  // runApp(configuredApp);
 }
+final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
+
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  bool useMobileLayout;
+
+
+
+
+
   // This widget is the root of your application.
-  final scaffoldKey = GlobalKey<ScaffoldState>();
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-      title: 'GNP',
-      theme: ThemeData(primaryColor: Colors.white),
-      key: scaffoldKey,
-      home: MyHomePage(title: 'GNP'),
-      //  home: SendEmail(),
-      //home: CotizacionVista(),
-      //home: CotizacionesGuardadas(),
+    return FutureBuilder(
+      future: _initialization,
+        builder: (context, snapshot){
+          if (snapshot.hasError) {
+            return Container();
+          }
+          // Once complete, show your application
+          if (snapshot.connectionState == ConnectionState.done) {
+            return  GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
 
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+                if (!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+                  FocusManager.instance.primaryFocus.unfocus();
+                }
+              },
+              child: MaterialApp(
+                navigatorKey: navigatorKey,
+                localizationsDelegates: [
+                  // ... app-specific localization delegate[s] here
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: [
+                  const Locale('en'), // English
+                  const Locale('es'), // español
+                ],
+                initialRoute: '/',
+                navigatorObservers: [ObserverRoute()],
+                routes: {
+                  '/cotizadorUnicoAP': (buildContext) => SeleccionaCotizadorAP(),
+                  '/cotizadorUnicoAPPasoUno': (buildContext) => FormularioPaso1(),
+                  '/cotizadorUnicoAPPasoTres' : (buildContext) => CotizacionVista(),
+                  '/login': (context) => PrincipalFormLogin(),
+                  '/loginBiometricos': (context) => BiometricosPage(),
+                },
+                title: 'Intermediario GNP',
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData(
+                  unselectedWidgetColor: Colors.indigo,
+                  primarySwatch: Colors.red,
+                ),
+                home: SplashMain(),
+              ),
+            );
+          }
+          return Container();
+        }
     );
+
+  }
+
+}
+/*
+void setOrientation(Orientation sreen){
+  print(""+sreen.toString());
+  if(diviceType != ScreenType.phone && sreen == Orientation.landscape){
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight,DeviceOrientation.portraitUp]);
+  }else if(sreen == Orientation.portrait){
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
   }
 }
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.scaffoldKey}) : super(key: key);
-
-  final GlobalKey<ScaffoldState> scaffoldKey;
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState(scaffoldKey);
-}
-
-class _MyHomePageState extends State<MyHomePage> with Validadores {
-  final formKey = GlobalKey<FormState>();
-  final GlobalKey<ScaffoldState> scaffoldKey;
-
-  _MyHomePageState(this.scaffoldKey);
-
-  //Se van a guardar los datos de la forma aquí createdoc[rango_edad]
-  var createDoc = {};
-
-  final LocalStorage storage = new LocalStorage('formulario_1');
-
-  final colorHex = const Color(0xFFCECFD1);
-  final colorLetters = const Color(0xFF002E71);
-  bool reNew = false;
-  bool isLoading = true;
-
-  Paint _paint;
-
-  Drawhorizontalline() {
-    _paint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 1
-      ..strokeCap = StrokeCap.round;
-  }
-
-  refresh() {
-    setState(() {});
-  }
-
-  agregarAlDiccionario(String key, String value) {
-    setState(() {
-      //El metodo que ya funciona
-      print("llegue al metodo del diccionario");
-      createDoc[key] = value;
-      print(createDoc);
-      guardarLocalStorage();
-
-      // Otro metodo
-      storage.setItem(key, createDoc);
-      print("esto etoy guardando" + json.encode(storage.getItem(key)));
-    });
-  }
-
-  guardarLocalStorage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final key = 'PASO1';
-    prefs.setString(key, createDoc.toString());
-
-    final value = prefs.getString(key) ?? "no hay";
-    print('read: $value');
-  }
-
-  Formulario data;
-
-  Future<String> getData() async {
-    var response = await http.get(
-        Uri.encodeFull(
-            "http://35.232.57.52:8008/cotizador/aplicacion?id_aplicacion=1818"),
-        headers: {"Accept": "application/json"});
-
-    if (response.statusCode == 200) {
-      //return Formulario.fromJson(json.decode(response.body));
-      this.setState(() {
-        //data = json.decode(response.body);
-        isLoading = false;
-        data = Formulario.fromJson(json.decode(response.body));
-      });
-    } else {
-      print("VVV");
-      throw Exception('Failed to load post');
-    }
-
-    return "Success!";
-  }
-
-  @override
-  void initState() {
-    this.getData();
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawLine(Offset(-90.0, 0.0), Offset(90.0, 0.0), _paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-
-        title: Text("GNP"),
-
-      ),
-
-      body: Column(
-
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-
-          Container(
-            color: Utilidades.sombra,
-            child: Row( //Barra de menú superior
-              children: <Widget>[
-                Expanded(
-                  flex: 7,
-                  child:  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: OutlineButton(
-                      textColor: Utilidades.color_primario,
-                      child: Text("COTIZACIONES GUARDADAS"),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => CotizacionesGuardadas(),
-                            ));
-                      },
-                      borderSide: BorderSide(
-                        color: Utilidades.color_primario, //Color of the border
-                        style: BorderStyle.solid, //Style of the border
-                        width: 0.8, //width of the border
-                      ),
-                    ),
-                  ),
-                ),
-
-
-                Expanded(
-
-                  flex: 3,
-                  child: Container(
-                    width: double.infinity,
-                    child: (
-                        PopupMenuButton(
-
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 1,
-                              child: Text(
-                                "Guardar",
-                                style: TextStyle(
-                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 2,
-                              child: Text(
-                                "Limpiar datos",
-                                style: TextStyle(
-                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 3,
-                              child: Text(
-                                "Imprimir",
-                                style: TextStyle(
-                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                            PopupMenuItem(
-                              value: 4,
-                              child: Text(
-                                "Material de apoyo",
-                                style: TextStyle(
-                                    color: Utilidades.color_primario, fontWeight: FontWeight.w700),
-                              ),
-                            ),
-                          ],
-                          initialValue: 2,
-                          onCanceled: () {
-                            print("You have canceled the menu.");
-                          },
-                          onSelected: (value) {
-                            print("value:$value");
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Text(
-                                "MÁS",
-                                style: TextStyle(fontSize: 14.0, color: Utilidades.color_primario),
-                                textAlign: TextAlign.right,
-
-                              ),
-                              Icon(Icons.more_vert, color: Utilidades.color_primario,),
-                            ],
-                          ),
-                        )
-
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                    child: Divider( //002e71
-                      thickness: 2,
-                      color: Utilidades.color_titulo,
-
-                      height: 0,
-                    )),
-              ),
-            ],
-          ),
-          /****** Termina panel superior *******/
-
-
-          /****** Comienza panel de coti *******/
-
-          Expanded(
-            child: Form(
-              key: formKey,
-              child: isLoading
-                  ? Center(
-                child: CircularProgressIndicator(),
-              )
-                  : new ListView.builder
-                (
-                  itemCount: data.secciones.length-1,
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemBuilder: (BuildContext ctxt, int index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: new SeccionDinamica(agregarDicc:agregarAlDiccionario, notifyParent:refresh,secc: data.secciones[index], i:index, end:data.secciones.length-1, cantidad_asegurados: data.cantidad_asegurados, formKey: formKey,),
-                    );
-                  }
-              ),
-            ),
-
-          ),
-        ]),
-      );
-  }
-}
+*/

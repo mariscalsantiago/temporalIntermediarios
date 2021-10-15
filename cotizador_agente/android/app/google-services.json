@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "993193296112",
+    "firebase_url": "https://gnp-accidentespersonales-uat-default-rtdb.firebaseio.com",
+    "project_id": "gnp-accidentespersonales-uat",
+    "storage_bucket": "gnp-accidentespersonales-uat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993193296112:android:e20f1ba5c7e439cd350235",
+        "android_client_info": {
+          "package_name": "mx.com.gnp.soysociognp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "993193296112-8ambgnb51nofi2uo1vui9agovsh2e6is.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwnqof4aA58TQWiCE13zYqiTY_2zMQduE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "993193296112-8ambgnb51nofi2uo1vui9agovsh2e6is.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "993193296112-s2v016goe7v2j3p56v2ntfcgb18adqkt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "mx.com.gnp.soysociognpapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
