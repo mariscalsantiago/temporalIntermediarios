@@ -2,7 +2,7 @@
 
 **Instalación de Flutter**
 
-Descargar Flutter 1.22.0 de  
+Descargar Flutter 1.22.2 de  
 [https://flutter.dev/docs/development/tools/sdk/releases?tab=macos](https://flutter.dev/docs/development/tools/sdk/releases?tab=macos) (para Mac)  
 [https://flutter.dev/docs/development/tools/sdk/releases?tab=windows](https://flutter.dev/docs/development/tools/sdk/releases?tab=windows) (para Windows)
 

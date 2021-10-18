@@ -22,6 +22,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:cotizador_agente/utils/Constants.dart' as Constants;
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 
 
@@ -562,68 +563,61 @@ class _CotizacionVistaState extends State<CotizacionVista> {
 
 
   Widget showModalGuardar(int idFormato, int index, bool abrirPdf, bool mostrarFormato){
-     showModalBottomSheet(
-      isScrollControlled: true,
-      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+    showMaterialModalBottomSheet(
+      barrierColor: AppColors.color_titleAlert.withOpacity(0.6),
       backgroundColor: Colors.transparent,
       context: context,
-      builder: (context) => AnimatedPadding(
-        duration: Duration(milliseconds: 0),
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: Container(
-          padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
-          decoration : new BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.only(
-                topLeft: const Radius.circular(12.0),
-                topRight: const Radius.circular(12.0),
-              )
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Wrap(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 16.0, left: 24.0, right: 24.0),
-                    child:Center(child: new Text(Mensajes.titleSave,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            color: AppColors.AzulGNP,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.15))),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16.0, left: 12.0, right: 12.0),
-                    child:SingleChildScrollView(child: new Text(Mensajes.lblSaveCot,
-                        textAlign: TextAlign.justify,
-                        style: TextStyle(
-                            color: AppColors.color_appBar,
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 0.25))),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 24.0, left: 24.0),
-                          child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas, idFormato: idFormato, index: index, abrirPdf: abrirPdf, mostrarFormato: mostrarFormato,),
-                        ),
-                      ],),
-                    ),
-                  ),
-                ],
+      builder: (context, scrollController) => Container(
+        padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+        decoration : new BoxDecoration(
+            color: Colors.white,
+            borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(12.0),
+              topRight: const Radius.circular(12.0),
+            )
+        ),
+        child:  Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: 16.0, left: 24.0, right: 24.0),
+              child:Center(child: new Text(Mensajes.titleSave,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: AppColors.AzulGNP,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.15))),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 16.0, left: 12.0, right: 12.0),
+              child:SingleChildScrollView(child: new Text(Mensajes.lblSaveCot,
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(
+                      color: AppColors.color_appBar,
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 0.25))),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-            ],
-          ),
+              child: Form(
+                key: _formKey,
+                child: Column(children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 24.0, left: 24.0),
+                    child: listaCheck(ispropuesta1: propuesta1, ispropuesta2: propuesta2, ispropuesta3: propuesta3, guardarPropuestas: guardarPropuestas, idFormato: idFormato, index: index, abrirPdf: abrirPdf, mostrarFormato: mostrarFormato,),
+                  ),
+                ],),
+              ),
+            ),
+          ],
         ),
       ),
     );
-}
+  }
 
   @override
   Widget build(BuildContext context) {

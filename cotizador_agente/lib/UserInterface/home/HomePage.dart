@@ -199,12 +199,16 @@ class _HomePageState extends State<HomePage> {
       _isActiveAutos = validateNotEmptyBool(event.snapshot.value["dataAutos"]["show"]);
       if(!_isActiveAutos){
         List _whiteList = event.snapshot.value["dataAutos"]["whitelist"];
-        for(String name in _whiteList){
+        final email = datosUsuario.emaillogin?.toLowerCase() ?? '';
+        if (email.isNotEmpty && _whiteList.contains(email)) {
+          _isActiveAutos = true;
+        }
+        /*for(String name in _whiteList){
           bool _whiteListMember = datosUsuario.emaillogin!=null ? name.toLowerCase() == datosUsuario.emaillogin.toLowerCase()? true : false:false;
           if(_whiteListMember){
             _isActiveAutos=true;
           }
-        }
+        }*/
 
       }
       if(mounted) setState(() { });
