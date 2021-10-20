@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
+import 'package:cotizador_agente/Custom/Crypto.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
 import 'package:cotizador_agente/UserInterface/home/HomePage.dart';
@@ -5455,9 +5456,10 @@ void customAlertTablet(AlertDialogTypeTablet type, BuildContext context,
 String numero() {
   if (prefs.getString("medioContactoTelefono") != null &&
       prefs.getString("medioContactoTelefono") != "") {
-    int numero = prefs.getString("medioContactoTelefono").length;
-    return "******" +
-        prefs.getString("medioContactoTelefono").substring(numero - 4, numero);
+    String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+        "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+    int numero = decryptedNumber.length;
+    return "******" + decryptedNumber.substring(numero - 4, numero);
   } else {
     return "**********";
   }

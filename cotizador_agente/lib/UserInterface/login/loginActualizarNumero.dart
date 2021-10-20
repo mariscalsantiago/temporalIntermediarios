@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/Custom/Crypto.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Inactivity.dart';
@@ -12,6 +13,7 @@ import 'package:cotizador_agente/flujoLoginModel/consultaMediosContactoAgentesMo
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +35,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
   bool _validNumber = true;
   TextEditingController controllerNumero;
   FocusNode focusCodigo = FocusNode();
+  EncryptData _encryptData = EncryptData();
 
 
   @override
@@ -423,20 +426,19 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
               String lada = controllerNumero.text.substring(0, 2);
               String numero = controllerNumero.text.substring(2, 10);
+              String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                  "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
 
               prefs.setString("lada", lada);
               prefs.setString("numero", numero);
-              prefs.setString("medioContactoTelefonoServicio",
-                  prefs.getString("medioContactoTelefono"));
-              print("Telefono -- ${prefs.getString("medioContactoTelefono")}");
-              prefs.setString("medioContactoTelefono", controllerNumero.text);
+              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS(decryptedNumber));
+              prefs.setString("medioContactoTelefono", encryptAESCryptoJS(controllerNumero.text));
               setState(() {
                 _saving = true;
               });
 
               OrquetadorOtpJwtModel optRespuesta =
-                  await orquestadorOTPJwtServicio(
-                      context, prefs.getString("medioContactoTelefono"), true);
+                  await orquestadorOTPJwtServicio(context, decryptedNumber, true);
 
               setState(() {
                 _saving = false;
@@ -444,7 +446,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
               if (optRespuesta != null) {
                 if (optRespuesta.error == "") {
-                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
                   prefs.setBool("seActualizarNumero", true);
                   Navigator.pop(context);
                   Navigator.push(
@@ -477,20 +479,20 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
               String lada = controllerNumero.text.substring(0, 2);
               String numero = controllerNumero.text.substring(2, 10);
+              String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                  "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
 
               prefs.setString("lada", lada);
               prefs.setString("numero", numero);
-              prefs.setString("medioContactoTelefonoServicio",
-                  prefs.getString("medioContactoTelefono"));
-              prefs.setString("medioContactoTelefono", controllerNumero.text);
+              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS(decryptedNumber));
+              prefs.setString("medioContactoTelefono", encryptAESCryptoJS(controllerNumero.text));
 
               setState(() {
                 _saving = true;
               });
 
               OrquetadorOtpJwtModel optRespuesta =
-                  await orquestadorOTPJwtServicio(
-                      context, prefs.getString("medioContactoTelefono"), true);
+                  await orquestadorOTPJwtServicio(context, decryptedNumber, true);
 
               setState(() {
                 _saving = false;
@@ -498,7 +500,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
               if (optRespuesta != null) {
                 if (optRespuesta.error == "") {
-                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
                   prefs.setBool("seActualizarNumero", true);
                   Navigator.pop(context);
                   Navigator.push(
@@ -530,13 +532,14 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               setState(() {
                 _saving = true;
               });
+              String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                  "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
 
               String lada = controllerNumero.text.substring(0, 2);
               String numero = controllerNumero.text.substring(2, 10);
               prefs.setString("lada", lada);
               prefs.setString("numero", numero);
-              prefs.setString("medioContactoTelefonoServicio",
-                  prefs.getString("medioContactoTelefono"));
+              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS(decryptedNumber));
 
 
               print("lada   ${lada}");
@@ -545,11 +548,10 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               setState(() {
                 _saving = true;
               });
+              var decryptedEmail = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+              print("Email decrypted $decryptedEmail");
               OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
-                  context,
-                  prefs.getString("correoUsuario"),
-                  controllerNumero.text,
-                  prefs.getBool('flujoOlvideContrasena'),responsive);
+                  context,decryptedEmail,controllerNumero.text,prefs.getBool('flujoOlvideContrasena'));
 
               setState(() {
                 _saving = false;
@@ -558,8 +560,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               if (optRespuesta != null) {
                 if (optRespuesta.error == "" && optRespuesta.idError == "") {
                   prefs.setBool("seActualizarNumero", true);
-                  prefs.setString("idOperacion", optRespuesta.idOperacion);
-                  prefs.setString("medioContactoTelefono", controllerNumero.text);
+                  prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
+                  prefs.setString("medioContactoTelefono", encryptAESCryptoJS(controllerNumero.text));
                   if (prefs.getBool("actulizarNumeroDesdeCodigo") != null &&
                       prefs.getBool("actulizarNumeroDesdeCodigo")) {
                     prefs.setBool("actulizarNumeroDesdeCodigo", false);
@@ -610,11 +612,16 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
     setState(() {
       _saving = true;
     });
+    var decryptedEmail = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+    String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+        "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+
+    print("Email decrypted 619 $decryptedEmail");
     OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
         context,
-        prefs.getString("correoUsuario"),
-        prefs.getString("medioContactoTelefono"),
-        prefs.getBool('flujoOlvideContrasena'),responsive);
+        decryptedEmail,
+        decryptedNumber,
+        prefs.getBool('flujoOlvideContrasena'));
 
     setState(() {
       _saving = false;
@@ -622,7 +629,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
     if (optRespuesta != null) {
       if (optRespuesta.error == "" && optRespuesta.idError == "") {
-        prefs.setString("idOperacion", optRespuesta.idOperacion);
+
+        prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
         if (prefs.getBool("actulizarNumeroDesdeCodigo") != null &&
             prefs.getBool("actulizarNumeroDesdeCodigo")) {
           prefs.setBool("actulizarNumeroDesdeCodigo", false);

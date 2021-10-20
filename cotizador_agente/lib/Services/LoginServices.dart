@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -50,6 +51,7 @@ List<dynamic> emitirAutos = [];
 List<dynamic> pagarAutos = [];
 int intento;
 Map accesoFirebase;
+EncryptData _encryptData = EncryptData();
 
 void funcionAlerta(){
 
@@ -80,11 +82,6 @@ Future<LoginDatosModel> logInServices(BuildContext context, String mail, String 
       print(e);
       //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
     }
-    /*
-    finally {
-      customAlert(AlertDialogType.timeOut, context, "", "", responsive, callback);
-      return null;
-    }*/
   } else{
     customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;
@@ -172,7 +169,7 @@ void consultaBitacora() async {
   //String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
   String formattedDate = DateFormat('kk:mm:ss').format(now);
   String formatted = formatter.format(now);
-  String deviceName= prefs.getString("deviceName");
+  String deviceName = _encryptData.decryptData(prefs.getString("deviceName"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
   try{
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {
@@ -340,6 +337,7 @@ Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String 
   metricsPerformance.send(request);
 
   await FirebaseAuthenticationServices().getIntentosUser(user);
+  print("logInPost user:"+user);
 
   if(response != null) {
     if (response.body != null && response.body.isNotEmpty) {

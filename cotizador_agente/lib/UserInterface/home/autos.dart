@@ -142,33 +142,10 @@ class _AutosPageState extends State<AutosPage> {
       onWebViewCreated: (InAppWebViewController controller) {
         webViewController = controller;
       },
-
-      onLoadStart: (controller, url,) {
-        print("loaderStart");
+      onLoadStart: (controller, url) {
         setState(() {
           _saving = true;
         });
-        Future.delayed(const Duration(seconds: 10), () {
-          if(_saving) {
-            setState(() {
-              _saving = false;
-            });
-            validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
-            print("=> ConnectivityAutos  $isMobile $isWifi<=");
-            Future.delayed(const Duration(seconds: 3), () {
-              Inactivity(context: context).cancelInactivity();
-              print("=> ConnectivityAutos  $isMobile $isWifi<=");
-              if(dialogConnectivityContext!=null) {
-                Navigator.pop(context);
-                isMessageWifi = false;
-                dialogConnectivityContext = null;
-              }
-              Navigator.pop(context, true);
-              return ShouldOverrideUrlLoadingAction.ALLOW;
-            });
-          }
-        });
-
         if (url.contains(returnToApp) || url.contains("ReturnToApp") || url.contains("returntoApp") || url.contains("returntoapp") ) {
           Inactivity(context:context).cancelInactivity();
           Navigator.pop(context,true);
@@ -179,32 +156,25 @@ class _AutosPageState extends State<AutosPage> {
       onLoadStop: (controller, url) {
         setState(() {
           _saving = false;
-          hasInternetFirebase = true;
         });
         print("onLoadStop ${url}");
         Inactivity(context:context).initialInactivity(functionInactivity);
       },
       onLoadError: (controller, url, code, message) {
         print("onLoadError:  $code $url,, $message");
-       bool time = message.contains("timed out") ? true: message.contains("conexion") ? true : false;
-       print("time $time");
         if(code!=null) {
-          if (time || "$code" == "-1004" || "$code" == "-5" || "$code" == "-1009"|| "$code" == "-2"|| "$code" == "-1001") {
-            setState(() {
-              _saving = false;
-            });
+          if ("$code" == "-1004" || "$code" == "-5" || "$code" == "-1009"|| "$code" == "-2" ) {
             hasInternetFirebase = false;
             hasAutosError = true;
             hasAutosErrorUrl = url;
-            if (!isMessageWifi) {
-              isMessageWifi = true;
-              customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", widget.responsive, funcionAlertaWifi);
-            }
+            validateIntenetstatus(context, widget.responsive, functionConnectivity, false);
             Future.delayed(const Duration(seconds: 3), () {
               Inactivity(context:context).cancelInactivity();
               if(isMessageWifi) {
-                  Navigator.pop(context);
+                if(dialogConnectivityContext!=null) {
                   isMessageWifi = false;
+                  Navigator.pop(navigatorKey.currentContext);
+                }
               }
               Navigator.pop(context,true);
               return ShouldOverrideUrlLoadingAction.ALLOW;

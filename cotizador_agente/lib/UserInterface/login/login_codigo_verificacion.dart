@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/Custom/Crypto.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
@@ -19,6 +20,7 @@ import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -42,6 +44,7 @@ bool timerEnd = false;
 Widget timer;
 String BackgroundRemaining;
 String BackgroundRemainingDate;
+EncryptData _encryptData = EncryptData();
 
 class LoginCodigoVerificaion extends StatefulWidget {
   final isNumero;
@@ -209,9 +212,13 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                         }
                         if (_saving) {
                         } else {
-                          if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {prefs.setString("medioContactoTelefono", prefs.getString("medioContactoTelefonoServicio"));
+                          String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefonoServicio"),
+                              "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+                          if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {
+                            prefs.setString("medioContactoTelefono", encryptAESCryptoJS(decryptedNumber));
                             Navigator.pop(context, true);
-                          } else {prefs.setString("medioContactoTelefono", prefs.getString("medioContactoTelefonoServicio"));
+                          } else {
+                            prefs.setString("medioContactoTelefono", encryptAESCryptoJS(decryptedNumber));
                             Navigator.pop(context, true);
                           }
                         }
@@ -285,7 +292,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                 : Container(
                     margin: EdgeInsets.only(top: responsive.hp(2.3)),
                     child: Text(
-                      "${"(+52)" + prefs.getString("medioContactoTelefono")}",
+                      "${"(+52)" + decryptAESCryptoJS(prefs.getString("medioContactoTelefono"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020")}",
                       style: TextStyle(
                           color: Tema.Colors.GNP,
                           fontWeight: FontWeight.normal,
@@ -584,11 +591,13 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                 setState(() {
                   _saving = true;
                 });
+                var decryptedEmail = _encryptData.decryptData(prefs.getString("correoCambioContrasena"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+                print("Email decrypted 595 $decryptedEmail");
                 OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
                     context,
-                    prefs.getString("correoCambioContrasena"),
+                    decryptedEmail,
                     "",
-                    prefs.getBool('flujoOlvideContrasena'),responsive);
+                    prefs.getBool('flujoOlvideContrasena'));
                 setState(() {
                   _saving = false;
                 });
@@ -602,7 +611,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                   if (optRespuesta.error == "" && optRespuesta.idError == "") {
                     //TODO validar Dali
                     sendTag("appinter_otp_ok");
-                    prefs.setString("idOperacion", optRespuesta.idOperacion);
+                    prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
                     //prefs.setBool('flujoOlvideContrasena', true);
                     //Navigator.pop(context,true);
                     //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => LoginCodigoVerificaion(responsive: responsive,)));
@@ -621,23 +630,24 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                   customAlert(AlertDialogType.errorServicio, context, "", "",
                       responsive, funcion);
                 }
-              }
-              else {
+              } else {
                 if (prefs.getBool("esPerfil") != null &&
                     prefs.getBool("esPerfil")) {
                   setState(() {
                     _saving = true;
                   });
                   OrquetadorOtpJwtModel optRespuesta;
+                  String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                      "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
                   if (prefs.getBool("esActualizarNumero")) {
                     optRespuesta = await orquestadorOTPJwtServicio(context,
-                        prefs.getString("medioContactoTelefono"), true);
+                        decryptedNumber, true);
                   } else if(prefs.getBool("seActualizarNumero")){
                     optRespuesta = await orquestadorOTPJwtServicio(context,
-                        prefs.getString("medioContactoTelefono"), true);
+                        decryptedNumber, true);
                   } else {
                     optRespuesta = await orquestadorOTPJwtServicio(context,
-                        prefs.getString("medioContactoTelefono"), false);
+                        decryptedNumber, false);
                   }
 
                   setState(() {
@@ -652,7 +662,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                     if (optRespuesta.error == "") {
                       //TODO validar Dali
                       sendTag("appinter_otp_ok");
-                      prefs.setString("idOperacion", optRespuesta.idOperacion);
+                      prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
                     } else {
                       //TODO validar Dali
                       sendTag("appinter_otp_error");
@@ -675,12 +685,16 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                     controllerCodigo.text = "";
                     _saving = true;
                   });
+                  var decryptedEmail = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+                  String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                      "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+
                   OrquestadorOTPModel optRespuesta =
                       await orquestadorOTPServicio(
                           context,
-                          prefs.getString("correoUsuario"),
-                          prefs.getString("medioContactoTelefono"),
-                          false,responsive);
+                          decryptedEmail,
+                          decryptedNumber,
+                          false);
                   setState(() {
                     timerEnd = false;
                     _saving = false;
@@ -688,7 +702,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                   if (optRespuesta != null) {
                     if (optRespuesta.error == "" &&
                         optRespuesta.idError == "") {
-                      prefs.setString("idOperacion", optRespuesta.idOperacion);
+                      prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
                       //TODO validar Dali
                       sendTag("appinter_otp_ok");
                     }else if ( optRespuesta.idError == "015" ) {
@@ -795,10 +809,11 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                 setState(() {
                   _saving = true;
                 });
-
+                var decryptedId = _encryptData.decryptData(prefs.getString("idOperacion"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+                print("ID decrypted $decryptedId");
                 ValidarOTPModel validarOTP = await validaOrquestadorOTPServicio(
                     context,
-                    prefs.getString("idOperacion"),
+                    decryptedId,
                     controllerCodigo.text);
 
 
@@ -879,10 +894,11 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                                     "medioContactoTelefonoServicio"));
                           }
                         } else {
+                          String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                              "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
                           customAlert(AlertDialogType.errorServicio, context,
                               "", "", responsive, funcionAlerta);
-                          prefs.setString("medioContactoTelefono",
-                              prefs.getString("medioContactoTelefonoServicio"));
+                          prefs.setString("medioContactoTelefono", encryptAESCryptoJS(decryptedNumber));
                         }
                       } else {
                         setState(() {
@@ -966,10 +982,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                           print("Flujoo completo");
                           prefs.setBool("flujoCompletoLogin", true);
                           if(_showFinOtro){
-                            customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, "title", "message", responsive, (){setState(() {
-                              _saving = false;
-                              Navigator.pop(context);
-                            }); });
+                            customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, "title", "message", responsive, callback);
                           }else{
                             sendTag("appinter_login_ok");
                             Navigator.push(
@@ -994,7 +1007,6 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                   }
                 } else {
                   setState(() {
-                    _saving = false;
                     _validCode = false;
                     codigoValidacion = "El código no coincide";
                     // todo limpiar codiggo

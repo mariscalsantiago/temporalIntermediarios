@@ -9,6 +9,7 @@ import 'package:cotizador_agente/Functions/Inactivity.dart';
 import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:geolocator/geolocator.dart';
@@ -31,6 +32,7 @@ DateTime date1;
 DateTime date2;
 bool showInp = true;
 bool doTimerOther = true;
+EncryptData _encryptData = EncryptData();
 
 
 /*void initializeTimer(BuildContext context,  Function callback) {
@@ -82,7 +84,7 @@ Future<void> logOutOtherUser(BuildContext context, Function callback) async {
     String locality="";
     String address;
     LocationPermission permission = await Geolocator.checkPermission();
-    String deviceName= prefs.getString("deviceName");
+    String deviceName = _encryptData.decryptData(prefs.getString("deviceName"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
     try{
       if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {
         userLocation= await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
@@ -156,6 +158,7 @@ Future<void> logOutOtherUser(BuildContext context, Function callback) async {
     else{
       if(doTimerOther){
       print("logOutOtherUser reinicio timer");
+      hasInternetFirebase = true;
       initializeTimerOtroUsuario(context,  callback);
       }
     }

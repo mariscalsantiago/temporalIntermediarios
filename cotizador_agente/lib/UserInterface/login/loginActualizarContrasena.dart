@@ -10,6 +10,7 @@ import 'package:cotizador_agente/UserInterface/login/Splash/Splash.dart';
 import 'package:cotizador_agente/flujoLoginModel/cambioContrasenaModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,8 @@ import '../../main.dart';
 
 bool isPortrait = false;
 Responsive responsiveMainTablet;
+EncryptData _encryptData = EncryptData();
+String _password;
 
 class LoginActualizarContrasena extends StatefulWidget {
   final Responsive responsive;
@@ -103,7 +106,10 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
     if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {
       Inactivity(context:context).initialInactivity(functionInactivity);
     } else {
-      controllerActualContrasena.text = prefs.getString("contrasenaUsuario");
+      var value = _encryptData.decryptData(prefs.getString("contrasenaUsuario"),
+          "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+      controllerActualContrasena.text = value;
+      _password = value;
     }
 
     var keyboardVisibilityController = KeyboardVisibilityController();
@@ -482,11 +488,11 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                   },
                 )),
             validator: (value) {
-              print("value ${prefs.getString("contrasenaUsuario")}");
+              print("value $_password");
 
               if (value.isEmpty && !value.contains(" ")) {
                 return 'Este campo es requerido';
-              } else if (value != prefs.getString("contrasenaUsuario") &&
+              } else if (value != _password &&
                   !value.contains(" ")) {
                 return 'La contraseña actual no coincide';
               } else if (value.contains(" ")) {
@@ -2083,7 +2089,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                         context,
                         controllerActualContrasena.text,
                         controllerNuevaContrasena.text,
-                        datosUsuario.idparticipante,responsive);
+                        datosUsuario.idparticipante);
 
                 if (cambiocontrasena != null) {
                   setState(() {
@@ -2099,10 +2105,10 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                         responsive,
                         funcionAlerta);
                   } else if (cambiocontrasena.error == "") {
-                    prefs.setString(
-                        "contrasenaUsuario", controllerNuevaContrasena.text);
-                    prefs.setString(
-                        "contraenaActualizada", controllerNuevaContrasena.text);
+                    prefs.setString("contrasenaUsuario",
+                        _encryptData.encryptInfo(controllerNuevaContrasena.text, "contrasenaUsuario"));
+                    prefs.setString("contraenaActualizada",
+                        _encryptData.encryptInfo(controllerNuevaContrasena.text, "contraenaActualizada"));
                     customAlert(
                         AlertDialogType.contrasena_actualiza_correctamente,
                         context,

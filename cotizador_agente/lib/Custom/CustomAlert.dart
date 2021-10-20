@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/Custom/Constantes.dart';
+import 'package:cotizador_agente/Custom/Crypto.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
@@ -27,6 +28,7 @@ import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,6 +54,7 @@ bool _didAuthenticate = true;
 var isShowAlert = false;
 bool _firstSession = true;
 bool _showFinOtro = false;
+EncryptData _encryptData = EncryptData();
 
 enum AlertDialogType {
   errorPermisosGeneric,
@@ -176,45 +179,26 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                             ),
                             Container(
                               margin: EdgeInsets.only(
+                                  top: responsive.height * 0.04,
                                   left: responsive.width * 0.04,
-                                right: responsive.width * 0.04,
-                                  ),
+                                  bottom: responsive.height * 0.03),
                               child: Container(
                                 margin: EdgeInsets.only(
                                   top: responsive.height * 0.04,
-                                  left: responsive.wp(2),
-                                  right: responsive.wp(2),
-                                  bottom: responsive.height * 0.02,
+                                  left: responsive.wp(6),
+                                  right: responsive.wp(6),
+                                  bottom: responsive.height * 0.03,
                                 ),
                                 child: Center(
-                                  child: Text("No se logró realizar la configuración de los permisos que requiere tu App Intermediario GNP.",
+                                  child: Text("No se pudo configurar los permisos que requiere tu App Intermediario GNP. Ve a Ajustes y válida que los permisos están habilitados para tu App Intermediario GNP.",
                                     style: TextStyle(
-                                        height:responsive.ip(0.2),
-                                        color:Theme.Colors.Funcional_Textos_Body,
-                                        fontSize: responsive.ip(1.5)),
+                                        color:
+                                        Theme.Colors.Funcional_Textos_Body,
+                                        fontSize: responsive.ip(1.8)),
                                   ),
                                 ),
                               ),
                             ),
-                          Container(
-                          margin: EdgeInsets.only(
-                          left: responsive.width * 0.04,
-                              right: responsive.width * 0.04,
-                          bottom: responsive.height * 0.04),
-                          child: Container(
-                              margin: EdgeInsets.only(
-                                left: responsive.wp(2),
-                                right: responsive.wp(2),
-                              ),
-                              child: Center(
-                                child: Text("Ve a Ajustes y válida que los permisos están habilitados para tu App Intermediario GNP.",
-                                  style: TextStyle(
-                                      height:responsive.ip(0.2),
-                                      color:Theme.Colors.Funcional_Textos_Body,
-                                      fontSize: responsive.ip(1.5)),
-                                ),
-                              ),
-                            )),
                             Center(
                               child: Container(
                                 height: responsive.hp(6.25),
@@ -227,7 +211,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                   elevation: 0,
                                   color: Theme.Colors.GNP,
                                   onPressed: () {
-                                    SystemSettings.app();
+                                    SystemSettings.defaultApps();
                                   },
                                   child: Text("CONFIGURAR PERMISOS",
                                     textAlign: TextAlign.center,
@@ -247,6 +231,11 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                   top: responsive.height * 0.02,
                                 ),
                                 child: RaisedButton(
+                                  shape: RoundedRectangleBorder(
+                                    side: BorderSide(
+                                        color: Theme.Colors.GNP, width: 2),
+                                    borderRadius: BorderRadius.circular(6.0),
+                                  ),
                                   elevation: 0,
                                   color: Theme.Colors.White,
                                   onPressed: () async {
@@ -3576,7 +3565,6 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                   padding: EdgeInsets.zero,
                                   color: Theme.Colors.White,
                                   onPressed: () {
-                                    callback();
                                     Navigator.pop(context, true);
                                   },
                                   child: Text(
@@ -7255,7 +7243,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
           useSafeArea: false,
           barrierDismissible: true,
           barrierColor: Theme.Colors.Back.withOpacity(0),
-          context: navigatorKey.currentState.overlay.context,
+          context: context,
           builder: (context) {
               dialogMobileContext = context;
             Responsive responsive = Responsive.of(context);
@@ -7361,7 +7349,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
           useSafeArea: false,
           barrierDismissible: true,
           barrierColor: Theme.Colors.Back.withOpacity(0),
-          context: navigatorKey.currentState.overlay.context,
+          context: context,
           builder: (context) {
             dialogConnectivityContext = context;
             Responsive responsive = Responsive.of(context);
@@ -7417,6 +7405,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                   top: responsive.height * 0.05,
                                   left: responsive.width * 0.04,
                                   right: responsive.width * 0.04,
+                                  bottom: responsive.height * 0.05,
                                 ),
                                 child: Text(
                                   "Comprueba que tienes acceso a una red Wi-Fi o que cuentas con datos móviles activados.",
@@ -7425,25 +7414,6 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                       fontSize: responsive.ip(2.0)),
                                 ),
                               ),
-                              Container(
-                                margin: EdgeInsets.only(
-                                    top: responsive.height * 0.06,
-                                    bottom: responsive.height * 0.05),
-                                child: Center(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      callback();
-                                      Navigator.pop(context, true);
-                                    },
-                                    child: Text(
-                                      "CERRAR",
-                                      style: TextStyle(
-                                          color: Theme.Colors.GNP,
-                                          fontSize: responsive.ip(2.2)),
-                                    ),
-                                  ),
-                                ),
-                              )
                               /*Container(
                                 margin: EdgeInsets.only(
                                     top: responsive.height * 0.06,
@@ -8119,7 +8089,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                     color: Theme.Colors.White,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Center(
                           child: Container(
@@ -8135,7 +8105,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                         ),
                         Center(
                           child: Text(
-                            "Codigo de verificación",
+                            "Servicio no disponible",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 color: Theme.Colors.Encabezados,
@@ -8150,7 +8120,7 @@ Future<void> customAlert(AlertDialogType type, BuildContext context, String titl
                                 left: responsive.wp(5)),
                             child: Text.rich(TextSpan(
                                 text:
-                                "Has superado el límite de envío de códigos de verificación. En 7 minutos podrás solicitar su envío nuevamente",
+                                "Has superado el límite de envío de códigos de verificación. En 7 min podrás solicitar su envío nuevamente",
                                 style: TextStyle(
                                     color: Theme.Colors.Funcional_Textos_Body,
                                     fontSize: responsive.ip(1.7))
@@ -9568,10 +9538,12 @@ class _MyDialogContrasenaInactividadState
                                 ? Theme.Colors.GNP
                                 : Theme.Colors.botonlogin,
                             onPressed: () {
-                              if (controllerContrasena.text != null &&
-                                  controllerContrasena.text.isNotEmpty) {
-                                if (controllerContrasena.text ==
-                                    prefs.getString("contrasenaUsuario")) {
+                              var value = _encryptData.decryptData(prefs.getString("contrasenaUsuario"),
+                                  "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+
+                              if ( controllerContrasena.text != null &&
+                                  controllerContrasena.text.isNotEmpty ) {
+                                if (controllerContrasena.text == value ) {
                                   sendTag("appinter_inactividad_login");
                                   inactiveFirebaseDivice(true);
                                   initializeTimerOtroUsuario(context,(){});
@@ -9893,9 +9865,10 @@ void FuncionAlerta(bool abc) {}
 String numero() {
   if (prefs.getString("medioContactoTelefono") != null &&
       prefs.getString("medioContactoTelefono") != "") {
-    int numero = prefs.getString("medioContactoTelefono").length;
-    return "******" +
-        prefs.getString("medioContactoTelefono").substring(numero - 4, numero);
+    String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+        "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+    int numero = decryptedNumber.length;
+    return "******" + decryptedNumber.substring(numero - 4, numero);
   } else {
     return "**********";
   }
@@ -9938,7 +9911,7 @@ void primerAccesoUsuario() async {
   String correoUsuario;
   String emailFirst;
   String email;
-  correoUsuario = prefs.getString("correoUsuario");
+  correoUsuario = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
   emailFirst = correoUsuario.replaceAll('.', '-');
   email = emailFirst.replaceAll('@', '-');
 
@@ -9984,7 +9957,7 @@ void inactiveFirebaseDivice(bool active) async {
   List<Placemark> newPlace;
   String locality="";
   String address;
-  String deviceName= prefs.getString("deviceName");
+  String deviceName= _encryptData.decryptData(prefs.getString("deviceName"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
   try{
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {

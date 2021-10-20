@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/Custom/Crypto.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/Services/flujoValidacionLoginServicio.dart';
@@ -12,6 +13,7 @@ import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
@@ -38,6 +40,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
   bool respuestaUno;
   bool respuestaDos;
   final _formKey = GlobalKey<FormState>();
+  EncryptData _encryptData = EncryptData();
 
   FocusNode focusPreguntaUno;
   FocusNode focusRespuestaUno;
@@ -777,15 +780,16 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
               setState(() {
                 _saving = true;
               });
+              var decrypted = _encryptData.decryptData(prefs.getString("contraenaActualizada"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
               consultaPreguntasSecretasModel actualizarPreguntas =
                   await actualizarPreguntaSecretaServicio(
                       context,
                       datosUsuario.idparticipante,
-                      prefs.getString("contraenaActualizada"),
+                      decrypted,
                       controllerPreguntaUno.text,
                       controllerRespuestaUno.text.trim(),
                       controllerPreguntaDos.text,
-                      controllerRespuestaDos.text.trim(),responsive);
+                      controllerRespuestaDos.text.trim());
 
               if (actualizarPreguntas != null) {
                 setState(() {
@@ -834,11 +838,15 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
       setState(() {
         _saving = true;
       });
+      var decrypted = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+      print("decrypted 842 : ${decrypted}");
+      String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+          "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
       OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
           context,
-          prefs.getString("correoUsuario"),
-          prefs.getString("medioContactoTelefono"),
-          false,responsive);
+          decrypted,
+          decryptedNumber,
+          false);
 
       setState(() {
         _saving = false;
@@ -846,7 +854,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
 
       if (optRespuesta != null) {
         if (optRespuesta.error == "" && optRespuesta.idError == "") {
-          prefs.setString("idOperacion", optRespuesta.idOperacion);
+          prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
           Navigator.push(
               context,
               MaterialPageRoute(

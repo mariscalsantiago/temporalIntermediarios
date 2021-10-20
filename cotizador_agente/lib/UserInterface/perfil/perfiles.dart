@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/Custom/Crypto.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
@@ -26,9 +27,9 @@ import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/main.dart';
-import 'package:cotizador_agente/modelos/ConexionModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:device_info/device_info.dart';
 import 'package:file_picker/file_picker.dart';
@@ -70,6 +71,7 @@ var _image;
 bool isSwitchedPerfill;
 Responsive responsiveMainTablet;
 bool _loading = false;
+EncryptData _encryptData = EncryptData();
 
 class PerfilPage extends StatefulWidget {
   Function callback;
@@ -98,12 +100,7 @@ class _PerfilPageState extends State<PerfilPage> {
     initializeTimerOtroUsuario(context,callback);
 
     systemDeviceInit();
-    if(prefs.get("posicionDA") != null){
-      posicionDA = prefs.get("posicionDA");
-    } else {
-      posicionDA = 0;
-    }
-
+    posicionDA = 0;
     _saving = false;
     super.initState();
     listadoDA = [];
@@ -199,7 +196,6 @@ class _PerfilPageState extends State<PerfilPage> {
     } else {
       showCua = false;
     }
-    print("showCUA uno ${showCua}");
   }
 
   void getCuas(BuildContext context) async {
@@ -245,7 +241,6 @@ class _PerfilPageState extends State<PerfilPage> {
     } else {
       showCua = false;
     }
-    print("showCUA dos ${showCua}");
   }
   
 
@@ -1152,15 +1147,18 @@ class _PerfilPageState extends State<PerfilPage> {
                   setState(() {
                     _saving = true;
                   });
+                  String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                      "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
 
-                  OrquetadorOtpJwtModel optRespuesta = await orquestadorOTPJwtServicio(context, prefs.getString("medioContactoTelefono"), false);
+                  OrquetadorOtpJwtModel optRespuesta =
+                      await orquestadorOTPJwtServicio(context,decryptedNumber, false);
 
                   setState(() {
                     _saving = false;
                   });
                   if (optRespuesta != null) {
                     if (optRespuesta.error == "") {
-                      prefs.setString("idOperacion", optRespuesta.idOperacion);
+                      prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
                       Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -1174,22 +1172,17 @@ class _PerfilPageState extends State<PerfilPage> {
 
                       });
                     } else {
-                      print(optRespuesta.idError);
-
                       if(optRespuesta.idError == "015"){
                         customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
                             responsive, funcion);
                       } else{
-                        customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
+                        customAlert(AlertDialogType.errorServicio, context, "",
+                            "", responsive, funcion);
                       }
                     }
                   } else {
-                    if(conexionModel!=null&&conexionModel.status){
-                      customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-                      conexionModel = null;
-                    }else{
-                      customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
-                    }
+                    customAlert(AlertDialogType.errorServicio, context, "", "",
+                        responsive, funcion);
                   }
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginActualizarContrasena(responsive: widget.responsive)));
                 },
@@ -1781,7 +1774,6 @@ print("_imgFromGallery");
       } else {
         showCua = false;
       }
-      print("showCUA tres ${showCua}");
     });
   }
 
@@ -1805,7 +1797,7 @@ print("_imgFromGallery");
     List<Placemark> newPlace;
     String locality="";
     String address;
-    String deviceName= prefs.getString("deviceName");
+    String deviceName = _encryptData.decryptData(prefs.getString("deviceName"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
     try{
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {
