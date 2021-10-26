@@ -1,11 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
 bool isInternet;
 bool hasInternetFirebase = true;
+StreamSubscription<DataConnectionStatus> listener;
+
 
 void internetStatus()  async {
 
@@ -31,11 +36,13 @@ class ConnectivityServices{
     bool  available;
     ConnectionType type;
     ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.mobile) {
-      type=ConnectionType.mobile;
-    } else if (connectivityResult == ConnectivityResult.wifi) {
+
+    print("connectivityResult $connectivityResult");
+    if (connectivityResult == ConnectivityResult.wifi) {
       type=ConnectionType.wifi;
-    } else if (connectivityResult == ConnectivityResult.none) {
+    }else if (connectivityResult == ConnectivityResult.mobile) {
+       type=ConnectionType.mobile;
+     } else if (connectivityResult == ConnectivityResult.none) {
       type=ConnectionType.none;
     }
     available = await detectConnection();

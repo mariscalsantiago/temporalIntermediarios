@@ -159,481 +159,113 @@ Future<File> urlToFile(String imageUrl) async {
 Future<void> validateIntenetstatus(BuildContext context, Responsive responsive,Function callback, bool origen) async {
   print("msjCx: validateIntenetstatus $origen ");
 
-  ConnectivityStatus connectivityInitial = await ConnectivityServices().isInternet();
-  isWifi = connectivityInitial.type.toString() == "ConnectionType.wifi"? true:false;
-  isMobile = connectivityInitial.type.toString() == "ConnectionType.mobile"? true:false;
+  ConnectivityStatus connectivityInitial = await ConnectivityServices()
+      .getConnectivityStatus();
+  isWifi =
+  connectivityInitial.type.toString() == "ConnectionType.wifi" ? true : false;
+  isMobile =
+  connectivityInitial.type.toString() == "ConnectionType.mobile" ? true : false;
 
-  if(origen){
+  if (origen) {
     hasInternetFirebase = connectivityInitial.available;
   }
 
-  print("msjCx: connectivityInitial: ${connectivityInitial.type} ${connectivityInitial.available} hasConnection $hasInternetFirebase");
-  print("msjCx: connectivityInitial: $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-  if(isWifi) {
+  print("msjCx: connectivityInitial: ${connectivityInitial
+      .type} ${connectivityInitial
+      .available} hasConnection $hasInternetFirebase origen: $origen");
+  print(
+      "msjCx: connectivityInitial: $isWifi $isMobile $isMessageMobile $isMessageWifi");
+  bool connection = await DataConnectionChecker().hasConnection;
+  print("connection: $connection");
+  if (isWifi) {
     print("msjCx: con wifi");
 
+    if (connectivityInitial.available && hasInternetFirebase) {
       print("msjCx: con wifi con tranferencia");
-    if (connectivityInitial.available || hasInternetFirebase) {
-      if(isMessageWifi) {
-        if(dialogConnectivityContext!=null) {
+      if (isMessageWifi) {
+        if (dialogConnectivityContext != null) {
+          Navigator.pop(navigatorKey.currentState.overlay.context);
           isMessageWifi = false;
-          Navigator.pop(navigatorKey.currentState.overlay.context);
+          dialogConnectivityContext = null;
         }
       }
-      if(isMessageMobile){
-        if(dialogMobileContext!=null){
+      if (isMessageMobile) {
+        if (dialogMobileContext != null) {
+          Navigator.pop(navigatorKey.currentState.overlay.context);
           isMessageMobile = false;
-          Navigator.pop(navigatorKey.currentState.overlay.context);
+          dialogMobileContext = null;
         }
       }
-      if(screenName!=null) {
+      if (screenName != null) {
         if ("$screenName" == "CotizadorAutos") {
           callback();
         }
       }
-    }else{
+    } else {
       print("msjCx: con wifi sin tranferencia");
-      if(!isMobile){
-        if (!isMessageWifi) {
-          isMessageWifi = true;
-          customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentState.overlay.context, "", "", responsive, funcionAlertaWifi);
-        }
-      }
-
-    }
-
-  }else if(!isWifi&&isMobile) {
-    print("msjCx: con mobile");
-
-    if (connectivityInitial.available || hasInternetFirebase) {
-      print("msjCx: con mobile con transferencia");
-      if(isMessageWifi) {
-        if(dialogConnectivityContext!=null) {
-          isMessageWifi = false;
-          Navigator.pop(navigatorKey.currentState.overlay.context);
-        }
-      }
-      if(!isMessageMobile){
-        if(isMessageMobileClose||origen){
-          isMessageMobile = true;
-          customAlert(AlertDialogType.DatosMoviles_Activados, navigatorKey.currentState.overlay.context, "", "", responsive, funcionAlertaMobile);
-        }
-      }
-    }else{
-      print("msjCx: con mobile sin transferencia");
-
-      if(isMessageMobile){
-        if(dialogMobileContext!=null){
-          isMessageMobile = false;
-          Navigator.pop(dialogMobileContext);
-        }
-      }
       if (!isMessageWifi) {
         isMessageWifi = true;
-        customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentState.overlay.context, "", "", responsive, funcionAlertaWifi);
+        customAlert(AlertDialogType.Sin_acceso_wifi,
+            navigatorKey.currentState.overlay.context, "", "", responsive,
+            funcionAlertaWifi);
       }
     }
-  }else if(!isWifi&&!isMobile&&!connectivityInitial.available) {
-    print("msjCx: con none");
+  } else if (!isWifi && isMobile) {
+    print("msjCx: con mobile");
+
+    if (connectivityInitial.available && hasInternetFirebase) {
+      print("msjCx: con mobile con transferencia");
+      if (isMessageWifi) {
+        if (dialogConnectivityContext != null) {
+          Navigator.pop(navigatorKey.currentState.overlay.context);
+          isMessageWifi = false;
+          dialogConnectivityContext = null;
+        }
+      }
+      if (!isMessageMobile) {
+        if (isMessageMobileClose || origen) {
+          isMessageMobile = true;
+          customAlert(AlertDialogType.DatosMoviles_Activados,
+              navigatorKey.currentState.overlay.context, "", "", responsive,
+              funcionAlertaMobile);
+        }
+      }
+    } else {
+      print("msjCx: con mobile sin transferencia");
 
       if (isMessageMobile) {
         if (dialogMobileContext != null) {
-          isMessageMobile = false;
           Navigator.pop(navigatorKey.currentState.overlay.context);
-        }
-      }
-      if (!isMessageWifi) {
-        isMessageWifi = true;
-        customAlert(AlertDialogType.Sin_acceso_wifi, navigatorKey.currentState.overlay.context, "", "", responsive, funcionAlertaWifi);
-      }
-  }
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-/*
-     if(!isWifi&&!isMobile&&!connectivityInitial.available) {
-       print("msjCx: sin moviles, sin wifi, sin transferencia");
-       if (!isMessageWifi) {//No existe el mesaje desplegado
-         isMessageWifi = true;
-         customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-       }
-
-     }else if(isWifi&&connectivityInitial.available){
-       print("msjCx: con wifi, con tranferencia");
-       //con wifi, con tranferencia
-       if(isMessageWifi) { //existe el mesaje sin conexion
-         if(dialogConnectivityContext!=null) {
-           isMessageWifi = false;
-           Navigator.pop(dialogConnectivityContext);
-           dialogConnectivityContext = null;
-         }
-       }
-     }else if(isWifi&&!connectivityInitial.available){
-       print("msjCx: con wifi, sin tranferencia");
-       //con wifi, sin tranferencia
-       if(!isMobile) {
-         if (!isMessageWifi) {
-           isMessageWifi = true;
-           customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-         }
-       }
-     }else if(!isWifi&&isMobile&&connectivityInitial.available){
-       if(!isMobile) {
-         if (!isMessageWifi) {
-           isMessageWifi = true;
-           customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-         }
-       }
-
-     }else if(!isWifi&&isMobile&&!connectivityInitial.available){
-
-       if(!isMobile) {
-         if (!isMessageWifi) {
-           isMessageWifi = true;
-           customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-         }
-       }
-     }
-
-  print("msjCx: validateIntenetstatus:previo Listener  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-
-  connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) async {
-    print("msjCx: validateIntenetstatus:connectivitySubscription");
-
-    ConnectivityStatus connectivityListener = await ConnectivityServices().getConnectivityStatus(false);
-    isWifi = connectivityListener.type.toString() == "ConnectionType.wifi"? true:false;
-    isMobile = connectivityListener.type.toString() == "ConnectionType.mobile"? true:false;
-
-    print("msjCx: connectivityListener: ${connectivityListener.type} ${connectivityListener.available}");
-    print("msjCx: onConnectivityChanged:  $isWifi $isMobile $isMessageMobile $isMessageWifi  $result");
-
-    if(isWifi && connectivityListener.available){
-      print("msjCx: wifi con transferencia");
-      //wifi con transferencia
-      print("msjCx: onConnectivityChanged:wifi  $isWifi $isMobile $isMessageMobile $isMessageWifi $result");
-
-      if(isMessageMobile){
-        if(dialogMobileContext!=null){
           isMessageMobile = false;
-          Navigator.pop(dialogMobileContext);
           dialogMobileContext = null;
         }
       }
-      if(isMessageWifi){
-        if(dialogConnectivityContext!=null){
-          isMessageWifi = false;
-          Navigator.pop(dialogConnectivityContext);
-          dialogConnectivityContext = null;
-        }
-      }
-      print("msjCx: onConnectivityChanged:wifi:next  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-    }else if(isWifi && !connectivityListener.available){
-      //wifi sin transferencia
-      print("msjCx: wifi sin transferencia");
-      print("msjCx: onConnectivityChanged:wifi  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-      if(isMobile){
-        if(!isMessageMobile){
-          isMessageMobile = true;
-          customAlert(AlertDialogType.DatosMoviles_Activados, context, "", "", responsive, funcionAlertaMobile);
-
-        }
-      }else{
-        if (!isMessageWifi) {
-          isMessageWifi = true;
-          customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-        }
-      }
-      print("msjCx: onConnectivityChanged:wifi:next  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-    }else if(!isWifi&&isMobile && connectivityListener.available){
-      //sin wifi con datos y transferencia
-      print("msjCx: sin wifi con datos y transferencia");
-      print("msjCx: onConnectivityChanged:mobile:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-      if(isMessageWifi){
-        if(dialogConnectivityContext!=null){
-          isMessageWifi = false;
-          Navigator.pop(dialogConnectivityContext);
-          dialogConnectivityContext = null;
-        }
-      }
-      if(!isMessageMobile){
-        isMessageMobile = true;
-        customAlert(AlertDialogType.DatosMoviles_Activados, context, "", "", responsive, funcionAlertaMobile);
-      }
-      print("msjCx: onConnectivityChanged:mobile:next  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-    }else if(!isWifi&&isMobile && !connectivityListener.available){
-      //sin wifi con datos y sin transferencia
-      print("msjCx: sin wifi con datos y sin transferencia");
-      print("onConnectivityChanged:mobile:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-      if (isMessageMobile) {
-        print("isMessageMobile:");
-        if(dialogMobileContext!=null){
-          isMessageMobile = false;
-          Navigator.pop(dialogMobileContext);
-          dialogMobileContext = null;
-        }
-      }
-
-      if (!isMessageWifi) {
-        print("isMessageWifi:");
-        isMessageWifi = true;
-        customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-      }
-
-
-    }else if(!isWifi && !isMobile && !connectivityListener.available){
-      print("msjCx: sin wifi, sin datos y sin transferencia");
-      print("msjCx: onConnectivityChanged:none:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-        if (isMessageMobile) {
-          if(dialogMobileContext!=null){
-            isMessageMobile = false;
-            Navigator.pop(dialogMobileContext);
-            dialogMobileContext = null;
-          }
-        }
-        if (!isMessageWifi) {
-          isMessageWifi = true;
-          customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-        }
-
-      //initialMessageWife(context, responsive, callback);
-      print("onConnectivityChanged:none:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-    }
-  });*/
-
-
-
-Future<void> validateIntenetBackgroundClosestatus(BuildContext context, Responsive responsive,Function callback) async {
-
-  print("validateIntenetBackgroundClosestatus: $isWifi $isMobile $isMessageMobile $isMessageWifi");
-  //connectivitySubscription.cancel();
-
-    if(isMessageWifi) {
-      if(dialogConnectivityContext!=null) {
-        isMessageWifi = false;
-        Navigator.pop(dialogConnectivityContext);
-      }
-    }
-    if(isMessageMobile){
-      if(dialogMobileContext!=null) {
-        isMessageMobile = false;
-        Navigator.pop(dialogMobileContext);
-      }
-    }
-
-}
-
-Future<void> validateIntenetBackgroundstatus(BuildContext context, Responsive responsive,Function callback) async {
-  print("validateIntenetBackgroundstatus:Initial");
-  ConnectivityStatus connectivityBackground = await ConnectivityServices().getConnectivityStatus(false);
-  isWifi = connectivityBackground.type.toString() == "ConnectionType.wifi"? true:false;
-  isMobile = connectivityBackground.type.toString() == "ConnectionType.mobile"? true:false;
-
-  print("msjCx: connectivityBackground: ${connectivityBackground.type} ${connectivityBackground.available}");
-
-  if(isWifi && connectivityBackground.available){
-    print("msjCx: wifi con transferencia");
-    //wifi con transferencia
-    print("msjCx: connectivityBackground:wifi  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-    if(isMessageMobile){
-      if(dialogMobileContext!=null){
-        isMessageMobile = false;
-        Navigator.pop(dialogMobileContext);
-        // dialogMobileContext = null;
-      }
-    }
-    if(isMessageWifi){
-      if(dialogConnectivityContext!=null){
-        isMessageWifi = false;
-        Navigator.pop(dialogConnectivityContext);
-      }
-    }
-    print("msjCx: connectivityBackground:wifi:next  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-  }else if(isWifi && !connectivityBackground.available){
-    //wifi sin transferencia
-    print("msjCx: wifi sin transferencia");
-    print("msjCx: connectivityBackground:wifi  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-    if(isMobile){
-      if(!isMessageMobile){
-        isMessageMobile = true;
-        customAlert(AlertDialogType.DatosMoviles_Activados, context, "", "", responsive, funcionAlertaMobile);
-      }
-    }else{
       if (!isMessageWifi) {
         isMessageWifi = true;
-        customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
+        customAlert(AlertDialogType.Sin_acceso_wifi,
+            navigatorKey.currentState.overlay.context, "", "", responsive,
+            funcionAlertaWifi);
       }
     }
-    print("msjCx: connectivityBackground:wifi:next  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-  }else if(!isWifi&&isMobile && connectivityBackground.available){
-    //sin wifi con datos y transferencia
-    print("msjCx: sin wifi con datos y transferencia");
-    print("msjCx: onConnectivityChanged:mobile:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-    if(isMessageWifi){
-      if(dialogConnectivityContext!=null){
-        isMessageWifi = false;
-        Navigator.pop(dialogConnectivityContext);
-        //dialogConnectivityContext = null;
-      }
-    }
-    if(!isMessageMobile){
-      isMessageMobile = true;
-      customAlert(AlertDialogType.DatosMoviles_Activados, context, "", "", responsive, funcionAlertaMobile);
-    }
-    print("msjCx: onConnectivityChanged:mobile:next  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-  }else if(!isWifi&&isMobile && !connectivityBackground.available){
-    //sin wifi con datos y sin transferencia
-    print("msjCx: sin wifi con datos y sin transferencia");
-    print("onConnectivityChanged:mobile:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-    if (isMessageMobile) {
-      print("isMessageMobile:");
-      if(dialogMobileContext!=null){
-        isMessageMobile = false;
-        Navigator.pop(dialogMobileContext);
-        //dialogMobileContext = null;
-      }
-    }
-
-    if (!isMessageWifi) {
-      print("isMessageWifi:");
-      isMessageWifi = true;
-      customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
-    }
-
-
-  }else if(!isWifi && !isMobile && !connectivityBackground.available) {
-    print("msjCx: sin wifi, sin datos y sin transferencia");
-    print(
-        "msjCx: onConnectivityChanged:none:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
+  } else if (!isWifi && !isMobile && !connectivityInitial.available) {
+    print("msjCx: con none");
 
     if (isMessageMobile) {
       if (dialogMobileContext != null) {
+        Navigator.pop(navigatorKey.currentState.overlay.context);
         isMessageMobile = false;
-        Navigator.pop(dialogMobileContext);
-
-        //dialogMobileContext = null;
+        dialogMobileContext = null;
       }
     }
     if (!isMessageWifi) {
       isMessageWifi = true;
-      customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive,
+      customAlert(AlertDialogType.Sin_acceso_wifi,
+          navigatorKey.currentState.overlay.context, "", "", responsive,
           funcionAlertaWifi);
     }
-
-    //initialMessageWife(context, responsive, callback);
-    print("onConnectivityChanged:none:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-  }
-
-  //validateIntenetstatus(context, responsive,callback);
-  print("validateIntenetBackgroundstatus:end $isWifi $isMobile $isMessageMobile $isMessageWifi");
-}
-
-
-initialMessageWife(BuildContext context, Responsive responsive,Function callback) {
-  print("_timerMessageWife");
-  if (_timerMessageWife != null && _timerMessageWife.isActive) {
-    _timerMessageWife.cancel();
-    _timerMessageWife = Timer.periodic(Duration(seconds: 3), (_) => MessageWifeClose(context,responsive,callback));
-  } else {
-    _timerMessageWife = Timer.periodic(Duration(seconds: 3), (_) => MessageWifeClose(context,responsive, callback));
   }
 }
 
-cancelMessageWife() {
-  print("_timerMessageWife:Cancel");
-  if (_timerMessageWife != null && _timerMessageWife.isActive)
-    _timerMessageWife.cancel();
-}
-
-MessageWifeClose(BuildContext context,Responsive responsive, Function callback) async {
-  print("MessageWifeClose");
-  if (_timerMessageWife != null && _timerMessageWife.isActive){
-    _timerMessageWife.cancel();
-    ConnectivityStatus connectivity = await ConnectivityServices().getConnectivityStatus(false);
-    print("MessageWifeClose:connectivity: $connectivity");
-    isWifi = connectivity.type.toString() == "ConnectionType.wifi" ? true : false;
-    isMobile = connectivity.type.toString() == "ConnectionType.mobile" ? true : false;
-
-    if(isWifi){
-      print("onConnectivityChanged:wifi  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-      if(isMessageMobile){
-        print("isMessageMobile");
-        if(dialogMobileContext!=null){
-          isMessageMobile = false;
-          Navigator.pop(dialogMobileContext);
-          //dialogMobileContext = null;
-        }
-
-      }
-      if(isMessageWifi){
-        print("isMessageWifi:");
-        if(dialogConnectivityContext!=null){
-          isMessageWifi = false;
-          Navigator.pop(dialogConnectivityContext);
-          //dialogConnectivityContext = null;
-        }
-      }
-      print("onConnectivityChanged:wifi:next  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-    }else if(!isWifi&&isMobile){
-      print("onConnectivityChanged:mobile:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-      if(isMessageWifi){
-        print("isMessageWifi:");
-        if(dialogConnectivityContext!=null){
-          isMessageWifi = false;
-          Navigator.pop(dialogConnectivityContext);
-
-          //dialogConnectivityContext = null;
-
-        }
-      }
-
-     // initialMessageWife(context, responsive,callback);
-
-      print("onConnectivityChanged:mobile:next  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-    }else if(!isWifi&&!isMobile){
-      print("onConnectivityChanged:none:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-
-      if (isMessageMobile) {
-        print("isMessageMobile:");
-        if(dialogMobileContext!=null){
-          isMessageMobile = false;
-          Navigator.pop(dialogMobileContext);
-
-         // dialogMobileContext = null;
-        }
-      }
-
-      
-     // initialMessageWife(context, responsive,callback);
-      print("onConnectivityChanged:none:  $isWifi $isMobile $isMessageMobile $isMessageWifi");
-    }
-  }
-}
 
 Future<void> validateIntenetstatuss(BuildContext context, Responsive responsive,Function callback) async {
  print("init:validateIntenetstatus");
@@ -800,7 +432,7 @@ funcionAlertaMobile(){
   isMessageMobile = false;
 }
 funcionAlertaWifi(){
-
+  isMessageWifi = false;
 }
 
 void funcionAlertaNone(BuildContext context, ConnectivityResult result){

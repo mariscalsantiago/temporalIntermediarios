@@ -32,6 +32,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 
+
   var configuredApp = new AppConfig(
     ambient: Ambient.qa,
     serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',

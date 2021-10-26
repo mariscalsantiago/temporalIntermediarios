@@ -82,6 +82,11 @@ Future<LoginDatosModel> logInServices(BuildContext context, String mail, String 
       print(e);
       //throw Exception(ErrorLoginMessageModel().statusErrorTextException);
     }
+    /*
+    finally {
+      customAlert(AlertDialogType.timeOut, context, "", "", responsive, callback);
+      return null;
+    }*/
   } else{
     customAlert(AlertDialogType.Sin_acceso_wifi_cerrar, context, "", "", responsive, callback);
     return null;

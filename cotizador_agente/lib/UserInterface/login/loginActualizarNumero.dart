@@ -551,7 +551,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               var decryptedEmail = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
               print("Email decrypted $decryptedEmail");
               OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
-                  context,decryptedEmail,controllerNumero.text,prefs.getBool('flujoOlvideContrasena'));
+                  context,decryptedEmail,controllerNumero.text,prefs.getBool('flujoOlvideContrasena'),responsive);
 
               setState(() {
                 _saving = false;
@@ -621,7 +621,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
         context,
         decryptedEmail,
         decryptedNumber,
-        prefs.getBool('flujoOlvideContrasena'));
+        prefs.getBool('flujoOlvideContrasena'),responsive);
 
     setState(() {
       _saving = false;

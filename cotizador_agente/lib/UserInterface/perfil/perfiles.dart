@@ -27,6 +27,7 @@ import 'package:cotizador_agente/UserInterface/perfil/VerFotoPage.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/main.dart';
+import 'package:cotizador_agente/modelos/ConexionModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/Security/EncryptData.dart';
@@ -100,7 +101,12 @@ class _PerfilPageState extends State<PerfilPage> {
     initializeTimerOtroUsuario(context,callback);
 
     systemDeviceInit();
-    posicionDA = 0;
+    if(prefs.get("posicionDA") != null){
+      posicionDA = prefs.get("posicionDA");
+    } else {
+      posicionDA = 0;
+    }
+
     _saving = false;
     super.initState();
     listadoDA = [];
@@ -196,6 +202,7 @@ class _PerfilPageState extends State<PerfilPage> {
     } else {
       showCua = false;
     }
+    print("showCUA uno ${showCua}");
   }
 
   void getCuas(BuildContext context) async {
@@ -241,6 +248,7 @@ class _PerfilPageState extends State<PerfilPage> {
     } else {
       showCua = false;
     }
+    print("showCUA dos ${showCua}");
   }
   
 
@@ -1149,7 +1157,6 @@ class _PerfilPageState extends State<PerfilPage> {
                   });
                   String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
                       "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
-
                   OrquetadorOtpJwtModel optRespuesta =
                       await orquestadorOTPJwtServicio(context,decryptedNumber, false);
 
@@ -1172,17 +1179,22 @@ class _PerfilPageState extends State<PerfilPage> {
 
                       });
                     } else {
+                      print(optRespuesta.idError);
+
                       if(optRespuesta.idError == "015"){
                         customAlert(AlertDialogType.error_codigo_verificacion, context, "", "",
                             responsive, funcion);
                       } else{
-                        customAlert(AlertDialogType.errorServicio, context, "",
-                            "", responsive, funcion);
+                        customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
                       }
                     }
                   } else {
-                    customAlert(AlertDialogType.errorServicio, context, "", "",
-                        responsive, funcion);
+                    if(conexionModel!=null&&conexionModel.status){
+                      customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcionAlertaWifi);
+                      conexionModel = null;
+                    }else{
+                      customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
+                    }
                   }
                   //Navigator.push(context, MaterialPageRoute(builder: (context) => LoginActualizarContrasena(responsive: widget.responsive)));
                 },
@@ -1774,6 +1786,7 @@ print("_imgFromGallery");
       } else {
         showCua = false;
       }
+      print("showCUA tres ${showCua}");
     });
   }
 

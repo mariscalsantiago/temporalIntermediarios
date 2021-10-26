@@ -27,6 +27,7 @@ import 'package:cotizador_agente/flujoLoginModel/consultaPersonaIdParticipante.d
 import 'package:cotizador_agente/flujoLoginModel/consultaPreguntasSecretasModel.dart';
 import 'package:cotizador_agente/flujoLoginModel/consultarUsuarioPorCorreo.dart';
 import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
+import 'package:cotizador_agente/modelos/ConexionModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/Security/EncryptData.dart';
@@ -424,7 +425,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         try{
           setState(() {});
         }catch (e){}
-        validateIntenetstatus(navigatorKey.currentContext, widget.responsive,functionConnectivity,false);
+        validateIntenetstatus(navigatorKey.currentState.overlay.context, widget.responsive,functionConnectivity,false);
         if(screenName!=null) {
           print("settings:login ${screenName}");
           if (screenName == "Login" || screenName == "Biometricos") {
@@ -1314,7 +1315,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
     var decrypted = _encryptData.decryptData(prefs.getString("correoCambioContrasena"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
     consultaPorCorreoNuevoServicio respuesta = await consultaUsuarioPorCorreo(
-        context, decrypted);
+        context, decrypted,responsive);
 
     print("UsuarioPorCorreo ${respuesta}");
     bool conecxion = false;
@@ -1392,7 +1393,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   prefs.getString("medioContactoTelefono") != null
                       ? decryptedNumber
                       : "",
-                  prefs.getBool('flujoOlvideContrasena'));
+                  prefs.getBool('flujoOlvideContrasena'),responsive);
 
               setState(() {
                 _saving = false;
@@ -1565,7 +1566,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               if (datosUsuario != null) {
                 prefs.setString("contrasenaUsuario",
                     _encryptData.encryptInfo(contrasenaUsuario, "contrasenaUsuario"));
-                respuestaServicioCorreo = await consultaUsuarioPorCorreo(context, correoUsuario);
+                respuestaServicioCorreo = await consultaUsuarioPorCorreo(context, correoUsuario,responsive);
+
                 if(respuestaServicioCorreo == null){
                   customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
                 }
@@ -1614,7 +1616,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 }
 
                 if (!existeUsuario) {
-                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante);
+                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante,responsive);
 
                   setState(() {
                     _saving = false;
@@ -1630,7 +1632,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   }
                 } else {
 
-                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante);
+                  consultaPreguntasSecretasModel preguntas = await consultarPreguntaSecretaServicio(context, datosUsuario.idparticipante,responsive);
 
                   setState(() {
                     _saving = false;
@@ -2474,7 +2476,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
         context,
         decrypted.substring(0,decrypted.length-5),
         decryptedNumber,
-        prefs.getBool('flujoOlvideContrasena'));
+        prefs.getBool('flujoOlvideContrasena'),responsive);
 
     setState(() {
       _saving = false;
@@ -2504,9 +2506,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
       }
     } else {
-      print("Error Servicio OTP");
-      customAlert(
-          AlertDialogType.errorServicio, context, "", "", responsive, funcion);
+
+      if(conexionModel!=null&&conexionModel.status) {
+        customAlert(AlertDialogType.Sin_acceso_wifi, context, "", "", responsive, funcion);
+        conexionModel = null;
+      }else{
+        customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
+
+      }
     }
   }
 
@@ -2536,8 +2543,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               context,
               decrypted,
               decryptedNumber,
-              prefs.getBool('flujoOlvideContrasena'));
-
+              prefs.getBool('flujoOlvideContrasena'),responsive);
           setState(() {
             _saving = false;
           });

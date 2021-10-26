@@ -597,7 +597,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                     context,
                     decryptedEmail,
                     "",
-                    prefs.getBool('flujoOlvideContrasena'));
+                    prefs.getBool('flujoOlvideContrasena'),responsive);
                 setState(() {
                   _saving = false;
                 });
@@ -630,7 +630,8 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                   customAlert(AlertDialogType.errorServicio, context, "", "",
                       responsive, funcion);
                 }
-              } else {
+              }
+              else {
                 if (prefs.getBool("esPerfil") != null &&
                     prefs.getBool("esPerfil")) {
                   setState(() {
@@ -694,7 +695,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                           context,
                           decryptedEmail,
                           decryptedNumber,
-                          false);
+                          false, responsive);
                   setState(() {
                     timerEnd = false;
                     _saving = false;
@@ -982,7 +983,10 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                           print("Flujoo completo");
                           prefs.setBool("flujoCompletoLogin", true);
                           if(_showFinOtro){
-                            customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, "title", "message", responsive, callback);
+                            customAlert(AlertDialogType.finalizar_seccion_en_otro_dispositivo, context, "title", "message", responsive, (){setState(() {
+                              _saving = false;
+                              Navigator.pop(context);
+                            }); });
                           }else{
                             sendTag("appinter_login_ok");
                             Navigator.push(
@@ -1007,6 +1011,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                   }
                 } else {
                   setState(() {
+                    _saving = false;
                     _validCode = false;
                     codigoValidacion = "El código no coincide";
                     // todo limpiar codiggo

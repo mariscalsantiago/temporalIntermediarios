@@ -789,7 +789,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
                       controllerPreguntaUno.text,
                       controllerRespuestaUno.text.trim(),
                       controllerPreguntaDos.text,
-                      controllerRespuestaDos.text.trim());
+                      controllerRespuestaDos.text.trim(),responsive);
 
               if (actualizarPreguntas != null) {
                 setState(() {
@@ -846,7 +846,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
           context,
           decrypted,
           decryptedNumber,
-          false);
+          false,responsive);
 
       setState(() {
         _saving = false;

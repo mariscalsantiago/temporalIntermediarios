@@ -606,7 +606,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
               ),
               Container(
                 margin: EdgeInsets.only(top: responsive.height * 0.03),
-                child: Text("Cotiza, emite y paga de acuerdo al tipo\nde negocio de manera ágil desde tu\ncelular o tablet.",
+                child: Text("Cotiza y emite de acuerdo al tipo\nde negocio de manera ágil desde tu\ncelular o tablet.",
                   style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.1) ),
                   textAlign: TextAlign.center,),
               ),
@@ -735,7 +735,7 @@ class _OnBoardingAppAutosState extends State<OnBoardingAppAutos>  with SingleTic
               ),
               Container(
                 margin: EdgeInsets.only(top: responsive.height * 0.03, bottom: responsive.width * 0.08),
-                child: Text("Encuentra la información de tus Clientes,\nemite cualquier cotización y paga al\nmomento de acuerdo a tu tipo de\nnegocio.",
+                child: Text("Encuentra la información de tus Clientes,\nemite cualquier cotización al\nmomento de acuerdo a tu tipo de\nnegocio.",
                   style: TextStyle( color: Theme.Colors.Encabezados, fontSize: responsive.ip(2.1) ),
                   textAlign: TextAlign.center,),
               ),

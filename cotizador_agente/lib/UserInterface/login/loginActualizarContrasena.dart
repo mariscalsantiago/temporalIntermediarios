@@ -2089,7 +2089,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                         context,
                         controllerActualContrasena.text,
                         controllerNuevaContrasena.text,
-                        datosUsuario.idparticipante);
+                        datosUsuario.idparticipante,responsive);
 
                 if (cambiocontrasena != null) {
                   setState(() {

@@ -57,7 +57,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  String dropdownValue =  prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos" : prefs.getBool("showAP") ? "Gastos Médicos" : "";
+  String dropdownValue =  prefs!=null&&prefs.getBool("rolAutoscotizarActivo") != null && prefs.getBool("rolAutoscotizarActivo") ? "Autos" : prefs.getBool("showAP") ? "Gastos Médicos" : "";
   String _address = "";
   List<String> listaCotizadores = [];
   bool showRamos;

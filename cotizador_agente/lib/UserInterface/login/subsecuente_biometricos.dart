@@ -60,7 +60,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
   bool _showFinOtro = false;
   var localAuth = new LocalAuthentication();
   bool _saving;
-
+  AppConfig _appEnvironmentConfig;
 
   @override
   void initState() {
@@ -95,7 +95,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
   @override
   Widget build(BuildContext context) {
-
+    _appEnvironmentConfig = AppConfig.of(context);
 
     if(!is_available_face && !is_available_finger){
       print("face y finger");
@@ -332,7 +332,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
 
   Future<http.Response> getVersionApp(String idApp, String idOs) async {
     print("getVersionApp");
-    AppConfig _appEnvironmentConfig = AppConfig.of(context);
+
     bool conecxion = false;
     try{
       conecxion = await validatePinig();
@@ -652,7 +652,7 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           var decryptedPassword = _encryptData.decryptData(prefs.getString("contrasenaUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
           datosUsuario = await logInServices(context,decryptedEmail, decryptedPassword, decryptedEmail,responsive);
           if(datosUsuario != null){
-            respuestaServicioCorreo = await consultaUsuarioPorCorreo(context,decryptedEmail);
+            respuestaServicioCorreo = await consultaUsuarioPorCorreo(context,decryptedEmail,responsive);
             //Validacion Roles
             validarRolesUsuario();
             setState(() {
@@ -674,7 +674,6 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
               });
             }
           } else{
-
 
             setState(() {
               _saving = false;
