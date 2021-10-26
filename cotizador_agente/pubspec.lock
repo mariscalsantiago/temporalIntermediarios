@@ -154,7 +154,7 @@ packages:
       name: device_info
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "5.0.0"
   device_info_platform_interface:
     dependency: transitive
     description:
@@ -369,7 +369,7 @@ packages:
       name: flutter_keychain
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "5.0.0"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -921,7 +921,7 @@ packages:
       name: system_settings
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0"
+    version: "5.0.0"
   term_glyph:
     dependency: transitive
     description:
