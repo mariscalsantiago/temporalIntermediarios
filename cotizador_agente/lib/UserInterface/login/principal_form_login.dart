@@ -2474,7 +2474,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     print("decrypted 2473 $decrypted");
     OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
         context,
-        decrypted.substring(0,decrypted.length-5),
+        decrypted,
         decryptedNumber,
         prefs.getBool('flujoOlvideContrasena'),responsive);
 

@@ -1,7 +1,7 @@
 class StringsMX {
   const StringsMX();
 
-  static const String appVersion = "5.0.0";
+  static const String appVersion = "5.0.2";
   static const String loginHeaderTitle = "Inicia con";
   static const String loginTitle = "Inicia con";
   static const String loginEmail = "Correo electrónico";

@@ -532,8 +532,12 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               setState(() {
                 _saving = true;
               });
-              String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+              String decryptedNumber ="";
+              if(prefs.getString("medioContactoTelefono") != null && prefs.getString("medioContactoTelefono").isNotEmpty)
+                decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
                   "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+              else
+                decryptedNumber= controllerNumero.text;
 
               String lada = controllerNumero.text.substring(0, 2);
               String numero = controllerNumero.text.substring(2, 10);
