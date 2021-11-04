@@ -397,7 +397,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           width: responsive.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            color: controllerNumero.text != ""
+            color: _validNumber
                 ? Tema.Colors.GNP
                 : Tema.Colors.botonlogin,
           ),
@@ -407,7 +407,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
             child: Text(
               "ACTUALIZAR",
               style: TextStyle(
-                  color: controllerNumero.text != ""
+                  color: _validNumber
                       ? Tema.Colors.backgroud
                       : Tema.Colors.botonletra,
                   fontWeight: FontWeight.w500),
