@@ -510,6 +510,15 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                             Navigator.pop(context);
                             Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
                             Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+
+                            //URLS
+                            Utilidades.url = cotizadorSelected.url;
+                            Utilidades.urlCotizaciones = cotizadorSelected.urlCotizaciones;
+                            Utilidades.urlBorrar = cotizadorSelected.urlBorrar;
+                            Utilidades.urlVer = cotizadorSelected.urlVer;
+                            Utilidades.urlGuardar = cotizadorSelected.urlGuardar;
+                            Utilidades.urlCorreo = cotizadorSelected.urlCorreo;
+
                             //Analytics
                             Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
                             Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);
@@ -519,6 +528,15 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                         } else{
                           Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
                           Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+
+                          //URLS
+                          Utilidades.url = cotizadorSelected.url;
+                          Utilidades.urlCotizaciones = cotizadorSelected.urlCotizaciones;
+                          Utilidades.urlBorrar = cotizadorSelected.urlBorrar;
+                          Utilidades.urlVer = cotizadorSelected.urlVer;
+                          Utilidades.urlGuardar = cotizadorSelected.urlGuardar;
+                          Utilidades.urlCorreo = cotizadorSelected.urlCorreo;
+
                           //Analytics
                           Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
                           Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);

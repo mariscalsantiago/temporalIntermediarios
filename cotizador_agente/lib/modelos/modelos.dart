@@ -2,21 +2,24 @@ import 'dart:collection';
 import 'dart:convert';
 
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/modelos/response_cotizacion/motor_dinamico_forma_pago.dart';
+import 'package:cotizador_agente/modelos/response_cotizacion/resumen_cotizacion_forma_pago.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 
 class CotizacionesApp {
   List<FormularioCotizacion> listaCotizaciones = List<FormularioCotizacion>();
-  Queue<FormularioCotizacion> listaCotizacionesEliminadas = Queue<FormularioCotizacion>();
-  bool elimineUnaCotizacion = false;
-  bool vengoDePrecargada = false;
 
   bool agregarCotizacion(FormularioCotizacion formularioCotizacion) {
 
     //Invalidar folios de Formato Comparativa
 
     if (listaCotizaciones.length <= 3) {
-      listaCotizaciones.add(formularioCotizacion);
-      return true;
+      if(listaCotizaciones.length == 3){
+        return false;
+      } else {
+        listaCotizaciones.add(formularioCotizacion);
+        return true;
+      }
     }
     return false;
   }
@@ -66,11 +69,15 @@ class FormularioCotizacion {
   PasoFormulario paso1;
   PasoFormulario paso2;
   Comparativa comparativa;
+  Map<String, dynamic> jsonComparativa;
   String idPlan;
   Map<String, dynamic> responseCotizacion;
   String requestCotizacion;
+  List<ResumenCotizacionFormaPago> formasPago;
+  List<MotorDinamicoFormaPago> motorDinamicoFormasPago;
 
   bool esValido = false;
+  bool seCotizo = false;
 
   FormularioCotizacion({this.paso1, this.paso2});
 
@@ -79,7 +86,7 @@ class FormularioCotizacion {
 
   Regla calcularReglas(){
 
-    /*for (int i = 0; i<paso1.secciones.length; i++){
+    for (int i = 0; i<paso1.secciones.length; i++){
       if(paso1.secciones[i].reglasNegocio!=null){
         if(paso1.secciones[i].reglasNegocio.length>0){
           for (int j=0; j<paso1.secciones[i].reglasNegocio.length; j++){
@@ -93,7 +100,6 @@ class FormularioCotizacion {
         }
       }
     }
-*/
 
     List<Regla> reglas = new List<Regla>();
 
@@ -108,7 +114,8 @@ class FormularioCotizacion {
             print("Calculando regla: "+ paso2.secciones[i].reglasNegocio[j].mensaje);
             for(int k=0; k<paso2.secciones[i].reglasNegocio[j].operaciones.length; k++){
 
-              bool resultadoRegla=paso2.secciones[i].reglasNegocio[j].operaciones[k].calcularOperacion();
+              final operation = paso2.secciones[i].reglasNegocio[j].operaciones[k];
+              bool resultadoRegla = operation.calcularOperacion();
               if(resultadoRegla==true){
                 if(paso2.secciones[i].reglasNegocio[j].tipoRegla == Utilidades.REGLA_STOPPER){
 
@@ -128,6 +135,7 @@ class FormularioCotizacion {
         }
       }
     }
+
     if(reglas.length > 0){
 
       String mensaje = "";
@@ -139,6 +147,9 @@ class FormularioCotizacion {
       Regla reglaAcumulada = Regla(tipoRegla: Utilidades.REGLA_INFO, mensaje: mensaje);
       return reglaAcumulada;
     }
+
+
+
   }
 
 
@@ -177,8 +188,8 @@ class FormularioCotizacion {
     Map<String, dynamic> map = paso2.toJSON();
     map["cotizacionGMMRequest"].addAll(paso1.toJSON()["cotizacionGMMRequest"]);
 
-    //La cotizacion debe saber con qué plan se cotiza
-    map["cotizacionGMMRequest"]["idPlan"] = Utilidades.buscaCampoPorID(Utilidades.referenciaPlan.id_seccion, Utilidades.referenciaPlan.id_campo, false)[0].valor;
+    map["cotizacionGMMRequest"]["idPlan"] = idPlan;
+    print("valorPlan/// $idPlan");
 
     List<int> planesPRevios = List<int>();
 
@@ -187,6 +198,7 @@ class FormularioCotizacion {
     for(int i=0; i<total-1; i++){
       if(Utilidades.cotizacionesApp.getCotizacionElement(i).comparativa!=null){
         planesPRevios.add(int.parse(Utilidades.buscaCampoPorFormularioID(i,Utilidades.referenciaPlan.id_seccion, Utilidades.referenciaPlan.id_campo, false)[0].valor));
+        //planesPRevios.add(int.parse(idPlan));
       }
     }
 
@@ -198,11 +210,6 @@ class FormularioCotizacion {
 
     //TODO: HARCODED Para sólo un usuario, revisar para múltiples asegurados
     map["cotizacionGMMRequest"]["descuentos"][0]["idPersona"] = 1;
-
-    //map["cotizacionGMMRequest"].remove("contratante");
-
-    //map["cotizacionGMMRequest"]["contratante"]["cpContratante"] = "09880";
-    //map["cotizacionGMMRequest"]["contratante"]["id"] = "1";
 
     //TODO:Se eliminaba el contratante por que el codigo postal no se estaba enviando.
 
@@ -211,43 +218,104 @@ class FormularioCotizacion {
     return map;
   }
 
-  Map<String, dynamic> getJSONComparativaSinAsegurados() {
-    Map<String, dynamic> map = paso2.toJSON();
-    map["cotizacionGMMRequest"].addAll(paso1.toJSON()["cotizacionGMMRequest"]);
+  String obtenerValorEtiqueta(dynamic valor, Campo c){
+    if(c.valores != null) {
+      if (c.valores.length > 0) {
+        for (int i = 0; i < c.valores.length; i++) {
+          if (c.valores[i].id == valor.toString()) {
+            return c.valores[i].descripcion;
+          }
+        }
+      } else {
+        return c.valores[0].descripcion;
+      }
+    } else {
+      return "";
+    }
+  }
 
-    //La cotizacion debe saber con qué plan se cotiza
-    map["cotizacionGMMRequest"]["idPlan"] = Utilidades.buscaCampoPorID(Utilidades.referenciaPlan.id_seccion, Utilidades.referenciaPlan.id_campo, false)[0].valor;
+  List<Map<String, dynamic>> obtenerListaCamposCamparativa(List<Map<String, dynamic>> acumCampos, List<Campo> campos) {
+    for (int i = 0; i < campos.length; i++) {
+      Campo c = campos[i];
+      if (c.valores != null) {
+        if (c.valores.length > 0) {
 
-    List<int> planesPRevios = List<int>();
+          if(c.nombre_campo != "nombre_completo" && c.nombre_campo != "label_divider") {
+            Map<String, dynamic> campo = {
+              //Tiene valores, puede que tenga hijos o no, pero se agrega el campo
+              "valor": c.getValorFormatted(),
+              "idCampo": c.id_campo,
+              "etiqueta": c.nombre_campo,
+              "valorString": obtenerValorEtiqueta(c.getValorFormatted(), c)
+            };
+            acumCampos.add(campo);
+          }
 
-    int total =  Utilidades.cotizacionesApp.getCurrentLengthLista();
+          for (int j = 0; j < c.valores.length; j++) {
+            Valor valor = c.valores[j];
+            if (valor.children != null) {
+              if (valor.children.length > 0) {
+                //Tiene hijos, evaluar los hijos y agregar al acumulador
 
-    for(int i=0; i<total-1; i++){
-      if(Utilidades.cotizacionesApp.getCotizacionElement(i).comparativa!=null){
-        planesPRevios.add(int.parse(Utilidades.buscaCampoPorFormularioID(i,Utilidades.referenciaPlan.id_seccion, Utilidades.referenciaPlan.id_campo, false)[0].valor));
+                if (valor.id == c.valor) {
+                  List<Map<String, dynamic>> campos_hijos =
+                  List<Map<String, dynamic>>();
+
+
+                  acumCampos.addAll(obtenerListaCamposCamparativa(campos_hijos, valor.children));
+                } else {
+                  if ((c.tipo_dato == "boolean" || c.tipo_componente == "toggle" || c.tipo_componente == "date_relativa") && (c.valor == "true" || c.tipo_componente == "date_relativa")) {
+                    List<Map<String, dynamic>> campos_hijos =
+                    List<Map<String, dynamic>>();
+
+
+                    if(c.tipo_componente == "date_relativa"){
+                      List <Campo> hijosFiltrados = List <Campo> ();
+
+                      valor.children.forEach((c){
+
+                        if(c.visible){
+                          hijosFiltrados.add(c);
+
+                        }
+
+                      });
+
+                      if(hijosFiltrados.length>0){
+                        acumCampos.addAll(
+                            obtenerListaCamposCamparativa(campos_hijos, hijosFiltrados));
+
+                      }
+                    }else{
+                      acumCampos.addAll(
+                          obtenerListaCamposCamparativa(campos_hijos, valor.children));
+                    }
+
+
+                  }
+                }
+              }
+            }
+          }
+
+
+        }
+      } else {
+        //Es un campo sin valores, se agrega a la lista
+        if(c.nombre_campo != "nombre_completo" && c.nombre_campo != "label_divider") {
+          Map<String, dynamic> campo = {
+            "valor": c.getValorFormatted(),
+            "idCampo": c.id_campo,
+            "etiqueta": c.nombre_campo,
+            "valorString": obtenerValorEtiqueta(c.getValorFormatted(), c)
+          };
+          acumCampos.add(campo);
+        }
       }
     }
 
-    map["cotizacionGMMRequest"]["planesPrevios"] = planesPRevios;
-    print("PLANES PREVIOS: " + planesPRevios.toString());
-
-    //TODO: Hardcode id titular, siempre el uno
-    map["cotizacionGMMRequest"]["titular"]["id"] = 1;
-
-    //TODO: HARCODED Para sólo un usuario, revisar para múltiples asegurados
-    map["cotizacionGMMRequest"]["descuentos"][0]["idPersona"] = 1;
-    map["cotizacionGMMRequest"]["asegurados"] = [];
-
-    //map["cotizacionGMMRequest"].remove("contratante");
-
-    //map["cotizacionGMMRequest"]["contratante"]["cpContratante"] = "09880";
-    //map["cotizacionGMMRequest"]["contratante"]["id"] = "1";
-
-    //TODO:Se eliminaba el contratante por que el codigo postal no se estaba enviando.
-
-    print("JSON COMPARATIVA: " + map.toString());
-
-    return map;
+    //Terminé de evaluar la lista de campos (hijos o de raíz)
+    return acumCampos;
   }
 
   List<Map<String, dynamic>> obtenerListaCampos(List<Map<String, dynamic>> acumCampos, List<Campo> campos) {
@@ -261,6 +329,9 @@ class FormularioCotizacion {
             "etiqueta": c.nombre_campo,
             "valor": c.getValorFormatted(),
             "idCampo": c.id_campo,
+            "valorString": obtenerValorEtiqueta(c.getValorFormatted(), c),
+            "tipo_componente": c.tipo_componente,
+            "label": c.etiqueta,
           };
           acumCampos.add(campo);
 
@@ -275,8 +346,7 @@ class FormularioCotizacion {
                   List<Map<String, dynamic>>();
 
 
-                  acumCampos
-                      .addAll(obtenerListaCampos(campos_hijos, valor.children));
+                  acumCampos.addAll(obtenerListaCampos(campos_hijos, valor.children));
                 } else {
                   if ((c.tipo_dato == "boolean" || c.tipo_componente == "toggle" || c.tipo_componente == "date_relativa") && (c.valor == "true" || c.tipo_componente == "date_relativa")) {
                     List<Map<String, dynamic>> campos_hijos =
@@ -320,6 +390,9 @@ class FormularioCotizacion {
           "etiqueta": c.nombre_campo,
           "valor": c.getValorFormatted(),
           "idCampo": c.id_campo,
+          "valorString": c.getValorFormatted(),
+          "tipo_componente": c.tipo_componente,
+          "label": c.etiqueta,
         };
         acumCampos.add(campo);
       }
@@ -354,6 +427,8 @@ class FormularioCotizacion {
                     List<Campo> campos_hijos = List<Campo>();
 
                     acumCampos.addAll(obtenerCamposSimplificados(campos_hijos, valor.children));
+                  }else if(c.valor == null && c.valores.length == 1 && c.tipo_componente == "select"){
+                    c.valor = c.valores[0].id;
                   }
                 }
               }
@@ -410,7 +485,128 @@ class FormularioCotizacion {
 
 
 
+  Map<String, dynamic> generarResponseResumenComparativa() {
+    //todos los datos del formulario (Paso1 y paso 2)
 
+    List<Map<String, dynamic>> secciones = List<Map<String, dynamic>>();
+    paso1.secciones.forEach((s) {
+      if (s.multiplicador > 0) {
+        List<Map<String, dynamic>> lista_asegurqados =
+        List<Map<String, dynamic>>();
+
+        for (int i = 0; i < s.children_secc.length; i++) {
+          Seccion s_child = s.children_secc[i];
+          List<Map<String, dynamic>> campos = List<Map<String, dynamic>>();
+
+          campos = obtenerListaCamposCamparativa(campos, s_child.campos);
+
+          Map<String, dynamic> seccion_child_json = {
+            "idPersona": s_child.id_valor != null ? s_child.id_valor : i + 2,
+            "valores": campos,
+            "idSeccion": s.id_seccion
+          };
+
+          lista_asegurqados.add(seccion_child_json);
+        }
+
+        Map<String, dynamic> seccion = {
+          "nombre": s.nombreRequestCotizacion,
+          "valores": lista_asegurqados,
+          "idSeccion": s.id_seccion
+        };
+
+        secciones.add(seccion);
+      } else {
+        List<Map<String, dynamic>> campos = List<Map<String, dynamic>>();
+        campos = obtenerListaCamposCamparativa(campos, s.campos);
+
+        Map<String, dynamic> seccion;
+        if (s.nombreRequestCotizacion == "titular") {
+          seccion = {
+            "nombre": s.nombreRequestCotizacion,
+            "valores": campos,
+            "idPersona": "1",
+            "idSeccion": s.id_seccion
+          };
+        } else {
+          seccion = {
+            "nombre": s.nombreRequestCotizacion,
+            "valores": campos,
+            "idSeccion": s.id_seccion
+          };
+        }
+
+        secciones.add(seccion);
+      }
+    });
+
+    Map<String, dynamic> seccionPlan = {
+      "nombre": "planes",
+      "valores": [
+        {
+          "valor": secciones.elementAt(0)["valores"][2]["valor"].toString(),
+          "idCampo": secciones.elementAt(0)["valores"][2]["idCampo"],
+          "etiqueta": "id_plan",
+          "valorString": secciones.elementAt(0)["valores"][2]["valorString"]
+        }
+      ],
+      "idSeccion": 6
+    };
+
+    secciones.add(seccionPlan);
+
+    paso2.secciones.forEach((s) {
+      if (s.multiplicador > 0) {
+        List<Map<String, dynamic>> lista_asegurqados =
+        List<Map<String, dynamic>>();
+
+        for (int i = 0; i < s.children_secc.length; i++) {
+          Seccion s_child = s.children_secc[i];
+          List<Map<String, dynamic>> campos = List<Map<String, dynamic>>();
+
+          campos = obtenerListaCamposCamparativa(campos, s_child.campos);
+
+          Map<String, dynamic> seccion_child_json = {
+            "idPersona": s_child.id_valor != null ? s_child.id_valor : i + 2,
+            "valores": campos,
+            "idSeccion": s.id_seccion
+          };
+
+          lista_asegurqados.add(seccion_child_json);
+        }
+
+        Map<String, dynamic> seccion = {
+          "nombre": s.nombreRequestCotizacion,
+          "valores": lista_asegurqados,
+          "idSeccion": s.id_seccion
+        };
+
+        secciones.add(seccion);
+      } else {
+        List<Map<String, dynamic>> campos = List<Map<String, dynamic>>();
+        campos = obtenerListaCamposCamparativa(campos, s.campos);
+
+        Map<String, dynamic> seccion = {
+          "nombre": s.nombreRequestCotizacion,
+          "valores": campos,
+          "idSeccion": s.id_seccion
+        };
+
+        secciones.add(seccion);
+      }
+    });
+
+    Map<String, dynamic> responseResumen = {
+      "seccion": secciones,
+      "idParticipante": datosUsuario.idparticipante.toString(),
+      "nombreParticipante": datosUsuario.givenname,
+      "parametroCotizador": Utilidades.idAplicacion,
+    };
+
+    print("NUEVO RESPONSE RESUMEN" + json.encode(responseResumen));
+
+    return responseResumen;
+  }
 
   //Repsonse Resumen
   Map<String, dynamic> generarResponseResumen() {
@@ -523,35 +719,39 @@ class FormularioCotizacion {
 }
 
 class PasoFormulario {
-  final int id_aplicacion;
-  final List<Seccion> secciones;
-  final String nombre;
-  final String descripcion;
-  final int cantidad_asegurados;
-  final String estatus;
-  final Estilos estilos;
-  final String raizRequestCotizacion;
-  final List<PropiedadConfiguracionRequest> camposRequestCotizacion;
-  final List<Documento> documentos;
-  final List<Documento> documentos_configuracion;
+  int id_aplicacion;
+  List<Seccion> secciones;
+  String nombre;
+  String descripcion;
+  int cantidad_asegurados;
+  String estatus;
+  Estilos estilos;
+  String raizRequestCotizacion;
+  String urlSiguiente;
+  List<PropiedadConfiguracionRequest> camposRequestCotizacion;
+  List<Documento> documentos;
+  List<Documento> documentos_configuracion;
 
-  PasoFormulario(
-      {this.id_aplicacion,
-        this.secciones,
-        this.nombre,
-        this.descripcion,
-        this.cantidad_asegurados,
-        this.estatus,
-        this.estilos,
-        this.raizRequestCotizacion,
-        this.camposRequestCotizacion,
-        this.documentos,
-        this.documentos_configuracion});
+  PasoFormulario({
+    this.id_aplicacion,
+    this.secciones,
+    this.nombre,
+    this.descripcion,
+    this.cantidad_asegurados,
+    this.estatus,
+    this.estilos,
+    this.raizRequestCotizacion,
+    this.urlSiguiente,
+    this.camposRequestCotizacion,
+    this.documentos,
+    this.documentos_configuracion,
+  });
 
-
-
-  String obtenerValorPrecargada (int idSeccion, int idCampo){
-
+  PasoFormulario copy() {
+    final json = toJson2();
+    final jsonString = jsonEncode(json);
+    final jsonCopy = jsonDecode(jsonString);
+    return PasoFormulario.fromJson2(jsonCopy);
   }
 
   bool validarFormulario() {
@@ -577,7 +777,8 @@ class PasoFormulario {
           //print("valido el campo" + s.campos[j].etiqueta + " con valor "+ s.campos[j].valor);
 
           if (!s.campos[j].isValid) {
-            print("Este campo no es valida " + s.campos[j].etiqueta + s.campos[j].valor);
+            print("Este campo no es valida " + s.campos[j].etiqueta +
+                s.campos[j].valor);
             return false;
           }
         }
@@ -646,8 +847,8 @@ class PasoFormulario {
             seccion.campo.forEach((id) {
               Campo resultado = buscarCampoPorID(s.campos, id, false);
 
-              if (resultado != null ) {
-                if(resultado.visibleLocal){
+              if (resultado != null) {
+                if (resultado.visibleLocal) {
                   campos.addAll(resultado.toJson());
                 }
                 print("======== Se encontró el campo" +
@@ -675,7 +876,6 @@ class PasoFormulario {
   }
 
   Campo buscarCampoPorID(List<Campo> campos, int id, bool busquedaProfunda) {
-
     for (int i = 0; i < campos.length; i++) {
       Campo current_campo = campos[i];
 
@@ -689,8 +889,10 @@ class PasoFormulario {
 
               if (current_valor.children != null) {
                 if (current_valor.children.length > 0) {
-                  if ((current_valor.id == current_campo.valor) || busquedaProfunda) {
-                    Campo buscar = buscarCampoPorID(current_valor.children, id, busquedaProfunda);
+                  if ((current_valor.id == current_campo.valor) ||
+                      busquedaProfunda) {
+                    Campo buscar = buscarCampoPorID(
+                        current_valor.children, id, busquedaProfunda);
                     if (buscar != null) {
                       return buscar;
                     }
@@ -698,11 +900,15 @@ class PasoFormulario {
                     if (((current_campo.tipo_dato == "boolean" ||
                         current_campo.tipo_componente == "toggle" ||
                         current_campo.tipo_componente == "date_relativa") &&
-                        (current_campo.valor == "true") || current_campo.tipo_componente == "date_relativa" )|| busquedaProfunda) {
-                      print("Busqueda profunda: "+ busquedaProfunda.toString());
+                        (current_campo.valor == "true") ||
+                        current_campo.tipo_componente == "date_relativa") ||
+                        busquedaProfunda) {
+                      print(
+                          "Busqueda profunda: " + busquedaProfunda.toString());
 
                       Campo buscar =
-                      buscarCampoPorID(current_valor.children, id, busquedaProfunda);
+                      buscarCampoPorID(
+                          current_valor.children, id, busquedaProfunda);
                       if (buscar != null && buscar.visible) {
                         return buscar;
                       }
@@ -722,9 +928,7 @@ class PasoFormulario {
     print("llego al filtrar del form");
 
     secciones.forEach((secc) {
-      print("busco en la seccion " + secc.id_seccion.toString());
       if (secc.id_seccion.toString() == idSeccion.toString()) {
-
         secc.filtrarSeccion(filtro);
       }
     });
@@ -734,18 +938,18 @@ class PasoFormulario {
     var list = parsedJson['secciones'] != null
         ? parsedJson['secciones'] as List
         : parsedJson['seccionesPlan'] as List;
-    List<Seccion> secc = list.map((i) => Seccion.fromJson(i)).toList();
+    List<Seccion> secc = list?.map((i) => Seccion.fromJson(i))?.toList();
 
     var list_raw_configs = parsedJson["camposRequestCotizacion"] as List;
     List<PropiedadConfiguracionRequest> configs = list_raw_configs
-        .map((i) => PropiedadConfiguracionRequest.fromJson(i))
-        .toList();
+        ?.map((i) => PropiedadConfiguracionRequest.fromJson(i))
+        ?.toList();
 
     var list_raw_docs = parsedJson["documentos"] != null
         ? parsedJson["documentos"] as List
         : List();
     List<Documento> docs;
-    if (list.length > 0) {
+    if (list?.length > 0) {
       docs = list_raw_docs.map((i) => Documento.fromJson(i)).toList();
     } else {
       docs = List<Documento>();
@@ -777,10 +981,73 @@ class PasoFormulario {
       estilos: es,
       secciones: secc,
       raizRequestCotizacion: parsedJson["raizRequestCotizacion"],
+      urlSiguiente: parsedJson["urlSiguiente"],
       camposRequestCotizacion: configs,
       documentos: docs != null ? docs : new List<Documento>(),
-      documentos_configuracion: docs_conf != null ? docs_conf : new List<Documento>(),
+      documentos_configuracion: docs_conf != null ? docs_conf : new List<
+          Documento>(),
 
+    );
+  }
+
+  Map<String, dynamic> toJson2() =>
+      {
+        "id_aplicacion": id_aplicacion,
+        "secciones": (secciones != null && secciones.isNotEmpty)
+            ? List<dynamic>.from(secciones.map((e) => e.toJson2()))
+            : [],
+        "nombre": nombre,
+        "descripcion": descripcion,
+        "cantidad_asegurados": cantidad_asegurados,
+        "estatus": estatus,
+        "estilos": estilos?.toJson2(),
+        "raizRequestCotizacion": raizRequestCotizacion,
+        "camposRequestCotizacion": (camposRequestCotizacion != null &&
+            camposRequestCotizacion.isNotEmpty)
+            ? List<dynamic>.from(
+            camposRequestCotizacion.map((e) => e.toJson2()))
+            : [],
+        "documentos": (documentos != null && documentos.isNotEmpty)
+            ? List<dynamic>.from(documentos.map((e) => e.toJson2()))
+            : [],
+        "documentos_configuracion": (documentos_configuracion != null &&
+            documentos_configuracion.isNotEmpty)
+            ? List<dynamic>.from(
+            documentos_configuracion.map((e) => e.toJson2()))
+            : [],
+      };
+
+  factory PasoFormulario.fromJson2(Map<String, dynamic> json) {
+    final jsonSecciones = json["secciones"];
+    final jsonCamposRequestCotizacion = json["camposRequestCotizacion"];
+    final jsonDocumentos = json["documentos"];
+    final jsonDocumentosConfiguracion = json["documentos_configuracion"];
+    final jsonEstilos = json["estilos"];
+    return PasoFormulario(
+      id_aplicacion: json["id_aplicacion"],
+      secciones: (jsonSecciones != null && jsonSecciones.isNotEmpty)
+          ? List<Seccion>.from(jsonSecciones.map((x) => Seccion.fromJson2(x)))
+          : <Seccion>[],
+      nombre: json["nombre"],
+      descripcion: json["descripcion"],
+      cantidad_asegurados: json["cantidad_asegurados"],
+      estatus: json["estatus"],
+      estilos: jsonEstilos != null ? Estilos.fromJson2(json["estilos"]) : null,
+      raizRequestCotizacion: json["raizRequestCotizacion"],
+      camposRequestCotizacion: (jsonCamposRequestCotizacion != null &&
+          jsonCamposRequestCotizacion.isNotEmpty)
+          ? List<PropiedadConfiguracionRequest>.from(jsonCamposRequestCotizacion
+          .map((x) => PropiedadConfiguracionRequest.fromJson2(x)))
+          : <PropiedadConfiguracionRequest>[],
+      documentos: (jsonDocumentos != null && jsonDocumentos.isNotEmpty)
+          ? List<Documento>.from(
+          jsonDocumentos.map((x) => Documento.fromJson2(x)))
+          : <Documento>[],
+      documentos_configuracion: (jsonDocumentosConfiguracion != null &&
+          jsonDocumentosConfiguracion.isNotEmpty)
+          ? List<Documento>.from(jsonDocumentosConfiguracion
+          .map((x) => Documento.fromJson2(x)))
+          : <Documento>[],
     );
   }
 }
@@ -798,6 +1065,20 @@ class PropiedadConfiguracionRequest {
 
     return PropiedadConfiguracionRequest(
         seccion: parsedJson["seccion"], campo: campos);
+  }
+
+  Map<String, dynamic> toJson2() => {
+    "seccion": seccion,
+    "campo": campo,
+  };
+
+  factory PropiedadConfiguracionRequest.fromJson2(Map<String, dynamic> json) {
+    final jsonCampos = json['campo'];
+    return PropiedadConfiguracionRequest(
+      seccion: json["seccion"],
+      campo: (jsonCampos != null && jsonCampos.isNotEmpty)
+          ? List<int>.from(jsonCampos.map((x) => x)) : <int>[],
+    );
   }
 }
 
@@ -845,6 +1126,24 @@ class Estilos {
       bannerUrl: parsedJson["bannerUrl"],
     );
   }
+
+  Map<String, dynamic> toJson2() => {
+    "colorPrimario": colorPrimario,
+    "colorSecundario": colorSecundario,
+    "colorSombra": colorSombra,
+    "colorTitulo": colorTitulo,
+    "colorTexto": colorTexto,
+    "bannerUrl": bannerUrl,
+  };
+
+  factory Estilos.fromJson2(Map<String, dynamic> json) => Estilos(
+    colorPrimario: json["colorPrimario"],
+    colorSecundario: json["colorSecundario"],
+    colorSombra: json["colorSombra"],
+    colorTitulo: json["colorTitulo"],
+    colorTexto: json["colorTexto"],
+    bannerUrl: json["bannerUrl"],
+  );
 }
 
 class Regla {
@@ -852,7 +1151,7 @@ class Regla {
   final int tipoRegla;
   final int seccion;
   final String mensaje;
-  final List <OperacionRegla> operaciones; // definicionRegla
+  final List<OperacionRegla> operaciones; // definicionRegla
 
 
   Regla({
@@ -860,7 +1159,7 @@ class Regla {
     this.tipoRegla,
     this.seccion,
     this.mensaje,
-    this.operaciones
+    this.operaciones,
   });
 
 
@@ -881,17 +1180,41 @@ class Regla {
     );
   }
 
+  Map<String, dynamic> toJson2() =>
+      {
+        "idRegla": idRegla,
+        "tipoRegla": tipoRegla,
+        "seccion": seccion,
+        "mensaje": mensaje,
+        "operaciones": (operaciones != null && operaciones.isNotEmpty)
+            ? List<dynamic>.from(operaciones.map((e) => e.toJson2()))
+            : [],
+      };
+
+  factory Regla.fromJson2(Map<String, dynamic> json) {
+    final jsonOperaciones = json["operaciones"];
+
+    return Regla(
+      idRegla: json["idRegla"],
+      tipoRegla: json["tipoRegla"],
+      seccion: json["seccion"],
+      mensaje: json["mensaje"],
+      operaciones: (jsonOperaciones != null && jsonOperaciones.isNotEmpty)
+          ? List<OperacionRegla>.from(
+          jsonOperaciones.map((x) => OperacionRegla.fromJson2(x)))
+          : <OperacionRegla>[],
+    );
+  }
 }
-
-
-
-
 class OperacionRegla {
 
   final List <Operando> operandos;
   final String operacion;
 
-  OperacionRegla({this.operandos, this.operacion});
+  OperacionRegla({
+    this.operandos,
+    this.operacion,
+  });
 
 
   //Calcular operacion se calcula la unidad
@@ -1077,7 +1400,7 @@ class OperacionRegla {
           }
         }
 
-        bool res=  valor_1 == valor_2;
+        bool res = valor_1.toString() == valor_2.toString();
         print(valor_1.toString() + "==" + valor_2.toString()+": "+ res.toString());
 
 
@@ -1174,7 +1497,6 @@ class OperacionRegla {
       }
     }
 
-
     return OperacionRegla(
         operacion: parsedJson["operacion"],
         operandos: operandos_json
@@ -1182,8 +1504,23 @@ class OperacionRegla {
     );
   }
 
+  Map<String, dynamic> toJson2() =>
+      {
+        "operandos": (operandos != null && operandos.isNotEmpty)
+            ? List<dynamic>.from(operandos.map((e) => e.toJson2()))
+            : [],
+        "operacion": operacion,
+      };
 
-
+  factory OperacionRegla.fromJson2(Map<String, dynamic> json) {
+    final jsonOperandos = json["operandos"];
+    return OperacionRegla(
+      operandos: (jsonOperandos != null && jsonOperandos.isNotEmpty)
+          ? List<Operando>.from(jsonOperandos.map((x) => Operando.fromJson2(x)))
+          : <Operando>[],
+      operacion: json["operacion"],
+    );
+  }
 }
 
 class Operando{
@@ -1194,7 +1531,13 @@ class Operando{
   final OperacionRegla child_operacion; //este valor es el resultado de una operación.
   final String nombreComponente;
 
-  Operando( {this.operando, this.referencia_id, this.child_operacion, this.referencia_seccion, this.nombreComponente,});
+  Operando({
+    this.operando,
+    this.referencia_id,
+    this.child_operacion,
+    this.referencia_seccion,
+    this.nombreComponente,
+  });
 
   dynamic getValor(){
 
@@ -1308,13 +1651,8 @@ class Operando{
       }
 
     }catch (e){
-
       print("Error: "+e.toString() + " "+parsedJson.toString()+" es un valor.");
-
-
     }
-
-
 
     return Operando(
       child_operacion: null,
@@ -1324,10 +1662,26 @@ class Operando{
     );
   }
 
+  Map<String, dynamic> toJson2() => {
+    "operando": operando,
+    "referencia_id": referencia_id,
+    "child_operacion": child_operacion?.toJson2(),
+    "referencia_seccion": referencia_seccion,
+    "nombreComponente": nombreComponente,
+  };
 
-
-
-
+  factory Operando.fromJson2(Map<String, dynamic> json) {
+    final jsonChildOperacion = json["child_operacion"];
+    return Operando(
+      operando: json["operando"],
+      referencia_id: json["referencia_id"],
+      child_operacion: jsonChildOperacion != null
+          ? OperacionRegla.fromJson2(json["child_operacion"])
+          : null,
+      referencia_seccion: json["referencia_seccion"],
+      nombreComponente: json["nombreComponente"],
+    );
+  }
 }
 
 class Seccion {
@@ -1341,6 +1695,7 @@ class Seccion {
   int id_filtrado;
   final String nombreRequestCotizacion;
   String id_valor;
+  bool opened = true;
   final List<Regla> reglasNegocio;
 
   int cont_child = 0;
@@ -1357,6 +1712,7 @@ class Seccion {
     this.children_secc_sin_filtro,
     this.nombreRequestCotizacion,
     this.id_valor,
+    this.opened,
   });
 
   bool existeUnCampoVisible() {
@@ -1392,6 +1748,7 @@ class Seccion {
       List<Campo> nuevosCampos = List<Campo>();
 
       this.campos.forEach((campo) {
+        print("campo----> ${campo.id_seccion}");
         Campo c = new Campo(
             rangoRelativa: campo.rangoRelativa,
             regla_catalogo: campo.regla_catalogo,
@@ -1424,6 +1781,74 @@ class Seccion {
           campos: nuevosCampos,
           multiplicador: 0,
           seccion: "Adicional " + (cont_child).toString()));
+    }
+  }
+
+  addChildFamiliares(String nombre, String ApellidoP, String ApellidoM, String sexo,String edad,  String cp, String fecha, String riengoSelecto, String garantiaCoaseguro) {
+    if (this.multiplicador > 0) {
+      cont_child = children_secc.length>0 ? children_secc.length + 1 : cont_child + 1 ;
+
+      List<Campo> nuevosCampos = List<Campo>();
+
+      this.campos.forEach((campo) {
+        print("campo----> ${campo.id_seccion}");
+        Campo c = new Campo(
+            rangoRelativa: campo.rangoRelativa,
+            regla_catalogo: campo.regla_catalogo,
+            id_campo: campo.id_campo,
+            etiqueta: campo.etiqueta,
+            obligatorio: campo.obligatorio,
+            nombre_campo: campo.nombre_campo,
+            tipo_dato: campo.tipo_dato,
+            tipo_componente: campo.tipo_componente,
+            visible: campo.visible,
+            regla: campo.regla,
+            valores: campo.valores,
+            rango: campo.rango,
+            view_ID: campo.view_ID,
+            dato_longitud: campo.dato_longitud,
+            seccion_dependiente: campo.seccion_dependiente,
+            nombreRequestCotizacion: campo.nombreRequestCotizacion,
+            valores_sin_filtro: campo.valores_sin_filtro,
+            checked: campo.checked,
+            enabled: campo.enabled,
+            reg_ex: campo.reg_ex,
+            visibleLocal: campo.visibleLocal,
+            oculta: campo.oculta);
+
+        nuevosCampos.add(c);
+      });
+
+      Seccion temp = Seccion(
+          id_seccion: this.id_seccion,
+          campos: nuevosCampos,
+          multiplicador: 0,
+          seccion: "Adicional " + (cont_child).toString());
+
+      for(int i = 0; i < temp.campos.length; i++){
+        if(i == 1 && nombre != ""){
+          temp.campos[i].valor = nombre;
+        } else if(i == 2 && ApellidoP != ""){
+          temp.campos[i].valor = ApellidoP;
+        } else if(i == 3 && ApellidoM != ""){
+          temp.campos[i].valor = ApellidoM;
+        } else if (i == 4){
+          temp.campos[i].valor = sexo;
+        } else if (i == 5 && edad != ""){
+          temp.campos[i].valor = edad;
+        } else if (i == 7 && cp != ""){
+          temp.campos[i].valor = cp;
+        } else if (i == 6){
+          temp.campos[i].valor = fecha;
+        } else if(i == 9){
+          temp.campos[i].valor = riengoSelecto;
+        } else if(i == 10){
+          temp.campos[i].valor = garantiaCoaseguro;
+        }
+      }
+
+      children_secc.add(temp);
+
     }
   }
 
@@ -1473,9 +1898,6 @@ class Seccion {
         var lista_valores_campos = elemento['campos'] as List;
         print("tiene " + lista_valores_campos.length.toString() + "campos");
         s.campos = lista_valores_campos.map((i) => Campo.fromJson(i)).toList();
-        print("se agregaron " +
-            s.campos.length.toString() +
-            " campos a la seccion");
         secc_valores.add(s);
       });
 
@@ -1515,7 +1937,70 @@ class Seccion {
       nombreRequestCotizacion: parsedJson["nombreRequestCotizacion"] != null
           ? parsedJson["nombreRequestCotizacion"]
           : "",
+      opened: parsedJson["opened"] ?? true,
     );
+  }
+
+  Map<String, dynamic> toJson2() => {
+    "reglasNegocio": (reglasNegocio != null && reglasNegocio.isNotEmpty)
+        ? List<dynamic>.from(reglasNegocio?.map((e) => e.toJson2()))
+        : [],
+    "id_seccion": id_seccion,
+    "campos": (campos != null && campos.isNotEmpty)
+        ? List<dynamic>.from(campos.map((e) => e.toJson2()))
+        : [],
+    "seccion": seccion,
+    "multiplicador": multiplicador,
+    "children_secc": (children_secc != null && children_secc.isNotEmpty)
+        ? List<dynamic>.from(children_secc.map((e) => e.toJson2()))
+        : [],
+    "id_filtrado": id_filtrado,
+    "filtrable": filtrable,
+    "children_secc_sin_filtro": (children_secc_sin_filtro != null &&
+        children_secc_sin_filtro.isNotEmpty)
+        ? List<dynamic>.from(
+        children_secc_sin_filtro.map((e) => e.toJson2()))
+        : [],
+    "nombreRequestCotizacion": nombreRequestCotizacion,
+    "id_valor": id_valor,
+    "opened": opened,
+  };
+
+  factory Seccion.fromJson2(Map<String, dynamic> json) {
+    final jsonReglasNegocio = json["reglasNegocio"];
+    final jsonCampos = json["campos"];
+    final jsonChildrenSecc = json["children_secc"];
+    final jsonChildrenSeccSinFiltro = json["children_secc_sin_filtro"];
+
+    final seccion = Seccion(
+      reglasNegocio: (jsonReglasNegocio != null && jsonReglasNegocio.isNotEmpty)
+          ? List<Regla>.from(
+          json["reglasNegocio"].map((x) => Regla.fromJson2(x)))
+          : null,
+      id_seccion: json["id_seccion"],
+      campos: (jsonCampos != null && jsonCampos.isNotEmpty)
+          ? List<Campo>.from(jsonCampos.map((x) => Campo.fromJson2(x)))
+          : <Campo>[],
+      seccion: json["seccion"],
+      multiplicador: json["multiplicador"],
+      children_secc: (jsonChildrenSecc != null && jsonChildrenSecc.isNotEmpty)
+          ? List<Seccion>.from(
+          jsonChildrenSecc.map((x) => Seccion.fromJson2(x)))
+          : [],
+      id_filtrado: json["id_filtrado"],
+      filtrable: json["filtrable"],
+      children_secc_sin_filtro: (jsonChildrenSeccSinFiltro != null &&
+          jsonChildrenSeccSinFiltro.isNotEmpty)
+          ? List<Seccion>.from(
+          jsonChildrenSeccSinFiltro?.map((x) => Seccion.fromJson2(x)))
+          : null,
+      nombreRequestCotizacion: json["nombreRequestCotizacion"],
+      id_valor: json["id_valor"],
+      opened: json["opened"],
+    );
+    seccion.cont_child = json["cont_child"] ?? 0;
+
+    return seccion;
   }
 }
 
@@ -1905,7 +2390,7 @@ class Campo {
           return int.parse(valor);
         } else {
           if (tipo_componente == "select") {
-            return valores[0].id;
+            return  valores != null ? valores[0].id : 1;
           } else {
             return 1;
           }
@@ -1945,6 +2430,103 @@ class Campo {
         return valor;
         break;
     }
+  }
+
+  Map<String, dynamic> toJson2() => {
+    "rangoRelativa": (rangoRelativa != null && rangoRelativa.isNotEmpty)
+        ? List<dynamic>.from(rangoRelativa.map((e) => e.toJson2()))
+        : [],
+    "regla_catalogo": regla_catalogo?.toJson2(),
+    "id_campo": id_campo,
+    "id_seccion": null,
+    "campos_modificados":
+    (campos_modificados != null && campos_modificados.isNotEmpty)
+        ? List<dynamic>.from(campos_modificados.map((e) => e.toJson2()))
+        : [],
+    "reg_ex": reg_ex,
+    "etiqueta": etiqueta,
+    "obligatorio": obligatorio,
+    "nombre_campo": nombre_campo,
+    "tipo_dato": tipo_dato,
+    "tipo_componente": tipo_componente,
+    "visible": visible,
+    "regla": regla,
+    "valores": (valores != null && valores.isNotEmpty)
+        ? List<dynamic>.from(valores.map((e) => e.toJson2()))
+        : [],
+    "rango": rango?.toJson2(),
+    "view_ID": view_ID,
+    "dato_longitud": dato_longitud,
+    "valor": valor,
+    "oculta": oculta,
+    "seccion_dependiente": seccion_dependiente,
+    "nombreRequestCotizacion": nombreRequestCotizacion,
+    "valores_sin_filtro":
+    (valores_sin_filtro != null && valores_sin_filtro.isNotEmpty)
+        ? List<dynamic>.from(valores_sin_filtro.map((e) => e.toJson2()))
+        : [],
+    "checked": checked,
+    "parent_campo": parent_campo?.toJson2(),
+    "enabled": enabled,
+    "visibleLocal": visibleLocal,
+  };
+
+  factory Campo.fromJson2(Map<String, dynamic> json) {
+    final jsonRangoRelativa = json["rangoRelativa"];
+    final jsonCamposModificados = json["campos_modificados"];
+    final jsonValores = json["valores"];
+    final jsonValoresSinFiltro = json["valores_sin_filtro"];
+    final jsonReglaCatalogo = json["regla_catalogo"];
+    final jsonParentCampo = json["parent_campo"];
+    final jsonRango = json["rango"];
+    final jsonDatoLongitud = json["dato_longitud"];
+    return Campo(
+      rangoRelativa: (jsonRangoRelativa != null && jsonRangoRelativa.isNotEmpty)
+          ? List<FechaRelativa>.from(
+          jsonRangoRelativa.map((x) => FechaRelativa.fromJson2(x)))
+          : null,
+      regla_catalogo: jsonReglaCatalogo != null
+          ? FechaRelativa.fromJson2(json["regla_catalogo"])
+          : null,
+      id_campo: json["id_campo"],
+      id_seccion: json["id_seccion"],
+      campos_modificados:
+      (jsonCamposModificados != null && jsonCamposModificados.isNotEmpty)
+          ? List<Referencia>.from(
+          jsonCamposModificados.map((x) => Referencia.fromJson2(x)))
+          : [],
+      reg_ex: json["reg_ex"],
+      etiqueta: json["etiqueta"],
+      obligatorio: json["obligatorio"],
+      nombre_campo: json["nombre_campo"],
+      tipo_dato: json["tipo_dato"],
+      tipo_componente: json["tipo_componente"],
+      visible: json["visible"],
+      regla: json["regla"],
+      valores: (jsonValores != null && jsonValores.isNotEmpty)
+          ? List<Valor>.from(jsonValores.map((x) => Valor.fromJson2(x)))
+          : null,
+      rango: jsonRango != null ? Rango.fromJson2(json["rango"]) : null,
+      view_ID: json["view_ID"],
+      dato_longitud: (jsonDatoLongitud != null && jsonDatoLongitud.isNotEmpty)
+          ? List<int>.from(jsonDatoLongitud)
+          : null,
+      valor: json["valor"],
+      oculta: json["oculta"],
+      seccion_dependiente: json["seccion_dependiente"],
+      nombreRequestCotizacion: json["nombreRequestCotizacion"],
+      valores_sin_filtro:
+      (jsonValoresSinFiltro != null && jsonValoresSinFiltro.isNotEmpty)
+          ? List<Valor>.from(
+          jsonValoresSinFiltro.map((x) => Valor.fromJson2(x)))
+          : null,
+      checked: json["checked"],
+      parent_campo: jsonParentCampo != null
+          ? Referencia.fromJson2(json["parent_campo"])
+          : null,
+      enabled: json["enabled"],
+      visibleLocal: json["visibleLocal"],
+    );
   }
 }
 
@@ -1988,6 +2570,16 @@ class Rango {
           : null,
     );
   }
+
+  Map<String, dynamic> toJson2() => {
+    "rango_inicio": rango_inicio,
+    "rango_fin": rango_fin,
+  };
+
+  factory Rango.fromJson2(Map<String, dynamic> json) => Rango(
+    rango_inicio: json["rango_inicio"],
+    rango_fin: json["rango_fin"],
+  );
 }
 
 class Valor {
@@ -2003,17 +2595,18 @@ class Valor {
   final bool valor_default;
 
 
-  Valor(
-      {this.id,
-        this.descripcion,
-        this.oculta_campos,
-        this.subnivel,
-        this.child,
-        this.id_filtrado,
-        this.children,
-        this.visible,
-        this.icono,
-        this.valor_default});
+  Valor({
+    this.id,
+    this.descripcion,
+    this.oculta_campos,
+    this.subnivel,
+    this.child,
+    this.id_filtrado,
+    this.children,
+    this.visible,
+    this.icono,
+    this.valor_default,
+  });
 
   factory Valor.fromJson(Map<String, dynamic> parsedJson) {
 
@@ -2083,6 +2676,46 @@ class Valor {
         " Child: " +
         child.nombre_campo.toString();
   }
+
+  Map<String, dynamic> toJson2() => {
+    "id": id,
+    "descripcion": descripcion,
+    "oculta_campos": (oculta_campos != null && oculta_campos.isNotEmpty)
+        ? List<dynamic>.from(oculta_campos.map((e) => e.toJson2()))
+        : [],
+    "subnivel": subnivel,
+    "child": child?.toJson2(),
+    "id_filtrado": id_filtrado,
+    "children": (children != null && children.isNotEmpty)
+        ? List<dynamic>.from(children.map((e) => e.toJson2()))
+        : [],
+    "visible": visible,
+    "icono": icono,
+    "valor_default": valor_default,
+  };
+
+  factory Valor.fromJson2(Map<String, dynamic> json) {
+    final jsonOcultaCampos = json["oculta_campos"];
+    final jsonChildren = json["children"];
+    final jsonChild = json["child"];
+    return Valor(
+      id: json["id"],
+      descripcion: json["descripcion"],
+      oculta_campos: (jsonOcultaCampos != null && jsonOcultaCampos.isNotEmpty)
+          ? List<Referencia>.from(
+          jsonOcultaCampos.map((x) => Referencia.fromJson2(x)))
+          : <Referencia>[],
+      subnivel: json["subnivel"],
+      child: jsonChild != null ? Campo.fromJson2(json["child"]) : null,
+      id_filtrado: json["id_filtrado"],
+      children: (jsonChildren != null && jsonChildren.isNotEmpty)
+          ? List<Campo>.from(jsonChildren.map((x) => Campo.fromJson2(x)))
+          : <Campo>[],
+      visible: json["visible"],
+      icono: json["icono"],
+      valor_default: json["valor_default"],
+    );
+  }
 }
 
 class Documento {
@@ -2104,6 +2737,23 @@ class Documento {
       urlPDF: parsedJson["url"],
     );
   }
+
+  Map<String, dynamic> toJson2() =>
+      {
+        "nombreDocumento": nombreDocumento,
+        "descDocumento": descDocumento,
+        "productos": productos,
+        "urlPDF": urlPDF,
+        "id": id,
+      };
+
+  factory Documento.fromJson2(Map<String, dynamic> json) => Documento(
+    id: json["id"],
+    nombreDocumento: json["nombreDocumento"],
+    descDocumento: json["descDocumento"],
+    productos: json["productos"],
+    urlPDF: json["urlPDF"],
+  );
 }
 
 class Cotizacion2Campos {
@@ -2175,12 +2825,19 @@ class NegocioOperable {
 }
 
 class Cotizadores {
+
   final int id_aplicacion;
   final int cantidad_asegurados;
   final String aplicacion;
   final String descripcion;
   final bool estatus;
   final bool visible_movil;
+  final String url;
+  final String urlCotizaciones;
+  final String urlBorrar;
+  final String urlVer;
+  final String urlGuardar;
+  final String urlCorreo;
   final String mensaje;
 
   Cotizadores(
@@ -2190,17 +2847,31 @@ class Cotizadores {
         this.descripcion,
         this.estatus,
         this.visible_movil,
-        this.mensaje});
+        this.url,
+        this.urlCotizaciones,
+        this.urlBorrar,
+        this.urlVer,
+        this.urlGuardar,
+        this.urlCorreo,
+        this.mensaje,
+      });
 
   factory Cotizadores.fromJson(Map<String, dynamic> parsedJson) {
     return Cotizadores(
         id_aplicacion: parsedJson["id_aplicacion"],
-        cantidad_asegurados: parsedJson["cantidad_asegurados"],
         aplicacion: parsedJson["aplicacion"],
         descripcion: parsedJson["descripcion"],
+        cantidad_asegurados: parsedJson["cantidad_asegurados"],
         estatus: parsedJson["estatus"],
         visible_movil: parsedJson["visible_movil"],
-        mensaje: parsedJson["mensaje"]);
+        url: parsedJson["url"],
+        urlCotizaciones: parsedJson["urlCotizaciones"],
+        urlBorrar: parsedJson["urlBorrar"],
+        urlVer: parsedJson["urlVer"],
+        urlGuardar: parsedJson["urlGuardar"],
+        urlCorreo: parsedJson["urlCorreo"],
+        mensaje: parsedJson["mensaje"]
+    );
   }
 }
 
@@ -2215,11 +2886,14 @@ class Comparativa {
 
   int formapagoseleccionada = 0;
 
-  Comparativa({this.formaspago, this.secciones, this.banComparativa,});
+  List<DetalleAsegurados> detalleAsegurados;
+
+  Comparativa({this.formaspago, this.secciones, this.banComparativa, this.detalleAsegurados});
 
   factory Comparativa.fromJson(Map<String, dynamic> parsedJson) {
 
     var raw_Formaspago = parsedJson["resumenCotizacion"]["formasPago"] as List;
+    var raw_DetalleAsegurados = parsedJson["resumenCotizacion"]["detalleAsegurados"] as List;
     print("FORMAS DE PAGO: " + raw_Formaspago.toString());
 
     var comp = parsedJson["resumenCotizacion"]["banComparativa"] as int;
@@ -2228,14 +2902,18 @@ class Comparativa {
     List<FormadePago> renglonesformas =
     raw_Formaspago.map((i) => FormadePago.fromJson(i)).toList();
 
+    List<DetalleAsegurados> renglonesAsegurados =
+    raw_DetalleAsegurados.map((i) => DetalleAsegurados.fromJson(i)).toList();
+
     var raw_Renglones = parsedJson["resumenCotizacion"]["secciones"] as List;
     List<SeccionComparativa> renglones =
     raw_Renglones.map((i) => SeccionComparativa.fromJson(i)).toList();
 
     return Comparativa(
-      secciones: renglones,
-      banComparativa: comp,
-      formaspago: renglonesformas,
+        secciones: renglones,
+        banComparativa: comp,
+        formaspago: renglonesformas,
+        detalleAsegurados: renglonesAsegurados
     );
   }
 }
@@ -2259,13 +2937,25 @@ class FormadePago {
   final String forma;
   final String ptotal;
   final String parcialidades;
-  final String pparcial;
 
-  FormadePago({this.forma, this.ptotal, this.parcialidades, this.pparcial});
+  FormadePago({this.forma, this.ptotal, this.parcialidades});
 
   factory FormadePago.fromJson(Map<String, dynamic> parsedJson) {
     return FormadePago(
-        forma: parsedJson["formaPago"], ptotal: parsedJson["primaTotal"].toString(), parcialidades: parsedJson["parcialidades"], pparcial: parsedJson["primaParcial"]);
+        forma: parsedJson["formaPago"], ptotal: parsedJson["primaTotal"].toString(), parcialidades: parsedJson["parcialidades"]);
+  }
+}
+
+class DetalleAsegurados {
+  final int id;
+  final String primaBase;
+  final String primaTotal;
+
+  DetalleAsegurados({this.id, this.primaBase, this.primaTotal});
+
+  factory DetalleAsegurados.fromJson(Map<String, dynamic> parsedJson) {
+    return DetalleAsegurados(
+        id: parsedJson["id"], primaBase: parsedJson["primaBase"], primaTotal: parsedJson["primaTotal"]);
   }
 }
 
@@ -2275,7 +2965,11 @@ class Referencia {
   int id_campo;
   int id_paso;
 
-  Referencia({this.id_campo, this.id_seccion, this.id_paso});
+  Referencia({
+    this.id_campo,
+    this.id_seccion,
+    this.id_paso,
+  });
 
   String toString(){
     return "Seccion: "+ id_seccion.toString()+", Campo:"+ id_campo.toString();
@@ -2293,7 +2987,17 @@ class Referencia {
     );
   }
 
+  Map<String, dynamic> toJson2() => {
+    "id_campo": id_campo,
+    "id_seccion": id_seccion,
+    "id_paso": id_paso,
+  };
 
+  factory Referencia.fromJson2(Map<String, dynamic> json) => Referencia(
+    id_campo: json["id_campo"],
+    id_seccion: json["id_seccion"],
+    id_paso: json["id_paso"],
+  );
 }
 
 class FechaRelativa {
@@ -2313,4 +3017,16 @@ class FechaRelativa {
         anio: parsedJson["anio"]
     );
   }
+
+  Map<String, dynamic> toJson2() => {
+    "dia": dia,
+    "mes": mes,
+    "anio": anio,
+  };
+
+  factory FechaRelativa.fromJson2(Map<String, dynamic> json) => FechaRelativa(
+    dia: json["dia"],
+    mes: json["mes"],
+    anio: json["anio"],
+  );
 }

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:cotizador_agente/CotizadorUnico/FormularioPaso1.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Mensajes.dart';
@@ -28,22 +29,47 @@ class ComboBoxDinamico extends StatefulWidget {
 
 class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
+  final dropdownState = GlobalKey<FormFieldState>();
+
   //String valorActual;
+
   bool isUnValor;
-
-
+  bool cambioCartera = false;
   void asignarValorDefault(){
     String valorDefecto;
+    int idPlan = 0;
 
     for(int i=0; i<widget.campo.valores.length; i++){ //Buscar si existe valorDefault
       if(widget.campo.valores[i].valor_default){
 
         if(widget.campo.valores[i].visible){//Asigna valor default si es visible
           valorDefecto = widget.campo.valores[i].id;
+          if(widget.campo.id_campo == 23) {
+            print("PLAN Valor Defect uno ${widget.campo.id_campo}");
+            print("PLAN Valor Defect uno ${widget.campo.etiqueta}");
+            setState(() {
+              valorEtiquetaPlan = widget.campo.valores[i].descripcion;
+              valorPlan = valorDefecto;
+            });
+            print("valorEtiquetaPlan ${valorEtiquetaPlan}");
+            print("valorPlan ${valorPlan}");
+          }
+
         }else{
           for(int j=0; j<widget.campo.valores.length; j++){
             if(widget.campo.valores[j].visible){ //Asigna primer valor visible
               valorDefecto = widget.campo.valores[j].id;
+              if(widget.campo.id_campo == 23) {
+                print("PLAN Valor Defect dos ${widget.campo.id_campo}");
+                print("PLAN Valor Defect dos ${widget.campo.etiqueta}");
+                setState(() {
+                  valorPlan = valorDefecto;
+                  valorEtiquetaPlan = widget.campo.valores[j].descripcion;
+                });
+
+                print("valorEtiquetaPlan ${valorEtiquetaPlan}");
+                print("valorPlan ${valorPlan}");
+              }
               break;
             }
           }
@@ -56,31 +82,40 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
       for(int k=0; k<widget.campo.valores.length; k++){
         if(widget.campo.valores[k].visible){ //Asigna primer valor visible
           valorDefecto = widget.campo.valores[k].id;
+          if(widget.campo.id_campo == 23) {
+            print("PLAN Valor Defect tres ${widget.campo.id_campo}");
+            print("PLAN Valor Defect tres ${widget.campo.etiqueta}");
+            setState(() {
+              valorPlan = valorDefecto;
+              valorEtiquetaPlan = widget.campo.valores[k].descripcion;
+            });
+
+            print("valorEtiquetaPlan ${valorEtiquetaPlan}");
+            print("valorPlan ${valorPlan}");
+          }
           break;
         }
       }
-
     }
+    print("valorDefecto ${valorDefecto}");
     widget.campo.valor = valorDefecto;
+
+
   }
 
   @override
   void initState() {
-
-
-    /*if(widget.campo.esConsulta && Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan ==null){
-      Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan =  widget.campo.valores[0].id;
-    }*/
+    //valorPlan = widget.campo.valor;
     isUnValor = widget.campo.valores.length > 1 ? false : true;
     int numeroValores = 0;
     if(!isUnValor){
       widget.campo.valores.forEach((valor){
         numeroValores = valor.visible ? numeroValores+1 : numeroValores;
       });
+
+
       isUnValor = numeroValores > 1 ? false : true;
     }
-
-
     if(widget.campo.valor == null){ //SE INICIALIZA CAMPO
 
       asignarValorDefault();
@@ -103,6 +138,12 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
       widget.campo.valores.forEach((valor){
 
         if(widget.campo.valor == valor.id && valor.visible){
+          setState(() {
+            if(widget.campo.id_campo == 23 && widget.campo.etiqueta == "PLAN"){
+              valorEtiquetaPlan = valor.descripcion;
+            }
+
+          });
           seEncuentraValorEnLista = true;
         }
 
@@ -113,97 +154,25 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
         asignarValorDefault();
       }
 
-    }
-
-
-    /*if (widget.campo.valor != null) {
-      //valorActual = widget.campo.valor;
-
-      if(widget.campo.esConsulta){
-
-        bool seEncuentraValorEnLista = false;
-        widget.campo.valores.forEach((valor){
-
-          if(valor.id==Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan  && valor.visible){
-            seEncuentraValorEnLista = true;
-          }
-
-
-
-        });
-
-        if(seEncuentraValorEnLista){
-           widget.campo.valor = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan;
-
-
-        }else{
-
-
-          bool esValorNoVisible = true;
-          String id_inicial;
-          //Verificar que el valor inicial sea visible.
-          for (int i = 0; i<widget.campo.valores.length && esValorNoVisible; i++){
-            if(widget.campo.valores[i].visible){
-              esValorNoVisible = false;
-              id_inicial= widget.campo.valores[i].id;
-            }
-
-
-          }
-
-          widget.campo.valor = id_inicial;
-
-          Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan = id_inicial;
-
-        }
-
-        //widget.actualizarSecciones(widget.campo.valor);
-
-      }
-
-
-
-
-    }else{
-
-      bool esValorNoVisible = true;
-      String id_inicial;
-      //Verificar que el valor inicial sea visible.
-      for (int i = 0; i<widget.campo.valores.length && esValorNoVisible; i++){
-        if(widget.campo.valores[i].visible){
-          esValorNoVisible = false;
-          id_inicial= widget.campo.valores[i].id;
-        }
-
-
-      }
-
-      widget.campo.valor = id_inicial;
-
-      if (widget.campo.seccion_dependiente != null) {
-        print("voy a filtrar la seccion"+ widget.campo.seccion_dependiente);
-        Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().filtrarSeccion(
-            int.parse(widget.campo.seccion_dependiente),
-            int.parse(widget.campo.valores[0].id));
-      }
-
+      //se agrega ocultar campos de cotizaciones guardadas
       if(widget.campo.oculta){ //Probar con el 292
-        ocultaCampos(widget.campo.valor);
+        ocultaCamposSinCamposModificados(widget.campo.valor);
         //ocultaCampos("292");
       }
 
+    }
 
-
-    }*/
-
-
+    //validacion para detonar el onChanged cuando entra a la vista FormularioPaso1, para poder oculta_campos del campo TIPO DE CARTERA de la seccion 1
+    if(Utilidades.entroUrlPaso1 && widget.campo.id_seccion == 1 && widget.campo.id_campo == 18 ){
+      WidgetsBinding.instance
+          .addPostFrameCallback((_) => dropdownState.currentState.didChange(widget.campo.valor));
+      print("entroUrlPaso1 "+Utilidades.entroUrlPaso1.toString() +"id_seccion "+ widget.campo.id_seccion.toString() +"id_campo "+ widget.campo.id_campo.toString() );
+      Utilidades.entroUrlPaso1 = false;
+    }
   }
-
 
   @override
   Widget build(BuildContext context) {
-
-
     return Padding(
       padding: EdgeInsets.only(top: 5, bottom: 4),
       child: AbsorbPointer(
@@ -214,7 +183,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
             //color: AppColors.color_sombra,
             child: Column(
               children: <Widget>[
-               /* Divider(
+                /* Divider(
                   color: AppColors.color_Bordes, height: 1
                 ),*/
                 Container(
@@ -223,30 +192,31 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
                   padding: EdgeInsets.only(bottom: 8),
                   child: Text(
                     widget.campo.etiqueta == null
-                        ? widget.campo.obligatorio == true ? widget.campo.nombre_campo.toUpperCase() + " *" :  widget.campo.nombre_campo.toUpperCase()
-                        : widget.campo.etiqueta.toUpperCase(),
-                    style: widget.campo.enabled? TextStyle(color: AppColors.color_Etiqueta, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5) : TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5),
+                        ? widget.campo.obligatorio == true ? widget.campo.nombre_campo + " *" :  widget.campo.nombre_campo
+                        : widget.campo.etiqueta,
+                    style: widget.campo.enabled? TextStyle(color: ColorsCotizador.color_Etiqueta, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5) : TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5),
                   ),
                 ),
                 Container(
                   //height: 60,
                   decoration: BoxDecoration(
-                    color: isUnValor ? AppColors.color_background : AppColors.color_background_blanco,
-                    borderRadius: BorderRadius.all(Radius.circular(4.0)),
-                    border: Border.all(color: AppColors.color_Bordes, style: BorderStyle.solid, width: 1.0),
+                      color: isUnValor ? ColorsCotizador.color_background : ColorsCotizador.color_background_blanco,
+                      borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                      border: Border.all(color: ColorsCotizador.color_Bordes, style: BorderStyle.solid, width: 1.0),
                       boxShadow: [
                         BoxShadow(
-                            color: AppColors.color_background,
+                            color: ColorsCotizador.color_background,
                             blurRadius: 1.0,
                             spreadRadius: 1.0,
                             offset: Offset(0.0, 1.5))
                       ]
                   ),
                   child: DropdownButtonFormField(
+                    key: dropdownState,
                     value:  widget.campo.valor,
                     items: getDropDownMenuItems(),
-                    onChanged: isUnValor ? null : changedDropDownItem,
-                    disabledHint: Text("  "+ widget.campo.valores[0].descripcion.toString(), style: TextStyle(color: AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),),
+                    onChanged: isUnValor ? null : (val) => changedDropDownItem(val),
+                    disabledHint: Text("  "+ widget.campo.valores[0].descripcion.toString(), style: TextStyle(color: ColorsCotizador.color_disable, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),),
                     /*decoration: InputDecoration(
                       contentPadding: EdgeInsets.only(top: 0, bottom: 0),
                       enabledBorder: UnderlineInputBorder(
@@ -274,7 +244,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
               padding: EdgeInsets.only(left: 8, bottom: 0),
               child: new Text(
                 v.descripcion.toString(),
-                style: widget.campo.enabled? TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto') : TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
+                style: widget.campo.enabled? TextStyle(color: Utilidades.color_texto_campo, fontSize: 15) : TextStyle(color: Colors.grey, fontSize: 15),
               ),
             )));
 
@@ -286,15 +256,157 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
   }
 
   void changedDropDownItem(String valorSeleccionado) {
-    widget.campo.valor = valorSeleccionado;
+    print("valorSeleccionado-- ${valorSeleccionado}");
+    print("VALOR SELECCIONADO: " + valorSeleccionado + " CAMPO: " + widget.campo.id_campo.toString());
+    //print("widget.campo.valor ${widget.campo.valores}");
+    setState(() {
+      widget.campo.valor = valorSeleccionado;
+    });
 
-    if(widget.campo.esConsulta){
+    //String ValorPlan = "";
+
+    if(widget.campo.id_campo == 17 ){
+
+      if(valorSeleccionado == "1"){
+        /*List<Seccion> seccionesAdicionales = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones;
+        seccionesAdicionales = seccionesAdicionales.where((s) => s.id_seccion == Utilidades.familiarSeccion).toList();
+        for(Seccion seccion in seccionesAdicionales) {
+          if (seccion.children_secc!=null) {
+            seccion.children_secc.clear();
+          }
+        }*/
+        setState(() {
+          seRequiereAntiguedad = false;
+        });
+
+      }
+      else{
+        /*List<Seccion> seccionesAdicionales = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones;
+        seccionesAdicionales = seccionesAdicionales.where((s) => s.id_seccion == Utilidades.familiarSeccion).toList();
+        for(Seccion seccion in seccionesAdicionales) {
+          if (seccion.children_secc!=null) {
+            seccion.children_secc.clear();
+          }
+        }*/
+        setState(() {
+          seRequiereAntiguedad = true;
+        });
+      }
+
+      int valor = int.parse(valorSeleccionado)-1;
+      for(int i = 0; i < widget.campo.valores[valor].children[0].valores.length; i++){
+        if(widget.campo.valores[valor].children[0].valores[i].valor_default){
+          setState(() {
+            widget.campo.valores[valor].children[0].valor = widget.campo.valores[valor].children[0].valores[0].id;
+            widget.campo.valores[valor].children[0].valores[0].children[0].valor = widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].id;
+            widget.campo.valores[valor].child.valor = widget.campo.valores[valor].child.valores[0].id;
+            widget.campo.valores[valor].child.valores[0].child.valor = widget.campo.valores[valor].child.valores[0].child.valores[i].id;
+            valorEtiquetaPlan =  widget.campo.valores[valor].children[0].valores[i].descripcion;
+            valorPlan =  widget.campo.valores[valor].children[0].valores[i].id;
+          });
+
+        }
+      }
+    }
+
+    if(widget.campo.id_campo == 18 ){
+
+      if(valorTipoCartera != valorSeleccionado){
+        cambioCartera = true;
+        valorTipoCartera = valorSeleccionado;
+      }
+
+      if(valorSeleccionado == "1"){
+        /*List<Seccion> seccionesAdicionales = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones;
+        seccionesAdicionales = seccionesAdicionales.where((s) => s.id_seccion == Utilidades.familiarSeccion).toList();
+        for(Seccion seccion in seccionesAdicionales) {
+          if (seccion.children_secc!=null) {
+            seccion.children_secc.clear();
+          }
+        }*/
+        setState(() {
+          seRequiereAntiguedad = false;
+          seRequiereGarantiaCoaseguro = false;
+          esCarteraAnterior = false;
+        });
+
+      }
+      else{
+        /*List<Seccion> seccionesAdicionales = Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso1.secciones;
+        seccionesAdicionales = seccionesAdicionales.where((s) => s.id_seccion == Utilidades.familiarSeccion).toList();
+        for(Seccion seccion in seccionesAdicionales) {
+          if (seccion.children_secc!=null) {
+            seccion.children_secc.clear();
+          }
+        }*/
+        setState(() {
+          seRequiereAntiguedad = true;
+          seRequiereGarantiaCoaseguro =  true;
+          esCarteraAnterior = true;
+        });
+
+      }
+      int valor = int.parse(valorSeleccionado)-1;
+      for(int i = 0; i < widget.campo.valores[valor].children[0].valores[0].children[0].valores.length; i++){
+        if(widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].valor_default && widget.campo.valores[valor].children[0].valores[0].children[0].valor == null){
+          setState(() {
+            valorEtiquetaPlan =  widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].descripcion;
+            valorPlan =  widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].id;
+            widget.campo.valores[valor].children[0].valor = widget.campo.valores[valor].children[0].valores[0].id;
+            widget.campo.valores[valor].children[0].valores[0].children[0].valor = widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].id;
+            widget.campo.valores[valor].child.valor = widget.campo.valores[valor].child.valores[0].id;
+            widget.campo.valores[valor].child.valores[0].child.valor = widget.campo.valores[valor].child.valores[0].child.valores[i].id;
+
+          });
+
+        }
+        if(widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].valor_default && cambioCartera){
+          setState(() {
+            valorEtiquetaPlan =  widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].descripcion;
+            valorPlan =  widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].id;
+            widget.campo.valores[valor].children[0].valor = widget.campo.valores[valor].children[0].valores[0].id;
+            widget.campo.valores[valor].children[0].valores[0].children[0].valor = widget.campo.valores[valor].children[0].valores[0].children[0].valores[i].id;
+            widget.campo.valores[valor].child.valor = widget.campo.valores[valor].child.valores[0].id;
+            widget.campo.valores[valor].child.valores[0].child.valor = widget.campo.valores[valor].child.valores[0].child.valores[i].id;
+
+          });
+
+        }
+      }
+    }
+
+    if(widget.campo.id_campo == 23 ){
+      setState(() {
+        valorPlan = valorSeleccionado;
+      });
+      for(int i = 0; i < widget.campo.valores.length; i++){
+        if(widget.campo.valores[i].id == valorSeleccionado){
+          setState(() {
+            valorEtiquetaPlan =  widget.campo.valores[i].descripcion;
+          });
+        }
+      }
+    }
+
+    if((widget.campo.id_campo == 17 || widget.campo.id_campo == 18) && tieneCP && tieneEdad){
+      widget.actualizarSecciones(valorPlan);
+      Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan = valorPlan.toString();
+    }
+
+    if((widget.campo.id_campo == 23) && tieneCP && tieneEdad){
+      //print("actualizo a plan"+ Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan);
       widget.actualizarSecciones(valorSeleccionado);
       Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan = valorSeleccionado.toString();
     }
 
+    if(widget.campo.id_seccion != 3 && (widget.campo.id_campo == 7 ) && tieneCP && tieneEdad){
+      //print("actualizo a plan"+ Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan);
+      widget.actualizarSecciones(valorPlan);
+      Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan = valorPlan;
+    }
 
     if (widget.campo.seccion_dependiente != null) {
+      print("voy a filtrar la seccion"+ widget.campo.seccion_dependiente);
       Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().filtrarSeccion(
           int.parse(widget.campo.seccion_dependiente),
           int.parse(valorSeleccionado));
@@ -306,8 +418,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
     }
 
     //Actualizar vista
-    widget.agregarAlDiccionario(
-        widget.campo.id_campo.toString(), widget.campo.valor);
+    widget.agregarAlDiccionario(widget.campo.id_campo.toString(), widget.campo.valor);
 
   }
 
@@ -317,7 +428,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
     //Liberar campos modificados
     widget.campo.campos_modificados.forEach((referencia){
-
+      print("Liberando campos modificados: "+ referencia.toString());
       List <Campo> campos  =  Utilidades.buscaCampoPorID(referencia.id_seccion, referencia.id_campo, true);
       if(campos!=null){
         campos.forEach((campo){
@@ -325,6 +436,7 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
           //Se regresa el valor del campo padre a su estado original
           if(campo.parent_campo!=null){
             Campo campo_padre = Utilidades.buscaCampoPorID(campo.parent_campo.id_seccion, campo.parent_campo.id_campo, true)[0];
+            print("Campo Padre es: "+referencia.toString());
 
             if(campo_padre.valores!=null){
               campo_padre.valores.forEach((valor){
@@ -425,6 +537,86 @@ class _ComboBoxDinamicoState extends State<ComboBoxDinamico> {
 
   }
 
+  //copia  de funcion ocultaCampos pero sin el forEach para widget.campo.campos_modificados
+  void ocultaCamposSinCamposModificados(String valorSeleccionado){
+
+    print("Es oculta");
+    //widget.campo.campos_modificados.clear();
+
+    //ocultar campos
+    widget.campo.valores.forEach((valor){
+      if(valor.id == valorSeleccionado){
+        if(valor.oculta_campos.length>0){
+          print("Este valor:"+ valor.descripcion.toString()+ ", oculta campos");
+          valor.oculta_campos.forEach((referencia){
+            List <Campo> campos  =  Utilidades.buscaCampoPorID(referencia.id_seccion, referencia.id_campo, true);
+            if(campos!=null){
+              campos.forEach((campo){
+                print("El campo a ocultar es: "+ campo.etiqueta.toString());
+
+
+                //Se oculta el valor del campo padre
+                if(campo.parent_campo!=null){
+                  Campo campo_padre = Utilidades.buscaCampoPorID(campo.parent_campo.id_seccion, campo.parent_campo.id_campo, true)[0];
+                  print("Campo Padre es: "+campo_padre.etiqueta);
+
+
+                  if(campo_padre.valores!=null){
+                    //campo_padre.filtrarHijos(campo.id_campo.toString());
+                    if(campo_padre.valor == campo.id_campo.toString()){
+
+                      bool esValorNoVisible = true;
+                      String id_inicial;
+                      //Verificar que el valor inicial sea visible.
+                      for (int i = 0; i<campo_padre.valores.length && esValorNoVisible; i++){
+                        if(campo_padre.valores[i].visible){
+                          esValorNoVisible = false;
+                          id_inicial= campo_padre.valores[i].id;
+                        }
+                      }
+                      campo_padre.valor =  id_inicial;
+
+                    }
+
+                    campo_padre.valores.forEach((valor){
+
+                      if(valor.id==campo.id_campo.toString()){
+                        valor.visible= false;
+                      }
+                    });
+
+
+
+
+                  }
+
+                }else{
+                  print("El campo padre es null");
+                }
+
+                //widget.agregarAlDiccionario("test", "test");
+
+
+                //Se oculta el campo
+                print("oculto el campo"+ campo.etiqueta);
+                campo.visible = false;
+                campo.visibleLocal = false;
+                print("oculto el campo"+ campo.etiqueta+ campo.visible.toString());
+
+
+                widget.campo.campos_modificados.add(referencia);
+                print("Se agrego la referencia"+ referencia.id_campo.toString());
+
+
+              });
+            }
+          });
+        }
+      }
+    });
+
+
+  }
 
 }
 
@@ -484,11 +676,11 @@ class _CheckBoxDinamicoState extends State<CheckBoxDinamico> {
     }
 
     return Visibility(
-      visible: widget.campo.visible,
+      visible: widget.campo.nombre_campo == "garantia_coaseguro" && esCarteraAnterior ? true : widget.campo.nombre_campo == "garantia_coaseguro" && esCarteraAnterior == false ? false : widget.campo.visible ,
       child: CheckboxListTile(
-        title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? AppColors.color_appBar : AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
+        title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? ColorsCotizador.color_appBar : ColorsCotizador.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
         value: widget.currentValue,
-        activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.secondary900,
+        activeColor: widget.campo.checked ? ColorsCotizador.color_disable : ColorsCotizador.secondary900,
         onChanged: widget.campo.enabled ? (newValue) {
           setState(() {
             widget.currentValue = newValue;
@@ -565,9 +757,9 @@ class _CheckBoxDinamicoDependienteState extends State<CheckBoxDinamicoDependient
 
             if(index==0){
               return CheckboxListTile(
-                title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? AppColors.color_appBar : AppColors.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
+                title: Text(widget.campo.etiqueta, style: TextStyle(color: widget.campo.enabled ? ColorsCotizador.color_appBar : ColorsCotizador.color_disable, fontSize: 16, fontWeight: FontWeight.normal, fontFamily: 'Roboto'),),
                 value: widget.currentValue,
-                activeColor: widget.campo.checked ? AppColors.color_disable : AppColors.secondary900,
+                activeColor: widget.campo.checked ? ColorsCotizador.color_disable : ColorsCotizador.secondary900,
                 onChanged: widget.campo.enabled ? (newValue) {
                   setState(() {
                     widget.currentValue = newValue;
@@ -634,9 +826,9 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
         builder: (BuildContext context, Widget child) {
           return Theme(
             data: ThemeData.light().copyWith(
-              primaryColor: AppColors.secondary900,
-              accentColor: AppColors.secondary900,
-              colorScheme: ColorScheme.light(primary: AppColors.secondary900),
+              primaryColor: ColorsCotizador.secondary900,
+              accentColor: ColorsCotizador.secondary900,
+              colorScheme: ColorScheme.light(primary: ColorsCotizador.secondary900),
               buttonTheme: ButtonThemeData(
                   textTheme: ButtonTextTheme.primary
               ),
@@ -679,9 +871,9 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
   @override
   Widget build(BuildContext context) {
     return AbsorbPointer(
-        absorbing: !widget.campo.enabled,
+        absorbing: !widget.campo.enabled ,
         child: Visibility(
-            visible: widget.campo.visible,
+            visible: widget.campo.visible || seRequiereAntiguedad,
             child: GestureDetector(
               onTap: (){
                 DateTime now = DateTime.now();
@@ -693,9 +885,9 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
               child: Container(
                   margin: EdgeInsets.only(top: 8),
                   decoration: BoxDecoration(
-                      color: AppColors.color_background_blanco,
+                      color: ColorsCotizador.color_background_blanco,
                       border: Border(
-                          bottom: BorderSide(color: AppColors.color_mail))),
+                          bottom: BorderSide(color: ColorsCotizador.color_mail))),
                   child: Column(
                     children: <Widget>[
                       Container(
@@ -705,7 +897,7 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
                           widget.campo.etiqueta == null
                               ? widget.campo.nombre_campo
                               : widget.campo.etiqueta,
-                          style: widget.campo.enabled? TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto') : TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
+                          style: widget.campo.enabled? TextStyle(color: ColorsCotizador.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto') : TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                         ),
                       ),
                       Container(
@@ -717,8 +909,7 @@ class _CalendarioDinamicoRangeState extends State<CalendarioDinamicoRange> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               //Jiffy( DateTime.parse(widget.campo.valor)).format("dd-MM-yyyy").toString()
-                              Text(Jiffy(widget.campo.valor).format("dd-MM-yyyy").toString(), style: TextStyle(color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
-                                textAlign: TextAlign.left,),
+                              Text(Jiffy(widget.campo.valor).format("dd-MM-yyyy").toString(), style: TextStyle(color: ColorsCotizador.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                               Icon(Icons.date_range, color: Colors.grey,)
                             ],
                           ))
@@ -757,19 +948,6 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
     final DateTime picked = await showDatePicker(
         context: context,
         locale: const Locale('es', 'MX'),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.light().copyWith(
-              primaryColor: AppColors.secondary900,
-              accentColor: AppColors.secondary900,
-              colorScheme: ColorScheme.light(primary: AppColors.secondary900),
-              buttonTheme: ButtonThemeData(
-                  textTheme: ButtonTextTheme.primary
-              ),
-            ),
-            child: child,
-          );
-        },
         initialDate: selectedDate,
         firstDate: firstDate,
         lastDate: lastDate);
@@ -788,19 +966,6 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
       //locale: Locale("es","MX"),
         context: context,
         locale: const Locale('es', 'MX'),
-        builder: (BuildContext context, Widget child) {
-          return Theme(
-            data: ThemeData.light().copyWith(
-              primaryColor: AppColors.secondary900,
-              accentColor: AppColors.secondary900,
-              colorScheme: ColorScheme.light(primary: AppColors.secondary900),
-              buttonTheme: ButtonThemeData(
-                  textTheme: ButtonTextTheme.primary
-              ),
-            ),
-            child: child,
-          );
-        },
         initialDate: selectedDate,
         firstDate: firstDate,
         lastDate: lastDate);
@@ -859,9 +1024,9 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
                           child: Container(
                               margin: EdgeInsets.only(top: 8),
                               decoration: BoxDecoration(
-                                  color: AppColors.color_sombra,
+                                  color: ColorsCotizador.color_background_blanco,
                                   border: Border(
-                                      bottom: BorderSide(color: AppColors.color_primario))),
+                                      bottom: BorderSide(color: ColorsCotizador.color_mail))),
                               child: Column(
                                 children: <Widget>[
                                   Container(
@@ -870,19 +1035,19 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
                                     child: Text(
                                       widget.campo.etiqueta == null
                                           ? widget.campo.nombre_campo
-                                          : widget.campo.etiqueta + " inicial",
-                                      style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                                          : "Fecha Salida",
+                                      style: widget.campo.enabled? TextStyle(color: ColorsCotizador.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'): TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                                     ),
                                   ),
                                   Container(
                                       height: 30,
-                                      margin: EdgeInsets.only(left: 8, top: 8),
+                                      margin: EdgeInsets.only(left: 8, top: 8,  right: 8),
                                       padding: EdgeInsets.only(bottom: 8),
                                       width: double.infinity,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(Jiffy( DateTime.parse(widget.campo.valor.split(",")[0])).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),textAlign: TextAlign.left,),
+                                          Text(Jiffy( DateTime.parse(widget.campo.valor.split(",")[0])).format("dd-MM-yyyy").toString(), style: TextStyle(color: ColorsCotizador.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto')),
                                           Icon(Icons.date_range, color: Colors.grey,)
                                         ],
                                       ))
@@ -913,9 +1078,9 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
                           child: Container(
                               margin: EdgeInsets.only(top: 8),
                               decoration: BoxDecoration(
-                                  color: AppColors.color_sombra,
+                                  color: ColorsCotizador.color_background_blanco,
                                   border: Border(
-                                      bottom: BorderSide(color: AppColors.color_primario))),
+                                      bottom: BorderSide(color: ColorsCotizador.color_mail))),
                               child: Column(
                                 children: <Widget>[
                                   Container(
@@ -924,19 +1089,19 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
                                     child: Text(
                                       widget.campo.etiqueta == null
                                           ? widget.campo.nombre_campo
-                                          : widget.campo.etiqueta + " final",
-                                      style: widget.campo.enabled? TextStyle(color: AppColors.color_primario, fontSize: 15): TextStyle(color: Colors.grey, fontSize: 15),
+                                          : "Fecha Regreso",
+                                      style: widget.campo.enabled? TextStyle(color: ColorsCotizador.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto') : TextStyle(color: Colors.grey, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                                     ),
                                   ),
                                   Container(
                                       height: 30,
-                                      margin: EdgeInsets.only(left: 8, top: 8),
+                                      margin: EdgeInsets.only(left: 8, top: 8, right: 8),
                                       padding: EdgeInsets.only(bottom: 8),
                                       width: double.infinity,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Text(Jiffy( DateTime.parse(widget.campo.valor.split(",")[1])).format("dd-MM-yyyy").toString(), style: TextStyle(fontSize: 16),textAlign: TextAlign.left,),
+                                          Text(Jiffy( DateTime.parse(widget.campo.valor.split(",")[1])).format("dd-MM-yyyy").toString(), style: TextStyle(color: ColorsCotizador.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'), textAlign: TextAlign.left,),
                                           Icon(Icons.date_range, color: Colors.grey,)
                                         ],
                                       ))
@@ -962,12 +1127,12 @@ class _CalendarioConRangoRelativoState extends State<CalendarioConRangoRelativo>
 
               return Column(
                 children: <Widget>[
-                  Visibility(
-                    visible: Jiffy(DateTime.parse(widget.campo.valor.split(",")[1])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) >= 1 ,
+                  /*Visibility(
+                    visible: widget.campo.valores[0].children[0].visible,
                     child: CampoDinamico(actualizarSecciones:widget.actualizarSecciones, agregarDicc: widget.agregarAlDiccionario, campo: widget.campo.valores[0].children[0], actualizarCodigoPostalFamiliares: () {}, validarCodigoPostalFamiliares: ()=>false,),
-                  ),
+                  ),*/
                   Visibility(
-                    visible: Jiffy(DateTime.parse(widget.campo.valor.split(",")[1])).diff(DateTime.parse(widget.campo.valor.split(",")[0]),"y" ) < 1 ,
+                    visible: widget.campo.valores[1].children[0].visible ,
                     child: CampoDinamico(actualizarSecciones:widget.actualizarSecciones, agregarDicc: widget.agregarAlDiccionario, campo: widget.campo.valores[1].children[0], actualizarCodigoPostalFamiliares: () {}, validarCodigoPostalFamiliares: ()=>false,),
                   )
                 ],
@@ -1006,12 +1171,12 @@ class _BotonDinamicoStateBorde extends State<BotonDinamicoBorde> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: OutlineButton(
-        textColor: AppColors.color_primario,
+        textColor: ColorsCotizador.color_primario,
         child: Text(widget.titulo.etiqueta,
           style: TextStyle(fontSize: 15),),
         onPressed: () {},
         borderSide: BorderSide(
-          color: AppColors.color_primario, //Color of the border
+          color: ColorsCotizador.color_primario, //Color of the border
           style: BorderStyle.solid, //Style of the border
           width: 0.8, //width of the border
         ),
@@ -1036,8 +1201,8 @@ class _BotonDinamicoSinBordeState extends State<BotonDinamicoSinBorde> {
   @override
   Widget build(BuildContext context) {
     return OutlineButton(
-      textColor: AppColors.color_primario,
-      color: AppColors.color_primario,
+      textColor: Utilidades.color_primario,
+      color: Utilidades.color_primario,
       child: Text(widget.titulo.toString(),
         style: TextStyle(fontSize: 15),),
       onPressed: () {},
@@ -1064,7 +1229,7 @@ class _TextoGenericoDinamicoState extends State<TextoGenericoDinamico> {
       overflow: TextOverflow.ellipsis,
       style: TextStyle(
           fontWeight: FontWeight.normal,
-          color: AppColors.color_primario,
+          color: Utilidades.color_primario,
           fontSize: 15),
     );
   }
@@ -1107,8 +1272,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
 
     final GlobalCupertinoLocalizations localizations = CupertinoLocalizations.of(context);
-    TextEditingController _controller;
-
+    TextEditingController _controller = new TextEditingController();
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Column(
@@ -1116,9 +1280,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           Container(
             padding: EdgeInsets.only(right: 8, left: 8),
             decoration: BoxDecoration(
-                color: AppColors.color_background_blanco,
+                color: ColorsCotizador.color_background_blanco,
                 border: Border(
-                    bottom: BorderSide(color: AppColors.color_mail))),
+                    bottom: BorderSide(color: ColorsCotizador.color_mail))),
             child: Visibility(
               visible: widget.campo.visible,
               child: Column(
@@ -1139,7 +1303,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       reverse: true,
                       child: TextFormField(
                         controller: _controller,
-                        style: TextStyle(color: AppColors.gnpTextUser, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
+                        style: TextStyle(color: ColorsCotizador.gnpTextUser, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
                         key: ValueKey('Key_' + widget.campo.hashCode.toString() + "_" + DateTime.now().millisecondsSinceEpoch.toString()),
                         inputFormatters: [new WhitelistingTextInputFormatter(new RegExp(widget.campo.reg_ex)), //[0-9]
                           LengthLimitingTextInputFormatter(widget.campo.dato_longitud!=null ? widget.campo.dato_longitud.length == 2 ?  widget.campo.dato_longitud[1] : widget.campo.dato_longitud[0]: null ,)],
@@ -1150,11 +1314,73 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           print("llegue al onsave " + widget.campo.valor);
                         },
                         onChanged: (valor) {
+
+                          print("onChanged-->${widget.campo.nombre_campo}");
                           widget.campo.valor = valor;
+                          if(widget.campo.nombre_campo == "edad" && valor != ""){
+                            tieneEdad = true;
+                          } else if(widget.campo.nombre_campo == "edad" && valor == ""){
+                            tieneEdad = false;;
+                          }
+                          if(widget.campo.nombre_campo == "cp" && valor != ""){
+                            tieneCP = true;
+                          } else if(widget.campo.nombre_campo == "cp" && valor == ""){
+                            tieneCP = false;
+                          }
+                          if(tieneEdad && widget.campo.nombre_campo == "cp" && valor.length == 5){
+                            print("--->valorPlan<--- ${valorPlan}");
+                            if(valor != codigoPostal && widget.validarCodigoPostalFamiliares() == true){
+                              codigoPostal = valor;
+                              showDialog<void>(
+                                context: context,
+                                barrierDismissible: false, // user must tap button!
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Aviso'),
+                                    content: SingleChildScrollView(
+                                      child: ListBody(
+                                        children: <Widget>[
+                                          Text(Mensajes.cambioCP),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Cancelar'),
+                                        onPressed: () {
+                                          widget.actualizarSecciones(valorPlan);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text('Aceptar'),
+                                        onPressed: () {
+                                          Utilidades.actualizarCodigoPostalAdicional = true;
+                                          actualizarCodigoPostalFamiliares();
+                                          widget.actualizarSecciones(valorPlan);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+
+                                    ],
+                                  );
+                                },
+                              );
+                            }
+                            else{
+                              widget.actualizarSecciones(valorPlan);
+                            }
+
+                          }
+                          if(tieneCP && widget.campo.nombre_campo == "edad" && valor.length == 2){
+                            print("--->valorPlan<--- ${valorPlan}");
+                            widget.actualizarSecciones(valorPlan);
+
+                          }
                           if ( (widget.campo.id_seccion == Utilidades.titularSeccion && widget.campo.id_campo == Utilidades.titularCampo) ) {
                             widget.campo.valor = valor;
                             if (valor != codigoPostal && widget.validarCodigoPostalFamiliares() == true) {
-                              if (valor.length == 5) {
+                              /*if (valor.length == 5) {
                                 codigoPostal = valor;
                                 showDialog<void>(
                                   context: context,
@@ -1189,7 +1415,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                                     );
                                   },
                                 );
-                              }
+                              }*/
                             }
                           }
                           // Se agrega validación para cuando se edita una cotización y el adicional cambia CP
@@ -1202,7 +1428,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                                   print("VALIDA cuando idsecc null: " + valor.toString());
                                 }
                               }else if(widget.validarCodigoPostalFamiliares() == true){
-                                if (valor.length == 5) {
+                                /*if (valor.length == 5) {
                                   codigoPostal = valor;
                                   print("VALIDA cuando idsecc null: " + valor.toString());
                                   showDialog<void>(
@@ -1238,9 +1464,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
                                       );
                                     },
                                   );
-                                }
+                                }*/
                               }
                             }
+                          }
+                        },
+                        onEditingComplete:(){
+                          if(widget.campo.nombre_campo == "edad" && widget.campo.nombre_campo == "cp" &&tieneEdad && tieneCP){
+                            print("--->valorPlan<--- ${valorPlan}");
+                            widget.actualizarSecciones(valorPlan);
                           }
                         },
                         initialValue: widget.campo.valor,
@@ -1264,7 +1496,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                           //labelStyle: TextStyle(color: AppColors.color_primario),
                           labelText: widget.campo.obligatorio == true ? widget.campo.etiqueta + " *" : widget.campo.etiqueta,
                           labelStyle: TextStyle(
-                              color: AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w400, fontFamily: 'Roboto'),
+                              color: ColorsCotizador.color_appBar, fontSize: 16, fontWeight: FontWeight.normal, letterSpacing: 0.5,fontFamily: 'Roboto'),
                           //labelText: widget.campo.etiqueta),
                         ),
                       ),
@@ -1281,7 +1513,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               margin: EdgeInsets.only(top: 8),
               child: Text(
                 widget.campo.error,
-                style: TextStyle(color: AppColors.color_primario, fontSize: 15),
+                style: TextStyle(color: ColorsCotizador.color_primario, fontSize: 15),
               ),
             ),
           ),
@@ -1356,17 +1588,17 @@ class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
                 decoration:
                 InputDecoration(
                   hintText: "Nombre cotización",
-                  fillColor: AppColors.color_primario,
+                  fillColor: Utilidades.color_primario,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(0.0),
                     borderSide: new BorderSide(
-                        color: AppColors.color_primario
+                        color: Utilidades.color_primario
                     ),
                   ),
                   focusedBorder:  new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(0.0),
                     borderSide: new BorderSide(
-                        color: AppColors.color_primario
+                        color: Utilidades.color_primario
                     ),
                   ),
                   suffixIcon:  IconButton(
@@ -1404,7 +1636,7 @@ class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
                     "Propuesta" + ' ' + (widget.cont).toString() : widget.comparativa.nombre,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: AppColors.primary700, fontSize: 24, fontWeight: FontWeight.bold,
+                        color: Utilidades.color_titulo, fontSize: 24, fontWeight: FontWeight.bold,
                       ),
                     ),
                     GestureDetector(
@@ -1418,7 +1650,7 @@ class _CustomTextFieldCotizacionState extends State<CustomTextFieldCotizacion>{
                         //padding: EdgeInsets.all(16.5),
                         child: Icon(
                           Icons.edit,
-                          color: AppColors.primary700,
+                          color: Utilidades.color_titulo,
                         ),
                       ),
                     ),
@@ -1473,68 +1705,64 @@ class _RenglonTablaDoscolumnaState extends State<RenglonTablaDoscolumna> {
   @override
   Widget build(BuildContext context) {
     return Container(
-     // color: AppColors.color_sombra,
-      padding: EdgeInsets.only(left: 0, right:0,),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: ListView(
-              shrinkWrap: true,
-              physics: ScrollPhysics(),
+        width: MediaQuery.of(context).size.width,
+        color: ColorsCotizador.color_background_blanco,
+        child: ListView(
+          shrinkWrap: true,
+          physics: ScrollPhysics(),
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        height: 32,
-                        color: AppColors.color_background,
-                        padding: EdgeInsets.only(bottom: 4.0, left: 8.0, top:4.0),
-                        child: Align( alignment: Alignment.centerLeft,
-                          child: Text(
-                            widget.titulo,
-                            style: TextStyle(
-                                color: AppColors.color_Etiqueta,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 12,
-                                letterSpacing: 0.4),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: ColorsCotizador.color_background,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 5, bottom: 5),
+                    child: Text(
+                      widget.titulo,
+                      style: TextStyle(
+                          color: ColorsCotizador.tituloTablaGMM,
+                          fontWeight: FontWeight.normal,
+                          letterSpacing: 0.4,
+                          fontSize: 12),
+                      textAlign: TextAlign.left,
                     ),
-
-
-                  ],
+                  ),
                 ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        height: 32,
-                        color: Colors.white,
-                        padding: EdgeInsets.only(left: 16.0,bottom: 4.0, top: 4.0),
-                        child: Align( alignment: Alignment.centerLeft,
-                          child: Text(
-                            widget.valor == "Novus" ? "N/A" : widget.valor,
-                            style: TextStyle(
-                                color: AppColors.color_appBar,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                                letterSpacing: 0.25),
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 7, bottom: 7),
+                    child: Text(
+                      widget.valor,
+                      style: TextStyle(
+                          color: ColorsCotizador.valorTablaGMM,
+                          fontWeight: FontWeight.normal,
+                          letterSpacing: 0.25,
+                          fontSize: 14),
+                      textAlign: TextAlign.left,
                     ),
-                  ],
+                  ),
                 ),
+
               ],
             ),
-          )
-        ],
-      ),
+            /*Row(
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                    padding: EdgeInsets.only(left: 16,right: 16),
+                    child: Divider( //002e71
+                      thickness: 0.5,
+                      color: Colors.grey,
+                      height: 0,
+                    )),
+              ),
+            ],
+          ),*/
+          ],
+        )
     );
   }
 }
@@ -1596,17 +1824,7 @@ class _ToggleConValoresState extends State<ToggleConValores> {
           if(index==0){
             return Row(
               children: <Widget>[
-                Expanded(
-                  child: Text(
-                    widget.campo.etiqueta,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.color_appBar,
-                      fontFamily: 'OpenSansRegular',
-                    ),
-                  ),
-                ),
+                Expanded(child: Text(widget.campo.etiqueta, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: ColorsCotizador.color_appBar, fontFamily: 'OpenSansRegular'),)),
                 Switch(
                   value: widget.isSwitched,
                   onChanged: (value) {
@@ -1618,26 +1836,19 @@ class _ToggleConValoresState extends State<ToggleConValores> {
 
                     });
                   },
-                  activeTrackColor: AppColors.secondary300.withOpacity(0.38),
-                  activeColor: AppColors.secondary900,
-                  inactiveTrackColor: AppColors.color_switch_simple_apagado.withOpacity(0.38),
-                  inactiveThumbColor: AppColors.color_switch_simple_apagado,
+                  activeTrackColor: ColorsCotizador.secondary300.withOpacity(0.38),
+                  activeColor: ColorsCotizador.secondary900,
+                  inactiveTrackColor: ColorsCotizador.color_switch_simple_apagado.withOpacity(0.38),
+                  inactiveThumbColor: ColorsCotizador.color_switch_simple_apagado,
                 ),
               ],
             );
           }else{
-
-            print("imprimo sus hijos"+ widget.campo.valores.length.toString());
-
-
             return ListView.builder(
                 itemCount: widget.campo.valores.length,
                 shrinkWrap: true,
                 physics: ScrollPhysics(),
                 itemBuilder: (BuildContext ctxt, int j) {
-
-
-
                   return Visibility(
                     visible: widget.campo.valor == widget.campo.valores[1].id ? true : false,
                     child: ListView.builder(
@@ -1812,7 +2023,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                       child: Container(
                         decoration: new BoxDecoration(
                           color: esMujer
-                              ? AppColors.color_primario
+                              ? ColorsCotizador.color_primario
                               : Colors.white,
                           shape: BoxShape.circle,
                         ),
@@ -1823,7 +2034,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                             icon: ImageSwitch(image: widget.campo.valores[0].icono, isOn: esMujer), //mujer
                             color: esMujer
                                 ? Colors.white
-                                : AppColors.color_switch_apagado,
+                                : ColorsCotizador.color_switch_apagado,
                             iconSize: 50,
                             onPressed: () {
                               setState(() {
@@ -1846,7 +2057,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                       child:  Container(
                         decoration: new BoxDecoration(
                           color: esHombre
-                              ? AppColors.color_primario
+                              ? ColorsCotizador.color_primario
                               : Colors.white,
                           shape: BoxShape.circle,
                         ),
@@ -1854,7 +2065,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                           icon: ImageSwitch(image: widget.campo.valores[1].icono, isOn: esHombre),//Icon(CotizadorUnicoApp.hombre),
                           color: esHombre
                               ? Colors.white
-                              : AppColors.color_switch_apagado,
+                              : ColorsCotizador.color_switch_apagado,
                           iconSize: 50,
                           onPressed: () {
                             setState(() {
@@ -1890,7 +2101,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                     child: Text(widget.campo.valores[0].descripcion, style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary700,
+                      color: ColorsCotizador.primary700,
                     ),
                     ),
                   ),
@@ -1902,7 +2113,7 @@ class _SwitchConImagenState extends State<SwitchConImagen> {
                     child: Text(widget.campo.valores[1].descripcion, style: TextStyle(
                         fontSize: 12.0,
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primary700),
+                        color: ColorsCotizador.primary700),
                     ),
                   ),
                 ),
@@ -2014,7 +2225,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                                 child: Container(
                                   decoration: new BoxDecoration(
                                     color: esValor1
-                                        ? AppColors.color_primario
+                                        ? ColorsCotizador.color_primario
                                         : Colors.white,
                                     shape: BoxShape.circle,
                                   ),
@@ -2027,7 +2238,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                                       color: esValor1
 
                                           ? Colors.white
-                                          : AppColors.color_switch_apagado,
+                                          : ColorsCotizador.color_switch_apagado,
                                       iconSize: 50,
                                       onPressed: () {
                                         setState(() {
@@ -2046,7 +2257,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                                 child:  Container(
                                   decoration: new BoxDecoration(
                                     color: esValor2
-                                        ? AppColors.color_primario
+                                        ? ColorsCotizador.color_primario
                                         : Colors.white,
                                     shape: BoxShape.circle,
                                   ),
@@ -2054,7 +2265,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                                     icon: ImageSwitch(image: widget.campo.valores[1].icono, isOn: esValor2), //hombre
                                     color: esValor2
                                         ? Colors.white
-                                        : AppColors.color_switch_apagado,
+                                        : ColorsCotizador.color_switch_apagado,
                                     iconSize: 50,
                                     onPressed: () {
                                       setState(() {
@@ -2086,7 +2297,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                               child: Text(widget.campo.valores[0].descripcion, style: TextStyle(
                                 fontSize: 12.0,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.primary700,
+                                color: ColorsCotizador.primary700,
                               ),
                               ),
                             ),
@@ -2098,7 +2309,7 @@ class _SwitchConImagenDependienteState extends State<SwitchConImagenDependiente>
                               child: Text(widget.campo.valores[1].descripcion, style: TextStyle(
                                   fontSize: 12.0,
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.primary700),
+                                  color: ColorsCotizador.primary700),
                               ),
                             ),
                           ),
@@ -2175,14 +2386,14 @@ class _CardCoberturasState extends State<CardCoberturas> {
     return Visibility(
       visible: widget.campo.visible,
       child: Container(
-        color: AppColors.color_sombra,
+        color: ColorsCotizador.color_sombra,
         child: Column(
           children: <Widget>[
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(8.0),
               child: Text(widget.campo.etiqueta,
-                style: TextStyle(color: AppColors.primary700, fontWeight: FontWeight.w600, fontSize: 16),),
+                style: TextStyle(color: ColorsCotizador.primary700, fontWeight: FontWeight.w600, fontSize: 16),),
             ),
 
             ListView.builder(
@@ -2201,7 +2412,7 @@ class _CardCoberturasState extends State<CardCoberturas> {
                         Visibility(
                           visible: widget.campo.valores[index].visible,
                           child: Text("\u2022 " + widget.campo.valores[index].descripcion,
-                            style: TextStyle(color: AppColors.primary700, fontWeight: FontWeight.w400, fontSize: 16),),
+                            style: TextStyle(color: ColorsCotizador.primary700, fontWeight: FontWeight.w400, fontSize: 16),),
                         ),
                       ],
                     ),
