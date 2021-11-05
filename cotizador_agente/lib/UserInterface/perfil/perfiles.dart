@@ -1158,7 +1158,7 @@ class _PerfilPageState extends State<PerfilPage> {
                   String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
                       "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
                   OrquetadorOtpJwtModel optRespuesta =
-                      await orquestadorOTPJwtServicio(context,decryptedNumber, false);
+                      await orquestadorOTPJwtServicio(context,decryptedNumber.trim(), false);
 
                   setState(() {
                     _saving = false;

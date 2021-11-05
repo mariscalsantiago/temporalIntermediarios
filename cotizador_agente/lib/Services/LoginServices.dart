@@ -298,6 +298,8 @@ void getNegociosOperables(BuildContext context) async {
 }
 
 Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String password,String user) async {
+  FirebaseAuthenticationServices().getIntentosUser(user);
+  print("logInPost user:"+user);
   String _service = "Login";
   String _serviceID = "S1";
   print("Getting $_service");
@@ -340,9 +342,6 @@ Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String 
   final http.Request request =
   http.Request("Login", Uri.parse(config.serviceLogin));
   metricsPerformance.send(request);
-
-  await FirebaseAuthenticationServices().getIntentosUser(user);
-  print("logInPost user:"+user);
 
   if(response != null) {
     if (response.body != null && response.body.isNotEmpty) {
