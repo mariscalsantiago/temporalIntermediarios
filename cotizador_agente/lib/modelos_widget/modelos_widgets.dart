@@ -1272,7 +1272,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   Widget build(BuildContext context) {
 
     final GlobalCupertinoLocalizations localizations = CupertinoLocalizations.of(context);
-    TextEditingController _controller = new TextEditingController();
+    TextEditingController _controller;
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Column(

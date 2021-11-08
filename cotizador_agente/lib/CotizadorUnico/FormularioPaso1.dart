@@ -1127,7 +1127,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
             //Utilidades.cotizacionesApp.eliminarDeLaComparativa(Utilidades.cotizacionesApp.getCurrentLengthLista()-1);
 
           }else{
-            Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoGMMNueva'));
+            Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoAP'));
           }
           validarRestaurarCotizacionDeEdicion();
 
@@ -1723,7 +1723,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                             ////Para funcionalidad cotizacion Editada A Recuperar
                                             //validarEdicion();
 
-                                            Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoTresNueva",);
+                                            Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
 
                                           });
                                         }
@@ -1739,7 +1739,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                                         ////Para funcionalidad cotizacion Editada A Recuperar
                                         //validarEdicion();
 
-                                        Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoTresNueva",);
+                                        Navigator.pushNamed(context, "/cotizadorUnicoAPPasoTres",);
 
                                       }
 

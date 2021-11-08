@@ -385,8 +385,8 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
 
     Utilidades.cotizacionesApp.limpiarComparativa();
 
-    Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoGMMNueva'));
-    Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoUnoNueva",);
+    Navigator.of(context).popUntil(ModalRoute.withName('/cotizadorUnicoAP'));
+    Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
 
   }
 
@@ -408,7 +408,7 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
       Utilidades.editarEnComparativa = true;
       Navigator.pushNamed(
         context,
-        "/cotizadorUnicoGMMPasoUnoNueva",
+        "/cotizadorUnicoAPPasoUno",
       );
     } else {
       Utilidades.mostrarAlerta(
