@@ -92,7 +92,7 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
               "idPlan": widget.id_Plan
             };
 
-            http.Response response= await post(AppConfig.of(context).urlBase + Constants.GENERA_FORMATOPDF, body: json.encode(jsonMap), headers: headers);
+            http.Response response= await post(Utilidades.urlVer, /*AppConfig.of(context).urlBase + Constants.GENERA_FORMATOPDF*/, body: json.encode(jsonMap), headers: headers);
 
             int statusCode = response.statusCode;
 
