@@ -841,8 +841,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
             correoUsuario = controllerCorreo.text;
             controllerCorreoCambioContrasena.text = correoUsuario;
           } else {
+            if(prefs.getString("correoUsuario")!= null && prefs.getString("correoUsuario").isNotEmpty){
             var value = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
-            controllerCorreoCambioContrasena.text = value;
+            controllerCorreoCambioContrasena.text = value;}
+            else{
+              controllerCorreoCambioContrasena.text = "";
+            }
 
           }
 
