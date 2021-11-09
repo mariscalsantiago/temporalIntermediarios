@@ -120,6 +120,7 @@ class Utilidades {
   //NUEVAS URLS DEL SERVICIO
   static String url;
   static String urlSiguiente;
+  static String urlCotizar;
   static String urlCotizaciones;
   static String urlBorrar;
   static String urlVer;

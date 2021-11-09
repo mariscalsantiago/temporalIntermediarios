@@ -736,6 +736,7 @@ class _FormularioPaso1State extends State<FormularioPaso1> {
                 PasoFormulario estePaso = PasoFormulario.fromJson(json.decode(response.body));
                 Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2 =  estePaso;
                 Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().idPlan= plan;
+                Utilidades.urlCotizar = estePaso.urlSiguiente;
 
                 for(int i = 0; i < Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones.length; i++){
                   Utilidades.cotizacionesApp.getCurrentFormularioCotizacion().paso2.secciones[i].opened = true;

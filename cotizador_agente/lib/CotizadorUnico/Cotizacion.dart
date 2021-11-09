@@ -896,6 +896,8 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
       return "4 pagos trimestrales de";
     } else if(valor == "12"){
       return "12 pagos mensuales de";
+    } else if(valor == "24"){
+      return "24 pagos quincenales de";
     }
   }
 
@@ -1870,7 +1872,8 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
     };
 
     Response response = await post(
-      config.urlBase+Constants.GENERA_COTIZACION,
+      Utilidades.urlCotizar,
+      /*config.urlBase+Constants.GENERA_COTIZACION,*/
       body: jsonCompString,
       headers: headers,
     );
