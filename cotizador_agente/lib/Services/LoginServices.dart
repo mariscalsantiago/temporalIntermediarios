@@ -347,6 +347,7 @@ Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String 
     if (response.body != null && response.body.isNotEmpty) {
       if (response.statusCode == 200) {
         Map map2 = json.decode(response.body);
+        writeUserIntentos(user, 0);
         //output?.hideLoader();
         loginData = LoginModel.fromJson(map2);
         List<String> jwt = loginData.jwt.split(".");
