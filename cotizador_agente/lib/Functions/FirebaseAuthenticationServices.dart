@@ -9,6 +9,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Database.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 
 class FirebaseAuthenticationServices {
   final FirebaseAnalytics _analytics = new FirebaseAnalytics();
@@ -17,6 +18,7 @@ class FirebaseAuthenticationServices {
   DeviceInformation _deviceInformation;
   UserModel _userModel;
   DatabaseReference _databaseReference;
+  EncryptData _encryptData = EncryptData();
 
 
   DeviceInformation _getDeviceInformation() {
@@ -58,7 +60,8 @@ class FirebaseAuthenticationServices {
           .onValue
           .listen((Event event) async {
         Codec<String, String> stringToBase64 = utf8.fuse(base64);
-        String encoded = stringToBase64.encode(email.toUpperCase()); // dXNlcm5hbWU6cGFzc3dvcmQ=
+        String encoded = _encryptData.encryptInfo(email.toUpperCase(),"intentosUserEmailSesion");
+        // dXNlcm5hbWU6cGFzc3dvcmQ=
         // String decoded = stringToBase64.decode(encoded);
 
         intento = event.snapshot.value!=null&&event.snapshot.value["$encoded"]!=null&&["intentos"] != null ? event.snapshot.value["$encoded"]["intentos"]:0;

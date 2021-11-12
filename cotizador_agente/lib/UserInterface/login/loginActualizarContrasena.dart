@@ -488,9 +488,11 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
                   },
                 )),
             validator: (value) {
+
               print("value $_password");
               _password = _encryptData.decryptData(prefs.getString("contrasenaUsuario"),
                   "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+
               if (value.isEmpty && !value.contains(" ")) {
                 return 'Este campo es requerido';
               } else if (value != _password &&

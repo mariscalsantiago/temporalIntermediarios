@@ -743,10 +743,11 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(4)),
-              color: controllerPreguntaUno.text != "" &&
+              color:  controllerPreguntaUno.text != "" &&
                       controllerPreguntaDos.text != "" &&
                       controllerRespuestaUno.text.trim() != "" &&
-                      controllerRespuestaDos.text.trim() != ""
+                      controllerRespuestaDos.text.trim() != "" &&
+                      controllerPreguntaUno.text != controllerPreguntaDos.text
                   ? Tema.Colors.GNP
                   : Tema.Colors.botonlogin,
             ),
@@ -757,10 +758,11 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
               child: Text(
                 "ACTUALIZAR",
                 style: TextStyle(
-                    color: controllerPreguntaUno.text != "" &&
+                    color:  controllerPreguntaUno.text != "" &&
                             controllerPreguntaDos.text != "" &&
                             controllerRespuestaUno.text != "" &&
-                            controllerRespuestaDos.text != ""
+                            controllerRespuestaDos.text != "" &&
+                            controllerPreguntaUno.text != controllerPreguntaDos.text
                         ? Tema.Colors.backgroud
                         : Tema.Colors.botonletra,
                     fontWeight: FontWeight.w500),
@@ -834,7 +836,6 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
   void funcionAlerta() {}
 
   void funcionAlertaCodVerificacion(Responsive responsive) async {
-    void funcionAlertaCodVerificacion(Responsive responsive) async {
       setState(() {
         _saving = true;
       });
@@ -878,7 +879,6 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
             funcionAlerta);
       }
     }
-  }
 
   Widget separacion(Responsive responsive, double tamano) {
     return SizedBox(

@@ -397,7 +397,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
           width: responsive.width,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(4)),
-            color: _validNumber
+            color: _validNumber && controllerNumero.text.isNotEmpty
                 ? Tema.Colors.GNP
                 : Tema.Colors.botonlogin,
           ),
@@ -407,7 +407,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
             child: Text(
               "ACTUALIZAR",
               style: TextStyle(
-                  color: _validNumber
+                  color: _validNumber && controllerNumero.text.isNotEmpty
                       ? Tema.Colors.backgroud
                       : Tema.Colors.botonletra,
                   fontWeight: FontWeight.w500),
@@ -425,9 +425,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               print("esPerfil esActualizarNumero");
 
               String lada = controllerNumero.text.substring(0, 2);
-              String numero = controllerNumero.text.substring(2, 10);
-              String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
-                  "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+              String numero = controllerNumero.text.substring(2, 9);
+              String decryptedNumber = controllerNumero.text;
 
               prefs.setString("lada", lada);
               prefs.setString("numero", numero);

@@ -4,8 +4,10 @@ import 'dart:convert';
 import 'package:cotizador_agente/Services/LoginServices.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 
 DatabaseReference _databaseReference = FirebaseDatabase.instance.reference();
+EncryptData _encryptData = EncryptData();
 
 void writeUserNode(String user,dynamic data) async {
   try {
@@ -19,7 +21,7 @@ void writeUserNode(String user,dynamic data) async {
 void writeUserIntentos(String email,int intentos) async {
   try {
     Codec<String, String> stringToBase64 = utf8.fuse(base64);
-    String encoded = stringToBase64.encode(email.toUpperCase());
+    String encoded = _encryptData.encryptInfo(email.toUpperCase(),"intentosUserEmailSesion");
 
     await _databaseReference.reference().child("emailSesion/$encoded").update({'intentos': intentos});
   }
@@ -34,7 +36,7 @@ void saveSesionUsuario()async {
   try{
     DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
     Codec<String, String> stringToBase64 = utf8.fuse(base64);
-    String encoded = stringToBase64.encode(datosUsuario.emaillogin.toUpperCase());
+    String encoded =_encryptData.encryptInfo(datosUsuario.emaillogin.toUpperCase(),"intentosUserEmailSesion");
 
     Map<String, dynamic> mapa = {
       '$encoded': {
