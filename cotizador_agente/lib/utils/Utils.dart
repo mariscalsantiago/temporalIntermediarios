@@ -401,120 +401,119 @@ class Utilidades {
 
   static void mostrarAlertaCallbackBorrar(String titulo, String mensaje,
       BuildContext context, Function negative, Function positive) {
+
+    double alturaHeight = mensaje.length < 94 ? 216 : mensaje.contains("Esta acción no se puede deshacer") ? 168 : 240;
     // flutter defined function
-    showDialog(
+    showMaterialModalBottomSheet(
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+      backgroundColor: Colors.transparent,
       context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        // return object of type Dialog
-        return WillPopScope(
-          onWillPop: ()async{
-            return false;
-          },
-          child: AlertDialog(
-            title: new Text("Borrar datos", style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.15,
-                color: ColorsCotizador.color_titleAlert
-            ), textAlign: TextAlign.center,),
-            content: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.only(bottom: 30),
-                      child: Text("Se eliminará la información no guardada.",
-                        style: TextStyle(
-                            letterSpacing: 0.5,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16,
-                            color: ColorsCotizador.color_appBar
-                        ), textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Divider(
-                      color: ColorsCotizador.color_borde,
-                      thickness: 2,
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          margin: EdgeInsets.only(right: 7),
-                          child: new FlatButton(
-                            color: ColorsCotizador.secondary900,
-                            child: new Text(
-                              "Cancelar",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.25
-                              ),
-                            ),
-                            onPressed: negative,
+      builder: (context, scrollController) => Container(
+        height: alturaHeight,
+        padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+        decoration : new BoxDecoration(
+            color: Colors.white,
+            borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(12.0),
+              topRight: const Radius.circular(12.0),
+            )
+        ),
+        child:  Center(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top:0.0),
+                  child:Center(child: new Text("Borrar datos", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                  child:SingleChildScrollView(child: new Text("Se eliminará la información no guardada.", style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
+                ),
+                Divider(
+                  color: ColorsCotizador.color_borde,
+                  thickness: 2,
+                ),
+                Container(
+                  margin: EdgeInsets.only(left: 40, right: 40, top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ButtonTheme(
+                        height: 40.0,
+                        buttonColor: AppColors.secondary900,
+                        child: RaisedButton(
+                          onPressed: negative,
+                          child: Text(
+                            "Cancelar",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ),
-                        Container(
-                          child: FlatButton(
-                            color:  ColorsCotizador.secondary900,
-                            child: new Text(
-                              "Aceptar",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  letterSpacing: 1.25
-                              ),
-                            ),
-                            onPressed: positive,
+                      ),
+                      ButtonTheme(
+                        height: 40.0,
+                        buttonColor: AppColors.secondary900,
+                        child: RaisedButton(
+                          onPressed: positive,
+                          child: Text(
+                            "Aceptar",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
-                        )
-                      ],
-                    )
-                  ],
+                        ),
+                      )
+                    ],
+                  ),
                 )
-            ),
-          ),
-        );
-      },
+              ],
+            )),
+      ),
     );
   }
 
   static void mostrarAlertaCallback(String titulo, String mensaje,
       BuildContext context, Function negative, Function positive) {
     // flutter defined function
-    showDialog(
+    double alturaHeight = mensaje.length < 94 ? 216 : mensaje.contains("Esta acción no se puede deshacer") ? 168 : 240;
+    // flutter defined function
+    showMaterialModalBottomSheet(
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+      backgroundColor: Colors.transparent,
       context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        // return object of type Dialog
-        return WillPopScope(
-          onWillPop: ()async{
-            return false;
-          },
-          child: AlertDialog(
-            title: new Text(titulo),
-            content: SingleChildScrollView(child: new Text(mensaje)),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              new FlatButton(
-                child: new Text(
-                  "Cancelar",
-                  style: TextStyle(color: Utilidades.color_primario),
+      builder: (context, scrollController) => Container(
+        height: alturaHeight,
+        padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+        decoration : new BoxDecoration(
+            color: Colors.white,
+            borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(12.0),
+              topRight: const Radius.circular(12.0),
+            )
+        ),
+        child:  Center(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top:0.0),
+                  child:Center(child: new Text(titulo, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
                 ),
-                onPressed: negative,
-              ),
-              FlatButton(
-                child: new Text(
-                  "Aceptar",
-                  style: TextStyle(color: Utilidades.color_primario),
+                Padding(
+                  padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                  child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
                 ),
-                onPressed: positive,
-              )
-            ],
-          ),
-        );
-      },
+                ButtonTheme(
+                  minWidth: 340.0,
+                  height: 40.0,
+                  buttonColor: AppColors.secondary900,
+                  child: RaisedButton(
+                    onPressed: positive,
+                    child: Text(
+                      "Aceptar",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+                  ),
+                ),
+              ],
+            )),
+      ),
     );
   }
 

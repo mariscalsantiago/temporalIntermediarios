@@ -105,7 +105,7 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
     nombreTres.text = "";
     nombreCuatro.text = "";
 
-    _getMenuItems();
+    //_getMenuItems();
 
     _generarCotizacion();
   }
@@ -567,284 +567,283 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
   }
 
   Future<dynamic> dialogo(BuildContext context){
+    String mensaje = "Selecciona los documentos que deseas guardar. Recuerda que los podrás revisar en la sección de Mis cotizaciones.";
     int cantidad = Utilidades.cotizacionesApp.getCurrentLengthLista();
 
-    return showDialog(
-        context: context,
-        useSafeArea: false,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-                return  AlertDialog(
-                    title: new Text("Guardar cotización",
-                      style: TextStyle(
-                          letterSpacing: 0.15,
-                          fontWeight: FontWeight.w600,
-                          color: ColorsCotizador.primary700,
-                          fontSize: 16.0,
-                          fontFamily: "Roboto"
+    print("CAntidad......> ${cantidad}");
+    double alturaHeight = cantidad == 1 ? 300 : cantidad == 2 ? 430 : cantidad == 3 ? 500 : 0;
+    return
+      showMaterialModalBottomSheet(
+      barrierColor: AppColors.AzulGNP.withOpacity(0.6),
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (context, scrollController) => Container(
+        height: alturaHeight,
+        padding: EdgeInsets.only(top:16.0, right: 16.0, left: 16.0, bottom: 16),
+        decoration : new BoxDecoration(
+            color: Colors.white,
+            borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(12.0),
+              topRight: const Radius.circular(12.0),
+            )
+        ),
+        child:  Center(
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(top:0.0),
+                  child:Center(child: new Text("Guardar cotización", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.AzulGNP),)),
+                ),
+                SingleChildScrollView(
+                  //fit: BoxFit.contain,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                        child:SingleChildScrollView(child: new Text(mensaje, style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16, fontFamily: 'OpenSansRegular', color: AppColors.color_appBar),)),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    content: SingleChildScrollView(
-                      //fit: BoxFit.contain,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(bottom: 8),
-                            child: Text(
-                                "Selecciona los documentos que deseas guardar. Recuerda que los podrás revisar en la sección de Mis cotizaciones.",
-                                style: TextStyle(
-                                    letterSpacing: 0.25,
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 14,
-                                    color: ColorsCotizador.color_appBar
-                                )
+                      cantidad >= 1 ? Container(
+                        margin: EdgeInsets.only(top: 8),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: cotizacionUno,
+                              activeColor:  ColorsCotizador.secondary900,
+                              onChanged: (bool value) {
+                                print("value ${value}");
+                                setState(() {
+                                  cambioCheckGuardado(value, 1);
+                                });
+                              },
                             ),
-                          ),
-                          cantidad >= 1 ? Container(
-                            margin: EdgeInsets.only(top: 8),
-                            child: Row(
-                              children: [
-                                Checkbox(
-                                  value: cotizacionUno,
-                                  activeColor:  ColorsCotizador.secondary900,
-                                  onChanged: (bool value) {
-                                    print("value ${value}");
-                                    setState(() {
-                                      cambioCheckGuardado(value, 1);
-                                    });
-                                  },
-                                ),
-                                Expanded(
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 8),
-                                      child: TextFormField(
-                                          inputFormatters: [
-                                            new LengthLimitingTextInputFormatter(30),
-                                          ],
-                                          enabled: cotizacionUno,
-                                          style: new TextStyle(fontSize: 12),
-                                          controller: nombreUno,
-                                          decoration: new InputDecoration(
-                                            labelText: "Nombre de propuesta 1",
-                                            labelStyle: new TextStyle(
-                                                color: ColorsCotizador.color_Etiqueta
-                                            ),
-                                            contentPadding: EdgeInsets.all(10),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: ColorsCotizador.color_Etiqueta,
-                                                  width: 0.5
-                                              ),
-                                            ),
+                            Expanded(
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 8),
+                                  child: TextFormField(
+                                      inputFormatters: [
+                                        new LengthLimitingTextInputFormatter(30),
+                                      ],
+                                      enabled: cotizacionUno,
+                                      style: new TextStyle(fontSize: 12),
+                                      controller: nombreUno,
+                                      decoration: new InputDecoration(
+                                        labelText: "Nombre de propuesta 1",
+                                        labelStyle: new TextStyle(
+                                            color: ColorsCotizador.color_Etiqueta
+                                        ),
+                                        contentPadding: EdgeInsets.all(10),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: ColorsCotizador.color_Etiqueta,
+                                              width: 0.5
                                           ),
-                                          onChanged: (value){
-                                          }
+                                        ),
                                       ),
-                                    )
+                                      onChanged: (value){
+                                      }
+                                  ),
                                 )
-                              ],
+                            )
+                          ],
+                        ),
+                      ) : Container(),
+                      cantidad >= 2 ? Container(
+                        margin: EdgeInsets.only(top: 8),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: cotizacionDos,
+                              activeColor:  ColorsCotizador.secondary900,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  cambioCheckGuardado(value, 2);
+                                });
+                              },
                             ),
-                          ) : Container(),
-                          cantidad >= 2 ? Container(
-                            margin: EdgeInsets.only(top: 8),
-                            child: Row(
-                              children: [
-                                Checkbox(
-                                  value: cotizacionDos,
-                                  activeColor:  ColorsCotizador.secondary900,
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      cambioCheckGuardado(value, 2);
-                                    });
-                                  },
-                                ),
-                                Expanded(
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 8),
-                                      child: TextFormField(
-                                          inputFormatters: [
-                                            new LengthLimitingTextInputFormatter(30),
-                                          ],
-                                          enabled: cotizacionDos,
-                                          style: new TextStyle(fontSize: 12),
-                                          controller: nombreDos,
-                                          decoration: new InputDecoration(
-                                            labelText: "Nombre de propuesta 2",
-                                            labelStyle: new TextStyle(
-                                                color: ColorsCotizador.color_Etiqueta
-                                            ),
-                                            contentPadding: EdgeInsets.all(10),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: ColorsCotizador.color_Etiqueta,
-                                                  width: 0.5
-                                              ),
-                                            ),
+                            Expanded(
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 8),
+                                  child: TextFormField(
+                                      inputFormatters: [
+                                        new LengthLimitingTextInputFormatter(30),
+                                      ],
+                                      enabled: cotizacionDos,
+                                      style: new TextStyle(fontSize: 12),
+                                      controller: nombreDos,
+                                      decoration: new InputDecoration(
+                                        labelText: "Nombre de propuesta 2",
+                                        labelStyle: new TextStyle(
+                                            color: ColorsCotizador.color_Etiqueta
+                                        ),
+                                        contentPadding: EdgeInsets.all(10),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: ColorsCotizador.color_Etiqueta,
+                                              width: 0.5
                                           ),
-                                          onChanged: (value){
-                                          }
+                                        ),
                                       ),
-                                    )
+                                      onChanged: (value){
+                                      }
+                                  ),
                                 )
-                              ],
+                            )
+                          ],
+                        ),
+                      ) : Container(),
+                      cantidad >= 3 ? Container(
+                        margin: EdgeInsets.only(top: 8),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: cotizacionTres,
+                              activeColor:  ColorsCotizador.secondary900,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  cambioCheckGuardado(value, 3);
+                                });
+                              },
                             ),
-                          ) : Container(),
-                          cantidad >= 3 ? Container(
-                            margin: EdgeInsets.only(top: 8),
-                            child: Row(
-                              children: [
-                                Checkbox(
-                                  value: cotizacionTres,
-                                  activeColor:  ColorsCotizador.secondary900,
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      cambioCheckGuardado(value, 3);
-                                    });
-                                  },
-                                ),
-                                Expanded(
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 8),
-                                      child: TextFormField(
-                                          inputFormatters: [
-                                            new LengthLimitingTextInputFormatter(30),
-                                          ],
-                                          enabled: cotizacionTres,
-                                          style: new TextStyle(fontSize: 12),
-                                          controller: nombreTres,
-                                          decoration: new InputDecoration(
-                                            labelText: "Nombre de propuesta 3",
-                                            labelStyle: new TextStyle(
-                                                color: ColorsCotizador.color_Etiqueta
-                                            ),
-                                            contentPadding: EdgeInsets.all(10),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: ColorsCotizador.color_Etiqueta,
-                                                  width: 0.5
-                                              ),
-                                            ),
+                            Expanded(
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 8),
+                                  child: TextFormField(
+                                      inputFormatters: [
+                                        new LengthLimitingTextInputFormatter(30),
+                                      ],
+                                      enabled: cotizacionTres,
+                                      style: new TextStyle(fontSize: 12),
+                                      controller: nombreTres,
+                                      decoration: new InputDecoration(
+                                        labelText: "Nombre de propuesta 3",
+                                        labelStyle: new TextStyle(
+                                            color: ColorsCotizador.color_Etiqueta
+                                        ),
+                                        contentPadding: EdgeInsets.all(10),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: ColorsCotizador.color_Etiqueta,
+                                              width: 0.5
                                           ),
-                                          onChanged: (value){
-                                          }
+                                        ),
                                       ),
-                                    )
+                                      onChanged: (value){
+                                      }
+                                  ),
                                 )
-                              ],
+                            )
+                          ],
+                        ),
+                      )
+                          : Container(),
+                      cantidad >= 2 ? Container(
+                        margin: EdgeInsets.only(top: 8),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: cotizacionComparativa,
+                              activeColor:  ColorsCotizador.secondary900,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  cambioCheckGuardado(value, 4);
+                                });
+                              },
                             ),
-                          )
-                              : Container(),
-                          cantidad >= 2 ? Container(
-                            margin: EdgeInsets.only(top: 8),
-                            child: Row(
-                              children: [
-                                Checkbox(
-                                  value: cotizacionComparativa,
-                                  activeColor:  ColorsCotizador.secondary900,
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      cambioCheckGuardado(value, 4);
-                                    });
-                                  },
-                                ),
-                                Expanded(
-                                    child: Container(
-                                      margin: EdgeInsets.only(top: 8),
-                                      child: TextFormField(
-                                          inputFormatters: [
-                                            new LengthLimitingTextInputFormatter(30),
-                                          ],
-                                          enabled: cotizacionComparativa,
-                                          style: new TextStyle(fontSize: 12),
-                                          controller: nombreCuatro,
-                                          decoration: new InputDecoration(
-                                            labelText: "Nombre del comparativo",
-                                            labelStyle: new TextStyle(
-                                                color: ColorsCotizador.color_Etiqueta
-                                            ),
-                                            contentPadding: EdgeInsets.all(10),
-                                            focusedBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: ColorsCotizador.color_Etiqueta,
-                                                  width: 0.5
-                                              ),
-                                            ),
+                            Expanded(
+                                child: Container(
+                                  margin: EdgeInsets.only(top: 8),
+                                  child: TextFormField(
+                                      inputFormatters: [
+                                        new LengthLimitingTextInputFormatter(30),
+                                      ],
+                                      enabled: cotizacionComparativa,
+                                      style: new TextStyle(fontSize: 12),
+                                      controller: nombreCuatro,
+                                      decoration: new InputDecoration(
+                                        labelText: "Nombre del comparativo",
+                                        labelStyle: new TextStyle(
+                                            color: ColorsCotizador.color_Etiqueta
+                                        ),
+                                        contentPadding: EdgeInsets.all(10),
+                                        focusedBorder: UnderlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color: ColorsCotizador.color_Etiqueta,
+                                              width: 0.5
                                           ),
-                                          onChanged: (value){
-                                          }
+                                        ),
                                       ),
-                                    )
+                                      onChanged: (value){
+                                      }
+                                  ),
                                 )
-                              ],
-                            ),
-                          )
-                              : Container(),
-                          Container(
-                            margin: EdgeInsets.only(top: 20),
-                            child: Divider(
-                              color: ColorsCotizador.color_borde,
-                              thickness: 1,
-                            ),
-                          ),
-                          CupertinoButton(
-                            onPressed: () async {
-                              Navigator.pop(context);
-                              /*setState(() {
+                            )
+                          ],
+                        ),
+                      )
+                          : Container(),
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Divider(
+                          color: ColorsCotizador.color_borde,
+                          thickness: 1,
+                        ),
+                      ),
+                      CupertinoButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          /*setState(() {
                             isLoading = true;
                           });*/
-                              iniciaLoading();
-                              if(cotizacionUno){
-                                print("cotizacion uno ${nombreUno.text}");
-                                await guardaCotizacion(0, 1, nombreUno.text, true);
-                              }
-                              if(cotizacionDos){
-                                print("cotizacion uno ${nombreDos.text}");
-                                await guardaCotizacion(1, 1, nombreDos.text, true);
-                              }
-                              if(cotizacionTres){
-                                print("cotizacion uno ${nombreTres.text}");
-                                await guardaCotizacion(2, 1, nombreTres.text, true);
-                              }
-                              if(cotizacionComparativa){
-                                print("cotizacion uno ${nombreCuatro.text}");
-                                guardarFormatoComparativaAcciones();
-                                await guardaCotizacion(0, Utilidades.FORMATO_COMPARATIVA, nombreCuatro.text, true);
-                                //guardarFormatoComparativa(nombreCuatro.text, true);
-                              }
-                              if(cotizacionUno || cotizacionDos || cotizacionTres || cotizacionComparativa) {
-                                alertaCotizacionesGuardadas();
-                              }
-                              finLoading();
-                              /*setState(() {
+                          iniciaLoading();
+                          if(cotizacionUno){
+                            print("cotizacion uno ${nombreUno.text}");
+                            await guardaCotizacion(0, 1, nombreUno.text, true);
+                          }
+                          if(cotizacionDos){
+                            print("cotizacion uno ${nombreDos.text}");
+                            await guardaCotizacion(1, 1, nombreDos.text, true);
+                          }
+                          if(cotizacionTres){
+                            print("cotizacion uno ${nombreTres.text}");
+                            await guardaCotizacion(2, 1, nombreTres.text, true);
+                          }
+                          if(cotizacionComparativa){
+                            print("cotizacion uno ${nombreCuatro.text}");
+                            guardarFormatoComparativaAcciones();
+                            await guardaCotizacion(0, Utilidades.FORMATO_COMPARATIVA, nombreCuatro.text, true);
+                            //guardarFormatoComparativa(nombreCuatro.text, true);
+                          }
+                          if(cotizacionUno || cotizacionDos || cotizacionTres || cotizacionComparativa) {
+                            alertaCotizacionesGuardadas();
+                          }
+                          finLoading();
+                          /*setState(() {
                             isLoading = true;
                           });*/
-                            },
-                            padding: EdgeInsets.zero,
-                            child: Container(
-                              padding: EdgeInsets.only(right: 32, left: 32, top: 10, bottom: 10),
-                              decoration: BoxDecoration(
-                                  color: ColorsCotizador.secondary900,
-                                  borderRadius: BorderRadius.circular(3)
-                              ),
-                              child: Text("Guardar", style: TextStyle(
-                                  letterSpacing: 1.25,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white
-                              ),),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                );
-              }
-          );
-        });
+                        },
+                        padding: EdgeInsets.zero,
+                        child: Container(
+                          padding: EdgeInsets.only(right: 32, left: 32, top: 10, bottom: 10),
+                          decoration: BoxDecoration(
+                              color: ColorsCotizador.secondary900,
+                              borderRadius: BorderRadius.circular(3)
+                          ),
+                          child: Text("Guardar", style: TextStyle(
+                              letterSpacing: 1.25,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white
+                          ),),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )),
+      ),
+    );
   }
 
   void handleClick(String value) {
@@ -1244,6 +1243,35 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
                                                         child: Visibility(
                                                           visible: true,
                                                           child: Container(
+                                                            width: MediaQuery.of(context).size.width,
+                                                              margin: EdgeInsets.only(top: 10),
+                                                              decoration: BoxDecoration(
+                                                                  color: ColorsCotizador.color_background_blanco,
+                                                                  borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                                                                  border: Border.all(color: ColorsCotizador.color_Bordes, style: BorderStyle.solid, width: 1.0),
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                        color: ColorsCotizador.color_background,
+                                                                        blurRadius: 1.0,
+                                                                        spreadRadius: 1.0,
+                                                                        offset: Offset(0.0, 1.5))
+                                                                  ]
+                                                              ),
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: Text(formaPago.formaPago,
+                                                                        style: TextStyle(color: ColorsCotizador.color_Etiqueta, fontSize: 10, fontWeight: FontWeight.w500, fontFamily: 'Roboto', letterSpacing: 1.5),
+                                                                        textAlign: TextAlign.center,
+                                                                ),
+                                                              )
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      /*Padding(
+                                                        padding: const EdgeInsets.all(16.0),
+                                                        child: Visibility(
+                                                          visible: true,
+                                                          child: Container(
                                                               margin: EdgeInsets.only(top: 10),
                                                               decoration: BoxDecoration(
                                                                   color: ColorsCotizador.color_background_blanco,
@@ -1286,7 +1314,7 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
                                                               )
                                                           ),
                                                         ),
-                                                      ),
+                                                      ),*/
                                                       Container(
                                                         padding: EdgeInsets.only(top: 8,bottom: 24),
                                                         decoration: BoxDecoration(
