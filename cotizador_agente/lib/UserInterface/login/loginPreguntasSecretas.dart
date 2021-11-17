@@ -747,7 +747,7 @@ class _PreguntasSecretasState extends State<PreguntasSecretas> {
                       controllerPreguntaDos.text != "" &&
                       controllerRespuestaUno.text.trim() != "" &&
                       controllerRespuestaDos.text.trim() != "" &&
-                      controllerPreguntaUno.text != controllerPreguntaDos.text
+                      controllerPreguntaUno.text != controllerPreguntaDos.text && _validAnswerOne && _validAnswerTwo && _validQuestionOne && _validAnswerTwo
                   ? Tema.Colors.GNP
                   : Tema.Colors.botonlogin,
             ),
