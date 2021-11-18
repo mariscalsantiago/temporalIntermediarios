@@ -53,6 +53,7 @@ Future<consultaPreguntasSecretasModel> consultarPreguntaSecretaServicio(
               _appEnvironmentConfig.consultaPreguntasSecretas + IdParticipante),
           headers: {
             "Content-Type": "application/json",
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             'apiKey': _appEnvironmentConfig.apiKey
           });
 
@@ -159,6 +160,7 @@ Future<consultaPreguntasSecretasModel> actualizarPreguntaSecretaServicio(
           body: _loginJSON,
           headers: {
             "Content-Type": "application/json",
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             'apiKey': _appEnvironmentConfig.apiKey
           });
 
@@ -254,7 +256,8 @@ Future<cambioContrasenaModel> cambioContrasenaServicio(
           body: _loginJSON,
           headers: {
             "Content-Type": "application/json",
-            'apiKey': _appEnvironmentConfig.apiKey
+            'apiKey': _appEnvironmentConfig.apiKey,
+            "Authorization": "Bearer ${loginData.refreshtoken}"
           });
 
       print(
@@ -353,7 +356,8 @@ Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(
           body: _loginJSON,
           headers: {
             'apiKey': _appEnvironmentConfig.apiKey,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${loginData.refreshtoken}"
           });
 
       print("reestablecerContrasenaServicio ${_response.body}");
@@ -441,6 +445,7 @@ Future<consultaPorCorreoNuevoServicio> consultaUsuarioPorCorreo(
       _response = await http.get(Uri.parse(_appEnvironmentConfig.servicioNuevoConsultaPorCorreo+"${correo}"),
           headers: {
             "Content-Type": "application/json;  charset=utf-8",
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             'apiKey': _appEnvironmentConfig.apiKey
           });
 
@@ -655,6 +660,7 @@ Future<ValidarOTPModel> validaOrquestadorOTPServicio(BuildContext context, Strin
       _response = await http.get(
           Uri.parse(_appEnvironmentConfig.validaOTP + idOperacion + "/" + OTP),
           headers: {
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             "Content-Type": "application/json",
             'apiKey': _appEnvironmentConfig.apiKey
           });
@@ -750,6 +756,7 @@ Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(
                   idParticipante),
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": "Bearer ${loginData.refreshtoken}",
                 'apiKey': _appEnvironmentConfig.apiKey
               });
 
@@ -877,6 +884,7 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(
           body: _loginJSON,
           headers: {
             "Content-Type": "application/json",
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             'apiKey': _appEnvironmentConfig.apikeyAppAgentes
           });
 
@@ -1050,7 +1058,10 @@ Future<ConsultarPorIdParticipanteConsolidado>
       _response = await http.post(
           Uri.parse(_appEnvironmentConfig.consultaPersonaIdParticipante),
           body: _loginJSON,
-          headers: {'apiKey': _appEnvironmentConfig.apiKey});
+          headers: {
+            'apiKey': _appEnvironmentConfig.apiKey,
+            "Authorization": "Bearer ${loginData.refreshtoken}"
+          });
 
       print("ConsultarPorIdParticipanteServicio ${_response.body}");
       print("ConsultarPorIdParticipanteServicio ${_response.statusCode}");

@@ -52,16 +52,18 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
     // Subscribe
     keyboardVisibilityController.onChange.listen((bool visible) {
       print('Keyboard visibility update. Is visible: ${visible}');
-      if (!visible) {
-        setState(() {
-          if(focusCodigo!=null)
-            focusCodigo.unfocus();
+      try{
+        if (!visible) {
+          setState(() {
+            if(focusCodigo!=null)
+              focusCodigo.unfocus();
 
-          if(focusContrasenaInactividad!=null)
-            focusContrasenaInactividad.unfocus();
+            if(focusContrasenaInactividad!=null)
+              focusContrasenaInactividad.unfocus();
 
-        });
-      }
+          });
+        }
+      }catch(e){}
     });
     _saving = false;
     focusCodigo = new FocusNode();
@@ -425,13 +427,17 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               print("esPerfil esActualizarNumero");
 
               String lada = controllerNumero.text.substring(0, 2);
-              String numero = controllerNumero.text.substring(2, 9);
-              String decryptedNumber = controllerNumero.text;
-
+              String numero = controllerNumero.text.substring(2, 10);
+              String decryptedNumber =controllerNumero.text;
+              print("Telefono save");
+              print(controllerNumero.text.length);
+              print(controllerNumero.text);
+              print(lada);
+              print(numero);
               prefs.setString("lada", lada);
               prefs.setString("numero", numero);
-              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS(decryptedNumber));
-              prefs.setString("medioContactoTelefono", encryptAESCryptoJS(controllerNumero.text));
+              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS("52"+controllerNumero.text));
+              prefs.setString("medioContactoTelefono", encryptAESCryptoJS("52"+controllerNumero.text));
               setState(() {
                 _saving = true;
               });
@@ -453,7 +459,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                       MaterialPageRoute(
                           builder: (BuildContext context) =>
                               LoginCodigoVerificaion(
-                                  responsive: responsive, isNumero: false))).then((value){
+                                  responsive: responsive, isNumero: false,))).then((value){
 
                   });
                 } else {
@@ -483,8 +489,8 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
 
               prefs.setString("lada", lada);
               prefs.setString("numero", numero);
-              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS(decryptedNumber));
-              prefs.setString("medioContactoTelefono", encryptAESCryptoJS(controllerNumero.text));
+              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS("52"+decryptedNumber));
+              prefs.setString("medioContactoTelefono", encryptAESCryptoJS("52"+controllerNumero.text));
 
               setState(() {
                 _saving = true;
@@ -509,6 +515,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                               LoginCodigoVerificaion(
                                 responsive: responsive,
                                 isNumero: false,
+
                               ))).then((value){
 
                   });
@@ -542,7 +549,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
               String numero = controllerNumero.text.substring(2, 10);
               prefs.setString("lada", lada);
               prefs.setString("numero", numero);
-              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS(decryptedNumber));
+              prefs.setString("medioContactoTelefonoServicio", encryptAESCryptoJS("52"+decryptedNumber));
 
 
               print("lada   ${lada}");
@@ -564,7 +571,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                 if (optRespuesta.error == "" && optRespuesta.idError == "") {
                   prefs.setBool("seActualizarNumero", true);
                   prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
-                  prefs.setString("medioContactoTelefono", encryptAESCryptoJS(controllerNumero.text));
+                  prefs.setString("medioContactoTelefono", encryptAESCryptoJS("52"+controllerNumero.text));
                   if (prefs.getBool("actulizarNumeroDesdeCodigo") != null &&
                       prefs.getBool("actulizarNumeroDesdeCodigo")) {
                     prefs.setBool("actulizarNumeroDesdeCodigo", false);
@@ -577,6 +584,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                                 LoginCodigoVerificaion(
                                   responsive: responsive,
                                   isNumero: false,
+
                                 ))).then((value){
 
                     });
@@ -589,6 +597,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                                 LoginCodigoVerificaion(
                                   responsive: responsive,
                                   isNumero: false,
+
                                 ))).then((value){
 
                     });
@@ -645,6 +654,7 @@ class _LoginActualizarNumeroState extends State<LoginActualizarNumero> {
                   builder: (BuildContext context) => LoginCodigoVerificaion(
                         responsive: responsive,
                         isNumero: false,
+
                       ))).then((value){
 
           });

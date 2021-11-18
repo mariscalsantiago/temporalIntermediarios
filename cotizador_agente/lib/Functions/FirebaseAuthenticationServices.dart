@@ -79,7 +79,8 @@ class FirebaseAuthenticationServices {
 
   Future<String> _getMail() async {
     SharedPreferences _sharePreferencesInstance =   await SharedPreferences.getInstance();
-    Map sessionStartData =   await json.decode(_sharePreferencesInstance.getString('datosHuella'));
+
+    Map sessionStartData =   await json.decode(_encryptData.decryptData(_sharePreferencesInstance.getString("datosHuella"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020"));
     return validateNotEmptyToString(datosUsuario.emaillogin, sessionStartData["savedMailApp"]);
   }
 

@@ -2042,7 +2042,7 @@ class _LoginActualizarContrasenaState extends State<LoginActualizarContrasena> {
               borderRadius: BorderRadius.all(Radius.circular(4)),
               color: controllerActualContrasena.text != "" &&
                       controllerNuevaContrasena.text != "" &&
-                    controllerConfirmarContrasena.text != "" && controllerNuevaContrasena.text == controllerConfirmarContrasena.text && _validNewPass
+                      controllerConfirmarContrasena.text != "" && controllerNuevaContrasena.text == controllerConfirmarContrasena.text && _validNewPass
                   ? Tema.Colors.GNP
                   : Tema.Colors.botonlogin,
             ),

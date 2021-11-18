@@ -215,10 +215,10 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                           String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefonoServicio"),
                               "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
                           if (prefs.getBool("esPerfil") != null && prefs.getBool("esPerfil")) {
-                            prefs.setString("medioContactoTelefono", encryptAESCryptoJS(decryptedNumber));
+                            prefs.setString("medioContactoTelefono", encryptAESCryptoJS("52"+decryptedNumber));
                             Navigator.pop(context, true);
                           } else {
-                            prefs.setString("medioContactoTelefono", encryptAESCryptoJS(decryptedNumber));
+                            prefs.setString("medioContactoTelefono", encryptAESCryptoJS("52"+decryptedNumber));
                             Navigator.pop(context, true);
                           }
                         }
@@ -233,6 +233,21 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
   List<Widget> builData(Responsive responsive) {
     Widget data = Container();
     Form form;
+    String telefono ="";
+try{
+  if( decryptAESCryptoJS(prefs.getString("medioContactoTelefono"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020") !=null && decryptAESCryptoJS(prefs.getString("medioContactoTelefono"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020").isNotEmpty ){
+    telefono = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+  }
+}catch(e){
+  if(prefs.getString("lada")!=null &&prefs.getString("numero")!=null)
+  telefono = prefs.getString("lada")+prefs.getString("numero");
+  else {
+      telefono =  decryptAESCryptoJS(prefs.getString("medioContactoTelefonoServicio"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+    }
+  print("builData");
+  print(e);
+}
+
 
     data = SingleChildScrollView(
         child: Container(
@@ -292,7 +307,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                 : Container(
                     margin: EdgeInsets.only(top: responsive.hp(2.3)),
                     child: Text(
-                      "${"(+52)" + decryptAESCryptoJS(prefs.getString("medioContactoTelefono"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020")}",
+                      "${"(+52)" + telefono}",
                       style: TextStyle(
                           color: Tema.Colors.GNP,
                           fontWeight: FontWeight.normal,
@@ -899,7 +914,7 @@ class _LoginCodigoVerificaionState extends State<LoginCodigoVerificaion> with Wi
                               "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
                           customAlert(AlertDialogType.errorServicio, context,
                               "", "", responsive, funcionAlerta);
-                          prefs.setString("medioContactoTelefono", encryptAESCryptoJS(decryptedNumber));
+                          prefs.setString("medioContactoTelefono", encryptAESCryptoJS("52"+decryptedNumber));
                         }
                       } else {
                         setState(() {

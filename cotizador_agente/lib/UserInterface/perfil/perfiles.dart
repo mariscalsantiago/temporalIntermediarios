@@ -1155,10 +1155,16 @@ class _PerfilPageState extends State<PerfilPage> {
                   setState(() {
                     _saving = true;
                   });
-                  String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
-                      "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+                  String decryptedNumber ="";
+                  try{
+                    decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                        "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+                  }catch(e){
+                    decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefonoServicio"),
+                        "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+                  }
                   OrquetadorOtpJwtModel optRespuesta =
-                      await orquestadorOTPJwtServicio(context,decryptedNumber.trim(), false);
+                      await orquestadorOTPJwtServicio(context,decryptedNumber, false);
 
                   setState(() {
                     _saving = false;

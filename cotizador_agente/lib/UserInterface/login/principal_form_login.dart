@@ -1351,7 +1351,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 if (teledonosLista.length > 0) {
                   // print("UsuarioPorCorreo if4");
                   prefs.setString("medioContactoTelefono",
-                      encryptAESCryptoJS(encryptAESCryptoJS(teledonosLista[0].lada + teledonosLista[0].valor)));
+                      encryptAESCryptoJS(encryptAESCryptoJS("52"+teledonosLista[0].lada+teledonosLista[0].valor)));
                 } else {
                   //print("UsuarioPorCorreo else1");
                   prefs.setString("medioContactoTelefono", "");
@@ -1592,7 +1592,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
                   if (teledonosLista.length > 0) {
                     prefs.setString("medioContactoTelefono", 
-                    encryptAESCryptoJS(teledonosLista[0].lada + teledonosLista[0].valor));
+                    encryptAESCryptoJS("52"+teledonosLista[0].lada + teledonosLista[0].valor));
                   } else {
                     prefs.setString("medioContactoTelefono", "");
                   }

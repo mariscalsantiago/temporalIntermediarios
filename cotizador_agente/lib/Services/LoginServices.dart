@@ -98,7 +98,8 @@ Future<LoginDatosModel> logInServices(BuildContext context, String mail, String 
     'savedMailApp':mail,
   };
   var encodeData = json.encode(datos);
-  _sharedPreferences.setString('datosHuella', encodeData);
+
+  _sharedPreferences.setString('datosHuella', _encryptData.encryptInfo(encodeData, "CL#AvEPrincIp4LvA#lMEXapgpsi2020"));
 
   datosPerfilador = await getPerfiladorAcceso(context, datosUsuario.idparticipante);
   print("datosPerfilador ${datosPerfilador}");
@@ -253,7 +254,8 @@ void getNegociosOperables(BuildContext context) async {
   var config = AppConfig.of(context);
   bool success = false;
   var headers = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Authorization": "Bearer ${loginData.refreshtoken}"
   };
   Map<String, dynamic> jsonMap = {
     "consultaNegocio": {
@@ -436,7 +438,10 @@ Future<PerfiladorModel> getPerfiladorAcceso(BuildContext context ,String idParti
     path: '?idInteresado=' + idParticipante,
     method: Method.GET,
     body: null,
-    headers: {"apikey": config.apiKey},
+    headers: {
+      "apikey": config.apikeyBCA,
+      "Authorization": "Bearer ${loginData.refreshtoken}"
+      },
   );
 
   MyResponse response = await RequestHandler.httpRequest(request); //.timeout(const Duration (seconds:6),onTimeout :  _onTimeout(context, _responsive));
