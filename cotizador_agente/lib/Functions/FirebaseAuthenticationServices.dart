@@ -61,10 +61,11 @@ class FirebaseAuthenticationServices {
           .listen((Event event) async {
         Codec<String, String> stringToBase64 = utf8.fuse(base64);
         String encoded = _encryptData.encryptInfo(email.toUpperCase(),"intentosUserEmailSesion");
+        final newString = encoded.replaceAll("/", "");
         // dXNlcm5hbWU6cGFzc3dvcmQ=
         // String decoded = stringToBase64.decode(encoded);
 
-        intento = event.snapshot.value!=null&&event.snapshot.value["$encoded"]!=null&&["intentos"] != null ? event.snapshot.value["$encoded"]["intentos"]:0;
+        intento = event.snapshot.value!=null&&event.snapshot.value["$newString"]!=null&&["intentos"] != null ? event.snapshot.value["$newString"]["intentos"]:0;
         //intento = int.parse(_intento);
 
       }, onError: (Object o) {

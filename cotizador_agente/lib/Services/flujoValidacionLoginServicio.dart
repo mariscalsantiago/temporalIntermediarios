@@ -558,7 +558,7 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context,
     } else {
       _loginBody = {
         "correo": correo,
-        "celular": celular,
+        "celular": celular.length == 10 ? celular : celular.substring(2,celular.length),
         "enviarSms": true,
         "enviarMail": false
       };

@@ -247,8 +247,9 @@ try{
   print("builData");
   print(e);
 }
-
-
+if(telefono.isNotEmpty && telefono.length > 10) {
+ telefono = telefono.substring(2, telefono.length);
+}
     data = SingleChildScrollView(
         child: Container(
       margin: EdgeInsets.only(left: responsive.wp(6), right: responsive.wp(6)),

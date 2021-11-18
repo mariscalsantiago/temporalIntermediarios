@@ -22,8 +22,9 @@ void writeUserIntentos(String email,int intentos) async {
   try {
     Codec<String, String> stringToBase64 = utf8.fuse(base64);
     String encoded = _encryptData.encryptInfo(email.toUpperCase(),"intentosUserEmailSesion");
+    final newString = encoded.replaceAll("/", "");
 
-    await _databaseReference.reference().child("emailSesion/$encoded").update({'intentos': intentos});
+    await _databaseReference.reference().child("emailSesion/$newString").update({'intentos': intentos});
   }
   catch (e){
     print("Error Database: $e");
@@ -37,9 +38,9 @@ void saveSesionUsuario()async {
     DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
     Codec<String, String> stringToBase64 = utf8.fuse(base64);
     String encoded =_encryptData.encryptInfo(datosUsuario.emaillogin.toUpperCase(),"intentosUserEmailSesion");
-
+    final newString = encoded.replaceAll("/", "");
     Map<String, dynamic> mapa = {
-      '$encoded': {
+      '$newString': {
         'intentos': intento,
       }
     };
