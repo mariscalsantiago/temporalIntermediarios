@@ -722,6 +722,9 @@ class ColorsCotizador {
   static HexColor tituloTablaGMM = HexColor("#647085");
   static HexColor valorTablaGMM = HexColor("#33445F");
   static HexColor valorComparativaActivo = HexColor("#FF6B0B");
+  static HexColor inputUnderlineFiltros = HexColor("#AAC3EE");
+  static HexColor itemFiltros = HexColor("#2155AB");
+  static HexColor itemRellenoFiltros = HexColor("#DADADA");
 }
 
 class HexColor extends Color {

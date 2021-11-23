@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:cotizador_agente/CotizadorUnico/FiltrosCotizacionesGuardadas.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_reglon_misCotizaciones.dart';
@@ -171,6 +172,22 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
 
   Future sleep1() {
     return new Future.delayed(const Duration(seconds: 1), () => "1");
+  }
+  changeValueName(String val){
+    setState(() {
+      nombreFiltro = val;
+    });
+  }
+  changeValues(String valNombreFiltro, String valNombreCotizacionFiltro, String valFechaInicioFiltro, String valFechaFinFiltro, String valFiltro, int valPagina){
+    setState(() {
+      nombreFiltro = valNombreFiltro;
+      nombreCotizacionFiltro = valNombreCotizacionFiltro;
+      fechaInicioFiltro = valFechaInicioFiltro;
+      fechaFinFiltro = valFechaFinFiltro;
+      filtro = valFiltro;
+      pagina = valPagina;
+      nuevaBusqueda = true;
+    });
   }
 
   llenarTabla(BuildContext context) async {
@@ -512,7 +529,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
 
         });
         print("getCurrentLengthLista ${Utilidades.cotizacionesApp.getCurrentLengthLista()}" );
-        Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+        Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoUnoNueva",);
         break;
     }
   }
@@ -577,7 +594,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
 
   @override
   Widget build(BuildContext context) {
-    nuevaBusqueda = false;
+    //nuevaBusqueda = false;
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -600,6 +617,22 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
         iconTheme: IconThemeData(color: Utilidades.color_primario),
         backgroundColor: Colors.white,
         actions:[
+          IconButton(
+            icon: new Icon(Icons.tune,
+              color: Utilidades.color_primario,
+            ),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(
+                    builder: (context) => FiltrosCotizacionesGuardadas(
+                        handleClick: handleClick,
+                        llenarTabla: llenarTabla,
+                        changeValues: changeValues
+                    ),
+                  )
+              );
+            },
+          ),
           PopupMenuButton<String>(
             onSelected: handleClick,
             itemBuilder: (BuildContext context) {
@@ -655,428 +688,150 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
         top: true,
         bottom: true,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            /*Row(
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                      child: Divider(
-                    //002e71
-                    thickness: 2,
-                    color: Utilidades.color_titulo,
-                  )),
-                ),
-              ],
-            ),
-            Row(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    "Cotizaciones guardadas",
-                    style:
-                        TextStyle(fontSize: 20.0, color: Utilidades.color_titulo),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: EdgeInsets.only(right: 16, top: 32, bottom: 24),
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    heroTag: "btn1",
-                    tooltip: "Cerrar",
-                    backgroundColor: Utilidades.color_primario,
-                    child: const Icon(Icons.close),
-                  ),
-                ),
-              ],
-            ),
+            filtro == "" ?
             Container(
-              color: Utilidades.color_filtro,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20.0),
+              margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              child: Text("Todos", style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  letterSpacing: 0.15,
+                  fontWeight: FontWeight.w600
+              ),),
+              decoration: BoxDecoration(
+                color: ColorsCotizador.itemFiltros,
+                borderRadius: BorderRadius.all(
+                    Radius.circular(20.0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
+                ],
+              ),
+            ) :
+            filtro == "nombre" ?
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  filtro = "";
+                });
+                llenarTabla(context);
+              },
+              child: Container(
+                width: 100,
+                margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                 child: Row(
-                  children: <Widget>[
-                    Expanded(
-                        child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Flexible(
-                            child: Container(
-                                child: Text(
-                          "Nombre Cotización",
-                          overflow: TextOverflow.clip,
-                          style: TextStyle(
-                              fontSize: 13.0,
-                              fontWeight: FontWeight.bold,
-                              color: Utilidades.color_encabezado_guardados),
-                        ))),
-                        IconButton(
-                          padding: const EdgeInsets.all(0.0),
-                          icon: Icon(col_3_filter_icon,
-                              color: Utilidades.color_encabezado_guardados),
-                          onPressed: () {
-                            ordenarPorID();
-                          },
-                        ),
-                      ],
-                    )),
-                    Expanded(
-                        child: Row(
-                      children: <Widget>[
-                        Text(
-                          "Titular",
-                          style: TextStyle(
-                              fontSize: 13.0,
-                              fontWeight: FontWeight.bold,
-                              color: Utilidades.color_encabezado_guardados),
-                        ),
-                        IconButton(
-                          padding: EdgeInsets.all(0.0),
-                          icon: Icon(col_2_filter_icon,
-                              color: Utilidades.color_encabezado_guardados),
-                          onPressed: () {
-                            ordenarPorNombre();
-                          },
-                        ),
-                      ],
-                    )),
-                    Expanded(
-                        child: Row(
-                      children: <Widget>[
-                        Text(
-                          "Fecha",
-                          style: TextStyle(
-                              fontSize: 13.0,
-                              fontWeight: FontWeight.bold,
-                              color: Utilidades.color_encabezado_guardados),
-                        ),
-                        IconButton(
-                          padding: EdgeInsets.all(0.0),
-                          icon: Icon(col_1_filter_icon,
-                              color: Utilidades.color_encabezado_guardados),
-                          onPressed: () {
-                            ordenarPorFecha();
-                          },
-                        ),
-                      ],
-                    ))
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Titular", style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 0.15,
+                        fontWeight: FontWeight.w600
+                    ),),
+                    Icon(Icons.cancel, color: ColorsCotizador.itemRellenoFiltros,)
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: ColorsCotizador.itemFiltros,
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(20.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
                   ],
                 ),
               ),
-            ),
-            Stack(
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(
-                    left: 16
-                  ),
-                  child: Visibility(
-                    visible: FechaAscendente,
-                    child: Row(
-                      children: <Widget>[
-                        Flexible(
-                            child: GestureDetector(
-                          onTap: () {
-
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(right: 8),
-                            padding: EdgeInsets.only(
-                                right: 0, left: 0, top: 5, bottom: 0),
-                            child: Container(
-                              //color: Utilidades.color_sombra,
-                              padding: EdgeInsets.only(top: 8),
-                              width: double.infinity,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    child: Theme(
-                                        data: ThemeData(
-                                          accentColor: Utilidades.color_primario,
-                                          primaryColor: Utilidades.color_primario,
-                                        ),
-                                        child: DatePickerCustomComponent(
-                                          label: 'DEL DÍA',
-                                          initialDate: null,
-                                          onShowPicker: (context, currentValue) {
-                                            return showDatePicker(
-                                                context: context,
-                                                helpText: DateTime.now().year.toString(),
-                                                locale: const Locale('es', 'MX'),
-                                                firstDate: DateTime(1900),
-                                                initialDate:  (fechaFinFiltro == 'null' ? DateTime.now() : DateTime.parse(fechaFinFiltro.substring(0,10))),
-                                                lastDate: (fechaFinFiltro == 'null' ? DateTime.now() : DateTime.parse(fechaFinFiltro.substring(0,10))));
-                                          },
-                                          onChanged: (context) {
-                                            cotizaciones.clear();
-                                            pagina = 1;
-                                            if(!nuevaBusqueda) {
-                                              fechaFinFiltro = 'null';
-                                            }
-
-                                            nuevaBusqueda = true;
-                                            fechaInicioFiltro = context.toString();
-                                            validarRangoFechas(fechaInicioFiltro);
-
-                                            //print("FECHA FILTRO: " + fechaInicioFiltro);validarRangoFechas(fechaInicioFiltro);
-                                          },
-                                          format: 'dd-MM-yyyy',
-                                          onRemove: () {
-                                            fechaInicioFiltro = 'null';
-                                          },
-                                          primaryColor: Utilidades.color_primario,
-                                        )
-
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        )),
-                        Flexible(
-                          child: Container(
-                            margin: EdgeInsets.only(left: 8),
-
-                            padding: EdgeInsets.only(
-                                right: 0, left: 0, top: 5, bottom: 0),
-                            child: Container(
-                              //color: Utilidades.color_sombra,
-                              padding: EdgeInsets.only(top: 8),
-                              width: double.infinity,
-                              child: Column(
-                                children: <Widget>[
-                                  Container(
-                                    child: Theme(
-                                        data: ThemeData(
-                                          accentColor: Utilidades.color_primario,
-                                          primaryColor: Utilidades.color_primario,
-                                        ),
-                                        child: DatePickerCustomComponent(
-                                          label: 'AL DÍA',
-                                          initialDate: null,
-                                          onShowPicker: (context, currentValue) {
-                                            return showDatePicker(
-                                                context: context,
-                                                helpText: DateTime.now().year.toString(),
-                                                locale: const Locale('es', 'MX'),
-                                                firstDate: (fechaInicioFiltro == 'null' ?  DateTime(1900) : DateTime.parse(fechaInicioFiltro.substring(0,10))),
-                                                initialDate: (fechaInicioFiltro == 'null' ?  DateTime.now() : DateTime.parse(fechaInicioFiltro.substring(0,10))),
-                                                lastDate: DateTime.now());
-                                          },
-                                          onChanged: (context) {
-                                            cotizaciones.clear();
-                                            pagina = 1;
-                                            if(!nuevaBusqueda) {
-                                              fechaInicioFiltro = 'null';
-                                            }
-                                            nuevaBusqueda = true;
-
-                                            fechaFinFiltro = context.toString();
-                                            validarRangoFechas(fechaFinFiltro);
-                                          },
-                                          format: 'dd-MM-yyyy',
-                                          onRemove: () {
-                                            fechaFinFiltro = 'null';
-                                          },
-                                          primaryColor: Utilidades.color_primario,
-                                        )
-
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 8),
-                          child: IconButton(
-
-                              icon: Icon(
-                                Icons.clear,
-                                color: Colors.grey,
-                              ),
-                              onPressed: () {
-                                controller.clear();
-                                cotizaciones.removeRange(0, cotizaciones.length);
-                                filtro = "";
-                                pagina= 1;
-                                llenarTabla(context);
-                              }),
-                        ),
-                      ],
+            ) :
+            filtro == "nombreCotizacion" ?
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  filtro = "";
+                });
+                llenarTabla(context);
+              },
+              child: Container(
+                width: 210,
+                margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Nombre de cotización", style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 0.15,
+                        fontWeight: FontWeight.w600
+                    ),),
+                    Icon(Icons.cancel, color: ColorsCotizador.itemRellenoFiltros,)
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: ColorsCotizador.itemFiltros,
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(20.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
                     ),
-                  ),
+                  ],
                 ),
-                Visibility(
-                  visible: IDAscendente,
-                  child: Row(
-                    children: <Widget>[
-                      Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              right: 15, left: 15, top: 5, bottom: 5),
-                          child: new TextFormField(
-                            onChanged: (valor){
-                              //folioFiltro = valor as int;
-                              cotizaciones.clear();
-                              pagina = 1;
-                            },
-                          maxLengthEnforced: true,
-                          maxLength: 32,
-                            onFieldSubmitted: (term) {
-                              //folioFiltro = int.parse(controller.text);
-                              nombreCotizacionFiltro = controller2.text;
-                              filtro = "nombreCotizacion";
-                              llenarTabla(context).then((result) {
-
-                              });
-                            },
-                            controller: controller2,
-                            //keyboardType: TextInputType. number ,
-                            decoration: new InputDecoration(
-                              hintText: "Escribe el nombre de la cotización",
-                              counter: SizedBox(
-                                width: 0,
-                                height: 0,
-                              ),
-                              prefixIcon: IconButton(
-                                  icon: Icon(
-                                    Icons.search,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () {
-                                    //folioFiltro = int.parse(controller2.text);
-                                    nombreCotizacionFiltro = controller2.text;
-                                    cotizaciones.clear();
-                                    pagina = 1;
-                                    filtro = "nombreCotizacion";
-                                    llenarTabla(context).then((result) {
-                                    });
-                                  }),
-                              fillColor: Utilidades.color_primario,
-                              border: new OutlineInputBorder(
-                                borderRadius: new BorderRadius.circular(0.0),
-                                borderSide: new BorderSide(
-                                    color: Utilidades.color_primario),
-                              ),
-                              focusedBorder: new OutlineInputBorder(
-                                borderRadius: new BorderRadius.circular(0.0),
-                                borderSide: new BorderSide(
-                                    color: Utilidades.color_primario),
-                              ),
-                              suffixIcon: IconButton(
-                                  icon: Icon(
-                                    Icons.clear,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () {
-                                    //controller2.clear();
-                                    WidgetsBinding.instance.addPostFrameCallback((_) => controller2.clear());
-                                    WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-                                    cotizaciones.removeRange(0, cotizaciones.length);
-                                    filtro = "";
-                                    pagina=1;
-                                    llenarTabla(context);
-                                  }),
-                            ),
-
-                            //keyboardType: TextInputType.text,
-                            style: new TextStyle(
-                              fontFamily: "Poppins",
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+              ),
+            ) :
+            filtro == "fecha" ?
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  filtro = "";
+                });
+                llenarTabla(context);
+              },
+              child: Container(
+                width: 100,
+                margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Fecha", style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 0.15,
+                        fontWeight: FontWeight.w600
+                    ),),
+                    Icon(Icons.cancel, color: ColorsCotizador.itemRellenoFiltros,)
+                  ],
                 ),
-                Visibility(
-                  visible: nombreAscendente,
-                  child: Row(
-                    children: <Widget>[
-                      Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                              right: 15, left: 15, top: 5, bottom: 5),
-                          child: new TextFormField(
-                            onChanged: (valor){
-                               /*  nombreFiltro = controller.text;
-                                filtro = "nombre";
-                                llenarTabla(); */
-
-                              },
-                            maxLengthEnforced: true,
-                            maxLength: 38,
-                            onFieldSubmitted: (term) {
-                              //folioFiltro = int.parse(controller.text);
-                              nombreFiltro = controller.text;
-                              filtro = "nombre";                                cotizaciones.clear();
-                                pagina = 1;
-                              llenarTabla(context);
-                            },
-                            controller: controller,
-                            decoration: new InputDecoration(
-                              hintText: "Escribe nombre de titular",
-                              counter: SizedBox(
-                                width: 0,
-                                height: 0,
-                              ),
-                              prefixIcon: IconButton(
-                                  icon: Icon(
-                                    Icons.search,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () {
-                                    nombreFiltro = controller.text;
-                                    cotizaciones.clear();
-                                    pagina = 1;
-                                    filtro = "nombre";
-                                    llenarTabla(context);
-                                  }),
-                              fillColor: Utilidades.color_primario,
-                              border: new OutlineInputBorder(
-                                borderRadius: new BorderRadius.circular(0.0),
-                                borderSide: new BorderSide(
-                                    color: Utilidades.color_primario),
-                              ),
-                              focusedBorder: new OutlineInputBorder(
-                                borderRadius: new BorderRadius.circular(0.0),
-                                borderSide: new BorderSide(
-                                    color: Utilidades.color_primario),
-                              ),
-                              suffixIcon: IconButton(
-                                  icon: Icon(
-                                    Icons.clear,
-                                    color: Colors.grey,
-                                  ),
-                                  onPressed: () {
-                                    //controller.clear();
-                                    WidgetsBinding.instance.addPostFrameCallback((_) => controller.clear());
-                                    WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-                                    cotizaciones.removeRange(0, cotizaciones.length);
-                                    filtro = "";
-                                    pagina= 1;
-                                    llenarTabla(context);
-                                  }),
-                            ),
-                            keyboardType: TextInputType.text,
-                            style: new TextStyle(
-                              fontFamily: "Poppins",
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                decoration: BoxDecoration(
+                  color: ColorsCotizador.itemFiltros,
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(20.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
                 ),
-              ],
-            ),*/
+              ),
+            ):
+            Container(),
             Expanded(
               child: listaGuardados(),
             ),
@@ -1085,4 +840,5 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
       ),
     );
   }
+
 }
