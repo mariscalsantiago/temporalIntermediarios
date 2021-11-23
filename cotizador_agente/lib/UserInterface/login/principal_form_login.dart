@@ -162,6 +162,8 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   }
 
   void arranque() async {
+    print(prefs.getString("correoUsuario"));
+    print(prefs.getString("correoUsuario").length);
     isActiveBiometric = await validSystemDevice();
     Platform.isIOS ? getVersionApp("24", "1") : getVersionApp("24", "2");
     controllerCorreoCambioContrasena.text = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");

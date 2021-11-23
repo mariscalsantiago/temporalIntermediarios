@@ -893,21 +893,22 @@ Future<DatosFisicosModel> getPersonaFisica(BuildContext context, String idPartic
       print("Getting $_service");
       http.Response _response;
       try {
-        print(config.serviceBCA + '/app/datos-perfil/' + idParticipante);
-        _response = await http.get(config.serviceBCA + '/app/datos-perfil/' + idParticipante,
-            headers: {"x-api-key": config.apikeyBCA});
+        print(config.servicioNuevoDatosPerfil + idParticipante);
+        _response = await http.get(config.servicioNuevoDatosPerfil+ idParticipante,
+            headers: {"x-api-key": config.apikeyBCA,
+              "Authorization": "Bearer ${loginData.refreshtoken}"});
 
         print("getPersonaFisica  ${_response.body}");
 
         //TODO: Metrics
         final MetricsPerformance metricsPerformance = MetricsPerformance(
             http.Client(),
-            config.serviceBCA + '/app/datos-perfil/' + idParticipante,
+            config.servicioNuevoDatosPerfil + idParticipante,
             HttpMethod.Get);
         final http.Request request = http.Request(
             "ObtenerPF",
             Uri.parse(
-                config.serviceBCA + '/app/datos-perfil/' + idParticipante));
+                config.servicioNuevoDatosPerfil + idParticipante));
         metricsPerformance.send(request);
 
         if (_response != null) {

@@ -32,12 +32,13 @@ void main() {
     consultaUsuarioPorCorreo: 'https://app-inter-uat.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=',
     orquestadorOTPSinSesion:'https://app-inter-uat.gnp.com.mx/intermediario/enviarOtp/sinSesion',
     validaOTP: 'https://app-inter-uat.gnp.com.mx/apr/otpLocalService/validateOtp/',
-    consultarMedioContactosAgentes :'https://api-uat.oscpuat.gnp.com.mx/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
+    consultarMedioContactosAgentes :'https://app-inter-uat.gnp.com.mx/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
     altaMediosContactoAgentes:'https://app-inter-uat.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
     orquestadorOtpJwt:'https://gnp-accidentespersonales-uat.uc.r.appspot.com/intermediario/enviarOtp/me',
     consultaPersonaIdParticipante:"https://app-inter-uat.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
     cotizadorAutos: "https://gnp-appcontratacionautos-uat.uc.r.appspot.com/",
     servicioNuevoConsultaPorCorreo:"https://app-inter-uat.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
+    servicioNuevoDatosPerfil:"https://app-inter-uat.gnp.com.mx/app/datos-perfil/",
 
     child: new MyApp(),
 
