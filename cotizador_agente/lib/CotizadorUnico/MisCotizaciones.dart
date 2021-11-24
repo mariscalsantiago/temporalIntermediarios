@@ -529,7 +529,7 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
 
         });
         print("getCurrentLengthLista ${Utilidades.cotizacionesApp.getCurrentLengthLista()}" );
-        Navigator.pushNamed(context, "/cotizadorUnicoGMMPasoUnoNueva",);
+        Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
         break;
     }
   }
