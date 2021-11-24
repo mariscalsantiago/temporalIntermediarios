@@ -1830,8 +1830,9 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
         paso1.secciones[1].campos[8].valor == trueString;
     jsonDescuento['banRiesgoSelecto'] = banRiesgoSelecto;
     jsonDescuento['banGarantiaCoaseguroCero'] = banGarantiaCoaseguro;
+    jsonComp['cotizacionGMMRequest']['asegurados'] = [];
 
-    List<Seccion> familiares = paso1.secciones[3].children_secc;
+    /*List<Seccion> familiares = paso1.secciones[3].children_secc;
     for (int i = 0; i < familiares.length; i++) {
       final banRiesgoSelecto = familiares[i].campos[9].valor == trueString;
       final banGarantia = familiares[i].campos[10].valor == trueString;
@@ -1841,7 +1842,7 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
         "idPersona": i + 2
       };
       jsonGMMRequest["descuentos"].add(adicional);
-    }
+    }*/
 
     return jsonComp;
   }
