@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/Custom/Crypto.dart';
 import 'package:cotizador_agente/Functions/Analytics.dart';
 import 'package:alt_sms_autofill/alt_sms_autofill.dart';
 import 'package:cotizador_agente/Custom/CustomAlert.dart';
@@ -29,6 +30,7 @@ import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/modelos/ConexionModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:cotizador_agente/Custom/Styles/Theme.dart' as Tema;
 import 'package:device_info/device_info.dart';
@@ -73,6 +75,7 @@ consultaPorCorreoNuevoServicio respuestaServicioCorreo;
 Responsive _generalResponsive;
 StreamSubscription<ConnectivityResult> connectivitySubscription;
 
+EncryptData _encryptData = EncryptData();
 
 final _formKeyOlvideContrasena = GlobalKey<FormState>();
 
@@ -159,9 +162,11 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
   }
 
   void arranque() async {
+    print(prefs.getString("correoUsuario"));
+    print(prefs.getString("correoUsuario").length);
     isActiveBiometric = await validSystemDevice();
     Platform.isIOS ? getVersionApp("24", "1") : getVersionApp("24", "2");
-    controllerCorreoCambioContrasena.text = prefs.getString("correoUsuario");
+    controllerCorreoCambioContrasena.text = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
     WidgetsBinding.instance.addObserver(this);
     prefs.setBool("esPerfil", false);
     prefs.setBool("actualizarContrasenaPerfil", false);
@@ -838,8 +843,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
             correoUsuario = controllerCorreo.text;
             controllerCorreoCambioContrasena.text = correoUsuario;
           } else {
-            controllerCorreoCambioContrasena.text =
-                prefs.getString("correoUsuario");
+            if(prefs.getString("correoUsuario")!= null && prefs.getString("correoUsuario").isNotEmpty){
+            var value = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+            controllerCorreoCambioContrasena.text = value;}
+            else{
+              controllerCorreoCambioContrasena.text = "";
+            }
+
           }
 
           focusContrasena.unfocus();
@@ -1306,10 +1316,12 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       _saving = true;
     });
     prefs.setBool('flujoOlvideContrasena', true);
-    prefs.setString(
-        "correoCambioContrasena", controllerCorreoCambioContrasena.text);
+    prefs.setString("correoCambioContrasena",
+        _encryptData.encryptInfo(controllerCorreoCambioContrasena.text, "correoCambioContrasena"));
+
+    var decrypted = _encryptData.decryptData(prefs.getString("correoCambioContrasena"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
     consultaPorCorreoNuevoServicio respuesta = await consultaUsuarioPorCorreo(
-        context, prefs.getString("correoCambioContrasena"),responsive);
+        context, decrypted,responsive);
 
     print("UsuarioPorCorreo ${respuesta}");
     bool conecxion = false;
@@ -1334,14 +1346,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
               if (mediosContacto != null) {
                 // print("UsuarioPorCorreo if3");
-                prefs.setString(
-                    "codigoAfiliacion", mediosContacto.codigoFiliacion);
+                prefs.setString("codigoAfiliacion",
+                    _encryptData.encryptInfo(mediosContacto.codigoFiliacion, "codigoAfiliacion"));
                 List<telefonosModel> teledonosLista = [];
                 teledonosLista = obtenerMedioContacto(mediosContacto);
                 if (teledonosLista.length > 0) {
                   // print("UsuarioPorCorreo if4");
                   prefs.setString("medioContactoTelefono",
-                      teledonosLista[0].lada + teledonosLista[0].valor);
+                      encryptAESCryptoJS(encryptAESCryptoJS("52"+teledonosLista[0].lada+teledonosLista[0].valor)));
                 } else {
                   //print("UsuarioPorCorreo else1");
                   prefs.setString("medioContactoTelefono", "");
@@ -1356,13 +1368,15 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                   String codigoAfiliacion = consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.sistemasOrigen.sistemaOrigen.valorSistemaOrigen.valor;
                   if(codigoAfiliacion != null){
                     print("codigoAfiliacion if ${codigoAfiliacion}");
-                    prefs.setString("codigoAfiliacion", codigoAfiliacion);
+                    prefs.setString("codigoAfiliacion",
+                        _encryptData.encryptInfo(codigoAfiliacion, "codigoAfiliacion"));
                   } else {
                     List<ValorSistemaOrigen> listCodigosAfiliacion = consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.sistemasOrigen.sistemaOrigen.valorSistemaOrigenList;
                     print("codigoAfiliacion else ${listCodigosAfiliacion.length}");
                     for(int i =0; i < listCodigosAfiliacion.length; i++){
                       if(listCodigosAfiliacion[i].banPadre){
-                        prefs.setString("codigoAfiliacion", listCodigosAfiliacion[i].valor);
+                        prefs.setString("codigoAfiliacion",
+                            _encryptData.encryptInfo(listCodigosAfiliacion[i].valor, "codigoAfiliacion"));
                         break;
                       }
                     }
@@ -1373,11 +1387,17 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 _saving = true;
               });
 
+              var decrypted = _encryptData.decryptData(prefs.getString("correoCambioContrasena"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+              String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+                  "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+
+              print("decrypted 1388 $decrypted");
+
               OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
                   context,
-                  prefs.getString("correoCambioContrasena"),
+                  decrypted,
                   prefs.getString("medioContactoTelefono") != null
-                      ? prefs.getString("medioContactoTelefono")
+                      ? decryptedNumber
                       : "",
                   prefs.getBool('flujoOlvideContrasena'),responsive);
 
@@ -1391,7 +1411,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                 //print("UsuarioPorCorreo if6");
                 if (optRespuesta.error == "" && optRespuesta.idError == "") {
                   //print("UsuarioPorCorreo if7");
-                  prefs.setString("idOperacion", optRespuesta.idOperacion);
+                  prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
                   Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -1509,35 +1529,40 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               });
 
               if (prefs.getString("correoUsuario") != null && prefs.getString("correoUsuario") != "") {
+                print("Usuario obtenido: ${prefs.getString("correoUsuario")}");
+                var decryptedEmail = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+                var decryptedPassword = _encryptData.decryptData(prefs.getString("contrasenaUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
 
-                correoUsuario = prefs.getString("correoUsuario");
+                correoUsuario = decryptedEmail;
                 print("controllerContrasena.text ${controllerContrasena.text} ${correoUsuario}");
 
-                if (controllerContrasena.text != null && controllerContrasena.text.isNotEmpty && controllerContrasena.text != prefs.getString("contrasenaUsuario")) {
+                if (controllerContrasena.text != null && controllerContrasena.text.isNotEmpty && controllerContrasena.text != decryptedPassword) {
                   print("if ---");
                   contrasenaUsuario = controllerContrasena.text;
                   //prefs.setString("contrasenaUsuario", contrasenaUsuario);
                 } else {
                   print("else -----");
-                  contrasenaUsuario = prefs.getString("contrasenaUsuario");
+                  contrasenaUsuario = decryptedPassword;
                 }
 
                 if (controllerCorreo.text != null && controllerCorreo.text.isNotEmpty) {
                   print("if ---");
                   correoUsuario = controllerCorreo.text;
-                  prefs.setString("correoUsuario", controllerCorreo.text);
+                  prefs.setString("correoUsuario",
+                      _encryptData.encryptInfo(controllerCorreo.text, "correoUsuario"));
                 } else {
                   print("else -----");
-                  correoUsuario = prefs.getString("correoUsuario");
+                  correoUsuario = decryptedEmail;
                 }
 
               } else {
-                print("else correoUsuario");
 
-                prefs.setString("correoUsuario", controllerCorreo.text);
+                prefs.setString("correoUsuario",
+                    _encryptData.encryptInfo(controllerCorreo.text, "correoUsuario"));
                 correoUsuario = controllerCorreo.text;
 
-                prefs.setString("contrasenaUsuario", controllerContrasena.text);
+                prefs.setString("contrasenaUsuario",
+                    _encryptData.encryptInfo(controllerContrasena.text, "contrasenaUsuario"));
                 contrasenaUsuario = controllerContrasena.text;
 
               }
@@ -1545,8 +1570,10 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
               datosUsuario = await logInServices(context, correoUsuario, contrasenaUsuario, correoUsuario, responsive);
 
               if (datosUsuario != null) {
-                prefs.setString("contrasenaUsuario", contrasenaUsuario);
+                prefs.setString("contrasenaUsuario",
+                    _encryptData.encryptInfo(contrasenaUsuario, "contrasenaUsuario"));
                 respuestaServicioCorreo = await consultaUsuarioPorCorreo(context, correoUsuario,responsive);
+
                 if(respuestaServicioCorreo == null){
                   customAlert(AlertDialogType.errorServicio, context, "", "", responsive, funcion);
                 }
@@ -1561,13 +1588,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
 
                 if (mediosContacto != null) {
-                  prefs.setString("codigoAfiliacion", mediosContacto.codigoFiliacion);
+                  prefs.setString("codigoAfiliacion",_encryptData.encryptInfo(mediosContacto.codigoFiliacion, "codigoAfiliacion"));
                   List<telefonosModel> teledonosLista = [];
                   teledonosLista = obtenerMedioContacto(mediosContacto);
 
                   if (teledonosLista.length > 0) {
-                    prefs.setString("medioContactoTelefono", teledonosLista[0].lada + teledonosLista[0].valor);
-                    print("Medios contacto ${prefs.getString("medioContactoTelefono")}");
+                    prefs.setString("medioContactoTelefono", 
+                    encryptAESCryptoJS("52"+teledonosLista[0].lada + teledonosLista[0].valor));
                   } else {
                     prefs.setString("medioContactoTelefono", "");
                   }
@@ -1580,13 +1607,13 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
                     String codigoAfiliacion = consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.sistemasOrigen.sistemaOrigen.valorSistemaOrigen.valor;
                     if(codigoAfiliacion != null){
                       print("codigoAfiliacion if ${codigoAfiliacion}");
-                      prefs.setString("codigoAfiliacion", codigoAfiliacion);
+                      prefs.setString("codigoAfiliacion",_encryptData.encryptInfo(codigoAfiliacion, "codigoAfiliacion"));
                     } else {
                       List<ValorSistemaOrigen> listCodigosAfiliacion = consulta.consultarPorIdParticipanteConsolidadoResponse.personaConsulta.persona.sistemasOrigen.sistemaOrigen.valorSistemaOrigenList;
                       print("codigoAfiliacion else ${listCodigosAfiliacion.length}");
                       for(int i =0; i < listCodigosAfiliacion.length; i++){
                         if(listCodigosAfiliacion[i].banPadre){
-                          prefs.setString("codigoAfiliacion", listCodigosAfiliacion[i].valor);
+                          prefs.setString("codigoAfiliacion",_encryptData.encryptInfo(listCodigosAfiliacion[i].valor, "codigoAfiliacion"));
                           break;
                         }
                       }
@@ -2447,10 +2474,14 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
     setState(() {
       _saving = true;
     });
+    var decrypted = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+    String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+        "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+    print("decrypted 2473 $decrypted");
     OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
         context,
-        prefs.getString("correoUsuario"),
-        prefs.getString("medioContactoTelefono"),
+        decrypted,
+        decryptedNumber,
         prefs.getBool('flujoOlvideContrasena'),responsive);
 
     setState(() {
@@ -2459,7 +2490,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
 
     if (optRespuesta != null) {
       if (optRespuesta.error == "" && optRespuesta.idError == "") {
-        prefs.setString("idOperacion", optRespuesta.idOperacion);
+        prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -2510,19 +2541,22 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
           setState(() {
             _saving = true;
           });
+          var decrypted = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+          String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+              "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+          print("decrypted 2535 $decrypted");
           OrquestadorOTPModel optRespuesta = await orquestadorOTPServicio(
               context,
-              prefs.getString("correoUsuario"),
-              prefs.getString("medioContactoTelefono"),
-              prefs.getBool('flujoOlvideContrasena',),responsive);
-
+              decrypted,
+              decryptedNumber,
+              prefs.getBool('flujoOlvideContrasena'),responsive);
           setState(() {
             _saving = false;
           });
 
           if (optRespuesta != null) {
             if (optRespuesta.error == "" && optRespuesta.idError == "") {
-              prefs.setString("idOperacion", optRespuesta.idOperacion);
+              prefs.setString("idOperacion",_encryptData.encryptInfo(optRespuesta.idOperacion, "idOperacion"));
               Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -2633,7 +2667,7 @@ class _PrincipalFormLoginState extends State<PrincipalFormLogin>
       emailFirst = controllerCorreo.text.replaceAll('.', '-');
       email = emailFirst.replaceAll('@', '-');
     } else {
-      correoUsuario = prefs.getString("correoUsuario");
+      correoUsuario = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
       emailFirst = correoUsuario.replaceAll('.', '-');
       email = emailFirst.replaceAll('@', '-');
     }

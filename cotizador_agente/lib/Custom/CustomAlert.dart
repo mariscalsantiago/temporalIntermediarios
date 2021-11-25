@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:cotizador_agente/Cotizar/CotizarController.dart';
 import 'package:cotizador_agente/Custom/Constantes.dart';
+import 'package:cotizador_agente/Custom/Crypto.dart';
 import 'package:cotizador_agente/Custom/CustomAlert_tablet.dart';
 import 'package:cotizador_agente/Custom/Validate.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
@@ -27,6 +28,7 @@ import 'package:cotizador_agente/flujoLoginModel/orquestadorOTPModel.dart';
 import 'package:cotizador_agente/main.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:countdown_flutter/countdown_flutter.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,6 +54,7 @@ bool _didAuthenticate = true;
 var isShowAlert = false;
 bool _firstSession = true;
 bool _showFinOtro = false;
+EncryptData _encryptData = EncryptData();
 
 enum AlertDialogType {
   errorPermisosGeneric,
@@ -9568,10 +9571,12 @@ class _MyDialogContrasenaInactividadState
                                 ? Theme.Colors.GNP
                                 : Theme.Colors.botonlogin,
                             onPressed: () {
-                              if (controllerContrasena.text != null &&
-                                  controllerContrasena.text.isNotEmpty) {
-                                if (controllerContrasena.text ==
-                                    prefs.getString("contrasenaUsuario")) {
+                              var value = _encryptData.decryptData(prefs.getString("contrasenaUsuario"),
+                                  "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+
+                              if ( controllerContrasena.text != null &&
+                                  controllerContrasena.text.isNotEmpty ) {
+                                if (controllerContrasena.text == value ) {
                                   sendTag("appinter_inactividad_login");
                                   inactiveFirebaseDivice(true);
                                   initializeTimerOtroUsuario(context,(){});
@@ -9893,9 +9898,10 @@ void FuncionAlerta(bool abc) {}
 String numero() {
   if (prefs.getString("medioContactoTelefono") != null &&
       prefs.getString("medioContactoTelefono") != "") {
-    int numero = prefs.getString("medioContactoTelefono").length;
-    return "******" +
-        prefs.getString("medioContactoTelefono").substring(numero - 4, numero);
+    String decryptedNumber = decryptAESCryptoJS(prefs.getString("medioContactoTelefono"),
+        "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+    int numero = decryptedNumber.length;
+    return "******" + decryptedNumber.substring(numero - 4, numero);
   } else {
     return "**********";
   }
@@ -9938,7 +9944,7 @@ void primerAccesoUsuario() async {
   String correoUsuario;
   String emailFirst;
   String email;
-  correoUsuario = prefs.getString("correoUsuario");
+  correoUsuario = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
   emailFirst = correoUsuario.replaceAll('.', '-');
   email = emailFirst.replaceAll('@', '-');
 
@@ -9984,7 +9990,7 @@ void inactiveFirebaseDivice(bool active) async {
   List<Placemark> newPlace;
   String locality="";
   String address;
-  String deviceName= prefs.getString("deviceName");
+  String deviceName= _encryptData.decryptData(prefs.getString("deviceName"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
   try{
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {

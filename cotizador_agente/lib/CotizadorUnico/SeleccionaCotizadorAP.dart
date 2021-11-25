@@ -75,7 +75,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     AnalyticsServices().sendTag(CotizadorAnalitycsTags.cotizadorGMM);
     AnalyticsServices().setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorAP");
     var headers = {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Authorization": "Bearer ${loginData.refreshtoken}"
     };
 
     Map<String, dynamic> jsonMap = {

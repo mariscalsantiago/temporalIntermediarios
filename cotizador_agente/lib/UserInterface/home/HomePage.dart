@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -41,6 +42,7 @@ bool _loading=false;
 String iniciales="EJ";
 bool _isPortrait = false;
 Responsive _responsiveMainTablet;
+EncryptData _encryptData = EncryptData();
 
 class HomePage extends StatefulWidget {
 
@@ -126,7 +128,7 @@ class _HomePageState extends State<HomePage> {
       print(e);
     }
     print("deviceID: ${deviceData["id"]}");
-    String deviceName= prefs.getString("deviceName");
+    String deviceName = _encryptData.decryptData(prefs.getString("deviceName"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
     try{
       DatabaseReference _dataBaseReference = FirebaseDatabase.instance.reference();
       Map<String, dynamic> mapa = {

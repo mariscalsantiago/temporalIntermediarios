@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:cotizador_agente/Functions/Conectivity.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
 Timer _timerMessageWife;
+EncryptData _encryptData = EncryptData();
 
 
 String validateNotEmptyToString(dynamic data, String defaultData){
@@ -458,7 +460,7 @@ Future<void> initPlatformState(Function callback) async {
 }
 
 Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
-  prefs.setString("deviceName",build.device);
+  prefs.setString("deviceName",_encryptData.encryptInfo(build.device, "deviceName"));
   return <String, dynamic>{
     //'version.securityPatch': build.version.securityPatch,
     //'version.sdkInt': build.version.sdkInt,
@@ -492,7 +494,7 @@ Map<String, dynamic> _readAndroidBuildData(AndroidDeviceInfo build) {
 }
 
 Map<String, dynamic> _readIosDeviceInfo(IosDeviceInfo data) {
-  prefs.setString("deviceName",data.model);
+  prefs.setString("deviceName",_encryptData.encryptInfo(data.model, "deviceName"));
   return <String, dynamic>{
     'name': data.name,
     'systemName': data.systemName,
