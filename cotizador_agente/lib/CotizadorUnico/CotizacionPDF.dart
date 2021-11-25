@@ -192,8 +192,8 @@ class _CotizacionPDFState extends State<CotizacionPDF> {
       };
 
       var request = MyRequest(
-          baseUrl: AppConfig.of(context).urlBase,
-          path: Constants.ENVIA_EMAIL,
+          baseUrl:Utilidades.urlCorreo,
+          path: "",
           method: Method.POST,
           body: jsonEncode(jsonMap).toString(),
           headers: headers

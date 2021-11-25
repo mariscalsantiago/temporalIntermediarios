@@ -87,7 +87,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
     var request = MyRequest(
       baseUrl: config.urlNegociosOperables,
-      path: Constants.NEGOCIOS_OPERABLES,
+      path: "",
       method: Method.POST,
       body: jsonEncode(jsonMap).toString(),
       headers: headers
