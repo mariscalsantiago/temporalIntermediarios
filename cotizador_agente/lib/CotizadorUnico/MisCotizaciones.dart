@@ -690,6 +690,17 @@ class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0, left: 16, right: 16),
+              child: Text(
+                'Se encontraron $registrosGuardados resultados para:',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Color.fromRGBO(100, 112, 133, 1),
+                ),
+              ),
+            ),
             filtro == "" ?
             Container(
               margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),

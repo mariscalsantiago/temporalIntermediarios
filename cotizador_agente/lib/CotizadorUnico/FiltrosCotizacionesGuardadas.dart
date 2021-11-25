@@ -5,6 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 
+enum DateRangeType {
+  fromDate,
+  toDate
+}
+
 class FiltrosCotizacionesGuardadas extends StatefulWidget {
   Function handleClick;
   Function(BuildContext) llenarTabla;
@@ -23,16 +28,7 @@ class _FiltrosCotizacionesGuardadasState extends State<FiltrosCotizacionesGuarda
   String fechaFinFiltro = null;
   String filtro = "";
   int pagina = 1;
-
-  @override
-  void initState() {
-    DateTime now = DateTime.now();
-    //String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
-    //fechaInicioFiltro = DateFormat('yyyy-MM-dd').format(now);
-    //fechaFinFiltro = DateFormat('yyyy-MM-dd').format(now);
-    // TODO: implement initState
-    super.initState();
-  }
+  String dateFormatString = 'yyyy-MM-dd';
 
   @override
   Widget build(BuildContext context) {
@@ -205,16 +201,10 @@ class _FiltrosCotizacionesGuardadasState extends State<FiltrosCotizacionesGuarda
                             children: [
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: (){
-                                    DateTime now = DateTime.now();
-                                    //String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(now);
-                                    fechaInicioFiltro = DateFormat('yyyy-MM-dd').format(now);
-                                    _selectDate1(context,
-                                        DateTime.parse(fechaInicioFiltro),
-                                        DateTime(1900),
-                                        DateTime(now.year , now.month , now.day),
-                                        true,
-                                        false
+                                  onTap: () {
+                                    _setDefaultDates();
+                                    _selectDate(
+                                      dateRangeType: DateRangeType.fromDate,
                                     );
                                   },
                                   child: Container(
@@ -253,14 +243,9 @@ class _FiltrosCotizacionesGuardadasState extends State<FiltrosCotizacionesGuarda
                               Expanded(
                                 child: GestureDetector(
                                   onTap: (){
-                                    DateTime now = DateTime.now();
-                                    fechaFinFiltro = DateFormat('yyyy-MM-dd').format(now);
-                                    _selectDate1(context,
-                                        DateTime.parse(fechaFinFiltro),
-                                        DateTime(1900),
-                                        DateTime(now.year , now.month , now.day),
-                                        false,
-                                        true
+                                    _setDefaultDates();
+                                    _selectDate(
+                                      dateRangeType: DateRangeType.toDate,
                                     );
                                   },
                                   child: Container(
@@ -359,35 +344,91 @@ class _FiltrosCotizacionesGuardadasState extends State<FiltrosCotizacionesGuarda
     );
   }
 
-  Future<Null> _selectDate1(BuildContext context, DateTime selectedDate, DateTime firstDate, DateTime lastDate, bool fechaInicio, bool fechaFinal ) async {
-    final DateTime picked = await showDatePicker(
+  _selectDate({
+    @required DateRangeType dateRangeType,
+  }) async {
+    DateTime initialDate;
+    DateTime firstDate;
+    DateTime lastDate;
+    final dateFormat = DateFormat(dateFormatString);
+    switch(dateRangeType) {
+      case DateRangeType.fromDate:
+        firstDate = DateTime(1900);
+        lastDate = dateFormat.parse(fechaFinFiltro);
+        initialDate = dateFormat.parse(fechaInicioFiltro);
+        break;
+      case DateRangeType.toDate:
+        firstDate = dateFormat.parse(fechaInicioFiltro);
+        lastDate = DateTime.now();
+        initialDate = dateFormat.parse(fechaFinFiltro);
+        break;
+    }
+
+    final DateTime picked = await _showDatePicker(
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+
+    _setSelectedDate(
+      picked: picked,
+      dateRangeType: dateRangeType,
+    );
+  }
+
+  Future<DateTime> _showDatePicker({
+    @required DateTime initialDate,
+    @required DateTime firstDate,
+    @required DateTime lastDate,
+  }) async =>
+      await showDatePicker(
         context: context,
-        helpText: selectedDate.year.toString(),
+        helpText: initialDate.year.toString(),
         locale: const Locale('es', 'MX'),
         builder: (BuildContext context, Widget child) {
           return Theme(
             data: ThemeData.light().copyWith(
               primaryColor: ColorsCotizador.secondary900,
               accentColor: ColorsCotizador.secondary900,
-              colorScheme: ColorScheme.light(primary: ColorsCotizador.secondary900),
+              colorScheme: ColorScheme.light(
+                primary: ColorsCotizador.secondary900,
+              ),
               buttonTheme: ButtonThemeData(
-                  textTheme: ButtonTextTheme.primary
+                textTheme: ButtonTextTheme.primary,
               ),
             ),
             child: child,
           );
         },
-        initialDate: selectedDate,
+        initialDate: initialDate,
         firstDate: firstDate,
-        lastDate: lastDate);
-    if (picked != null)
-      setState(() {
-        if(fechaInicio) {
-          fechaInicioFiltro = Jiffy(picked).format("yyy-MM-dd").toString();
-        } else  if(fechaFinal){
-          fechaFinFiltro = Jiffy(picked).format("yyy-MM-dd").toString();
-        }
+        lastDate: lastDate,
+      );
 
+  _setSelectedDate({
+    DateTime picked,
+    DateRangeType dateRangeType,
+  }) {
+    if (picked != null) {
+      setState(() {
+        switch (dateRangeType) {
+          case DateRangeType.fromDate:
+            fechaInicioFiltro = Jiffy(picked).format(dateFormatString).toString();
+            break;
+          case DateRangeType.toDate:
+            fechaFinFiltro = Jiffy(picked).format(dateFormatString).toString();
+            break;
+        }
       });
+    } else {
+      fechaInicioFiltro = null;
+      fechaFinFiltro = null;
+    }
+  }
+
+  _setDefaultDates() {
+    DateTime now = DateTime.now();
+    fechaInicioFiltro ??= DateFormat(dateFormatString).format(now);
+    fechaFinFiltro ??= DateFormat(dateFormatString).format(now);
   }
 }
