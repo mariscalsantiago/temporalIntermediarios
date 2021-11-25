@@ -16,7 +16,7 @@ const String COTIZACIONES_GUARDADAS = "cotizacion/cotizaciones";
 const String FORMULARIO_PASO1 = "cotizador/aplicacion?idAplicacion=";
 const String FORMULARIO_PASO2 = "cotizador/aplicacion/";
 const String GUARDA_COTIZACION = "persisteCotizaciones/guardaCotizacion";
-const String ENVIA_EMAIL = "cotizacion/correo";
+const String ENVIA_EMAIL = "cotizacion-gmm/correo";
 const String VISTA_PREVIA = "vistaPreviaMovil&dataLayer=";
 const String DESCARGA = "descargarMovil&dataLayer=";
 const String ENVIA_COTIZACION = "cotizacionMovil&dataLayer=";
