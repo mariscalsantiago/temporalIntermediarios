@@ -201,7 +201,7 @@ class _HomePageState extends State<HomePage> {
       _isActiveAutos = validateNotEmptyBool(event.snapshot.value["dataAutos"]["show"]);
       if(!_isActiveAutos){
         List _whiteList = event.snapshot.value["dataAutos"]["whitelist"];
-        final email = datosUsuario.emaillogin?.toLowerCase() ?? '';
+        final email = datosUsuario.emaillogin;
         if (email.isNotEmpty && _whiteList.contains(email)) {
           _isActiveAutos = true;
         }
