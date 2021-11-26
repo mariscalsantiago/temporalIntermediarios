@@ -262,7 +262,7 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
               "responseCotizacion": idformato == Utilidades.FORMATO_COMPARATIVA ? "{}" : json.encode(Utilidades.cotizacionesApp.getCotizacionElement(index).responseCotizacion).toString(),
               "responseResumen": resumen,
               "nombreCotizacion": nombreFormato,
-              "origenCotizacion": true
+              //"origenCotizacion": true
             };
 
             /*Utilidades.LogPrint("REQUEST: " + Utilidades.cotizacionesApp.getCotizacionElement(index).requestCotizacion.toString());
@@ -778,6 +778,7 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
                       CupertinoButton(
                         onPressed: () async {
                           Navigator.pop(context);
+                          final idFormato = Utilidades.FORMATO_COTIZACION_AP;
                           /*setState(() {
                           isLoading = true;
                         });*/
@@ -785,17 +786,17 @@ class _CotizacionVistaState extends State<CotizacionVista> with AutomaticKeepAli
                           if (cotizacionUno) {
                             print("cotizacion uno ${nombreUno.text}");
                             await guardaCotizacion(
-                                0, 1, nombreUno.text, true);
+                                0, idFormato, nombreUno.text, true);
                           }
                           if (cotizacionDos) {
                             print("cotizacion uno ${nombreDos.text}");
                             await guardaCotizacion(
-                                1, 1, nombreDos.text, true);
+                                1, idFormato, nombreDos.text, true);
                           }
                           if (cotizacionTres) {
                             print("cotizacion uno ${nombreTres.text}");
                             await guardaCotizacion(
-                                2, 1, nombreTres.text, true);
+                                2, idFormato, nombreTres.text, true);
                           }
                           if (cotizacionUno ||
                               cotizacionDos ||
