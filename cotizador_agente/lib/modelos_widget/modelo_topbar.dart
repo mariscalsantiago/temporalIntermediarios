@@ -93,7 +93,7 @@ class _TopBarState extends State<TopBar> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MisCotizaciones(),
+                          builder: (context) => CotizacionesGuardadas(),
                         ));
                   },
                   borderSide: BorderSide(

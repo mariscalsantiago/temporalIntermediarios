@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:cotizador_agente/CotizadorUnico/FiltrosCotizacionesGuardadas.dart';
 import 'package:cotizador_agente/EnvironmentVariablesSetup/app_config.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/modelos_widget/modelo_reglon_misCotizaciones.dart';
@@ -22,12 +23,16 @@ import '../CotizadorUnico/FormularioPaso1.dart';
 
 import 'dart:async';
 
-class MisCotizaciones extends StatefulWidget {
+class CotizacionesGuardadas extends StatefulWidget {
+
+  bool seCreaNueva;
+  CotizacionesGuardadas({Key key, this.seCreaNueva}) : super(key: key);
+
   @override
-  _MisCotizacionesState createState() => _MisCotizacionesState();
+  _CotizacionesGuardadasState createState() => _CotizacionesGuardadasState();
 }
 
-class _MisCotizacionesState extends State<MisCotizaciones> {
+class _CotizacionesGuardadasState extends State<CotizacionesGuardadas> {
   //Dummy data
   List<Cotizacion> cotizaciones = List<Cotizacion>();
   bool isLoading = true;
@@ -90,7 +95,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   eliminarDelServer(int id, BuildContext context) async {
 
-    final Trace deleteCot = FirebasePerformance.instance.newTrace("IntermediarioGNP_EliminarCotizacion");
+    final Trace deleteCot = FirebasePerformance.instance.newTrace("CotizadorUnico_EliminarCotizacion");
     deleteCot.start();
     print(deleteCot.name);
     bool success = false;
@@ -101,6 +106,7 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
 
+        try{
 
           Map<String, dynamic> jsonMap = {"folioCotizacion": id};
 
@@ -109,15 +115,23 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
             "Authorization": loginData.jwt
           };
 
-          Response response = await http.post(AppConfig.of(context).urlBase + Constants.BORRA_COTIZACION, body: json.encode(jsonMap), headers: headers);
+          Response response = await http.post(Utilidades.urlBorrar, body: json.encode(jsonMap), headers: headers);
 
+          if(response != null){
 
-          if(response.body != null && response.body.isNotEmpty){
-            if (json.decode(response.body) == true) {
-              success = true;
+            if(response.body != null && response.body.isNotEmpty){
+              if (json.decode(response.body) == true) {
+                success = true;
+                deleteCot.stop();
+              }
+
+            }else{
               deleteCot.stop();
+              Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+                Navigator.pop(context);
+                eliminarDelServer(id, context);
+              });
             }
-
           }else{
             deleteCot.stop();
             Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
@@ -127,6 +141,14 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
           }
 
 
+        } catch (e) {
+          deleteCot.stop();
+          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+            Navigator.pop(context);
+            eliminarDelServer(id, context);
+          });
+        }
+
       }else {
         deleteCot.stop();
         Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
@@ -135,9 +157,12 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
         });
       }
 
-    }catch (e,s) {
+    }catch (e) {
       deleteCot.stop();
-      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+        Navigator.pop(context);
+        eliminarDelServer(id, context);
+      });
     }
 
 
@@ -148,10 +173,26 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
   Future sleep1() {
     return new Future.delayed(const Duration(seconds: 1), () => "1");
   }
+  changeValueName(String val){
+    setState(() {
+      nombreFiltro = val;
+    });
+  }
+  changeValues(String valNombreFiltro, String valNombreCotizacionFiltro, String valFechaInicioFiltro, String valFechaFinFiltro, String valFiltro, int valPagina){
+    setState(() {
+      nombreFiltro = valNombreFiltro;
+      nombreCotizacionFiltro = valNombreCotizacionFiltro;
+      fechaInicioFiltro = valFechaInicioFiltro;
+      fechaFinFiltro = valFechaFinFiltro;
+      filtro = valFiltro;
+      pagina = valPagina;
+      nuevaBusqueda = true;
+    });
+  }
 
   llenarTabla(BuildContext context) async {
 
-    final Trace llenaTbl = FirebasePerformance.instance.newTrace("IntermediarioGNP_CotizacionesGuardadas");
+    final Trace llenaTbl = FirebasePerformance.instance.newTrace("CotizadorUnico_CotizacionesGuardadas");
     llenaTbl.start();
     print(llenaTbl.name);
     bool success = false;
@@ -164,15 +205,16 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
         setState(() {
           isLoading = true;
         });
+        try{
+          Map<String, dynamic> jsonMap = {
+            "idAplicacion": Utilidades.idAplicacion,
+            "pagina": pagina,
+            "idUsuario": datosUsuario.idparticipante.toString(),
+            "origenCotizacion" : true
+          };
 
-        Map<String, dynamic> jsonMap = {
-          "idAplicacion": Utilidades.idAplicacion,
-          "pagina": pagina,
-          "idUsuario": datosUsuario.idparticipante.toString()
-        };
 
-        //FILTROS
-        /*if (filtro != "") {
+          if (filtro != "") {
 
             if (nuevaBusqueda) {
               cotizaciones.removeRange(0, cotizaciones.length);
@@ -186,7 +228,8 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                   "idAplicacion": Utilidades.idAplicacion,
                   "idUsuario": datosUsuario.idparticipante.toString(),
                   "titularCotizacion": nombreFiltro,
-                  "pagina": pagina
+                  "pagina": pagina,
+                  "origenCotizacion" : true
                 };
                 break;
               case "nombreCotizacion":
@@ -195,7 +238,8 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                   "idAplicacion": Utilidades.idAplicacion,
                   "idUsuario": datosUsuario.idparticipante.toString(),
                   "nombreCotizacion": nombreCotizacionFiltro,
-                  "pagina": pagina
+                  "pagina": pagina,
+                  "origenCotizacion" : true
                 };
                 break;
               case "fecha":
@@ -204,7 +248,8 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                   "idUsuario": datosUsuario.idparticipante.toString(),
                   "fechaInicio": fechaInicioFiltro.substring(0, 10),
                   "fechaFin": fechaFinFiltro.substring(0, 10),
-                  "pagina": pagina
+                  "pagina": pagina,
+                  "origenCotizacion" : true
                 };
                 break;
               default:
@@ -212,71 +257,97 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
                 break;
             }
 
-          }*/
-        //Utilidades.LogPrint("JSONMAP COT G: " + jsonMap.toString());
-        Map<String, String> headers = {
-          "Content-Type": "application/json",
-          "Authorization": loginData.jwt
-        };
+          }
+          //Utilidades.LogPrint("JSONMAP COT G: " + jsonMap.toString());
+          Map<String, String> headers = {
+            "Content-Type": "application/json",
+            "Authorization": loginData.jwt
+          };
 
 
-        if (!blockSearch) {
-          blockSearch = true;
-          return http.post(AppConfig.of(context).urlBase + Constants.COTIZACIONES_GUARDADAS, body: json.encode(jsonMap), headers: headers).then((Response response) {
-            Utilidades.LogPrint("RESPONSE COT G: " + response.body.toString());
+          if (!blockSearch) {
+            blockSearch = true;
+            return http.post(Utilidades.urlCotizaciones, body: json.encode(jsonMap), headers: headers).then((Response response) {
+              //Utilidades.LogPrint("RESPONSE COT G: " + response.body.toString());
 
-            int statusCode = response.statusCode;
+              int statusCode = response.statusCode;
 
-            if(response.body != null && response.body.isNotEmpty){
-              if (statusCode == 200) {
-                success = true;
-                registrosGuardados = json.decode(response.body)['registrosEncontrados'];
-                llenaTbl.stop();
-                var list = json.decode(response.body)['cotizaciones'] as List;
+              if(response != null){
+                if(response.body != null && response.body.isNotEmpty){
+                  if (statusCode == 200) {
+                    success = true;
+                    registrosGuardados = json.decode(response.body)['registrosEncontrados'];
+                    llenaTbl.stop();
+                    var list = json.decode(response.body)['cotizaciones'] as List;
 
-                maxpagina = json.decode(response.body)['numeroPaginas'];
+                    maxpagina = json.decode(response.body)['numeroPaginas'];
 
 
-                //cambios en setState se egrega validacion con mounted
-                if (this.mounted){
-                  setState(() {
-                    List<Cotizacion> newcotizaciones =
-                    list.map((i) => Cotizacion.fromJson(i)).toList();
-                    cotizaciones.addAll(newcotizaciones);
-                  });
-                }
+                    //cambios en setState se egrega validacion con mounted
+                    if (this.mounted){
+                      setState(() {
+                        List<Cotizacion> newcotizaciones =
+                        list.map((i) => Cotizacion.fromJson(i)).toList();
+                        cotizaciones.addAll(newcotizaciones);
+                      });
+                    }
 
                     /*setState(() {
                       List<Cotizacion> newcotizaciones =
                       list.map((i) => Cotizacion.fromJson(i)).toList();
                       cotizaciones.addAll(newcotizaciones);
                     });*/
+
                     isLoading = false;
-              } else if (statusCode != null) {
-                llenaTbl.stop();
-                isLoading = false;
-                Navigator.pop(context);
-                String message = json.decode(response.body)['message'] != null
-                    ? json.decode(response.body)['message']
-                    : json.decode(response.body)['errors'][0] != null
-                    ? json.decode(response.body)['errors'][0]
-                    : "Error del servidor";
+                  } else if (statusCode == 400) {
+                    llenaTbl.stop();
+                    isLoading = false;
+                    Navigator.pop(context);
+                    Utilidades.mostrarAlerta(Mensajes.titleError + statusCode.toString(), "Bad Request", context);
 
-                Utilidades.mostrarAlerta(Mensajes.titleError + statusCode.toString(), message, context);
-              }
+                  } else if (statusCode != null) {
+                    llenaTbl.stop();
+                    isLoading = false;
+                    Navigator.pop(context);
+                    String message = json.decode(response.body)['message'] != null
+                        ? json.decode(response.body)['message']
+                        : json.decode(response.body)['errors'][0] != null
+                        ? json.decode(response.body)['errors'][0]
+                        : "Error del servidor";
 
-              if (registrosGuardados == 0) {
+                    Utilidades.mostrarAlerta(Mensajes.titleError + statusCode.toString(), message, context);
+                  }
+
+                  if (registrosGuardados == 0) {
 
                     Utilidades.mostrarAlerta(Mensajes.titleLoSentimos, Mensajes.sinCotizaciones, context);
                   }
 
-              blockSearch = false;
+                  blockSearch = false;
 
-            }else{
-              llenaTbl.stop();
-              Utilidades.mostrarAlerta(Mensajes.titleLoSentimos, Mensajes.sinCotizaciones, context);
-            }
+                }else{
+                  llenaTbl.stop();
+                  Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+                    Navigator.pop(context);
+                    llenarTabla(context);
+                  });
+                }
+              }else{
+                llenaTbl.stop();
+                Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+                  Navigator.pop(context);
+                  llenarTabla(context);
+                });
+              }
 
+            });
+          }
+
+        }catch(e){
+          llenaTbl.stop();
+          Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+            Navigator.pop(context);
+            llenarTabla(context);
           });
         }
 
@@ -287,31 +358,17 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
           llenarTabla(context);
         });
       }
-    }catch(e,s){
+    }catch(e){
       llenaTbl.stop();
-      await FirebaseCrashlytics.instance.recordError(e, s, reason: "an error occured: $e");
+      Utilidades.mostrarAlertaCallBackCustom(Mensajes.titleConexion, Mensajes.errorConexion, context,"Reintentar",(){
+        Navigator.pop(context);
+        llenarTabla(context);
+      });
     }
 
     return success;
   }
 
-  Widget showLoading() {
-    return Scaffold(
-        backgroundColor: AppColors.primary700.withOpacity(0.8),
-        body: Center(
-          child: Container(
-              child: SizedBox(
-                width: 80.0,
-                height: 80.0,
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.transparent,
-                  valueColor: AlwaysStoppedAnimation(Colors.white),
-                  strokeWidth: 5.0,
-                ),
-              )),
-        ));
-  }
-  
   mostrarMas() {
     setState(() {
       pagina++;
@@ -446,10 +503,46 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   bool blockSearch = false;
 
+  void handleClick(String value) {
+    switch (value) {
+      case 'Nueva cotización':
+        print("Nueva cotización -->");
+        if (Utilidades.cotizacionesApp.listaCotizaciones.length >= 3) {
+          Utilidades.mostrarAlerta(
+            Mensajes.titleAdver,
+            Mensajes.limiteCotizacion2,
+            context,
+          );
+          return;
+        }
+        setState(() {
+          //valorEtiquetaPlan = "VIP";
+          tieneEdad = false;
+          tieneCP = false;
+          seRequiereAntiguedad = false;
+
+          if(widget.seCreaNueva){
+            nuevaCotizacionDesdeMisCotizaciones = true;
+          } else {
+            nuevaCotizacionDesdeMisCotizaciones = false;
+          }
+
+        });
+        print("getCurrentLengthLista ${Utilidades.cotizacionesApp.getCurrentLengthLista()}" );
+        Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
+        break;
+    }
+  }
+
   Widget listaGuardados() {
     if(isLoading==true)
     {
-      return Container();
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: new AlwaysStoppedAnimation<Color>(
+              Utilidades.color_primario),
+        ),
+      );
     }
     else if(cotizaciones == null) {
       return Container();
@@ -460,23 +553,23 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
     else {
       List<Widget> cotizacionFiltradas = cotizaciones.map(
               (cotizacion) => Padding(
-                padding: const EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-                top: 8.0,
-                ), //all(16.0),
-                 child: GestureDetector(
-                   onTap: () {
-                     mostrarVistaPrevia(cotizacion);
-                     },
-                   child: RenglonMisCotizaciones(
-                     cotizacion: cotizacion,
-                     eliminar: eliminarCotizacion,
-                     vistaprevia: mostrarVistaPrevia,
-                     editar: cotizacionEditar,
-                   ),
-                 ),
-              )).toList();
+            padding: const EdgeInsets.only(
+                left: 6.0,
+                right: 6.0,
+                top: 2.0,
+                bottom: 0.0), //all(16.0),
+            child: GestureDetector(
+              onTap: () {
+                mostrarVistaPrevia(cotizacion);
+              },
+              child: RenglonMisCotizaciones(
+                cotizacion: cotizacion,
+                eliminar: eliminarCotizacion,
+                vistaprevia: mostrarVistaPrevia,
+                editar: cotizacionEditar,
+              ),
+            ),
+          )).toList();
       if(pagina < maxpagina) {
         cotizacionFiltradas.add(Padding(
           padding: const EdgeInsets.all(8.0),
@@ -501,129 +594,262 @@ class _MisCotizacionesState extends State<MisCotizaciones> {
 
   @override
   Widget build(BuildContext context) {
-    nuevaBusqueda = false;
-    return LoadingOverlay(
-      isLoading: isLoading,
-      opacity: 0.8,
-      color: AppColors.primary700,
-      progressIndicator: SizedBox(
-        width: 100.0,
-        height: 100.0,
-        child: CircularProgressIndicator(
-          backgroundColor: Colors.transparent,
-          valueColor: AlwaysStoppedAnimation(Colors.white),
-          strokeWidth: 5.0,
-        ),
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          iconTheme: IconThemeData(color: AppColors.color_primario),
-          backgroundColor: Colors.white,
-          title: Text(Mensajes.misCotizaciones,
-            style: TextStyle(color: AppColors.color_TextAppBar.withOpacity(0.87), fontSize: 20, fontWeight: FontWeight.w500, fontFamily: "Roboto"),
+    //nuevaBusqueda = false;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Mis cotizaciones",
+          style: TextStyle(
+              color:ColorsCotizador.texto_tabla_comparativa,
+              letterSpacing: 0.15,
+              fontWeight: FontWeight.normal,
+              fontSize: 20
           ),
-          leading: IconButton(
-            icon: Icon(Icons.chevron_left, size: 35,),
+        ),
+        leading: IconButton(
+          icon: new Icon(Icons.arrow_back_ios,
+            color: Utilidades.color_primario,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        iconTheme: IconThemeData(color: Utilidades.color_primario),
+        backgroundColor: Colors.white,
+        actions:[
+          IconButton(
+            icon: new Icon(Icons.tune,
+              color: Utilidades.color_primario,
+            ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(context,
+                  MaterialPageRoute(
+                    builder: (context) => FiltrosCotizacionesGuardadas(
+                        handleClick: handleClick,
+                        llenarTabla: llenarTabla,
+                        changeValues: changeValues
+                    ),
+                  )
+              );
             },
           ),
-          actions: <Widget>[
-            PopupMenuButton(icon: Image.asset('assets/icon/cotizador/ic_appbar.png'),
-              offset: Offset(100, 100),
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 1,
-                  child: Column(
-                    children: <Widget>[
-                      Divider(height: 4,color: AppColors.color_divider,),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          children: <Widget>[
-                            Text("ACCIONES",
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                    color: AppColors.color_popupmenu,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 10,
-                                )
-                            ),
-                            Spacer(flex: 1,)
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                PopupMenuItem(
-                  value: 2,
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-                              child: Text(
-                                "Nueva cotización",
-                                style: TextStyle(
-                                color: AppColors.color_appBar,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16)
-                              ),
-                            ),
+          PopupMenuButton<String>(
+            onSelected: handleClick,
+            itemBuilder: (BuildContext context) {
+              return {'Nueva cotización'}.map((String choice) {
+                return PopupMenuItem<String>(
+                    value: choice,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Divider(color: ColorsCotizador.color_Bordes),
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10.0),
+                          child: Text("ACCIONES", style: TextStyle(
+                              color: ColorsCotizador.color_Etiqueta,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 10.0,
+                              letterSpacing: 0.15)
                           ),
-                          Spacer(flex: 2,),
-                          IconButton(
-                            icon: Icon(Icons.add, color: AppColors.color_primario,),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Navigator.pushNamed(context, "/cotizadorUnicoAPPasoUno",);
-                            },),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 16.0, right: 8.0),
-                        child: Divider(height: 2,color: AppColors.color_divider,),
-                      ),
-                    ],
-                  ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(left: 10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+
+
+                                child: Text(choice, style: TextStyle(
+                                    color: ColorsCotizador.color_appBar,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.0,
+                                    letterSpacing: 0.15)
+                                ),
+                              ),
+                              Container(
+                                  margin: EdgeInsets.only(left: 60),
+                                  child: Image.asset("assets/icon/cotizador/guardar_Enabled.png", height: 25, width: 25)
+                              ),
+
+                            ],
+                          ),
+                        ),
+                        Divider(color: ColorsCotizador.color_Bordes),
+                      ],
+                    )
+                );
+              }).toList();
+            },
+          ),
+        ],
+      ),
+      body:  SafeArea(
+        top: true,
+        bottom: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0, left: 16, right: 16),
+              child: Text(
+                'Se encontraron $registrosGuardados resultados para:',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w400,
+                  color: Color.fromRGBO(100, 112, 133, 1),
                 ),
+              ),
+            ),
+            filtro == "" ?
+            Container(
+              margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+              padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              child: Text("Todos", style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  letterSpacing: 0.15,
+                  fontWeight: FontWeight.w600
+              ),),
+              decoration: BoxDecoration(
+                color: ColorsCotizador.itemFiltros,
+                borderRadius: BorderRadius.all(
+                    Radius.circular(20.0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(0, 3), // changes position of shadow
+                  ),
                 ],
-                initialValue: 0,
-                onCanceled: () {
-                  print("You have canceled the menu.");
-                },
-                onSelected: (value) {
-                    /*switch (value) {
-                      case 2:
-                        Navigator.pushReplacement(context,  MaterialPageRoute(
-                          builder: (context) => FormularioPaso1(),
-                        ));
-                        break;
-                    }*/
-                }
+              ),
+            ) :
+            filtro == "nombre" ?
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  filtro = "";
+                });
+                llenarTabla(context);
+              },
+              child: Container(
+                width: 100,
+                margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Titular", style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 0.15,
+                        fontWeight: FontWeight.w600
+                    ),),
+                    Icon(Icons.cancel, color: ColorsCotizador.itemRellenoFiltros,)
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: ColorsCotizador.itemFiltros,
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(20.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+              ),
+            ) :
+            filtro == "nombreCotizacion" ?
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  filtro = "";
+                });
+                llenarTabla(context);
+              },
+              child: Container(
+                width: 210,
+                margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Nombre de cotización", style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 0.15,
+                        fontWeight: FontWeight.w600
+                    ),),
+                    Icon(Icons.cancel, color: ColorsCotizador.itemRellenoFiltros,)
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: ColorsCotizador.itemFiltros,
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(20.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+              ),
+            ) :
+            filtro == "fecha" ?
+            GestureDetector(
+              onTap: (){
+                setState(() {
+                  filtro = "";
+                });
+                llenarTabla(context);
+              },
+              child: Container(
+                width: 100,
+                margin: EdgeInsets.only(top: 15, bottom: 10, left: 20),
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Fecha", style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        letterSpacing: 0.15,
+                        fontWeight: FontWeight.w600
+                    ),),
+                    Icon(Icons.cancel, color: ColorsCotizador.itemRellenoFiltros,)
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: ColorsCotizador.itemFiltros,
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(20.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+              ),
+            ):
+            Container(),
+            Expanded(
+              child: listaGuardados(),
             ),
           ],
-        ),
-        body:  SafeArea(
-          top: true,
-          bottom: true,
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: listaGuardados(),
-              ),
-            ],
-          ),
         ),
       ),
     );
   }
+
 }

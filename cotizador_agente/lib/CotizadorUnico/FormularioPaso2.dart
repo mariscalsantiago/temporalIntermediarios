@@ -112,7 +112,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
 
   }
 
-  void limpiarDatos(){
+  /*void limpiarDatos(){
 
     Utilidades.mostrarAlertaBorrarCallback(Mensajes.titleLimpia, Mensajes.limpiaDatos, context, (){
       Navigator.pop(context);
@@ -121,7 +121,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
       actualizarVistaConNuevoPlan(plan);
     });
 
-  }
+  }*/
 
   actualizarVistaConNuevoPlan(String p) async{
 
@@ -620,7 +620,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                           GestureDetector(
                             onTap: (){
                               Navigator.pop(context);
-                              limpiarDatos();
+                              //limpiarDatos();
                             },
                             child: Row(
                               children: <Widget>[
@@ -638,7 +638,7 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                   icon: Image.asset('assets/icon/cotizador/ic_borrar.png'),
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    limpiarDatos();
+                                    //limpiarDatos();
 
                                   },),
                               ],
@@ -683,13 +683,13 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                                     letterSpacing: 0.15)
                                 ),),
                               Spacer(flex: 2,),
-                              IconButton(
+                              /*IconButton(
                                 icon: Image.asset('assets/icon/cotizador/miscotizaciones.png'),
                                 onPressed: () {
                                   Navigator.push(context,  MaterialPageRoute(
                                     builder: (context) => MisCotizaciones(),
                                   ));
-                                },),
+                                },),*/
                             ],
                           ),
                           Padding(
@@ -709,12 +709,12 @@ class _FormularioPaso2State extends State<FormularioPaso2> {
                       case 2:
                         break;
                       case 3:
-                        limpiarDatos();
+                        //limpiarDatos();
                         break;
                       case 4:
-                        Navigator.push(context,  MaterialPageRoute(
+                        /*Navigator.push(context,  MaterialPageRoute(
                           builder: (context) => MisCotizaciones(),
-                        ));
+                        ));*/
                         break;
                     }
                   }

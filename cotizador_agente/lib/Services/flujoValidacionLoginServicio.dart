@@ -16,6 +16,7 @@ import 'package:cotizador_agente/flujoLoginModel/orquestadorOtpJwtModel.dart';
 import 'package:cotizador_agente/modelos/ConexionModel.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:cotizador_agente/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
@@ -52,6 +53,7 @@ Future<consultaPreguntasSecretasModel> consultarPreguntaSecretaServicio(
               _appEnvironmentConfig.consultaPreguntasSecretas + IdParticipante),
           headers: {
             "Content-Type": "application/json",
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             'apiKey': _appEnvironmentConfig.apiKey
           });
 
@@ -158,6 +160,7 @@ Future<consultaPreguntasSecretasModel> actualizarPreguntaSecretaServicio(
           body: _loginJSON,
           headers: {
             "Content-Type": "application/json",
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             'apiKey': _appEnvironmentConfig.apiKey
           });
 
@@ -253,7 +256,8 @@ Future<cambioContrasenaModel> cambioContrasenaServicio(
           body: _loginJSON,
           headers: {
             "Content-Type": "application/json",
-            'apiKey': _appEnvironmentConfig.apiKey
+            'apiKey': _appEnvironmentConfig.apiKey,
+            "Authorization": "Bearer ${loginData.refreshtoken}"
           });
 
       print(
@@ -352,7 +356,8 @@ Future<ReestablecerContrasenaModel> reestablecerContrasenaServicio(
           body: _loginJSON,
           headers: {
             'apiKey': _appEnvironmentConfig.apiKey,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${loginData.refreshtoken}"
           });
 
       print("reestablecerContrasenaServicio ${_response.body}");
@@ -440,6 +445,7 @@ Future<consultaPorCorreoNuevoServicio> consultaUsuarioPorCorreo(
       _response = await http.get(Uri.parse(_appEnvironmentConfig.servicioNuevoConsultaPorCorreo+"${correo}"),
           headers: {
             "Content-Type": "application/json;  charset=utf-8",
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             'apiKey': _appEnvironmentConfig.apiKey
           });
 
@@ -552,7 +558,7 @@ Future<OrquestadorOTPModel> orquestadorOTPServicio(BuildContext context,
     } else {
       _loginBody = {
         "correo": correo,
-        "celular": celular,
+        "celular": celular.length == 10 ? celular : celular.substring(2,celular.length),
         "enviarSms": true,
         "enviarMail": false
       };
@@ -654,6 +660,7 @@ Future<ValidarOTPModel> validaOrquestadorOTPServicio(BuildContext context, Strin
       _response = await http.get(
           Uri.parse(_appEnvironmentConfig.validaOTP + idOperacion + "/" + OTP),
           headers: {
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             "Content-Type": "application/json",
             'apiKey': _appEnvironmentConfig.apiKey
           });
@@ -749,6 +756,7 @@ Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(
                   idParticipante),
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": "Bearer ${loginData.refreshtoken}",
                 'apiKey': _appEnvironmentConfig.apiKey
               });
 
@@ -830,6 +838,9 @@ Future<consultaMediosContactoAgentesModel> consultaMediosContactoServicio(
 Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(
     BuildContext context, String lada, String numero) async {
   print("altaMediosContactoServicio");
+
+  EncryptData _encryptData = EncryptData();
+
   String idParticipante = prefs.getBool('flujoOlvideContrasena') != null &&
           prefs.getBool('flujoOlvideContrasena')
       ? idParticipanteValidaPorCorre
@@ -841,12 +852,13 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(
 
   if (_connectivityStatus.available) {
     http.Response _response;
+    var decrypted = _encryptData.decryptData(prefs.getString("codigoAfiliacion"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
 
     Map _loginBody = {
       "idParticipante": idParticipante,
       "codFiliacion": prefs.getString("codigoAfiliacion") != null &&
               prefs.getString("codigoAfiliacion") != ""
-          ? prefs.getString("codigoAfiliacion")
+          ? decrypted
           : "",
       "tipoMedioContacto": "TLCL",
       "propositosContacto": [
@@ -872,6 +884,7 @@ Future<AltaMedisoContactoAgentes> altaMediosContactoServicio(
           body: _loginJSON,
           headers: {
             "Content-Type": "application/json",
+            "Authorization": "Bearer ${loginData.refreshtoken}",
             'apiKey': _appEnvironmentConfig.apikeyAppAgentes
           });
 
@@ -1045,7 +1058,10 @@ Future<ConsultarPorIdParticipanteConsolidado>
       _response = await http.post(
           Uri.parse(_appEnvironmentConfig.consultaPersonaIdParticipante),
           body: _loginJSON,
-          headers: {'apiKey': _appEnvironmentConfig.apiKey});
+          headers: {
+            'apiKey': _appEnvironmentConfig.apiKey,
+            "Authorization": "Bearer ${loginData.refreshtoken}"
+          });
 
       print("ConsultarPorIdParticipanteServicio ${_response.body}");
       print("ConsultarPorIdParticipanteServicio ${_response.statusCode}");

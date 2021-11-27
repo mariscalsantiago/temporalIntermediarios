@@ -1,8 +1,10 @@
 
+import 'package:cotizador_agente/CotizadorUnico/agregarFamiliares.dart';
 import 'package:cotizador_agente/modelos/modelos.dart';
 import 'package:cotizador_agente/utils/AppColors.dart';
 import 'package:cotizador_agente/utils/Utils.dart';
 import 'package:cotizador_agente/utils/validadores.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'modelos_widgets.dart';
 
@@ -15,7 +17,9 @@ class SeccionDinamica extends StatefulWidget {
         this.i,
         this.end,
         this.cantidad_asegurados,
-        this.formKey, this.formulario, this.actualizarSecciones,
+        this.formKey, this.formulario,
+        this.actualizarSecciones,
+        this.actulizarVistaParaFamiliar,
         this.actualizarCodigoPostalFamiliares,
         this.validarCodigoPostalFamiliares,
         this.borrarAdicional,
@@ -29,6 +33,7 @@ class SeccionDinamica extends StatefulWidget {
   final Function() notifyParent;
   final void Function(String, String) agregarDicc;
   final void Function(String) actualizarSecciones;
+  Function actulizarVistaParaFamiliar;
   final GlobalKey<FormState> formKey;
   final bool Function() formulario;
   final Function actualizarCodigoPostalFamiliares;
@@ -67,6 +72,38 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
   }
 
 
+  void _showModalAdicional(int index) {
+    // flutter defined function
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Agregar familiar"),
+          content: Container(
+            height: 300.0, // Change as per your requirement
+            width: 300.0,
+            color: ColorsCotizador.color_background_blanco,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: SeccionDinamica(secc: widget.secc.children_secc[index],agregarDicc: widget.agregarDicc, actualizarSecciones: widget.actualizarSecciones, borrarAdicional: widget.borrarAdicional,),
+              ),
+            ),
+          ),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Aceptar"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void _showDialog() {
     // flutter defined function
@@ -114,19 +151,55 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
       });
     }
 
+    void addChildFamiliarCarga(String nombre, String ApellidoP, String ApellidoM, String sexo,String edad,  String cp, String fecha, String riesgoSelecto, String garantiaCoaseguro){
+      widget.secc.addChildFamiliares(
+          nombre,
+          ApellidoP,
+          ApellidoM,
+          sexo,
+          edad,
+          cp,
+          fecha,
+          riesgoSelecto,
+          garantiaCoaseguro
+      );
+    }
+
     void _aumentar() {
       setState(() {
         if(widget.secc.children_secc.length <= widget.secc.multiplicador){
-          widget.secc.addChild();
+          //widget.secc.addChild();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                new AgregarFamiliares(secc: widget.secc,callbackFam:  addChildFamiliarCarga,agregarDicc: widget.agregarDicc, actualizarSecciones: widget.actualizarSecciones, actualizarCodigoPostalFamiliares: actualizarCodigoPostalFamiliares, validarCodigoPostalFamiliares: widget.validarCodigoPostalFamiliares, actualizarVista: widget.actulizarVistaParaFamiliar,edicionDatos: false,)
+            ),
+          );
+          //_showModalAdicional(widget.secc.children_secc.length-1);
         }else{
           _showDialog();
         }
         if (widget.secc.id_seccion == Utilidades.familiarSeccion) {
+          print("Familiares-->");
           widget.actualizarCodigoPostalFamiliares();
         }
 
       });
     }
+
+    void editarFamiliar(String num){
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+            new AgregarFamiliares(secc: widget.secc,callbackFam:  addChildFamiliarCarga,agregarDicc: widget.agregarDicc, actualizarSecciones: widget.actualizarSecciones, actualizarCodigoPostalFamiliares: actualizarCodigoPostalFamiliares, validarCodigoPostalFamiliares: widget.validarCodigoPostalFamiliares, actualizarVista: widget.actulizarVistaParaFamiliar,edicionDatos: true,numFamiliar: num,)
+        ),
+      );
+
+    }
+
 
     //TODO: Pedir a los de Backend que pongan una bandera de combo tipo consulta
     if(widget.secc.id_seccion== 6 && widget.secc.campos[0].etiqueta=="Plan"){
@@ -181,37 +254,19 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
         if(!widget.secc.existeUnCampoVisible()){
           return Container();
         }
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
-              child: Divider(height: 1,
-                color: AppColors.color_divider,),
+        return Column( children: <Widget>[
+          Container(
+            width: double.infinity,
+            child: Text(
+              widget.secc.seccion,
+              textAlign: TextAlign.start,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: Utilidades.color_titulo,
+                  fontSize: 20),
             ),
-            Row(children: <Widget>[
-              Expanded(
-                flex: 3,
-                child: ButtonBar(
-                    alignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        widget.secc.seccion.toUpperCase(),
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.primary700,
-                            fontSize: 10,
-                            letterSpacing: 1.5),
-                      ),//
-                    ]
-                ),
-              ),
-            ]
-            ),
-
+          ),
           ListView.builder(
               itemCount: widget.secc.children_secc.length,
               shrinkWrap: true,
@@ -222,18 +277,16 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       _camposVisibles(_seccion.campos) ? Container(
-                        padding: const EdgeInsets.only(top: 16, bottom: 8,left: 8),
+                        padding: const EdgeInsets.only(top: 16, bottom: 8),
                         width: double.infinity,
                         child: Text(
                           _seccion.seccion,
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.primary700,
-                              fontSize: 20,
-                              letterSpacing: 0.5),
+                              fontWeight: FontWeight.normal,
+                              color: Utilidades.color_titulo,
+                              fontSize: 20),
                         ),
                       ): Container(),
                       ListView.builder(
@@ -301,91 +354,179 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
         );*/
 
       } else {
-        return Column(
-          children: <Widget>[
-            ListView.builder(
-                itemCount: widget.secc.children_secc.length,
-                shrinkWrap: true,
-                physics: ScrollPhysics(),
-                itemBuilder: (BuildContext ctxt, int index) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 16.0),
+          child: Column(
+            children: <Widget>[
+              ListView.builder(
+                  itemCount: widget.secc.children_secc.length,
+                  shrinkWrap: true,
+                  physics: ScrollPhysics(),
+                  itemBuilder: (BuildContext ctxt, int index) {
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: SeccionDinamica(secc: widget.secc.children_secc[index],agregarDicc: widget.agregarDicc, actualizarSecciones: widget.actualizarSecciones, borrarAdicional: widget.borrarAdicional,),
-                  );
-                  //return _aseguradosList[index];
-                }),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Visibility(
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 24),
+                      child: SeccionDinamica(secc: widget.secc.children_secc[index],agregarDicc: widget.agregarDicc, actualizarSecciones: widget.actualizarSecciones, borrarAdicional: widget.borrarAdicional,),
+                    );
+                    //return _aseguradosList[index];
+                  }),
+              Visibility(
                 visible: widget.secc.multiplicador>=1,
                 child: Visibility(
                   visible: widget.secc.children_secc.length <= widget.secc.multiplicador-1,
-                  child: Column(
+                  child: Row(
                     children: <Widget>[
-                      Row(
-                        children: <Widget>[
-                          Expanded(flex: 9, child: Text(botonAgregarEtiqueta(widget.secc.id_seccion), style: TextStyle(color:AppColors.color_appBar, fontSize: 16, fontWeight: FontWeight.w600, fontFamily: 'OpenSansRegular'),)),
-                          Expanded(
-                            flex: 1,
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              child: FittedBox(
-                                child: FloatingActionButton(
-                                  onPressed: _aumentar,
-                                  heroTag: "btn1",
-                                  tooltip: "Agregar "+ widget.secc.seccion,
-                                  child: Icon(Icons.add, color: AppColors.secondary900, size: 50,),
-                                  backgroundColor: AppColors.color_background_blanco,
-                                  elevation: 0,
+                      Expanded(flex: 6, child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(botonAgregarEtiqueta(widget.secc.id_seccion),
+                          style: TextStyle(
+                              color:ColorsCotizador.color_appBar,
+                              fontSize: 16,
+                              letterSpacing: 0.15,
+                              fontWeight: FontWeight.normal
+                          ),),
+                      )),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                            height: 60,
+                            width: 60,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: CupertinoButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: _aumentar,
+                                child: Icon(Icons.add,
+                                  color: Utilidades.color_primario,
+                                  size: 30,
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Divider(
-                          color: AppColors.color_Bordes, height: 1
+                            )
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
 
       }
 
-    } else {
+    }
+    else {
+
+      if(widget.secc.campos.length>0 && widget.secc.seccion.contains("Adicional ")){
+        String cadena = "";
+
+        widget.secc.campos.forEach((element) {
+          if(element.valor != null && (element.id_campo ==5 || element.id_campo == 4 || element.id_campo == 7)){
+            cadena = cadena + (element.valores != null ? element.valores[int.parse(element.valor)-1].descripcion : element.valor) + " | ";
+            print("cadena ${cadena}");
+          }
+          print("widget.secc.seccion ${widget.secc.seccion}");
+        });
+
+        final section = widget.secc.seccion;
+
+        return Row(
+          children: [
+            Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                  color: ColorsCotizador.color_background,
+                  border: Border.all(
+                    color: ColorsCotizador.color_titleAlert,
+                    width: 1,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: Align(alignment: Alignment.center, child: Text(widget.secc.seccion.replaceAll("Adicional ", "F"),
+                    style: TextStyle(
+                      color: ColorsCotizador.color_titleAlert,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 24,
+                    )))
+            ),
+            Expanded(
+              //margin: EdgeInsets.only(left: 8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(widget.secc.seccion.replaceAll("Adicional ", "Familiar "),
+                        style: TextStyle(
+                          color: ColorsCotizador.color_titleAlert,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.15,
+                          fontSize: 16,
+                        )
+                    ),
+                    Container(height: 8,),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              editarFamiliar(
+                                section.substring(
+                                  section.length - 1,
+                                  widget.secc.seccion.length,
+                                ),
+                              );
+                            },
+                            child: Text(
+                              _buildFamilyText(),
+                              style: TextStyle(
+                                color: ColorsCotizador.color_Etiqueta,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.15,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (widget.secc.id_seccion == Utilidades.familiarSeccion)
+                          IconButton(
+                            constraints: BoxConstraints(),
+                            padding: EdgeInsets.zero,
+                            icon: Icon(Icons.delete_outline),
+                            color: Utilidades.color_primario,
+                            onPressed: () => _borrarSeccion(widget.secc.hashCode),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      }
 
       if(widget.secc.campos.length>0){
         return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-             /* Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
-                child: Divider(height: 1,
-                  color: AppColors.color_divider,),
-              ),*/
               Row(children: <Widget>[
                 Expanded(
                   flex: 3,
                   child: ButtonBar(
                     alignment: MainAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        widget.secc.seccion.toUpperCase(),
+                      /*Text(
+                        widget.secc.seccion+"--",
                         textAlign: TextAlign.start,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.color_Etiqueta,
-                            fontSize: 10,
-                            letterSpacing: 1.5),
-                      ),
+                            fontWeight: FontWeight.normal,
+                            color: Utilidades.color_titulo,
+                            fontSize: 20),
+                      ),*/
                       GestureDetector(
                         onTap: (){
                           setState(() {
@@ -397,7 +538,7 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
                           child: Ink(
                             child: IconButton(
                               icon: Icon(Icons.delete_outline),
-                              color: AppColors.color_primario,
+                              color: Utilidades.color_primario,
                               onPressed: () {
                                 _borrarSeccion(widget.secc.hashCode);
                               },
@@ -433,6 +574,15 @@ class _SeccionDinamicaState extends State<SeccionDinamica> with Validadores {
       }
 
     }
+  }
+
+  String _buildFamilyText() {
+    String age = widget.secc.campos[5].valor;
+    String sex = widget.secc.campos[4].valor == "1"
+        ? "Femenino": "Masculino";
+    String zip = widget.secc.campos[7].valor;
+
+    return "$age años | $sex | CP $zip";
   }
 }
 
@@ -485,18 +635,21 @@ class _CampoDinamicoState extends State<CampoDinamico> {
           }else{
             return Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text("Error: El campo select "+ widget.campo.id_campo.toString() + " no contiene valores"),
+              child: Text("Error: El campo "+ widget.campo.etiqueta + " no contiene valores"),
             );
           }
+
           break;
 
         }
 
+
       case "textbox":
         {
-          return CustomTextField(campo: widget.campo,
-            actualizarCodigoPostalFamiliares:
-            widget.actualizarCodigoPostalFamiliares,
+          return CustomTextField(
+            campo: widget.campo,
+            actualizarSecciones: widget.actualizarSecciones,
+            actualizarCodigoPostalFamiliares: widget.actualizarCodigoPostalFamiliares,
             validarCodigoPostalFamiliares: widget.validarCodigoPostalFamiliares,
           );
         }
@@ -545,14 +698,36 @@ class _CampoDinamicoState extends State<CampoDinamico> {
         }
 
 
+      case "labelDivider":
+        {
+          return Container(
+            margin: EdgeInsets.only(top: 16, bottom: 16),
+            child: Visibility(
+                visible: widget.campo.visible,
+                child: Text(widget.campo.etiqueta ,
+                    style: TextStyle(
+                        color: ColorsCotizador.color_Etiqueta,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.5,
+                        fontSize: 10)
+                )
+            ),
+          );
+        }
       case "label":
         {
           return Container(
-            margin: EdgeInsets.only(bottom: 16),
+            margin: EdgeInsets.only(top: 16, bottom: 16),
             child: Visibility(
-
                 visible: widget.campo.visible,
-                child: Text(widget.campo.etiqueta ,style: TextStyle(color: AppColors.color_primario, fontWeight: FontWeight.w400, fontSize: 16))),
+                child: Text(widget.campo.etiqueta ,
+                    style: TextStyle(
+                        color: ColorsCotizador.color_Etiqueta,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 1.5,
+                        fontSize: 10)
+                )
+            ),
           );
         }
 
@@ -572,7 +747,7 @@ class _CampoDinamicoState extends State<CampoDinamico> {
           );
         }
 
-      case "toggle":
+      case "toogle":
         {
           // return CheckBoxDinamicoDependiente(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);
           return ToggleConValores(campo: widget.campo, actualizarSecciones: widget.actualizarSecciones, agregarAlDiccionario: widget.agregarDicc,);

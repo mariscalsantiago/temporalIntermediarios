@@ -19,6 +19,7 @@ import 'package:cotizador_agente/UserInterface/login/principal_form_login.dart';
 import 'package:cotizador_agente/modelos/LoginModels.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController.dart';
 import 'package:cotizador_agente/utils/LoaderModule/LoadingController_2.dart';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:device_info/device_info.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ import 'package:cotizador_agente/Functions/Analytics.dart';
 
 String _authorized = 'Not Authorized';
 bool _isAuthenticating = false;
+EncryptData _encryptData = EncryptData();
 
 class BiometricosPage extends StatefulWidget {
   BiometricosPage({Key key, this.responsive}) : super(key: key);
@@ -645,9 +647,12 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           setState(() {
             _saving = true;
           });
-          datosUsuario = await logInServices(context,prefs.getString("correoUsuario"), prefs.getString("contrasenaUsuario"), prefs.getString("correoUsuario"),responsive);
+
+          var decryptedEmail = _encryptData.decryptData(prefs.getString("correoUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+          var decryptedPassword = _encryptData.decryptData(prefs.getString("contrasenaUsuario"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
+          datosUsuario = await logInServices(context,decryptedEmail, decryptedPassword, decryptedEmail,responsive);
           if(datosUsuario != null){
-            respuestaServicioCorreo = await  consultaUsuarioPorCorreo(context, prefs.getString("correoUsuario"),responsive);
+            respuestaServicioCorreo = await consultaUsuarioPorCorreo(context,decryptedEmail,responsive);
             //Validacion Roles
             validarRolesUsuario();
             setState(() {
@@ -746,6 +751,18 @@ class _BiometricosPage extends State<BiometricosPage> with WidgetsBindingObserve
           localAuth.stopAuthentication();
           Platform.isAndroid ? customAlert(
               AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric) :
+          is_available_finger ? customAlert(
+              AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric) :
+          customAlert(AlertDialogType.FACE_PERMISS_DECLINADO, context, "", "",
+              responsive, funcionDenegadoBiometric);
+        }else if (e.code == auth_error.otherOperatingSystem ){
+          prefs.setInt("localAuthCountIOS", 102);
+          localAuth.stopAuthentication();
+          Navigator.pop(context, true);
+          Platform.isAndroid ? customAlert(
+              AlertDialogType.FACE_HUELLA_PERMISS_DECLINADO, context, "", "otherOperatingSystem",
               responsive, funcionDenegadoBiometric) :
           is_available_finger ? customAlert(
               AlertDialogType.HUELLA_PERMISS_DECLINADO, context, "", "",

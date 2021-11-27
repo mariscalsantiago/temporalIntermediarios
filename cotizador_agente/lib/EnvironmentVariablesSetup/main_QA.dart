@@ -11,12 +11,12 @@ void main() {
     ambient: Ambient.qa,
     serviceLogin: 'https://cuentas-qa.gnp.com.mx/auth/login',
     apikeyAppAgentes: 'l7xxfb568d77704046d0b5a80256fe00f829',
-    service_perfilador: "https://api-qa.oscp.gnp.com.mx/Consulta-Agentes/consulta-perfil-app-int",
+    service_perfilador: "https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/Consulta-Agentes/consulta-perfil-app-int",
     proyectId: 'gnp-accidentespersonales-qa',
     //urlNotifierService:'https://api-qa.oscp.gnp.com.mx',
 
     //COTIZADOR UNICO
-    urlNegociosOperables: 'https://us-central1-gnp-auttarifasgmm-qa.cloudfunctions.net/',
+    urlNegociosOperables: 'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/',
     urlBase: 'https://gmm-cotizadores-qa.gnp.com.mx/',
     urlSendAnalytics: 'https://www.google-analytics.com/',
     idContenedorAnalytics: 'UA-146126625-2',
@@ -26,19 +26,22 @@ void main() {
 
     //Preguntas Secretas
     apiKey: 'l7xx2fea6d294a6641438cde5681449e16dc',
-    consultaPreguntasSecretas: 'https://api-qa.oscp.gnp.com.mx/aprAprovisionamientoProvee/intermediario/preguntas/',
-    actualizarEstablecerPreguntasSecretas: 'https://api-qa.oscp.gnp.com.mx/aprAprovisionamientoProvee/intermediario/preguntas',
-    cambioContrasenaPerfil: 'https://api-qa.oscp.gnp.com.mx/aprAprovisionamientoProvee/intermediario/password/',
-    reestablecerContrasena: 'https://api-qa.oscp.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
-    consultaUsuarioPorCorreo: 'https://api-qa.oscp.gnp.com.mx/aprAprovisionamiento/admonUsuarios',
+    consultaPreguntasSecretas: 'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/aprAprovisionamientoProvee/intermediario/preguntas/',
+    actualizarEstablecerPreguntasSecretas: 'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/aprAprovisionamientoProvee/intermediario/preguntas',
+    cambioContrasenaPerfil: 'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/aprAprovisionamientoProvee/intermediario/password/',
+    reestablecerContrasena: 'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/aprAprovisionamiento/admonUsuarios',
+    consultaUsuarioPorCorreo: 'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=',
     orquestadorOTPSinSesion:'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/intermediario/enviarOtp/sinSesion',
-    validaOTP: 'https://api-qa.oscp.gnp.com.mx/apr/otpLocalService/validateOtp/',
-    consultarMedioContactosAgentes :'https://api-qa.oscp.gnp.com.mx/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
-    altaMediosContactoAgentes:'https://api-qa.oscp.gnp.com.mx/crm-personas/alta-medios-contacto-evo',
-    orquestadorOtpJwt:'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/intermediario/enviarOtp/me',
-    consultaPersonaIdParticipante:"https://api-qa.oscp.gnp.com.mx/CRM/ConsultaPersonaIdParticipante",
-    cotizadorAutos: "https://gnp-appcontratacionautos-qa.uc.r.appspot.com/",
-    servicioNuevoConsultaPorCorreo:"https://api-qa.oscp.gnp.com.mx/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
+    validaOTP: 'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/apr/otpLocalService/validateOtp/',
+    consultarMedioContactosAgentes :'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/crm-personas/consulta-medios-contacto-agt-id?idAgente=',
+    altaMediosContactoAgentes:'https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/crm-personas/alta-medios-contacto-evo',
+    orquestadorOtpJwt:'https://gnp-accidentespersonales-uat.uc.r.appspot.com/intermediario/enviarOtp/me',
+    consultaPersonaIdParticipante:"https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/CRM/ConsultaPersonaIdParticipante",
+    cotizadorAutos: "https://gnp-appcontratacionautos-uat.uc.r.appspot.com/",
+    servicioNuevoConsultaPorCorreo:"https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/aprAprovisionamientoProvee/intermediario/app/consulta-usuario-correo?email=",
+    servicioNuevoDatosPerfil:"https://orquestador-otp-dot-gnp-accidentespersonales-qa.appspot.com/app/datos-perfil/",
+
+
     child: new MyApp(),
   );
 

@@ -14,12 +14,15 @@ class Mensajes{
   static final String titleAdver = "No se puede continuar";
   static final String legendCotizador = "Selecciona un cotizador";
   static final String servicioNoDisp = "Servicio no disponible";
+  static final String titleEliminarCotizacion = "Eliminar Cotización";
+  static final String seEliminaraLaCotizacion = "La cotización se eliminará y ya no podrá ser consultada.";
 
   //MENSAJES
   static final String recuperarPlan = "No es posible recuperar la cotización, el plan ya no se encuentra disponible.";
   static final String propRestablecida = "La propuesta ha sido restablecida. Revisa que los datos se hayan cargado con éxito.";
   static final String cargaDatos = "Se han modificado algunos campos, que alteran la carga de datos. ¿Deseas continuar?";
   static final String limiteCotizacion =  "Has llegado al límite de cotizaciones para comparar o editar, elimina una propuesta.";
+  static final String limiteCotizacion2 = "Has llegado al número máximo de cotizaciones permitidas";
   static final String agregarCot = "Si deseas agregar esta cotización a la comparativa, tome en cuenta que las anteriores se quitarán.";
   static final String cambioCP = "Se ha cambiado el CP del Titular ¿Deseas asignar el mismo para los familiares adicionales?";
   static final String cotizacionEnviada = "Tu cotización se ha enviado con éxito.";

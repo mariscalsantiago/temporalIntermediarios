@@ -75,7 +75,8 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
     AnalyticsServices().sendTag(CotizadorAnalitycsTags.cotizadorGMM);
     AnalyticsServices().setCurrentScreen(CotizadorAnalitycsTags.cotizadorGMM, "SeleccionaCotizadorAP");
     var headers = {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Authorization": "Bearer ${loginData.refreshtoken}"
     };
 
     Map<String, dynamic> jsonMap = {
@@ -86,7 +87,7 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
 
     var request = MyRequest(
       baseUrl: config.urlNegociosOperables,
-      path: Constants.NEGOCIOS_OPERABLES,
+      path: "",
       method: Method.POST,
       body: jsonEncode(jsonMap).toString(),
       headers: headers
@@ -510,6 +511,15 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                             Navigator.pop(context);
                             Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
                             Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+
+                            //URLS
+                            Utilidades.url = cotizadorSelected.url;
+                            Utilidades.urlCotizaciones = cotizadorSelected.urlCotizaciones;
+                            Utilidades.urlBorrar = cotizadorSelected.urlBorrar;
+                            Utilidades.urlVer = cotizadorSelected.urlVer;
+                            Utilidades.urlGuardar = cotizadorSelected.urlGuardar;
+                            Utilidades.urlCorreo = cotizadorSelected.urlCorreo;
+
                             //Analytics
                             Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
                             Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);
@@ -519,6 +529,15 @@ class _SeleccionaCotizadorAPState extends State<SeleccionaCotizadorAP>
                         } else{
                           Utilidades.idAplicacion = int.parse(cotizadorSelected.id_aplicacion.toString());
                           Utilidades.tipoDeNegocio = cotizadorSelected.aplicacion;
+
+                          //URLS
+                          Utilidades.url = cotizadorSelected.url;
+                          Utilidades.urlCotizaciones = cotizadorSelected.urlCotizaciones;
+                          Utilidades.urlBorrar = cotizadorSelected.urlBorrar;
+                          Utilidades.urlVer = cotizadorSelected.urlVer;
+                          Utilidades.urlGuardar = cotizadorSelected.urlGuardar;
+                          Utilidades.urlCorreo = cotizadorSelected.urlCorreo;
+
                           //Analytics
                           Utilidades.sendAnalytics(context, "Negocio operable", negocioSelected.negocioOperable);
                           Utilidades.sendAnalytics(context, "Cotizador", "Ingreso" + " / " + Utilidades.tipoDeNegocio);

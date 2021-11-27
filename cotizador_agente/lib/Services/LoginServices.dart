@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'package:cotizador_agente/utils/Security/EncryptData.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -50,6 +51,7 @@ List<dynamic> emitirAutos = [];
 List<dynamic> pagarAutos = [];
 int intento;
 Map accesoFirebase;
+EncryptData _encryptData = EncryptData();
 
 void funcionAlerta(){
 
@@ -96,7 +98,8 @@ Future<LoginDatosModel> logInServices(BuildContext context, String mail, String 
     'savedMailApp':mail,
   };
   var encodeData = json.encode(datos);
-  _sharedPreferences.setString('datosHuella', encodeData);
+
+  _sharedPreferences.setString('datosHuella', _encryptData.encryptInfo(encodeData, "CL#AvEPrincIp4LvA#lMEXapgpsi2020"));
 
   datosPerfilador = await getPerfiladorAcceso(context, datosUsuario.idparticipante);
   print("datosPerfilador ${datosPerfilador}");
@@ -172,7 +175,7 @@ void consultaBitacora() async {
   //String formattedDate = DateFormat('kk:mm:ss \n EEE d MMM').format(now);
   String formattedDate = DateFormat('kk:mm:ss').format(now);
   String formatted = formatter.format(now);
-  String deviceName= prefs.getString("deviceName");
+  String deviceName = _encryptData.decryptData(prefs.getString("deviceName"), "CL#AvEPrincIp4LvA#lMEXapgpsi2020");
   try{
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission  != LocationPermission.denied && permission  != LocationPermission.deniedForever) {
@@ -251,7 +254,8 @@ void getNegociosOperables(BuildContext context) async {
   var config = AppConfig.of(context);
   bool success = false;
   var headers = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Authorization": "Bearer ${loginData.refreshtoken}"
   };
   Map<String, dynamic> jsonMap = {
     "consultaNegocio": {
@@ -260,7 +264,7 @@ void getNegociosOperables(BuildContext context) async {
   };
   var request = MyRequest(
       baseUrl: config.urlNegociosOperables,
-      path: Constants.NEGOCIOS_OPERABLES,
+      path: "",
       method: Method.POST,
       body: jsonEncode(jsonMap).toString(),
       headers: headers
@@ -299,6 +303,10 @@ Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String 
   String _service = "Login";
   String _serviceID = "S1";
   print("Getting $_service");
+  
+  FirebaseAuthenticationServices().getIntentosUser(user);
+  print("logInPost user:"+user);
+
   if (!await ConnectionManager.isConnected()) {
     //output.showAlert('Conexión no disponible', Constants.ALERTA_NO_CONEXION, null, null);
     if (deviceType == ScreenType.phone) {
@@ -339,12 +347,14 @@ Future<LoginDatosModel> logInPost(BuildContext context ,String emailApp, String 
   http.Request("Login", Uri.parse(config.serviceLogin));
   metricsPerformance.send(request);
 
-  await FirebaseAuthenticationServices().getIntentosUser(user);
+//  await FirebaseAuthenticationServices().getIntentosUser(user);
+//  print("logInPost user:"+user);
 
   if(response != null) {
     if (response.body != null && response.body.isNotEmpty) {
       if (response.statusCode == 200) {
         Map map2 = json.decode(response.body);
+        writeUserIntentos(user, 0);
         //output?.hideLoader();
         loginData = LoginModel.fromJson(map2);
         List<String> jwt = loginData.jwt.split(".");
@@ -428,7 +438,10 @@ Future<PerfiladorModel> getPerfiladorAcceso(BuildContext context ,String idParti
     path: '?idInteresado=' + idParticipante,
     method: Method.GET,
     body: null,
-    headers: {"apikey": config.apiKey},
+    headers: {
+      "apikey": config.apikeyBCA,
+      "Authorization": "Bearer ${loginData.refreshtoken}"
+      },
   );
 
   MyResponse response = await RequestHandler.httpRequest(request); //.timeout(const Duration (seconds:6),onTimeout :  _onTimeout(context, _responsive));
@@ -880,21 +893,22 @@ Future<DatosFisicosModel> getPersonaFisica(BuildContext context, String idPartic
       print("Getting $_service");
       http.Response _response;
       try {
-        print(config.serviceBCA + '/app/datos-perfil/' + idParticipante);
-        _response = await http.get(config.serviceBCA + '/app/datos-perfil/' + idParticipante,
-            headers: {"x-api-key": config.apikeyBCA});
+        print(config.servicioNuevoDatosPerfil + idParticipante);
+        _response = await http.get(config.servicioNuevoDatosPerfil+ idParticipante,
+            headers: {"x-api-key": config.apikeyBCA,
+              "Authorization": "Bearer ${loginData.refreshtoken}"});
 
         print("getPersonaFisica  ${_response.body}");
 
         //TODO: Metrics
         final MetricsPerformance metricsPerformance = MetricsPerformance(
             http.Client(),
-            config.serviceBCA + '/app/datos-perfil/' + idParticipante,
+            config.servicioNuevoDatosPerfil + idParticipante,
             HttpMethod.Get);
         final http.Request request = http.Request(
             "ObtenerPF",
             Uri.parse(
-                config.serviceBCA + '/app/datos-perfil/' + idParticipante));
+                config.servicioNuevoDatosPerfil + idParticipante));
         metricsPerformance.send(request);
 
         if (_response != null) {
